@@ -8,6 +8,8 @@ public class Dialog
         {
             Title = "Nowe okno",
             Filter = "Pliki PDF (*.pdf)|*.pdf|Wszystkie pliki (*.*)|*.*",
+            AutoUpgradeEnabled = true,
+            RestoreDirectory = true,
             Multiselect = true
         };
         

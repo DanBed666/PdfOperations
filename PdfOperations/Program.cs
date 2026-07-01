@@ -2,8 +2,7 @@
 
 class Program
 {
-    [STAThread] 
-    static void Main(string[] args)
+    [STAThread] static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
 
