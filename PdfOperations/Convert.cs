@@ -21,4 +21,9 @@ public static class Convert
     {
         
     }
+    
+    public static void PictToPdf()
+    {
+        
+    }
 }
