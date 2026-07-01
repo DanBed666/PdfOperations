@@ -102,10 +102,18 @@ public class AddOpsOptions
         switch (znak)
         {
             case "1":
-                Divide.ManyToOne();
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input = Console.ReadLine()!;
+                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+                string output = Console.ReadLine()!;
+                Divide.ManyToOne(input, output);
                 break;
             case "2":
-                Divide.OneToMany();
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input8 = Console.ReadLine()!;
+                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+                string output8 = Console.ReadLine()!;
+                Divide.OneToMany(input8, output8);
                 break;
             case "3":
                 MainMenu.MainMenuF();
