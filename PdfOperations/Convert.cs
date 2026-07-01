@@ -7,9 +7,10 @@ public static class Convert
         
     }
     
-    public static void PdfToPict()
+    public static void PdfToPict(string input, string output)
     {
-        
+        string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
+        RunClass.Run(tool, "-r", "300", "-jpeg", input, output);
     }
     
     public static void PdfToTxt(string input, string output)
@@ -24,8 +25,9 @@ public static class Convert
         RunClass.Run(tool, input, output, "-l", "pol");
     }
     
-    public static void PictToPdf()
+    public static void PictToPdf(string input, string output)
     {
-        
+        string tool = ToolPaths.ToolPathsDict[Tool.Magick];
+        RunClass.Run(tool, input, output);
     }
 }
