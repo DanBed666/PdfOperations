@@ -9,8 +9,7 @@ public class ToolPaths
     public static readonly IReadOnlyDictionary<Tool, string> ToolPathsDict =
         new ReadOnlyDictionary<Tool, string>(new Dictionary<Tool, string>
             {
-                [Tool.LibreOffice] = Path.Combine(ToolsDir, "LibreOfficePortable", "App",
-                        "libreoffice", "program", "soffice.com"),
+                [Tool.LibreOffice] = Path.Combine(ToolsDir, "libreoffice", "program", "soffice.com"),
                 [Tool.PdfToPpm] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
                     "bin", "pdftoppm.exe"),
                 [Tool.Magick] = Path.Combine(ToolsDir, "ImageMagick-7.1.2-26-portable-Q16-x64", 

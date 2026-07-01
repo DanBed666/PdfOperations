@@ -23,7 +23,17 @@ public class AddOpsOptions
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input2 = Console.ReadLine()!;
+                //string input2 = Console.ReadLine()!;
+                string input2 = Dialog.SelectFile();
+                
+                if (input2 == null)
+                {
+                    Console.WriteLine("Nie wybrano pliku!");
+                    return;
+                }
+                
+                Console.WriteLine("Wybrano: " + input2);
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
                 Convert.PdfToPict(input2, output2);
@@ -37,10 +47,18 @@ public class AddOpsOptions
                 break; 
             case "4":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Console.ReadLine()!;
+                string input88 = Dialog.SelectFile();
+                
+                if (input88 == null)
+                {
+                    Console.WriteLine("Nie wybrano pliku!");
+                    return;
+                }
+                
+                Console.WriteLine("Wybrano: " + input88);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
-                Convert.PdfToTxt(input, output);
+                Convert.PdfToTxt(input88, output);
                 break;
             case "5":
                 Console.WriteLine("Podaj nazwę obrazu: ");
