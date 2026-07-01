@@ -70,7 +70,13 @@ public class AddOpsOptions
         switch (znak)
         {
             case "1":
-                Pages.CreateWithPages();
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input = Console.ReadLine()!;
+                Console.WriteLine("Podaj strony: ");
+                string pages = Console.ReadLine()!;
+                Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
+                string output = Console.ReadLine()!;
+                Pages.CreateWithPages(input, pages, output);
                 break;
             case "2":
                 MainMenu.MainMenuF();
@@ -124,7 +130,9 @@ public class AddOpsOptions
         switch (znak)
         {
             case "1":
-                Info.ShowInfo();
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input = Console.ReadLine()!;
+                Info.ShowInfo(input);
                 break;
             case "2":
                 MainMenu.MainMenuF();
