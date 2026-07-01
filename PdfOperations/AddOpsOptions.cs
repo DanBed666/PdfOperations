@@ -17,7 +17,9 @@ public class AddOpsOptions
         switch (znak)
         {
             case "1":
-                Convert.FileToPdf();
+                Console.WriteLine("Podaj nazwę pliku: ");
+                string file = Console.ReadLine()!;
+                Convert.FileToPdf(file);
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");

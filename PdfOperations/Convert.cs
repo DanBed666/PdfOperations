@@ -2,9 +2,10 @@
 
 public static class Convert
 {
-    public static void FileToPdf()
+    public static void FileToPdf(string file)
     {
-        
+        string tool = ToolPaths.ToolPathsDict[Tool.LibreOffice];
+        RunClass.Run(tool, "--headless", "--convert-to", "pdf", file);
     }
     
     public static void PdfToPict(string input, string output)
