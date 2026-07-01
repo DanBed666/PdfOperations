@@ -23,10 +23,18 @@ public class AddOpsOptions
                 Convert.PdfToPict();
                 break; 
             case "3":
-                Convert.PictToTxt();
+                Console.WriteLine("Podaj nazwę obrazu: ");
+                string input8 = Console.ReadLine()!;
+                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+                string output8 = Console.ReadLine()!;
+                Convert.PictToTxt(input8, output8);
                 break; 
             case "4":
-                Convert.PdfToText();
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input = Console.ReadLine()!;
+                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+                string output = Console.ReadLine()!;
+                Convert.PdfToTxt(input, output);
                 break;
             case "5":
                 Convert.PictToPdf();

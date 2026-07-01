@@ -4,9 +4,9 @@ namespace PdfOperations;
 
 public class ToolPaths
 {
-    public static readonly string ToolsDir = Path.Combine(AppContext.BaseDirectory, "tools");
+    private static readonly string ToolsDir = Path.Combine(AppContext.BaseDirectory, "tools");
 
-    private static readonly IReadOnlyDictionary<Tool, string> ToolPathsDict =
+    public static readonly IReadOnlyDictionary<Tool, string> ToolPathsDict =
         new ReadOnlyDictionary<Tool, string>(new Dictionary<Tool, string>
             {
                 [Tool.LibreOffice] = Path.Combine(ToolsDir, "LibreOfficePortable", "App",
