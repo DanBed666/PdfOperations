@@ -2,10 +2,8 @@
 
 class Program
 {
-    static void Main(string[] args)
+    static void MainMenu()
     {
-        Console.WriteLine("Hello, World!");
-
         while (true)
         {
             Console.WriteLine("1. Plik na Pdf");
@@ -20,27 +18,31 @@ class Program
             switch (znak)
             {
                 case "1":
-                    Console.WriteLine(1);
+                    OperationsMenu.FileToPdf();
                     break;    
                 case "2":
-                    Console.WriteLine(2);
+                    OperationsMenu.PdfToPict();
                     break; 
                 case "3":
-                    Console.WriteLine(3);
+                    OperationsMenu.PictToTxt();
                     break; 
                 case "4":
-                    Console.WriteLine(4);
-                    break; 
-                case "5":
-                    Console.WriteLine(5);
+                    OperationsMenu.PdfToText();
                     break; 
                 case "0":
-                    Console.WriteLine(0);
+                    Environment.Exit(0);
                     break; 
                 default:
-                    Console.WriteLine("default");
+                    Console.WriteLine("Nie ma takiej opcji!");
                     break; 
             }
         }
+    }
+    
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Hello, World!");
+
+        MainMenu();
     }
 }
