@@ -1,6 +1,6 @@
 ﻿namespace PdfOperations;
 
-public static class OperationsMenu
+public static class Convert
 {
     public static void FileToPdf()
     {
