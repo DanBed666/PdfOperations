@@ -22,13 +22,18 @@ public class Search
     public static void SearchTxt(string input, string phrase)
     {
         string [] test = File.ReadAllLines(input);
+        List<String> found = new List<string>();
 
         foreach (string line in test)
         {
-            if (line.ToLower().Contains(phrase))
+            string l = line.ToLower();
+            
+            if (l.Contains(phrase))
             {
-                File.WriteAllText("wyniknowy.txt", line);
+                found.Add(line);
             }
         }
+        
+        File.WriteAllLines("wyniknowy.txt", found);
     }
 }
