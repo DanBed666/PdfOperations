@@ -157,4 +157,40 @@ public class AddOpsOptions
                 break;
         }
     }
+    
+    public static void SearchOptions()
+    {
+        Console.WriteLine("1. Wyszukaj wyraz w obrazie");
+        Console.WriteLine("2. Wyszukaj wyraz w pdf");
+        Console.WriteLine("0. Wyjscie");
+        Console.WriteLine("Wpisz opcje: ");
+        string znak = Console.ReadLine();
+
+        switch (znak)
+        {
+            case "1":
+                Console.WriteLine("Podaj nazwę obrazu: ");
+                string input = Files.AddFile(pictFiles);
+                Console.WriteLine("Podaj hasło do wyszukiwania: ");
+                string phrase = Console.ReadLine()!;
+                Search.SearchPicture(input, phrase);
+                break;
+            case "2":
+                Console.WriteLine("Podaj nazwę pdf: ");
+                string input2 = Files.AddFile(pdfFiles);
+                Console.WriteLine("Podaj hasło do wyszukiwania: ");
+                string phrase2 = Console.ReadLine()!;
+                Search.SearchPdf(input2, phrase2);
+                break;
+            case "3":
+                MainMenu.MainMenuF();
+                break;
+            case "0":
+                Environment.Exit(0);
+                break;
+            default:
+                Console.WriteLine("nic");
+                break;
+        }
+    }
 }

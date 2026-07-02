@@ -26,17 +26,18 @@ public static class Convert
         RunClass.Run(tool, input, output);
     }
     
-    public static void PictToPdf(string [] input, string output)
+    public static void PictToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         
-        string[] arguments = [..input, output, "-l", "pol"];
+        string[] arguments = [input, output, "-l", "pol"];
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToTxt(string input, string output)
+    public static void PictToPdf(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
-        RunClass.Run(tool, input, output);
+        string[] arguments = [..input, output];
+        RunClass.Run(tool, arguments);
     }
 }

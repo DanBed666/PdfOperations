@@ -10,6 +10,7 @@ public class MainMenu
             Console.WriteLine("2. Strony");
             Console.WriteLine("3. Rozdzielanie");
             Console.WriteLine("4. Informacje");
+            Console.WriteLine("5. Wyszukiwanie");
             Console.WriteLine("0. Wyjscie");
             Console.WriteLine("Wpisz opcje: ");
             string znak = Console.ReadLine()!;
@@ -27,6 +28,9 @@ public class MainMenu
                     break; 
                 case "4":
                     AddOpsOptions.InfoOptions();
+                    break; 
+                case "5":
+                    AddOpsOptions.SearchOptions();
                     break; 
                 case "0":
                     Environment.Exit(0);
