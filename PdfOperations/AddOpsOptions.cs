@@ -2,6 +2,10 @@
 
 public class AddOpsOptions
 {
+    public static string allFiles = "Wszystkie pliki (*.*)|*.*";
+    public static string pdfFiles = "Pliki PDF (*.pdf*)|*.pdf*";
+    public static string pictFiles = "Pliki obrazów (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png";
+    
     public static void ConvertOptions()
     {
         Console.WriteLine("1. Plik na PDF");
@@ -18,32 +22,32 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
-                Convert.FileToPdf(Files.AddFiles());
+                Convert.FileToPdf(Files.AddFiles(allFiles));
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile();
+                string input = Files.AddFile(pdfFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
                 Convert.PdfToPict(input, output2);
                 break; 
             case "3":
                 Console.WriteLine("Podaj nazwę obrazu: ");
-                string [] input8 = Files.AddFiles();
+                string [] input8 = Files.AddFiles(pictFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 Convert.PictToPdf(input8, output8);
                 break; 
             case "4":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input88 = Files.AddFile();
+                string input88 = Files.AddFile(pdfFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 Convert.PdfToTxt(input88, output);
                 break;
             case "5":
                 Console.WriteLine("Podaj nazwę obrazu: ");
-                string input5 = Files.AddFile();
+                string input5 = Files.AddFile(pictFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output5 = Console.ReadLine()!;
                 Convert.PictToTxt(input5, output5);
@@ -72,7 +76,7 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile();
+                string input = Files.AddFile(pdfFiles);
                 Console.WriteLine("Podaj strony (np. 3-6): ");
                 string pages = Console.ReadLine()!;
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
@@ -104,14 +108,14 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string[] input88 = Files.AddFiles();
+                string[] input88 = Files.AddFiles(pdfFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 Divide.ManyToOne(input88, output);
                 break;
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input8 = Files.AddFile();
+                string input8 = Files.AddFile(pdfFiles);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 Divide.OneToMany(input8, output8);
@@ -140,8 +144,7 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile();
-                Info.ShowInfo(input);
+                Info.ShowInfo(Files.AddFile(pdfFiles));
                 break;
             case "2":
                 MainMenu.MainMenuF();

@@ -2,9 +2,9 @@
 
 public class Files
 {
-    public static string AddFile()
+    public static string AddFile(string filter)
     {
-        string file = Dialog.SelectFile();
+        string file = Dialog.SelectFile(filter);
 
         if (file == "")
         {
@@ -14,9 +14,9 @@ public class Files
         return file;
     } 
     
-    public static string [] AddFiles()
+    public static string [] AddFiles(string filter)
     {
-        string [] files = Dialog.SelectFiles();
+        string [] files = Dialog.SelectFiles(filter);
 
         if (files.Length == 0)
         {

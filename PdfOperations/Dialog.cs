@@ -2,12 +2,12 @@
 
 public class Dialog
 {
-    public static string SelectFile()
+    public static string SelectFile(string filter)
     {
         using var dialog = new OpenFileDialog
         {
             Title = "Wybierz plik",
-            Filter = "Pliki PDF (*.pdf)|*.pdf|Wszystkie pliki (*.*)|*.*",
+            Filter = filter,
             AutoUpgradeEnabled = true,
             RestoreDirectory = true,
             Multiselect = true
@@ -16,12 +16,12 @@ public class Dialog
         return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : "";
     }
     
-    public static string [] SelectFiles()
+    public static string [] SelectFiles(string filter)
     {
         using var dialog = new OpenFileDialog
         {
             Title = "Wybierz pliki",
-            Filter = "Pliki PDF (*.pdf)|*.pdf|Wszystkie pliki (*.*)|*.*",
+            Filter = filter,
             AutoUpgradeEnabled = true,
             RestoreDirectory = true,
             Multiselect = true
