@@ -6,9 +6,9 @@ public class AddOpsOptions
     {
         Console.WriteLine("1. Plik na PDF");
         Console.WriteLine("2. Pdf na obraz");
-        Console.WriteLine("3. Obraz na tekst");
+        Console.WriteLine("3. Sklej obrazy w pdf");
         Console.WriteLine("4. Pdf na tekst");
-        Console.WriteLine("5. Sklej obrazy w pdf");
+        Console.WriteLine("5. Obraz na tekst");
         Console.WriteLine("6. Menu główne");
         Console.WriteLine("0. Wyjscie");
         Console.WriteLine("Wpisz opcje: ");
@@ -18,62 +18,35 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
-                
-                string [] files = Dialog.SelectFiles();
-                
-                if (files.Length == 0)
-                {
-                    Console.WriteLine("Nie wybrano żadnego pliku!");
-                    return;
-                }
-                
-                Convert.FileToPdf(files);
+                Convert.FileToPdf(Files.AddFiles());
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                //string input2 = Console.ReadLine()!;
-                string input2 = Dialog.SelectFile();
-                
-                if (input2.Length == 0)
-                {
-                    Console.WriteLine("Nie wybrano pliku!");
-                    return;
-                }
-                
-                Console.WriteLine("Wybrano: " + input2);
-                
+                string input = Files.AddFile();
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
-                Convert.PdfToPict(input2, output2);
+                Convert.PdfToPict(input, output2);
                 break; 
             case "3":
                 Console.WriteLine("Podaj nazwę obrazu: ");
-                string input8 = Console.ReadLine()!;
+                string [] input8 = Files.AddFiles();
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
-                Convert.PictToTxt(input8, output8);
+                Convert.PictToPdf(input8, output8);
                 break; 
             case "4":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input88 = Dialog.SelectFile();
-                
-                if (input88.Length == 0)
-                {
-                    Console.WriteLine("Nie wybrano pliku!");
-                    return;
-                }
-                
-                Console.WriteLine("Wybrano: " + input88);
+                string input88 = Files.AddFile();
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 Convert.PdfToTxt(input88, output);
                 break;
             case "5":
                 Console.WriteLine("Podaj nazwę obrazu: ");
-                string input5 = Console.ReadLine()!;
+                string input5 = Files.AddFile();
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output5 = Console.ReadLine()!;
-                Convert.PictToPdf(input5, output5);
+                Convert.PictToTxt(input5, output5);
                 break;
             case "6":
                 MainMenu.MainMenuF();
