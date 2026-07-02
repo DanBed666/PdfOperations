@@ -123,10 +123,18 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Console.ReadLine()!;
+                string [] input88 = Dialog.SelectFiles();
+                
+                if (input88 == null)
+                {
+                    Console.WriteLine("Nie wybrano pliku!");
+                    return;
+                }
+                
+                Console.WriteLine("Wybrano: " + input88);
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
-                Divide.ManyToOne(input, output);
+                Divide.ManyToOne(input88, output);
                 break;
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
