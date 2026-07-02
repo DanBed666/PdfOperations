@@ -2,10 +2,16 @@
 
 public static class Convert
 {
-    public static void FileToPdf(string file)
+    public static void FileToPdf(string [] files)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.LibreOffice];
-        RunClass.Run(tool, "--headless", "--convert-to", "pdf", file);
+
+        string profileDir = Path.Combine(Path.GetTempPath(), "PdfOperationsProfile", Guid.NewGuid().ToString());
+        string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
+
+        string[] arguments = [$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", "pdf", ..files];
+        
+        RunClass.Run(tool, arguments);
     }
     
     public static void PdfToPict(string input, string output)

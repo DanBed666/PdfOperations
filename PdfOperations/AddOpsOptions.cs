@@ -18,15 +18,23 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
-                string file = Console.ReadLine()!;
-                Convert.FileToPdf(file);
+                
+                string [] files = Dialog.SelectFiles();
+                
+                if (files.Length == 0)
+                {
+                    Console.WriteLine("Nie wybrano żadnego pliku!");
+                    return;
+                }
+                
+                Convert.FileToPdf(files);
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 //string input2 = Console.ReadLine()!;
                 string input2 = Dialog.SelectFile();
                 
-                if (input2 == null)
+                if (input2.Length == 0)
                 {
                     Console.WriteLine("Nie wybrano pliku!");
                     return;
@@ -49,7 +57,7 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input88 = Dialog.SelectFile();
                 
-                if (input88 == null)
+                if (input88.Length == 0)
                 {
                     Console.WriteLine("Nie wybrano pliku!");
                     return;
