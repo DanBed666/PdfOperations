@@ -72,8 +72,8 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Console.ReadLine()!;
-                Console.WriteLine("Podaj strony: ");
+                string input = Files.AddFile();
+                Console.WriteLine("Podaj strony (np. 3-6): ");
                 string pages = Console.ReadLine()!;
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output = Console.ReadLine()!;
@@ -104,22 +104,14 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string [] input88 = Dialog.SelectFiles();
-                
-                if (input88 == null)
-                {
-                    Console.WriteLine("Nie wybrano pliku!");
-                    return;
-                }
-                
-                Console.WriteLine("Wybrano: " + input88);
+                string[] input88 = Files.AddFiles();
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 Divide.ManyToOne(input88, output);
                 break;
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input8 = Console.ReadLine()!;
+                string input8 = Files.AddFile();
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 Divide.OneToMany(input8, output8);
@@ -148,7 +140,7 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Console.ReadLine()!;
+                string input = Files.AddFile();
                 Info.ShowInfo(input);
                 break;
             case "2":
