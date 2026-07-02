@@ -6,10 +6,9 @@ public class Files
     {
         string file = Dialog.SelectFile();
 
-        if (file == null)
+        if (file == "")
         {
             Console.WriteLine("Nie wybrano pliku!");
-            return "";
         }
 
         return file;

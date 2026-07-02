@@ -13,7 +13,7 @@ public class Dialog
             Multiselect = true
         };
         
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : "";
     }
     
     public static string [] SelectFiles()
@@ -27,7 +27,7 @@ public class Dialog
             Multiselect = true
         };
         
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileNames : null;
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileNames : [];
     }
     
     public static string SelectDirectory()
@@ -38,7 +38,7 @@ public class Dialog
             ShowNewFolderButton = true,
         };
         
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPath : null;
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPath : "";
     }
     
     public static string [] SelectDirectories()
@@ -49,6 +49,6 @@ public class Dialog
             ShowNewFolderButton = true,
         };
         
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPaths : null;
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPaths : [];
     }
 }
