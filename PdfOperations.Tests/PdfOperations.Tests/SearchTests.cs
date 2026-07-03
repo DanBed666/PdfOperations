@@ -4,7 +4,7 @@
 public class SearchTests
 {
     [TestMethod]
-    public void FindText()
+    public void FindTextTest()
     {
         string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.txt");
 
