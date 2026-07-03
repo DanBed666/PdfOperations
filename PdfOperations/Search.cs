@@ -26,9 +26,7 @@ public class Search
 
         foreach (string line in test)
         {
-            string l = line.ToLower();
-            
-            if (l.Contains(phrase))
+            if (line.Contains(phrase, StringComparison.OrdinalIgnoreCase))
             {
                 found.Add(line);
             }

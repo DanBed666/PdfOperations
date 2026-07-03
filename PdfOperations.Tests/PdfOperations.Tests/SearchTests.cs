@@ -1,6 +1,29 @@
 ﻿namespace PdfOperations.Tests;
 
+[TestClass]
 public class SearchTests
 {
-    
+    [TestMethod]
+    public void FindText()
+    {
+        string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.txt");
+
+        try
+        {
+            File.WriteAllLines(path, ["test", "HYDRAULIKA", "cos tam", "hYdRaUliKa ggggggg"]);
+            List<String> lista = Search.SearchNewTxt(path, "hydraulika");
+            Assert.HasCount(2, lista);
+            Assert.AreEqual("HYDRAULIKA", lista[0]);
+            Assert.AreEqual("hYdRaUliKa ggggggg", lista[1]);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
 }
