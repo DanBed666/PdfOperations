@@ -26,4 +26,14 @@ public class Files
 
         return files;
     }
+
+    public static string [] ReadFile(string input)
+    {
+        return File.ReadAllLines(input);
+    }
+
+    public static void SaveToFile(List<String> found)
+    {
+        File.WriteAllLines("wyniknowy.txt", found);
+    }
 }

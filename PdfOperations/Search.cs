@@ -9,19 +9,19 @@ public class Search
         
         string[] arguments = [input, Path.ChangeExtension(filename, null), "-l", "pol"];
         RunClass.Run(tool, arguments);
-        SearchTxt(filename, phrase);
+        Files.SaveToFile(SearchNewTxt(filename, phrase));
     }
 
     public static void SearchPdf(string input, string phrase)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
-        RunClass.Run(tool, input, Path.ChangeExtension(filename, null));
-        SearchTxt(filename, phrase);
+        RunClass.Run(tool, input, filename);
+        Files.SaveToFile(SearchNewTxt(filename, phrase));
     }
 
-    public static void SearchTxt(string input, string phrase)
+    public static List<String> SearchNewTxt(string input, string phrase)
     {
-        string [] test = File.ReadAllLines(input);
+        string[] test = Files.ReadFile(input);
         List<String> found = new List<string>();
 
         foreach (string line in test)
@@ -34,6 +34,6 @@ public class Search
             }
         }
         
-        File.WriteAllLines("wyniknowy.txt", found);
+        return found;
     }
 }
