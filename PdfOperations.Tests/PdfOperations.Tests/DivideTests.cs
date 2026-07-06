@@ -35,13 +35,33 @@ public class DivideTests
         {
             Directory.Delete(dir, true);
         }
-        
-        //Divide.OneToMany();
     }
     
     [TestMethod]
-    public void ManyToOne(string [] input, string output)
+    public void ManyToOne()
     {
-        //Divide.ManyToOne();
+        string input = Path.Combine(AppContext.BaseDirectory, "TestData", "kompy.pdf");
+        string input2 = Path.Combine(AppContext.BaseDirectory, "TestData", "word.pdf");
+        string input3 = Path.Combine(AppContext.BaseDirectory, "TestData", "pdf_test.pdf");
+
+        string [] inputFiles = new string[] { input, input2, input3 };
+        string output = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+        
+        try
+        {
+            Divide.ManyToOne(inputFiles, output);
+            
+            Assert.IsTrue(File.Exists(output));
+            Assert.IsGreaterThan(0, new FileInfo(output).Length);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            File.Delete(output);
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace PdfOperations.Tests;
+﻿using System.Runtime.ExceptionServices;
+
+namespace PdfOperations.Tests;
 
 [TestClass]
 public class ConvertTests()
@@ -44,9 +46,37 @@ public class ConvertTests()
     }
     
     [TestMethod]
-    public void PdfToPictTest(string input, string output)
+    public void PdfToPictTest()
     {
-        //Convert.PdfToPict();
+        string input = Path.Combine(AppContext.BaseDirectory, "TestData", "pdf_test.pdf");
+        string dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        string output = Path.Combine(dir, "strona");
+        
+        try
+        {
+            Convert.PdfToPict(input, output);
+            
+            string [] outputFiles = Directory.GetFiles(dir, "*strona*");
+            Assert.HasCount(6, outputFiles);
+
+            for (int i = 1; i <= outputFiles.Length; i++)
+            {
+                string outputFile = Path.Combine(dir, $"strona{i}.pdf");
+                
+                Assert.IsTrue(File.Exists(outputFile));
+                Assert.IsGreaterThan(0, new FileInfo(outputFile).Length);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
     }
     
     [TestMethod]
@@ -98,8 +128,30 @@ public class ConvertTests()
     }
     
     [TestMethod]
-    public void PictToPdfTest(string [] input, string output)
+    public void PictToPdfTest()
     {
-        //Convert.PictToPdf();
+        string input = Path.Combine(AppContext.BaseDirectory, "TestData", "strona1.png");
+        string input2 = Path.Combine(AppContext.BaseDirectory, "TestData", "strona2.png");
+        string input3 = Path.Combine(AppContext.BaseDirectory, "TestData", "strona3.png");
+
+        string[] inputFiles = new string[] { input, input2, input3 };
+        string output = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+        
+        try
+        {
+            Convert.PictToPdf(inputFiles, output);
+            
+            Assert.IsTrue(File.Exists(output));
+            Assert.IsGreaterThan(0, new FileInfo(output).Length);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            File.Delete(output);
+        }
     }
 }
