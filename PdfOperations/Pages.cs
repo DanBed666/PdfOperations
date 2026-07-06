@@ -7,7 +7,10 @@ public class Pages
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         
         if (string.IsNullOrEmpty(output))
-            output = "defautl10.pdf";
+        {
+            string fileName = Path.GetFileNameWithoutExtension(input);
+            output = $"{fileName}.pdf";
+        }
         
         RunClass.Run(tool, input, "--pages", ".", pages, "--", output);
     }

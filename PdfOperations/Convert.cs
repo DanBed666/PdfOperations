@@ -19,7 +19,10 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         
         if (string.IsNullOrEmpty(output))
-            output = "strona";
+        {
+            string fileName = Path.GetFileNameWithoutExtension(input);
+            output = $"{fileName}";
+        }
         
         RunClass.Run(tool, "-r", "300", "-jpeg", input, output);
     }
@@ -29,8 +32,15 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
 
         if (string.IsNullOrEmpty(output))
-            output = "defaultpdf.txt";
+        {
+            output = Files.SaveEmptyFile(input);
+        }
         
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output);    
+        }
+
         RunClass.Run(tool, input, output);
     }
     
@@ -39,7 +49,10 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         
         if (string.IsNullOrEmpty(output))
-            output = "defaultpict.txt";
+        {
+            string fileName = Path.GetFileNameWithoutExtension(input);
+            output = $"{fileName}.txt";
+        }
         
         string[] arguments = [input, output, "-l", "pol"];
         RunClass.Run(tool, arguments);
@@ -50,7 +63,10 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         
         if (string.IsNullOrEmpty(output))
-            output = "default.pdf";
+        {
+            string fileName = Path.GetFileNameWithoutExtension(input[0]);
+            output = $"{fileName}.pdf";
+        }
         
         string[] arguments = [..input, output];
         RunClass.Run(tool, arguments);

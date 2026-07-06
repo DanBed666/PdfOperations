@@ -48,4 +48,27 @@ public class Files
     {
         File.WriteAllLines("wyniknowy.txt", found);
     }
+
+    public static string SaveEmptyFile(string input)
+    {
+        string fileName = Path.GetFileNameWithoutExtension(input);
+        string output = $"{fileName}.txt";
+        return output;
+    }
+
+    public static string SaveExistingFile(string output)
+    {
+        for (int i = 2; i <= 999999999; i++)
+        {
+            string outputNew = $"{Path.GetFileNameWithoutExtension(output)}-{i}.txt";
+
+            if (!File.Exists(outputNew))
+            {
+                output = $"{Path.GetFileNameWithoutExtension(output)}-{i}.txt";
+                break;
+            }
+        }
+
+        return output;
+    }
 }
