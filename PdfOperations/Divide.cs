@@ -8,8 +8,12 @@ public class Divide
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input);
-            output = $"{fileName}.pdf";
+            output = Files.SaveEmptyFile(input, ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
         }
         
         RunClass.Run(tool, input, output);
@@ -21,8 +25,12 @@ public class Divide
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input[0]);
-            output = $"{fileName}.pdf";
+            output = Files.SaveEmptyFile(input[0], ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
         }
 
         string[] arguments = [..input, output];

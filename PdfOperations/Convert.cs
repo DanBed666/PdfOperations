@@ -20,8 +20,12 @@ public static class Convert
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input);
-            output = $"{fileName}";
+            output = Files.SaveEmptyFile(input, ".jpg");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".jpg");    
         }
         
         RunClass.Run(tool, "-r", "300", "-jpeg", input, output);
@@ -33,12 +37,12 @@ public static class Convert
 
         if (string.IsNullOrEmpty(output))
         {
-            output = Files.SaveEmptyFile(input);
+            output = Files.SaveEmptyFile(input, ".txt");
         }
         
         if (File.Exists(output))
         {
-            output = Files.SaveExistingFile(output);    
+            output = Files.SaveExistingFile(output, ".txt");    
         }
 
         RunClass.Run(tool, input, output);
@@ -50,8 +54,12 @@ public static class Convert
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input);
-            output = $"{fileName}.txt";
+            output = Files.SaveEmptyFile(input, ".txt");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".txt");    
         }
         
         string[] arguments = [input, output, "-l", "pol"];
@@ -64,8 +72,12 @@ public static class Convert
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input[0]);
-            output = $"{fileName}.pdf";
+            output = Files.SaveEmptyFile(input[0], ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
         }
         
         string[] arguments = [..input, output];

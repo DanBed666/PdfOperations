@@ -8,8 +8,12 @@ public class Pages
         
         if (string.IsNullOrEmpty(output))
         {
-            string fileName = Path.GetFileNameWithoutExtension(input);
-            output = $"{fileName}.pdf";
+            output = Files.SaveEmptyFile(input, ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
         }
         
         RunClass.Run(tool, input, "--pages", ".", pages, "--", output);
