@@ -1,4 +1,6 @@
-﻿namespace PdfOperations.Tests;
+﻿using System.Globalization;
+
+namespace PdfOperations.Tests;
 
 [TestClass]
 public class PagesTests
@@ -13,9 +15,15 @@ public class PagesTests
         try
         {
             Pages.CreateWithPages(input, pages, output);
-            
+
             Assert.IsTrue(File.Exists(output));
             Assert.IsGreaterThan(0, new FileInfo(output).Length);
+            
+            string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
+            string pageSize = RunClass.RunWithOutput(tool, "--show-npages", output);
+            int.TryParse(pageSize, out int ps);
+            
+            Assert.AreEqual(2, ps);
         }
         catch (Exception e)
         {
@@ -24,7 +32,7 @@ public class PagesTests
         }
         finally
         {
-            File.Delete(output);
+            //File.Delete(output);
         }
     }
 }
