@@ -41,10 +41,7 @@ public class ConvertTests()
         }
         finally
         {
-            for (int i = 0; i < outputFiles.Length; i++)
-            {
-                File.Delete(outputFiles[i]);
-            }
+            Directory.Delete(dir, true);
         }
     }
     
