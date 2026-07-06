@@ -11,6 +11,7 @@ public class RunClass
             FileName = exe,
             UseShellExecute = false,
             CreateNoWindow = true,
+            RedirectStandardError = true
         };
 
         foreach (string argument in arguments)
@@ -20,6 +21,13 @@ public class RunClass
         
         using Process process = Process.Start(info)!;
         process.WaitForExit();
+        
+        string error = process.StandardError.ReadToEnd();
+        
+        if (process.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
+        }
     }
     
     public static string RunWithOutput(string exe, params  string[] arguments)
@@ -42,6 +50,11 @@ public class RunClass
         string output = process.StandardOutput.ReadToEnd();
         string error = process.StandardError.ReadToEnd();
         process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
+        }
         
         return output;
     }
