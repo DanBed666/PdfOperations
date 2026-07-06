@@ -30,6 +30,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Convert.FileToPdf(input9, dir);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -51,6 +52,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Convert.PdfToPict(input, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -72,6 +74,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Convert.PictToPdf(input8, output8);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -93,6 +96,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Convert.PdfToTxt(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -114,6 +118,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Convert.PictToTxt(input5, output5);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -159,6 +164,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Pages.CreateWithPages(input, pages, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -203,6 +209,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Divide.ManyToOne(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -224,6 +231,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa konwersja...");
                         Divide.OneToMany(input8, output8);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -293,6 +301,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa wyszukiwanie...");
                         Search.SearchPicture(input, phrase);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
@@ -314,6 +323,7 @@ public class AddOpsOptions
                 {
                     try
                     {
+                        Console.WriteLine("Trwa wyszukiwanie...");
                         Search.SearchPdf(input2, phrase2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
