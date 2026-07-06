@@ -10,7 +10,7 @@ public class Dialog
             Filter = filter,
             AutoUpgradeEnabled = true,
             RestoreDirectory = true,
-            Multiselect = true
+            Multiselect = false
         };
         
         return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : "";

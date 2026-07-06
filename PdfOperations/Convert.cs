@@ -17,18 +17,29 @@ public static class Convert
     public static void PdfToPict(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
+        
+        if (string.IsNullOrEmpty(output))
+            output = "strona";
+        
         RunClass.Run(tool, "-r", "300", "-jpeg", input, output);
     }
     
     public static void PdfToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
+
+        if (string.IsNullOrEmpty(output))
+            output = "defaultpdf.txt";
+        
         RunClass.Run(tool, input, output);
     }
     
     public static void PictToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
+        
+        if (string.IsNullOrEmpty(output))
+            output = "defaultpict.txt";
         
         string[] arguments = [input, output, "-l", "pol"];
         RunClass.Run(tool, arguments);
@@ -37,6 +48,10 @@ public static class Convert
     public static void PictToPdf(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
+        
+        if (string.IsNullOrEmpty(output))
+            output = "default.pdf";
+        
         string[] arguments = [..input, output];
         RunClass.Run(tool, arguments);
     }
