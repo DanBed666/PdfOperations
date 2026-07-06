@@ -22,7 +22,10 @@ public class AddOpsOptions
         {
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
-                Convert.FileToPdf(Files.AddFiles(allFiles));
+                string [] input9 = Files.AddFiles(allFiles);
+                Console.WriteLine("Podaj katalog docelowy: ");
+                string dir = Files.AddDirectory();
+                Convert.FileToPdf(input9, dir);
                 break;    
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");

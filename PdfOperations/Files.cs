@@ -26,6 +26,18 @@ public class Files
 
         return files;
     }
+    
+    public static string AddDirectory()
+    {
+        string file = Dialog.SelectDirectory();
+
+        if (file == "")
+        {
+            Console.WriteLine("Nie wybrano katalogu!");
+        }
+
+        return file;
+    } 
 
     public static string [] ReadFile(string input)
     {

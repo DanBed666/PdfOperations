@@ -8,21 +8,24 @@ public class ConvertTests()
     [TestMethod]
     public void FileToPdfTest()
     {
-        string input = Path.Combine(AppContext.BaseDirectory, "TestData", "word.docx");
-        string input2 = Path.Combine(AppContext.BaseDirectory, "TestData", "word2.docx");
-        string input3 = Path.Combine(AppContext.BaseDirectory, "TestData", "word3.docx");
+        string format = ".docx";
+        string input = Path.Combine(AppContext.BaseDirectory, "TestData", $"word{format}");
+        string input2 = Path.Combine(AppContext.BaseDirectory, "TestData", $"word2{format}");
+        string input3 = Path.Combine(AppContext.BaseDirectory, "TestData", $"word3{format}");
 
         string [] inputFiles = new []{input, input2, input3};
+        string dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
         string [] outputFiles = new string[inputFiles.LongLength];
 
         for (int i = 0; i < inputFiles.Length; i++)
         {
-            outputFiles[i] = inputFiles[i].Replace(".docx", ".pdf");
+            outputFiles[i] = Path.Combine(dir, Path.GetFileNameWithoutExtension(inputFiles[i]) + ".pdf");
         }
 
         try
         {
-            Convert.FileToPdf(inputFiles);
+            Convert.FileToPdf(inputFiles, dir);
             Assert.HasCount(3, outputFiles);
 
             for (int i = 0; i < outputFiles.Length; i++)
@@ -48,21 +51,22 @@ public class ConvertTests()
     [TestMethod]
     public void PdfToPictTest()
     {
+        string key = "klucz";
         string input = Path.Combine(AppContext.BaseDirectory, "TestData", "pdf_test.pdf");
         string dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
-        string output = Path.Combine(dir, "strona");
+        string output = Path.Combine(dir, key);
         
         try
         {
             Convert.PdfToPict(input, output);
             
-            string [] outputFiles = Directory.GetFiles(dir, "*strona*");
+            string [] outputFiles = Directory.GetFiles(dir, $"*{key}*");
             Assert.HasCount(6, outputFiles);
 
             for (int i = 1; i <= outputFiles.Length; i++)
             {
-                string outputFile = Path.Combine(dir, $"strona{i}.pdf");
+                string outputFile = Path.Combine(dir, $"{key}-{i}.jpg");
                 
                 Assert.IsTrue(File.Exists(outputFile));
                 Assert.IsGreaterThan(0, new FileInfo(outputFile).Length);
