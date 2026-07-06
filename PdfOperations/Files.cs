@@ -53,6 +53,7 @@ public class Files
     {
         string fileName = Path.GetFileNameWithoutExtension(input);
         string output = $"{fileName}{ext}";
+        Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
         return output;
     }
 
@@ -69,6 +70,7 @@ public class Files
             }
         }
 
+        Console.WriteLine($"Plik już istnieje! Utworzono nowy plik {output}!");
         return output;
     }
 }
