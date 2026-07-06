@@ -2,7 +2,7 @@
 
 public class CheckParams
 {
-    public static bool checkParams(string [] files, string dir)
+    public static bool checkParams(string [] files)
     {
         if (files.Length == 0 || files is null)
         {
@@ -12,16 +12,11 @@ public class CheckParams
         return true;
     }
     
-    public static bool checkParams(string input, string output)
+    public static bool checkParams(string input)
     {
         if (string.IsNullOrEmpty(input))
             return false;
 
         return true;
-    }
-    
-    public static bool checkParams(string input, string pages, string output)
-    {
-        
     }
 }
