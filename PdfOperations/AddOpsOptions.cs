@@ -28,7 +28,15 @@ public class AddOpsOptions
 
                 if (CheckParams.checkParams(input9))
                 {
-                    Convert.FileToPdf(input9, dir);
+                    try
+                    {
+                        Convert.FileToPdf(input9, dir);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
 
                 break;  
@@ -41,7 +49,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input))
                 {
-                    Convert.PdfToPict(input, output2);
+                    try
+                    {
+                        Convert.PdfToPict(input, output2);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
 
                 break; 
@@ -54,7 +70,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input8))
                 {
-                    Convert.PictToPdf(input8, output8);
+                    try
+                    {
+                        Convert.PictToPdf(input8, output8);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break; 
@@ -67,7 +91,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input88))
                 {
-                    Convert.PdfToTxt(input88, output);
+                    try
+                    {
+                        Convert.PdfToTxt(input88, output);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -80,7 +112,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input5))
                 {
-                    Convert.PictToTxt(input5, output5);
+                    try
+                    {
+                        Convert.PictToTxt(input5, output5);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -117,7 +157,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input))
                 {
-                    Pages.CreateWithPages(input, pages, output);
+                    try
+                    {
+                        Pages.CreateWithPages(input, pages, output);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -153,7 +201,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input88))
                 {
-                    Divide.ManyToOne(input88, output);
+                    try
+                    {
+                        Divide.ManyToOne(input88, output);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -166,7 +222,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input8))
                 {
-                    Divide.OneToMany(input8, output8);
+                    try
+                    {
+                        Divide.OneToMany(input8, output8);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -227,7 +291,15 @@ public class AddOpsOptions
 
                 if (CheckParams.checkParams(input))
                 {
-                    Search.SearchPicture(input, phrase);
+                    try
+                    {
+                        Search.SearchPicture(input, phrase);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
@@ -240,7 +312,15 @@ public class AddOpsOptions
                 
                 if (CheckParams.checkParams(input2))
                 {
-                    Search.SearchPicture(input2, phrase2);
+                    try
+                    {
+                        Search.SearchPdf(input2, phrase2);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                    }
                 }
                 
                 break;
