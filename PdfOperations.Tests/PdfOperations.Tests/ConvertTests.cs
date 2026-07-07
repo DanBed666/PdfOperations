@@ -9,6 +9,7 @@ public class ConvertTests()
     public void FileToPdfTest()
     {
         string format = ".docx";
+        string formatEnd = "pdf";
         string input = Path.Combine(AppContext.BaseDirectory, "TestData", $"word{format}");
         string input2 = Path.Combine(AppContext.BaseDirectory, "TestData", $"word2{format}");
         string input3 = Path.Combine(AppContext.BaseDirectory, "TestData", $"word3{format}");
@@ -25,12 +26,13 @@ public class ConvertTests()
 
         try
         {
-            Convert.FileToPdf(inputFiles, dir);
+            Convert.FileToPdf(inputFiles, formatEnd, dir);
             Assert.HasCount(3, outputFiles);
 
             for (int i = 0; i < outputFiles.Length; i++)
             {
                 Assert.IsTrue(File.Exists(outputFiles[i]));
+                Assert.IsTrue(Path.GetExtension(outputFiles[i]).Equals(formatEnd, StringComparison.OrdinalIgnoreCase));
                 Assert.IsGreaterThan(0, new FileInfo(outputFiles[i]).Length);
             }
         }

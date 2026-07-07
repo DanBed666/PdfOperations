@@ -4,7 +4,7 @@ namespace PdfOperations;
 
 public class RunClass
 {
-    public static void Run(string exe, params  string[] arguments)
+    public static void Run(string exe, params string[] arguments)
     {
         var info = new ProcessStartInfo
         {
@@ -17,6 +17,35 @@ public class RunClass
         foreach (string argument in arguments)
         {
             info.ArgumentList.Add(argument);
+        }
+        
+        using Process process = Process.Start(info)!;
+        process.WaitForExit();
+        
+        string error = process.StandardError.ReadToEnd();
+        
+        if (process.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
+        }
+    }
+    
+    public static void Run(string exe, params string[][] arguments)
+    {
+        var info = new ProcessStartInfo
+        {
+            FileName = exe,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardError = true
+        };
+
+        foreach (string [] argument in arguments)
+        {
+            foreach (string arg in argument)
+            {
+                info.ArgumentList.Add(arg);
+            }
         }
         
         using Process process = Process.Start(info)!;

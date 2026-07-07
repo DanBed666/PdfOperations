@@ -2,14 +2,24 @@
 
 public static class Convert
 {
-    public static void FileToPdf(string [] files, string directory)
+    public static void FileToPdf(string [] files, string format, string directory)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.LibreOffice];
 
         string profileDir = Path.Combine(Path.GetTempPath(), "PdfOperationsProfile", Guid.NewGuid().ToString());
         string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
+        string [][] arguments = new string[files.Length][];
 
-        string[] arguments = [$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", "pdf", ..files, "--outdir", directory];
+        for (int i = 0; i < files.Length; i++)
+        {
+            if (Path.GetExtension(files[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
+                && format.Equals("docx"))
+            {
+                arguments[i] = [$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", format, ..files, "--outdir", directory];
+            }
+            
+            arguments[i] = [$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", format, ..files, "--outdir", directory];
+        }
         
         RunClass.Run(tool, arguments);
     }

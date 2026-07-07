@@ -23,6 +23,8 @@ public class AddOpsOptions
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
                 string [] input9 = Files.AddFiles(allFiles);
+                Console.WriteLine("Podaj format dla konwersji: ");
+                string format = Console.ReadLine()!;
                 Console.WriteLine("Podaj katalog docelowy: ");
                 string dir = Files.AddDirectory();
 
@@ -31,7 +33,7 @@ public class AddOpsOptions
                     try
                     {
                         Console.WriteLine("Trwa konwersja...");
-                        Convert.FileToPdf(input9, dir);
+                        Convert.FileToPdf(input9, format, dir);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
                     catch (Exception e)
