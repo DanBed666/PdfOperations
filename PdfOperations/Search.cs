@@ -7,6 +7,12 @@ public class Search
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
+
+        if (string.IsNullOrEmpty(phrase))
+        {
+            Console.WriteLine("Nie podano hasła do wyszukwania!");
+            return;
+        }
         
         arguments.AddRange([input, Path.ChangeExtension(filename, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
@@ -17,6 +23,12 @@ public class Search
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
+        
+        if (string.IsNullOrEmpty(phrase))
+        {
+            Console.WriteLine("Nie podano hasła do wyszukwiania!");
+            return;
+        }
 
         arguments.AddRange([input, filename]);
         RunClass.Run(tool, arguments);

@@ -10,6 +10,11 @@ public static class Convert
         string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
         List<string> arguments = new List<string>();
 
+        if (string.IsNullOrEmpty(directory))
+        {
+            Console.WriteLine("Nie podano katalogu! Dlatego plik zostanie utworzony w katalogu domyślnym!");
+        }
+
         for (int i = 0; i < files.Length; i++)
         {
             if (Path.GetExtension(files[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)

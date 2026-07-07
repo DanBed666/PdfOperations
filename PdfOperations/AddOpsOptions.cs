@@ -23,6 +23,10 @@ public class AddOpsOptions
             case "1":
                 Console.WriteLine("Podaj nazwę pliku: ");
                 string [] input9 = Files.AddFiles(allFiles);
+                
+                if (input9.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj format dla konwersji: ");
                 string format = Console.ReadLine()!;
                 Console.WriteLine("Podaj katalog docelowy: ");
@@ -47,6 +51,10 @@ public class AddOpsOptions
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input = Files.AddFile(pdfFiles);
+                
+                if (input.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
                 
@@ -69,6 +77,10 @@ public class AddOpsOptions
             case "3":
                 Console.WriteLine("Podaj nazwę obrazu: ");
                 string [] input8 = Files.AddFiles(pictFiles);
+                
+                if (input8.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 
@@ -91,6 +103,10 @@ public class AddOpsOptions
             case "4":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input88 = Files.AddFile(pdfFiles);
+                
+                if (input88.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
@@ -113,6 +129,10 @@ public class AddOpsOptions
             case "5":
                 Console.WriteLine("Podaj nazwę obrazu: ");
                 string input5 = Files.AddFile(pictFiles);
+                
+                if (input5.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output5 = Console.ReadLine()!;
                 
@@ -157,6 +177,10 @@ public class AddOpsOptions
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input = Files.AddFile(pdfFiles);
+                
+                if (input.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj strony (np. 3-6): ");
                 string pages = Console.ReadLine()!;
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
@@ -204,6 +228,10 @@ public class AddOpsOptions
             case "1":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string[] input88 = Files.AddFiles(pdfFiles);
+                
+                if (input88.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
@@ -226,6 +254,10 @@ public class AddOpsOptions
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input8 = Files.AddFile(pdfFiles);
+                
+                if (input8.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 
@@ -296,6 +328,10 @@ public class AddOpsOptions
             case "1":
                 Console.WriteLine("Podaj nazwę obrazu: ");
                 string input = Files.AddFile(pictFiles);
+                
+                if (input.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase = Console.ReadLine()!;
 
@@ -318,6 +354,10 @@ public class AddOpsOptions
             case "2":
                 Console.WriteLine("Podaj nazwę pdf: ");
                 string input2 = Files.AddFile(pdfFiles);
+                
+                if (input2.Length == 0)
+                    break;
+                
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase2 = Console.ReadLine()!;
                 
