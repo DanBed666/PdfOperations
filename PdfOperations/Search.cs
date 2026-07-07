@@ -6,8 +6,9 @@ public class Search
     public static void SearchPicture(string input, string phrase)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
+        List<string> arguments = new List<string>();
         
-        string[] arguments = [input, Path.ChangeExtension(filename, null), "-l", "pol"];
+        arguments.AddRange([input, Path.ChangeExtension(filename, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
         Files.SaveToFile(SearchNewTxt(filename, phrase));
     }
@@ -15,7 +16,10 @@ public class Search
     public static void SearchPdf(string input, string phrase)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
-        RunClass.Run(tool, input, filename);
+        List<string> arguments = new List<string>();
+
+        arguments.AddRange([input, filename]);
+        RunClass.Run(tool, arguments);
         Files.SaveToFile(SearchNewTxt(filename, phrase));
     }
 

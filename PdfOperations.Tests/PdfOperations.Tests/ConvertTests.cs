@@ -32,7 +32,7 @@ public class ConvertTests()
             for (int i = 0; i < outputFiles.Length; i++)
             {
                 Assert.IsTrue(File.Exists(outputFiles[i]));
-                Assert.IsTrue(Path.GetExtension(outputFiles[i]).Equals(formatEnd, StringComparison.OrdinalIgnoreCase));
+                Assert.IsTrue(Path.GetExtension(outputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase));
                 Assert.IsGreaterThan(0, new FileInfo(outputFiles[i]).Length);
             }
         }

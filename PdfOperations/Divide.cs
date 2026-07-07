@@ -5,6 +5,7 @@ public class Divide
     public static void OneToMany(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfSeparate];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -16,12 +17,14 @@ public class Divide
             output = Files.SaveExistingFile(output, ".pdf");    
         }
         
-        RunClass.Run(tool, input, output);
+        arguments.AddRange([input, output]);
+        RunClass.Run(tool, arguments);
     }
     
     public static void ManyToOne(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -33,8 +36,7 @@ public class Divide
             output = Files.SaveExistingFile(output, ".pdf");    
         }
 
-        string[] arguments = [..input, output];
-        
+        arguments.AddRange([..input, output]);
         RunClass.Run(tool, arguments);
     }
 }

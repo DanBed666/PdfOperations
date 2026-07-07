@@ -8,17 +8,17 @@ public static class Convert
 
         string profileDir = Path.Combine(Path.GetTempPath(), "PdfOperationsProfile", Guid.NewGuid().ToString());
         string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
-        string [][] arguments = new string[files.Length][];
+        List<string> arguments = new List<string>();
 
         for (int i = 0; i < files.Length; i++)
         {
             if (Path.GetExtension(files[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
                 && format.Equals("docx"))
             {
-                arguments[i] = [$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", format, ..files, "--outdir", directory];
+                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", format, ..files, "--outdir", directory]);
             }
             
-            arguments[i] = [$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", format, ..files, "--outdir", directory];
+            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", format, ..files, "--outdir", directory]);
         }
         
         RunClass.Run(tool, arguments);
@@ -27,6 +27,7 @@ public static class Convert
     public static void PdfToPict(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -38,12 +39,14 @@ public static class Convert
             output = Files.SaveExistingFile(output, ".jpg");    
         }
         
-        RunClass.Run(tool, "-r", "300", "-jpeg", input, output);
+        arguments.AddRange(["-r", "300", "-jpeg", input, output]);
+        RunClass.Run(tool, arguments);
     }
     
     public static void PdfToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
+        List<string> arguments = new List<string>();
 
         if (string.IsNullOrEmpty(output))
         {
@@ -55,12 +58,14 @@ public static class Convert
             output = Files.SaveExistingFile(output, ".txt");    
         }
 
-        RunClass.Run(tool, input, output);
+        arguments.AddRange([input, output]);
+        RunClass.Run(tool, arguments);
     }
     
     public static void PictToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -72,13 +77,14 @@ public static class Convert
             output = Files.SaveExistingFile(output, ".txt");    
         }
         
-        string[] arguments = [input, output, "-l", "pol"];
+        arguments.AddRange([input, output, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }
     
     public static void PictToPdf(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -89,8 +95,8 @@ public static class Convert
         {
             output = Files.SaveExistingFile(output, ".pdf");    
         }
-        
-        string[] arguments = [..input, output];
+
+        arguments.AddRange([..input, output]);
         RunClass.Run(tool, arguments);
     }
 }

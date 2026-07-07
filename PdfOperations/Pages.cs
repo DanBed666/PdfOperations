@@ -5,6 +5,7 @@ public class Pages
     public static void CreateWithPages(string input, string pages, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
+        List<string> arguments = new List<string>();
         
         if (string.IsNullOrEmpty(output))
         {
@@ -16,6 +17,7 @@ public class Pages
             output = Files.SaveExistingFile(output, ".pdf");    
         }
         
-        RunClass.Run(tool, input, "--pages", ".", pages, "--", output);
+        arguments.AddRange([input, "--pages", ".", pages, "--", output]);
+        RunClass.Run(tool, arguments);
     }
 }
