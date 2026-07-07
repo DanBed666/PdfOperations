@@ -193,7 +193,7 @@ public class AddOpsOptions
                 if (input.Length == 0)
                     break;
                 
-                Console.WriteLine("Podaj strony (np. 3-6): ");
+                Console.WriteLine("Podaj strony (np. 3-6 lub 2-5, 7): ");
                 string pages = Console.ReadLine()!;
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output = Console.ReadLine()!;

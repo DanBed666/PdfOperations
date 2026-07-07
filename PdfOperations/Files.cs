@@ -6,7 +6,7 @@ public class Files
     {
         string file = Dialog.SelectFile(filter);
 
-        if (file == "")
+        if (string.IsNullOrEmpty(file))
         {
             Console.WriteLine("Nie wybrano pliku!");
         }
@@ -31,7 +31,7 @@ public class Files
     {
         string file = Dialog.SelectDirectory();
 
-        if (file == "")
+        if (string.IsNullOrEmpty(file))
         {
             Console.WriteLine("Nie wybrano katalogu!");
         }
