@@ -31,14 +31,17 @@ public class AddOpsOptions
                 string format = Console.ReadLine()!;
                 Console.WriteLine("Podaj katalog docelowy: ");
                 string dir = Files.AddDirectory();
-
+                
                 if (CheckParams.checkParams(input9))
                 {
                     try
                     {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.FileToPdf(input9, format, dir);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
+                        if (Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
+                        {
+                            Console.WriteLine("Trwa konwersja...");
+                            Convert.FileToPdf(input9, ToFileFormat.ToFormatFile(ext), dir);
+                            Console.WriteLine("Operacja zakończona pomyślnie!");
+                        }
                     }
                     catch (Exception e)
                     {
