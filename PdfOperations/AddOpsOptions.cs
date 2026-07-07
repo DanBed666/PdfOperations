@@ -29,6 +29,18 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj format dla konwersji: ");
                 string format = Console.ReadLine()!;
+                string extension = "";
+
+                if (Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
+                {
+                    extension = ToFileFormat.ToFormatFile(ext);
+                }
+                else
+                {
+                    Console.WriteLine("Nieprawidłowy format pliku!");
+                    break;
+                }
+                
                 Console.WriteLine("Podaj katalog docelowy: ");
                 string dir = Files.AddDirectory();
                 
@@ -36,12 +48,9 @@ public class AddOpsOptions
                 {
                     try
                     {
-                        if (Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
-                        {
-                            Console.WriteLine("Trwa konwersja...");
-                            Convert.FileToPdf(input9, ToFileFormat.ToFormatFile(ext), dir);
-                            Console.WriteLine("Operacja zakończona pomyślnie!");
-                        }
+                        Console.WriteLine("Trwa konwersja...");
+                        Convert.FileToPdf(input9, extension, dir);
+                        Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
                     catch (Exception e)
                     {
