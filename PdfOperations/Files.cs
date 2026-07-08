@@ -44,7 +44,7 @@ public class Files
         return File.ReadAllLines(input);
     }
 
-    public static void SaveToFile(List<List<string>> found)
+    public static void SaveToFile(List<List<string>> found, string output)
     {
         List<string> outputLines = new();
         
@@ -53,7 +53,7 @@ public class Files
             outputLines.AddRange(lista);
         }
         
-        File.WriteAllLines("wyniknowy.txt", outputLines);
+        File.WriteAllLines(output, outputLines);
     }
 
     public static string SaveEmptyFile(string input, string ext)

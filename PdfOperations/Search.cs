@@ -3,7 +3,7 @@
 public class Search
 {
     public static string filename = "rnd_fname.txt";
-    public static void SearchPicture(string input, string phrase)
+    public static void SearchPicture(string input, string phrase, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
@@ -14,12 +14,22 @@ public class Search
             return;
         }
         
+        if (string.IsNullOrEmpty(output))
+        {
+            output = Files.SaveEmptyFile(input, ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
+        }
+        
         arguments.AddRange([input, Path.ChangeExtension(filename, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(filename, phrase));
+        Files.SaveToFile(SearchNewTxt(filename, phrase), output);
     }
 
-    public static void SearchPdf(string input, string phrase)
+    public static void SearchPdf(string input, string phrase, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
@@ -29,10 +39,20 @@ public class Search
             Console.WriteLine("Nie podano hasła do wyszukwiania!");
             return;
         }
+        
+        if (string.IsNullOrEmpty(output))
+        {
+            output = Files.SaveEmptyFile(input, ".pdf");
+        }
+        
+        if (File.Exists(output))
+        {
+            output = Files.SaveExistingFile(output, ".pdf");    
+        }
 
         arguments.AddRange([input, filename]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(filename, phrase));
+        Files.SaveToFile(SearchNewTxt(filename, phrase), output);
     }
 
     public static List<List<string>> SearchNewTxt(string input, string phrase)

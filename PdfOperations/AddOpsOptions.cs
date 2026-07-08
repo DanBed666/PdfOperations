@@ -346,13 +346,16 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase = Console.ReadLine()!;
+                
+                Console.WriteLine("Podaj nazwe pliku do zapisu: ");
+                string output = Console.ReadLine()!;
 
                 if (CheckParams.checkParams(input))
                 {
                     try
                     {
                         Console.WriteLine("Trwa wyszukiwanie...");
-                        Search.SearchPicture(input, phrase);
+                        Search.SearchPicture(input, phrase, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
                     catch (Exception e)
@@ -373,12 +376,15 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase2 = Console.ReadLine()!;
                 
+                Console.WriteLine("Podaj nazwe pliku do zapisu: ");
+                string output2 = Console.ReadLine()!;
+                
                 if (CheckParams.checkParams(input2))
                 {
                     try
                     {
                         Console.WriteLine("Trwa wyszukiwanie...");
-                        Search.SearchPdf(input2, phrase2);
+                        Search.SearchPdf(input2, phrase2, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                     }
                     catch (Exception e)
