@@ -48,7 +48,7 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void PdfToTxt(string input, string output)
+    public static void PdfToTxt(string input, string output, string dir)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
@@ -63,6 +63,7 @@ public static class Convert
             output = Files.SaveExistingFile(output, ".txt");    
         }
 
+        //output = Path.Combine(dir, output);
         arguments.AddRange([input, output]);
         RunClass.Run(tool, arguments);
     }
@@ -86,7 +87,7 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToPdf(string [] input, string output)
+    public static void PictToPdf(string [] input, string output, string dir)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
@@ -101,6 +102,7 @@ public static class Convert
             output = Files.SaveExistingFile(output, ".pdf");    
         }
 
+        //output = Path.Combine(dir, output);
         arguments.AddRange([..input, output]);
         RunClass.Run(tool, arguments);
     }

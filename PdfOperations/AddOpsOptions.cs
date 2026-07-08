@@ -118,6 +118,15 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
                 
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
+                    
+                
                 string format2 = Path.GetExtension(output2).Replace(".", "");
                 
                 if (!Enum.TryParse(format2, ignoreCase: true, out FileExtension ext2))
@@ -177,6 +186,9 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 
+                Console.WriteLine("Zapisać do folderu?");
+                string folder = Console.ReadLine()!;
+                
                 string format3 = Path.GetExtension(output8).Replace(".", "");
 
                 if (!Enum.TryParse(format3, ignoreCase: true, out FileExtension ext3))
@@ -190,7 +202,7 @@ public class AddOpsOptions
                     try
                     {
                         Console.WriteLine("Trwa konwersja...");
-                        Convert.PictToPdf(input8, output8);
+                        Convert.PictToPdf(input8, output8, folder);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
                         Console.WriteLine("Zapisano w: ");
@@ -221,6 +233,14 @@ public class AddOpsOptions
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input88));
                 
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
+                
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt2 = Console.ReadLine()!;
                 
@@ -229,6 +249,9 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
+                
+                Console.WriteLine("Zapisać do folderu?");
+                string folder2 = Console.ReadLine()!;
                 
                 string format4 = Path.GetExtension(output).Replace(".", "");
                 
@@ -243,7 +266,7 @@ public class AddOpsOptions
                     try
                     {
                         Console.WriteLine("Trwa konwersja...");
-                        Convert.PdfToTxt(input88, output);
+                        Convert.PdfToTxt(input88, output, folder2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
                         Console.WriteLine("Zapisano w: ");
@@ -272,6 +295,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input5));
+                
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+                
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt3 = Console.ReadLine()!;
@@ -346,6 +377,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input));
+                
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
@@ -485,6 +524,14 @@ public class AddOpsOptions
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input8));
                 
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
+                
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
                 
@@ -582,6 +629,14 @@ public class AddOpsOptions
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input));
                 
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
+                
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
                 
@@ -636,6 +691,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Wybrano plik: ");
                 Console.WriteLine(Path.GetFullPath(input2));
+                
+                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+                string op = Console.ReadLine()!;
+
+                if (op.ToLower().Equals("t"))
+                {
+                    string folder89 = Files.AddDirectory();
+                }
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt2 = Console.ReadLine()!;
