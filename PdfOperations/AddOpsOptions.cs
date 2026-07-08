@@ -27,6 +27,15 @@ public class AddOpsOptions
                 if (input9.Length == 0)
                     break;
                 
+                if (input9.Length == 1)
+                {
+                    Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                    string opt99 = Console.ReadLine()!;
+                    
+                    if (opt99.ToLower().Equals("t"))
+                        RunClass.RunFile(input9[0]);
+                }
+                
                 Console.WriteLine("Podaj format dla konwersji: ");
                 string format = Console.ReadLine()!;
                 format = format.Replace(".", "");
@@ -52,6 +61,15 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.FileToPdf(input9, extension, dir);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        if (input9.Length == 1)
+                        {
+                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                            string opt99 = Console.ReadLine()!;
+                    
+                            if (opt99.ToLower().Equals("t"))
+                                RunClass.RunFile(input9[0]);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -67,6 +85,12 @@ public class AddOpsOptions
                 
                 if (input.Length == 0)
                     break;
+
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt = Console.ReadLine()!;
+                
+                if (opt.ToLower().Equals("t"))
+                    RunClass.RunFile(input);
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
@@ -86,6 +110,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PdfToPict(input, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output2);
                     }
                     catch (Exception e)
                     {
@@ -101,6 +131,15 @@ public class AddOpsOptions
                 
                 if (input8.Length == 0)
                     break;
+                
+                if (input8.Length == 1)
+                {
+                    Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                    string opt99 = Console.ReadLine()!;
+                                    
+                    if (opt99.ToLower().Equals("t"))
+                        RunClass.RunFile(input8[0]);
+                }
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
@@ -120,6 +159,15 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PictToPdf(input8, output8);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        if (input8.Length == 1)
+                        {
+                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                            string opt99 = Console.ReadLine()!;
+                    
+                            if (opt99.ToLower().Equals("t"))
+                                RunClass.RunFile(input8[0]);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -135,6 +183,12 @@ public class AddOpsOptions
                 
                 if (input88.Length == 0)
                     break;
+                
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt2 = Console.ReadLine()!;
+                
+                if (opt2.ToLower().Equals("t"))
+                    RunClass.RunFile(input88);
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
@@ -154,6 +208,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PdfToTxt(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output);
                     }
                     catch (Exception e)
                     {
@@ -169,6 +229,12 @@ public class AddOpsOptions
                 
                 if (input5.Length == 0)
                     break;
+                
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt3 = Console.ReadLine()!;
+                                
+                if (opt3.ToLower().Equals("t"))
+                    RunClass.RunFile(input5);
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output5 = Console.ReadLine()!;
@@ -188,6 +254,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PictToTxt(input5, output5);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output5);
                     }
                     catch (Exception e)
                     {
@@ -226,6 +298,12 @@ public class AddOpsOptions
                 if (input.Length == 0)
                     break;
                 
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt = Console.ReadLine()!;
+                
+                if (opt.ToLower().Equals("t"))
+                    RunClass.RunFile(input);
+                
                 Console.WriteLine("Podaj strony (np. 3-6 lub 2-5, 7): ");
                 string pages = Console.ReadLine()!;
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
@@ -246,6 +324,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Pages.CreateWithPages(input, pages, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output);
                     }
                     catch (Exception e)
                     {
@@ -285,6 +369,15 @@ public class AddOpsOptions
                 if (input88.Length == 0)
                     break;
                 
+                if (input88.Length == 1)
+                {
+                    Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                    string opt99 = Console.ReadLine()!;
+                    
+                    if (opt99.ToLower().Equals("t"))
+                        RunClass.RunFile(input88[0]);
+                }
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
@@ -303,6 +396,15 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Divide.ManyToOne(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        if (input88.Length == 1)
+                        {
+                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                            string opt99 = Console.ReadLine()!;
+                    
+                            if (opt99.ToLower().Equals("t"))
+                                RunClass.RunFile(input88[0]);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -318,6 +420,12 @@ public class AddOpsOptions
                 
                 if (input8.Length == 0)
                     break;
+                
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt = Console.ReadLine()!;
+                
+                if (opt.ToLower().Equals("t"))
+                    RunClass.RunFile(input8);
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
@@ -337,6 +445,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Divide.OneToMany(input8, output8);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output8);
                     }
                     catch (Exception e)
                     {
@@ -401,6 +515,12 @@ public class AddOpsOptions
                 if (input.Length == 0)
                     break;
                 
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt = Console.ReadLine()!;
+                
+                if (opt.ToLower().Equals("t"))
+                    RunClass.RunFile(input);
+                
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase = Console.ReadLine()!;
                 
@@ -422,6 +542,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa wyszukiwanie...");
                         Search.SearchPicture(input, phrase, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output);
                     }
                     catch (Exception e)
                     {
@@ -437,6 +563,12 @@ public class AddOpsOptions
                 
                 if (input2.Length == 0)
                     break;
+                
+                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                string opt2 = Console.ReadLine()!;
+                
+                if (opt2.ToLower().Equals("t"))
+                    RunClass.RunFile(input2);
                 
                 Console.WriteLine("Podaj hasło do wyszukiwania: ");
                 string phrase2 = Console.ReadLine()!;
@@ -459,6 +591,12 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa wyszukiwanie...");
                         Search.SearchPdf(input2, phrase2, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt9 = Console.ReadLine()!;
+                
+                        if (opt9.ToLower().Equals("t"))
+                            RunClass.RunFile(output2);
                     }
                     catch (Exception e)
                     {

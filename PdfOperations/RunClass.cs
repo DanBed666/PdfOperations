@@ -29,6 +29,18 @@ public class RunClass
             throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
         }
     }
+
+    public static void RunFile(string path)
+    {
+        var run = new ProcessStartInfo
+        {
+            FileName = path,
+            UseShellExecute = true,
+        };
+        
+        using Process process = Process.Start(run)!;
+        process.WaitForExit();
+    }
     
     public static string RunWithOutput(string exe, params  string[] arguments)
     {
