@@ -35,6 +35,17 @@ public class AddOpsOptions
                     if (opt99.ToLower().Equals("t"))
                         RunClass.RunFile(input9[0]);
                 }
+                else
+                {
+                    Console.WriteLine("Podgląd pominięty!");
+                }
+                
+                Console.WriteLine("WYbrano pliki!");
+                
+                foreach (string file in input9)
+                {
+                    Console.WriteLine(Path.GetFullPath(file));
+                }
                 
                 Console.WriteLine("Podaj format dla konwersji: ");
                 string format = Console.ReadLine()!;
@@ -70,6 +81,15 @@ public class AddOpsOptions
                             if (opt99.ToLower().Equals("t"))
                                 RunClass.RunFile(input9[0]);
                         }
+                        
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(dir));
+                        
+                        Console.WriteLine("Czy chesz zrobić podgląd folderu (T/N)");
+                        string opt0 = Console.ReadLine()!;
+                    
+                        if (opt0.ToLower().Equals("t"))
+                            RunClass.RunFile(dir);
                     }
                     catch (Exception e)
                     {
@@ -85,6 +105,9 @@ public class AddOpsOptions
                 
                 if (input.Length == 0)
                     break;
+                
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input));
 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
@@ -110,6 +133,9 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PdfToPict(input, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output2));
                         
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;
@@ -141,6 +167,13 @@ public class AddOpsOptions
                         RunClass.RunFile(input8[0]);
                 }
                 
+                Console.WriteLine("WYbrano pliki!");
+                
+                foreach (string file in input8)
+                {
+                    Console.WriteLine(Path.GetFullPath(file));
+                }
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
                 
@@ -160,14 +193,15 @@ public class AddOpsOptions
                         Convert.PictToPdf(input8, output8);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
-                        if (input8.Length == 1)
-                        {
-                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                            string opt99 = Console.ReadLine()!;
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output8));
+
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt99 = Console.ReadLine()!;
                     
-                            if (opt99.ToLower().Equals("t"))
-                                RunClass.RunFile(input8[0]);
-                        }
+                        if (opt99.ToLower().Equals("t"))
+                            RunClass.RunFile(output8);
+                        
                     }
                     catch (Exception e)
                     {
@@ -183,6 +217,9 @@ public class AddOpsOptions
                 
                 if (input88.Length == 0)
                     break;
+                
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input88));
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt2 = Console.ReadLine()!;
@@ -209,6 +246,9 @@ public class AddOpsOptions
                         Convert.PdfToTxt(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output));
+                        
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;
                 
@@ -229,6 +269,9 @@ public class AddOpsOptions
                 
                 if (input5.Length == 0)
                     break;
+                
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input5));
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt3 = Console.ReadLine()!;
@@ -254,6 +297,9 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Convert.PictToTxt(input5, output5);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output5));
                         
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;
@@ -298,6 +344,9 @@ public class AddOpsOptions
                 if (input.Length == 0)
                     break;
                 
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input));
+                
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
                 
@@ -324,6 +373,9 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa konwersja...");
                         Pages.CreateWithPages(input, pages, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output));
                         
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;
@@ -378,6 +430,13 @@ public class AddOpsOptions
                         RunClass.RunFile(input88[0]);
                 }
                 
+                Console.WriteLine("WYbrano pliki!");
+                
+                foreach (string file in input88)
+                {
+                    Console.WriteLine(Path.GetFullPath(file));
+                }
+                
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
@@ -397,14 +456,16 @@ public class AddOpsOptions
                         Divide.ManyToOne(input88, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
-                        if (input88.Length == 1)
-                        {
-                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                            string opt99 = Console.ReadLine()!;
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output));
+                        
+                       
+                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+                        string opt99 = Console.ReadLine()!;
                     
-                            if (opt99.ToLower().Equals("t"))
-                                RunClass.RunFile(input88[0]);
-                        }
+                        if (opt99.ToLower().Equals("t"))
+                            RunClass.RunFile(output);
+                        
                     }
                     catch (Exception e)
                     {
@@ -420,6 +481,9 @@ public class AddOpsOptions
                 
                 if (input8.Length == 0)
                     break;
+                
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input8));
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
@@ -515,6 +579,9 @@ public class AddOpsOptions
                 if (input.Length == 0)
                     break;
                 
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input));
+                
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt = Console.ReadLine()!;
                 
@@ -543,6 +610,9 @@ public class AddOpsOptions
                         Search.SearchPicture(input, phrase, output);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
                         
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output));
+                        
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;
                 
@@ -563,6 +633,9 @@ public class AddOpsOptions
                 
                 if (input2.Length == 0)
                     break;
+                
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(input2));
                 
                 Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                 string opt2 = Console.ReadLine()!;
@@ -591,6 +664,9 @@ public class AddOpsOptions
                         Console.WriteLine("Trwa wyszukiwanie...");
                         Search.SearchPdf(input2, phrase2, output2);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
+                        
+                        Console.WriteLine("Zapisano w: ");
+                        Console.WriteLine(Path.GetFullPath(output2));
                         
                         Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
                         string opt9 = Console.ReadLine()!;

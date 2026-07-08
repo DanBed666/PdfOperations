@@ -6,6 +6,7 @@ public class ToFileFormat
     {
         return extension switch 
         {
+            FileExtension.Pdf => "pdf",
             FileExtension.Docx => "docx",
             FileExtension.Odt => "odt",
             FileExtension.Txt => "txt",
