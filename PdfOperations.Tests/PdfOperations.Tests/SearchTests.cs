@@ -11,10 +11,14 @@ public class SearchTests
         try
         {
             File.WriteAllLines(path, ["test", "HYDRAULIKA", "cos tam", "hYdRaUliKa ggggggg"]);
-            List<String> lista = Search.SearchNewTxt(path, "hydraulika");
+            List<List<string>> lista = Search.SearchNewTxt(path, "hydraulika");
             Assert.HasCount(2, lista);
-            Assert.AreEqual("HYDRAULIKA", lista[0]);
-            Assert.AreEqual("hYdRaUliKa ggggggg", lista[1]);
+
+            foreach (List<string> lst in lista)
+            {
+                Assert.AreEqual("HYDRAULIKA", lst[0]);
+                Assert.AreEqual("hYdRaUliKa ggggggg", lst[1]);
+            }
         }
         catch (Exception e)
         {

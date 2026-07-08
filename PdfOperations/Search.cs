@@ -35,16 +35,29 @@ public class Search
         Files.SaveToFile(SearchNewTxt(filename, phrase));
     }
 
-    public static List<String> SearchNewTxt(string input, string phrase)
+    public static List<List<string>> SearchNewTxt(string input, string phrase)
     {
+        List<List<string>> found = new();
         string[] test = Files.ReadFile(input);
-        List<String> found = new List<string>();
 
-        foreach (string line in test)
+        for (int i = 0; i < test.Length; i++)
         {
-            if (line.Contains(phrase, StringComparison.OrdinalIgnoreCase))
+            if (test[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                found.Add(line);
+                List<string> lines = new List<string>();
+                
+                for (int k = -2; k <= 2; k++)
+                {
+                    int idx = i + k;
+                    
+                    if (idx >= 0 && idx < test.Length)
+                    {
+                        lines.Add(test[idx]);
+                    }
+                }
+                
+                lines.Add("------------------------------------");
+                found.Add(lines);
             }
         }
         

@@ -44,9 +44,16 @@ public class Files
         return File.ReadAllLines(input);
     }
 
-    public static void SaveToFile(List<String> found)
+    public static void SaveToFile(List<List<string>> found)
     {
-        File.WriteAllLines("wyniknowy.txt", found);
+        List<string> outputLines = new();
+        
+        foreach (List<String> lista in found)
+        {
+            outputLines.AddRange(lista);
+        }
+        
+        File.WriteAllLines("wyniknowy.txt", outputLines);
     }
 
     public static string SaveEmptyFile(string input, string ext)
