@@ -10,7 +10,7 @@ public class Search
 
         if (string.IsNullOrEmpty(phrase))
         {
-            Console.WriteLine("Nie podano hasła do wyszukwania!");
+            Console.WriteLine("Nie podano hasła do wyszukiwania!");
             return;
         }
         
@@ -36,7 +36,7 @@ public class Search
         
         if (string.IsNullOrEmpty(phrase))
         {
-            Console.WriteLine("Nie podano hasła do wyszukwiania!");
+            Console.WriteLine("Nie podano hasła do wyszukiwania!");
             return;
         }
         

@@ -29,6 +29,7 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj format dla konwersji: ");
                 string format = Console.ReadLine()!;
+                format = format.Replace(".", "");
                 string extension = "";
 
                 if (Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
@@ -70,6 +71,14 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output2 = Console.ReadLine()!;
                 
+                string format2 = Path.GetExtension(output2).Replace(".", "");
+                
+                if (!Enum.TryParse(format2, ignoreCase: true, out FileExtension ext2))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format2}!");
+                    break;
+                }
+                
                 if (CheckParams.checkParams(input))
                 {
                     try
@@ -95,6 +104,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
+                
+                string format3 = Path.GetExtension(output8).Replace(".", "");
+
+                if (!Enum.TryParse(format3, ignoreCase: true, out FileExtension ext3))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format3}!");
+                    break;
+                }
                 
                 if (CheckParams.checkParams(input8))
                 {
@@ -122,6 +139,14 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
+                string format4 = Path.GetExtension(output).Replace(".", "");
+                
+                if (!Enum.TryParse(format4, ignoreCase: true, out FileExtension ext4))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format4}!");
+                    break;
+                }
+                
                 if (CheckParams.checkParams(input88))
                 {
                     try
@@ -147,6 +172,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output5 = Console.ReadLine()!;
+                
+                string format5 = Path.GetExtension(output5).Replace(".", "");
+
+                if (!Enum.TryParse(format5, ignoreCase: true, out FileExtension ext5))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format5}!");
+                    break;
+                }
                 
                 if (CheckParams.checkParams(input5))
                 {
@@ -198,6 +231,14 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
                 string output = Console.ReadLine()!;
                 
+                string format = Path.GetExtension(output).Replace(".", "");
+
+                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format}!");
+                    break;
+                }
+                
                 if (CheckParams.checkParams(input))
                 {
                     try
@@ -247,6 +288,14 @@ public class AddOpsOptions
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
                 
+                string format = Path.GetExtension(output).Replace(".", "");
+
+                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format}!");
+                    break;
+                }
+                
                 if (CheckParams.checkParams(input88))
                 {
                     try
@@ -272,6 +321,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output8 = Console.ReadLine()!;
+                
+                string format8 = Path.GetExtension(output8).Replace(".", "");
+
+                if (!Enum.TryParse(format8, ignoreCase: true, out FileExtension ext8))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format8}!");
+                    break;
+                }
                 
                 if (CheckParams.checkParams(input8))
                 {
@@ -349,6 +406,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwe pliku do zapisu: ");
                 string output = Console.ReadLine()!;
+                
+                string format = Path.GetExtension(output).Replace(".", "");
+
+                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format}!");
+                    break;
+                }
 
                 if (CheckParams.checkParams(input))
                 {
@@ -378,6 +443,14 @@ public class AddOpsOptions
                 
                 Console.WriteLine("Podaj nazwe pliku do zapisu: ");
                 string output2 = Console.ReadLine()!;
+                
+                string format2 = Path.GetExtension(output2).Replace(".", "");
+
+                if (!Enum.TryParse(format2, ignoreCase: true, out FileExtension ext2))
+                {
+                    Console.WriteLine($"Nieprawidłowy format {format2}!");
+                    break;
+                }
                 
                 if (CheckParams.checkParams(input2))
                 {
