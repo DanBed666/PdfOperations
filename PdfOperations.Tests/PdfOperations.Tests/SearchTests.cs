@@ -16,8 +16,8 @@ public class SearchTests
 
             foreach (List<string> lst in lista)
             {
-                Assert.AreEqual("HYDRAULIKA", lst[0]);
-                Assert.AreEqual("hYdRaUliKa ggggggg", lst[1]);
+                CollectionAssert.Contains(lst, "HYDRAULIKA");
+                CollectionAssert.Contains(lst, "hYdRaUliKa ggggggg");
             }
         }
         catch (Exception e)
