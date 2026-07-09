@@ -14,16 +14,6 @@ public class Search
             return;
         }
         
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input, ".pdf");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".pdf");    
-        }
-        
         arguments.AddRange([input, Path.ChangeExtension(filename, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
         Files.SaveToFile(SearchNewTxt(filename, phrase), output);
@@ -40,16 +30,6 @@ public class Search
             return;
         }
         
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input, ".pdf");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".pdf");    
-        }
-
         arguments.AddRange([input, filename]);
         RunClass.Run(tool, arguments);
         Files.SaveToFile(SearchNewTxt(filename, phrase), output);

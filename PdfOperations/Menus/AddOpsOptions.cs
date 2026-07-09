@@ -22,32 +22,27 @@ public class AddOpsOptions
         {
             case "1":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Convert.FileToPdf);
+                CaseOptions.ExecuteFun(allFiles, Convert.FileToPdf);
                 break;
             }
             case "2":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Convert.PdfToPict);
+                CaseOptions.ExecuteFun(pdfFiles, Convert.PdfToPict);
                 break;
             }
             case "3":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Convert.PictToPdf);
+                CaseOptions.ExecuteFun(pictFiles, Convert.PictToPdf);
                 break;
             }
             case "4":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Convert.PdfToTxt);
+                CaseOptions.ExecuteFun(pdfFiles, Convert.PdfToTxt);
                 break;
             }
             case "5":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Convert.PictToTxt);
+                CaseOptions.ExecuteFun(pictFiles, Convert.PictToTxt);
                 break;
             }
             case "6":
@@ -74,8 +69,7 @@ public class AddOpsOptions
         {
             case "1":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Pages.CreateWithPages);
+                CaseOptions.ExecuteFun(pdfFiles, Pages.CreateWithPages);
                 break;
             }
             case "2":
@@ -103,14 +97,12 @@ public class AddOpsOptions
         {
             case "1":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Divide.ManyToOne);
+                CaseOptions.ExecuteFun(pdfFiles, Divide.ManyToOne);
                 break;
             }
             case "2":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Divide.OneToMany);
+                CaseOptions.ExecuteFun(pdfFiles, Divide.OneToMany);
                 break;
             }
             case "3":
@@ -163,14 +155,12 @@ public class AddOpsOptions
         {
             case "1":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Search.SearchPicture);
+                CaseOptions.ExecuteFun(pictFiles, Search.SearchPicture);
                 break;
             }
             case "2":
             {
-                string [] data = CaseOptions.GetData(pdfFiles);
-                CaseOptions.Execute(data, Search.SearchPdf);
+                CaseOptions.ExecuteFun(pdfFiles, Search.SearchPdf);
                 break;
             }
             case "3":

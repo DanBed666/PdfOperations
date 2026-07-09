@@ -92,7 +92,7 @@ public class ConvertTests()
 
         try
         {
-            Convert.PdfToTxt(input, output, dir);
+            Convert.PdfToTxt(input, output);
             Assert.IsTrue(File.Exists(output));
             Assert.IsGreaterThan(0, new FileInfo(output).Length);
         }

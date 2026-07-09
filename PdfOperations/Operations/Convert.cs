@@ -33,17 +33,7 @@ public static class Convert
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
-        
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input, ".jpg");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".jpg");    
-        }
-        
+
         arguments.AddRange(["-r", "300", "-jpeg", input, output]);
         RunClass.Run(tool, arguments);
     }
@@ -62,16 +52,6 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input, ".txt");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".txt");    
-        }
-        
         arguments.AddRange([input, output, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }
@@ -81,17 +61,6 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input[0], ".pdf");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".pdf");    
-        }
-
-        //output = Path.Combine(dir, output);
         arguments.AddRange([..input, output]);
         RunClass.Run(tool, arguments);
     }
