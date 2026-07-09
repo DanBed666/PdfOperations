@@ -48,12 +48,11 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void PdfToTxt(string input, string output, string dir)
+    public static void PdfToTxt(string input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
-
-        output = Path.Combine(dir, output);
+        
         arguments.AddRange([input, output]);
         RunClass.Run(tool, arguments);
     }

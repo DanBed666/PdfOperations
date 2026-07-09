@@ -22,297 +22,32 @@ public class AddOpsOptions
         {
             case "1":
             {
-                Console.WriteLine("Podaj nazwę pliku: ");
-                string[] input9 = Files.AddFiles(allFiles);
-
-                if (input9.Length == 1)
-                {
-                    Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                    string opt99 = Console.ReadLine()!;
-
-                    if (opt99.ToLower().Equals("t"))
-                        RunClass.RunFile(input9[0]);
-                }
-                else
-                {
-                    Console.WriteLine("Podgląd pominięty!");
-                }
-
-                Console.WriteLine("WYbrano pliki!");
-
-                foreach (string file in input9)
-                {
-                    Console.WriteLine(Path.GetFullPath(file));
-                }
-
-                Console.WriteLine("Podaj format dla konwersji: ");
-                string format = Console.ReadLine()!;
-                format = format.Replace(".", "");
-                string extension = "";
-
-                if (Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
-                {
-                    extension = ToFileFormat.ToFormatFile(ext);
-                }
-                else
-                {
-                    Console.WriteLine("Nieprawidłowy format pliku!");
-                    break;
-                }
-
-                Console.WriteLine("Podaj katalog docelowy: ");
-                string dir = Files.AddDirectory();
-
-                if (CheckParams.checkParams(input9))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.FileToPdf(input9, extension, dir);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        if (input9.Length == 1)
-                        {
-                            Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                            string opt99 = Console.ReadLine()!;
-
-                            if (opt99.ToLower().Equals("t"))
-                                RunClass.RunFile(input9[0]);
-                        }
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(dir));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd folderu (T/N)");
-                        string opt0 = Console.ReadLine()!;
-
-                        if (opt0.ToLower().Equals("t"))
-                            RunClass.RunFile(dir);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Convert.FileToPdf);
                 break;
             }
             case "2":
             {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile(pdfFiles);
-
-                if (input.Length == 0)
-                    break;
-
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input));
-
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt = Console.ReadLine()!;
-
-                if (opt.ToLower().Equals("t"))
-                    RunClass.RunFile(input);
-
-                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-                string output2 = Console.ReadLine()!;
-
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-
-
-                string format2 = Path.GetExtension(output2).Replace(".", "");
-
-                if (!Enum.TryParse(format2, ignoreCase: true, out FileExtension ext2))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format2}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.PdfToPict(input, output2);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output2));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output2);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Convert.PdfToPict);
                 break;
             }
             case "3":
             {
-                Console.WriteLine("Podaj nazwę obrazu: ");
-                string[] input8 = Files.AddFiles(pictFiles);
-
-                if (input8.Length == 0)
-                    break;
-
-                if (input8.Length == 1)
-                {
-                    Files.ViewFile(input8[0]);
-                }
-
-                Console.WriteLine("WYbrano pliki!");
-
-                foreach (string file in input8)
-                {
-                    Console.WriteLine(Path.GetFullPath(file));
-                }
-
-                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-                string output8 = Console.ReadLine()!;
-
-                Console.WriteLine("Zapisać do folderu?");
-                string folder = Console.ReadLine()!;
-
-                string format3 = Path.GetExtension(output8).Replace(".", "");
-
-                if (!Enum.TryParse(format3, ignoreCase: true, out FileExtension ext3))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format3}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input8))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.PictToPdf(input8, output8, folder);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output8));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt99 = Console.ReadLine()!;
-
-                        if (opt99.ToLower().Equals("t"))
-                            RunClass.RunFile(output8);
-
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Convert.PictToPdf);
                 break;
             }
             case "4":
             {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile(pdfFiles);
-
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input));
-                
-                Files.ViewFile(input);
-                string dir = Files.AddDirectory();
-
-                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-                string output = Console.ReadLine()!;
-
-                if (CheckParams.TryPrepareParams(input, dir, output,
-                        out string finalDir, out string finalOutput))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.PdfToTxt(input, finalOutput, finalDir);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output));
-                        Files.ViewFile(output);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Convert.PdfToTxt);
                 break;
             }
             case "5":
             {
-                Console.WriteLine("Podaj nazwę obrazu: ");
-                string input5 = Files.AddFile(pictFiles);
-                
-                if (input5.Length == 0)
-                    break;
-                
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input5));
-                
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-                
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-                
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt3 = Console.ReadLine()!;
-                                
-                if (opt3.ToLower().Equals("t"))
-                    RunClass.RunFile(input5);
-                
-                Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
-                string output5 = Console.ReadLine()!;
-                
-                string format5 = Path.GetExtension(output5).Replace(".", "");
-
-                if (!Enum.TryParse(format5, ignoreCase: true, out FileExtension ext5))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format5}!");
-                    break;
-                }
-                
-                if (CheckParams.checkParams(input5))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Convert.PictToTxt(input5, output5);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-                        
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output5));
-                        
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-                
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output5);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-                
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Convert.PictToTxt);
                 break;
             }
             case "6":
@@ -339,65 +74,8 @@ public class AddOpsOptions
         {
             case "1":
             {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string input = Files.AddFile(pdfFiles);
-
-                if (input.Length == 0)
-                    break;
-
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input));
-
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt = Console.ReadLine()!;
-
-                if (opt.ToLower().Equals("t"))
-                    RunClass.RunFile(input);
-
-                Console.WriteLine("Podaj strony (np. 3-6 lub 2-5, 7): ");
-                string pages = Console.ReadLine()!;
-                Console.WriteLine("Podaj nazwę pliku wynikowego pdf: ");
-                string output = Console.ReadLine()!;
-
-                string format = Path.GetExtension(output).Replace(".", "");
-
-                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Pages.CreateWithPages(input, pages, output);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Pages.CreateWithPages);
                 break;
             }
             case "2":
@@ -425,122 +103,14 @@ public class AddOpsOptions
         {
             case "1":
             {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string[] input88 = Files.AddFiles(pdfFiles);
-
-                if (input88.Length == 0)
-                    break;
-
-                if (input88.Length == 1)
-                {
-                    Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                    string opt99 = Console.ReadLine()!;
-
-                    if (opt99.ToLower().Equals("t"))
-                        RunClass.RunFile(input88[0]);
-                }
-
-                Console.WriteLine("WYbrano pliki!");
-
-                foreach (string file in input88)
-                {
-                    Console.WriteLine(Path.GetFullPath(file));
-                }
-
-                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-                string output = Console.ReadLine()!;
-
-                string format = Path.GetExtension(output).Replace(".", "");
-
-                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input88))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Divide.ManyToOne(input88, output);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output));
-
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt99 = Console.ReadLine()!;
-
-                        if (opt99.ToLower().Equals("t"))
-                            RunClass.RunFile(output);
-
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Divide.ManyToOne);
                 break;
             }
             case "2":
-                {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string input8 = Files.AddFile(pdfFiles);
-                
-                if (input8.Length == 0)
-                    break;
-                
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input8));
-                
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-                
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt = Console.ReadLine()!;
-                
-                if (opt.ToLower().Equals("t"))
-                    RunClass.RunFile(input8);
-                
-                Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-                string output8 = Console.ReadLine()!;
-                
-                string format8 = Path.GetExtension(output8).Replace(".", "");
-
-                if (!Enum.TryParse(format8, ignoreCase: true, out FileExtension ext8))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format8}!");
-                    break;
-                }
-                
-                if (CheckParams.checkParams(input8))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa konwersja...");
-                        Divide.OneToMany(input8, output8);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-                        
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-                
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output8);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-                
+            {
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Divide.OneToMany);
                 break;
             }
             case "3":
@@ -593,130 +163,14 @@ public class AddOpsOptions
         {
             case "1":
             {
-                Console.WriteLine("Podaj nazwę obrazu: ");
-                string input = Files.AddFile(pictFiles);
-
-                if (input.Length == 0)
-                    break;
-
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input));
-
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt = Console.ReadLine()!;
-
-                if (opt.ToLower().Equals("t"))
-                    RunClass.RunFile(input);
-
-                Console.WriteLine("Podaj hasło do wyszukiwania: ");
-                string phrase = Console.ReadLine()!;
-
-                Console.WriteLine("Podaj nazwe pliku do zapisu: ");
-                string output = Console.ReadLine()!;
-
-                string format = Path.GetExtension(output).Replace(".", "");
-
-                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa wyszukiwanie...");
-                        Search.SearchPicture(input, phrase, output);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Search.SearchPicture);
                 break;
             }
             case "2":
             {
-                Console.WriteLine("Podaj nazwę pdf: ");
-                string input2 = Files.AddFile(pdfFiles);
-
-                if (input2.Length == 0)
-                    break;
-
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input2));
-
-                Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-                string op = Console.ReadLine()!;
-
-                if (op.ToLower().Equals("t"))
-                {
-                    string folder89 = Files.AddDirectory();
-                }
-
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string opt2 = Console.ReadLine()!;
-
-                if (opt2.ToLower().Equals("t"))
-                    RunClass.RunFile(input2);
-
-                Console.WriteLine("Podaj hasło do wyszukiwania: ");
-                string phrase2 = Console.ReadLine()!;
-
-                Console.WriteLine("Podaj nazwe pliku do zapisu: ");
-                string output2 = Console.ReadLine()!;
-
-                string format2 = Path.GetExtension(output2).Replace(".", "");
-
-                if (!Enum.TryParse(format2, ignoreCase: true, out FileExtension ext2))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format2}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input2))
-                {
-                    try
-                    {
-                        Console.WriteLine("Trwa wyszukiwanie...");
-                        Search.SearchPdf(input2, phrase2, output2);
-                        Console.WriteLine("Operacja zakończona pomyślnie!");
-
-                        Console.WriteLine("Zapisano w: ");
-                        Console.WriteLine(Path.GetFullPath(output2));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output2);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Wystąpił błąd: {e.Message}");
-                    }
-                }
-
+                string [] data = CaseOptions.GetData(pdfFiles);
+                CaseOptions.Execute(data, Search.SearchPdf);
                 break;
             }
             case "3":
