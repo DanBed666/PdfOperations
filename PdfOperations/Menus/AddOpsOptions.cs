@@ -22,7 +22,7 @@ public class AddOpsOptions
         {
             case "1":
             {
-                CaseOptions.ExecuteFun(allFiles, Convert.FileToPdf);
+                CaseOptions.ExecuteManyInSingleOut(allFiles, Convert.FileToPdf);
                 break;
             }
             case "2":
