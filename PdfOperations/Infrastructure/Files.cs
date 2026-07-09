@@ -56,25 +56,15 @@ public class Files
         File.WriteAllLines(output, outputLines);
     }
 
-    public static string SaveEmptyFile(string input, string ext)
+    public static string GetAvailableFileName(string output)
     {
-        string fileName = Path.GetFileNameWithoutExtension(input);
-        string output = $"{fileName}{ext}";
-        Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
-        return output;
-    }
-
-    public static string SaveExistingFile(string output, string ext)
-    {
-        for (int i = 2; i <= 999999999; i++)
+        string ext = Path.GetExtension(output);
+        int i = 2;
+        
+        while (File.Exists(output))
         {
-            string outputNew = $"{Path.GetFileNameWithoutExtension(output)}-{i}{ext}";
-
-            if (!File.Exists(outputNew))
-            {
-                output = $"{Path.GetFileNameWithoutExtension(output)}-{i}{ext}";
-                break;
-            }
+            output = $"{Path.GetFileNameWithoutExtension(output)}-{i}{ext}";
+            i++;
         }
 
         Console.WriteLine($"Plik już istnieje! Utworzono nowy plik {output}!");
@@ -102,5 +92,26 @@ public class Files
 
         string path = Path.Combine(folder, file);
         Directory.CreateDirectory(path);
+    }
+
+    public static string GetDefaultDirectory()
+    {
+        string dirDefault = Path.Combine(AppContext.BaseDirectory, "output");
+        
+        if (Directory.Exists(dirDefault))
+        {
+            Directory.CreateDirectory(dirDefault);
+        }
+
+        return dirDefault;
+    }
+    
+    public static string GetDefaultOutputFile(string input)
+    {
+        string fileName = Path.GetFileNameWithoutExtension(input);
+        string ext = Path.GetExtension(input);
+        string output = $"{fileName}{ext}";
+        Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
+        return output;
     }
 }
