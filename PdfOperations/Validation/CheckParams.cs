@@ -12,8 +12,12 @@ public class CheckParams
         return true;
     }
     
-    public static bool CheckInputParams(string input, string dir, string output)
+    public static bool TryPrepareParams(string input, string? dir, string? output, 
+        out string finalDir, out string finalOutput)
     {
+        finalDir = dir ?? "";
+        finalOutput = output ?? "";
+        
         if (string.IsNullOrEmpty(input))
         {
             Console.WriteLine("No input file provided!");
@@ -23,18 +27,18 @@ public class CheckParams
         if (string.IsNullOrEmpty(dir))
         {
             Console.WriteLine("Domyslny dir");
-            Files.GetDefaultDirectory();
+            finalDir = Files.GetDefaultDirectory();
         }
 
         if (string.IsNullOrEmpty(output))
         {
             Console.WriteLine("Domyslny plik");
-            Files.GetDefaultOutputFile(input);
+            finalOutput = Files.GetDefaultOutputFile(input);
         }
 
         if (File.Exists(output))
         {
-            Files.GetAvailableFileName(output);
+            finalOutput = Files.GetAvailableFileName(output);
         }
 
         if (!CheckFileFormat(output))

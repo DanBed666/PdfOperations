@@ -222,46 +222,29 @@ public class AddOpsOptions
             case "4":
             {
                 Console.WriteLine("Podaj nazwę pdf: ");
-                string input88 = Files.AddFile(pdfFiles);
+                string input = Files.AddFile(pdfFiles);
 
                 Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(input88));
+                Console.WriteLine(Path.GetFullPath(input));
                 
-                Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                string optView = Console.ReadLine()!;
-
-                if (optView.ToLower().Equals("t"))
-                    RunClass.RunFile(input88);
+                Files.ViewFile(input);
+                string dir = Files.AddDirectory();
 
                 Console.WriteLine("Podaj nazwę pliku wynikowego: ");
                 string output = Console.ReadLine()!;
 
-                string format = Path.GetExtension(output).Replace(".", "");
-
-                if (!Enum.TryParse(format, ignoreCase: true, out FileExtension ext4))
-                {
-                    Console.WriteLine($"Nieprawidłowy format {format}!");
-                    break;
-                }
-
-                if (CheckParams.checkParams(input88))
+                if (CheckParams.TryPrepareParams(input, dir, output,
+                        out string finalDir, out string finalOutput))
                 {
                     try
                     {
                         Console.WriteLine("Trwa konwersja...");
-                        Convert.PdfToTxt(input88, output);
+                        Convert.PdfToTxt(input, finalOutput, finalDir);
                         Console.WriteLine("Operacja zakończona pomyślnie!");
 
                         Console.WriteLine("Zapisano w: ");
                         Console.WriteLine(Path.GetFullPath(output));
-
-                        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
-                        string opt9 = Console.ReadLine()!;
-
-                        if (opt9.ToLower().Equals("t"))
-                            RunClass.RunFile(output);
-
-                        Files.SaveInFolder(output);
+                        Files.ViewFile(output);
                     }
                     catch (Exception e)
                     {

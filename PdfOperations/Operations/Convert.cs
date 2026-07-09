@@ -53,17 +53,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
 
-        if (string.IsNullOrEmpty(output))
-        {
-            output = Files.SaveEmptyFile(input, ".txt");
-        }
-        
-        if (File.Exists(output))
-        {
-            output = Files.SaveExistingFile(output, ".txt");    
-        }
-
-        //output = Path.Combine(dir, output);
+        output = Path.Combine(dir, output);
         arguments.AddRange([input, output]);
         RunClass.Run(tool, arguments);
     }

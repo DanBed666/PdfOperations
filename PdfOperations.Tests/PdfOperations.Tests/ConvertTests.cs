@@ -86,11 +86,13 @@ public class ConvertTests()
     public void PdfToTxtTest()
     {
         string input = Path.Combine(AppContext.BaseDirectory, "TestData", "kompy.pdf");
-        string output = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.txt");
+        string dir = Path.Combine(AppContext.BaseDirectory, "output");
+        Directory.CreateDirectory(dir);
+        string output = Path.Combine(dir, $"{Guid.NewGuid():N}.txt");
 
         try
         {
-            Convert.PdfToTxt(input, output);
+            Convert.PdfToTxt(input, output, dir);
             Assert.IsTrue(File.Exists(output));
             Assert.IsGreaterThan(0, new FileInfo(output).Length);
         }
