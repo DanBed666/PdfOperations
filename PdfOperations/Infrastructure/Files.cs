@@ -80,4 +80,27 @@ public class Files
         Console.WriteLine($"Plik już istnieje! Utworzono nowy plik {output}!");
         return output;
     }
+
+    public static void ViewFile(string path)
+    {
+        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+        string opt = Console.ReadLine()!;
+        
+        if (opt.ToLower().Equals("t"))
+            RunClass.RunFile(path);
+    }
+
+    public static void SaveInFolder(string file)
+    {
+        string folder = Path.Combine(AppContext.BaseDirectory, "output");
+        
+        Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
+        string opt = Console.ReadLine()!;
+
+        if (opt.ToLower().Equals("t"))
+            folder = AddDirectory();
+
+        string path = Path.Combine(folder, file);
+        Directory.CreateDirectory(path);
+    }
 }

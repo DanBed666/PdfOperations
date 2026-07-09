@@ -87,7 +87,7 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToPdf(string [] input, string output, string dir)
+    public static void PictToPdf(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
