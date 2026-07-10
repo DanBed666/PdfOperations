@@ -22,27 +22,27 @@ public class AddOpsOptions
         {
             case "1":
             {
-                CaseOptions.ExecuteManyInSingleOut(allFiles, Convert.FileToPdf);
+                CaseOptions.ExecuteSingleInSingleOut(allFiles, Convert.FileToPdf);
                 break;
             }
             case "2":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Convert.PdfToPict);
+                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToPict);
                 break;
             }
             case "3":
             {
-                CaseOptions.ExecuteFun(pictFiles, Convert.PictToPdf);
+                CaseOptions.ExecuteManyInSingleOut(pictFiles, Convert.PictToPdf);
                 break;
             }
             case "4":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Convert.PdfToTxt);
+                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToTxt);
                 break;
             }
             case "5":
             {
-                CaseOptions.ExecuteFun(pictFiles, Convert.PictToTxt);
+                CaseOptions.ExecuteSingleInSingleOut(pictFiles, Convert.PictToTxt);
                 break;
             }
             case "6":
@@ -69,7 +69,7 @@ public class AddOpsOptions
         {
             case "1":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Pages.CreateWithPages);
+                CaseOptions.ExecuteSingleInSingleOutPages(pdfFiles, Pages.CreateWithPages);
                 break;
             }
             case "2":
@@ -97,12 +97,12 @@ public class AddOpsOptions
         {
             case "1":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Divide.ManyToOne);
+                CaseOptions.ExecuteManyInSingleOut(pdfFiles, Divide.ManyToOne);
                 break;
             }
             case "2":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Divide.OneToMany);
+                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Divide.OneToMany);
                 break;
             }
             case "3":
@@ -155,12 +155,12 @@ public class AddOpsOptions
         {
             case "1":
             {
-                CaseOptions.ExecuteFun(pictFiles, Search.SearchPicture);
+                CaseOptions.ExecuteSingleInSingleOutSearch(pictFiles, Search.SearchPicture);
                 break;
             }
             case "2":
             {
-                CaseOptions.ExecuteFun(pdfFiles, Search.SearchPdf);
+                CaseOptions.ExecuteSingleInSingleOutSearch(pdfFiles, Search.SearchPdf);
                 break;
             }
             case "3":

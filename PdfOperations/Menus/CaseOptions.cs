@@ -41,12 +41,17 @@ public class CaseOptions
     public static void ExecuteManyInSingleOut(string filter, Action<string [], string> operation)
     {
         Console.WriteLine("Podaj nazwę pdf: ");
-        string input = Files.AddFile(filter);
+        string [] input = Files.AddFiles(filter);
 
-        Console.WriteLine("Wybrano plik: ");
-        Console.WriteLine(Path.GetFullPath(input));
-                
-        Files.ViewFile(input);
+        foreach (string file in input)
+        {
+            Console.WriteLine("Wybrano plik: ");
+            Console.WriteLine(Path.GetFullPath(file));
+        }
+
+        if (input.Length == 1)
+            Files.ViewFile(input[0]);
+        
         string dir = Files.AddDirectory();
 
         Console.WriteLine("Podaj nazwę pliku wynikowego: ");
@@ -81,6 +86,9 @@ public class CaseOptions
     
             Console.WriteLine("Wybrano plik: ");
             Console.WriteLine(Path.GetFullPath(input));
+            
+            Console.WriteLine("Podaj strony: ");
+            string pages = Console.ReadLine()!;
                     
             Files.ViewFile(input);
             string dir = Files.AddDirectory();
@@ -88,7 +96,8 @@ public class CaseOptions
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
             
-            if (!CheckParams.TryPrepareParams(input, dir, output, out string finalDir, out string finalOutput))
+            if (!CheckParams.TryPrepareParamsArg(input, dir, pages, "Podaj strony: ", 
+                    output, out string finalDir, out string finalOutput))
             {
                 return;
             }
@@ -97,7 +106,7 @@ public class CaseOptions
             {
                 finalOutput = Path.Combine(finalDir, finalOutput);
                 Console.WriteLine("Trwa konwersja...");
-                operation(input, finalOutput);
+                operation(input, pages, finalOutput);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
                 Console.WriteLine("Zapisano w: ");
@@ -117,6 +126,9 @@ public class CaseOptions
     
             Console.WriteLine("Wybrano plik: ");
             Console.WriteLine(Path.GetFullPath(input));
+            
+            Console.WriteLine("Podaj frazę: ");
+            string phrase = Console.ReadLine()!;
                     
             Files.ViewFile(input);
             string dir = Files.AddDirectory();
@@ -124,7 +136,8 @@ public class CaseOptions
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
             
-            if (!CheckParams.TryPrepareParams(input, dir, output, out string finalDir, out string finalOutput))
+            if (!CheckParams.TryPrepareParamsArg(input, dir, phrase, "Podaj frazę: ", 
+                    output, out string finalDir, out string finalOutput))
             {
                 return;
             }
@@ -133,7 +146,7 @@ public class CaseOptions
             {
                 finalOutput = Path.Combine(finalDir, finalOutput);
                 Console.WriteLine("Trwa konwersja...");
-                operation(input, finalOutput);
+                operation(input, phrase, finalOutput);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
                 Console.WriteLine("Zapisano w: ");
