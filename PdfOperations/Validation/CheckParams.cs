@@ -174,6 +174,7 @@ public class CheckParams
 
         if (!Enum.TryParse(typeof(FileExtension), format, ignoreCase: true, out object? ext))
         {
+            Console.WriteLine("Zły format!");
             return false;
         }
         

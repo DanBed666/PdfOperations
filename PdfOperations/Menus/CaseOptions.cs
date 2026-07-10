@@ -96,7 +96,7 @@ public class CaseOptions
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
             
-            if (!CheckParams.TryPrepareParamsArg(input, dir, pages, "Podaj strony: ", 
+            if (!CheckParams.TryPrepareParamsArg(input, pages, "Brak stron!", dir,  
                     output, out string finalDir, out string finalOutput))
             {
                 return;
@@ -136,7 +136,7 @@ public class CaseOptions
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
             
-            if (!CheckParams.TryPrepareParamsArg(input, dir, phrase, "Podaj frazę: ", 
+            if (!CheckParams.TryPrepareParamsArg(input, phrase, "Brak frazy!", dir,  
                     output, out string finalDir, out string finalOutput))
             {
                 return;
@@ -159,21 +159,29 @@ public class CaseOptions
             }
         }
         
-    public static void ExecuteFun(string filter, Action<string, string> operation)
+    public static void ExecuteManyInSingleOutFormat(string filter, Action<string [], string, string> operation)
         {
             Console.WriteLine("Podaj nazwę pdf: ");
-            string input = Files.AddFile(filter);
-    
-            Console.WriteLine("Wybrano plik: ");
-            Console.WriteLine(Path.GetFullPath(input));
+            string [] input = Files.AddFiles(filter);
+
+            foreach (string file in input)
+            {
+                Console.WriteLine("Wybrano plik: ");
+                Console.WriteLine(Path.GetFullPath(file));
+            }
+
+            Console.WriteLine("Podaj format: ");
+            string format = Console.ReadLine()!;
                     
-            Files.ViewFile(input);
+            if (input.Length == 1)
+                Files.ViewFile(input[0]);
+            
             string dir = Files.AddDirectory();
     
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
             
-            if (!CheckParams.TryPrepareParams(input, dir, output, out string finalDir, out string finalOutput))
+            if (!CheckParams.TryPrepareParamsArg(input, format, "Brak formatu!", dir, output, out string finalDir, out string finalOutput))
             {
                 return;
             }
@@ -182,7 +190,7 @@ public class CaseOptions
             {
                 finalOutput = Path.Combine(finalDir, finalOutput);
                 Console.WriteLine("Trwa konwersja...");
-                operation(input, finalOutput);
+                operation(input, format, finalOutput);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
                 Console.WriteLine("Zapisano w: ");
