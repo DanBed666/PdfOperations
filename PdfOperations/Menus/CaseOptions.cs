@@ -7,6 +7,11 @@ public class CaseOptions
         Console.WriteLine("Podaj nazwę pdf: ");
         string input = Files.AddFile(filter);
 
+        if (!Files.CheckFileOrDir(input))
+        {
+            return;
+        }
+
         Console.WriteLine("Wybrano plik: ");
         Console.WriteLine(Path.GetFullPath(input));
                 
@@ -42,6 +47,11 @@ public class CaseOptions
     {
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] input = Files.AddFiles(filter);
+        
+        if (!Files.CheckFiles(input))
+        {
+            return;
+        }
 
         foreach (string file in input)
         {
@@ -83,6 +93,11 @@ public class CaseOptions
         {
             Console.WriteLine("Podaj nazwę pdf: ");
             string input = Files.AddFile(filter);
+            
+            if (!Files.CheckFileOrDir(input))
+            {
+                return;
+            }
     
             Console.WriteLine("Wybrano plik: ");
             Console.WriteLine(Path.GetFullPath(input));
@@ -123,6 +138,11 @@ public class CaseOptions
         {
             Console.WriteLine("Podaj nazwę pdf: ");
             string input = Files.AddFile(filter);
+            
+            if (!Files.CheckFileOrDir(input))
+            {
+                return;
+            }
     
             Console.WriteLine("Wybrano plik: ");
             Console.WriteLine(Path.GetFullPath(input));
@@ -163,6 +183,11 @@ public class CaseOptions
         {
             Console.WriteLine("Podaj nazwę pdf: ");
             string [] input = Files.AddFiles(filter);
+            
+            if (!Files.CheckFiles(input))
+            {
+                return;
+            }
 
             foreach (string file in input)
             {

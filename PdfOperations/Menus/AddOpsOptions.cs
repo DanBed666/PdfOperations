@@ -22,26 +22,31 @@ public class AddOpsOptions
         {
             case "1":
             {
+                // File to pdf
                 CaseOptions.ExecuteManyInSingleOutFormat(allFiles, Convert.FileToPdf);
                 break;
             }
             case "2":
             {
+                // Pdf to picture
                 CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToPict);
                 break;
             }
             case "3":
             {
+                // Picture to pdf
                 CaseOptions.ExecuteManyInSingleOut(pictFiles, Convert.PictToPdf);
                 break;
             }
             case "4":
             {
+                // Pdf to txt
                 CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToTxt);
                 break;
             }
             case "5":
             {
+                // Picture to txt
                 CaseOptions.ExecuteSingleInSingleOut(pictFiles, Convert.PictToTxt);
                 break;
             }
@@ -69,6 +74,7 @@ public class AddOpsOptions
         {
             case "1":
             {
+                // Create pdf with selected pages
                 CaseOptions.ExecuteSingleInSingleOutPages(pdfFiles, Pages.CreateWithPages);
                 break;
             }
@@ -97,11 +103,13 @@ public class AddOpsOptions
         {
             case "1":
             {
+                // Unite many to one
                 CaseOptions.ExecuteManyInSingleOut(pdfFiles, Divide.ManyToOne);
                 break;
             }
             case "2":
             {
+                // Separate one to many
                 CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Divide.OneToMany);
                 break;
             }
@@ -128,6 +136,7 @@ public class AddOpsOptions
         switch (znak)
         {
             case "1":
+                //Show info
                 Console.WriteLine("Podaj nazwę pdf: ");
                 Info.ShowInfo(Files.AddFile(pdfFiles));
                 break;
@@ -155,11 +164,13 @@ public class AddOpsOptions
         {
             case "1":
             {
+                // Search phrase in picture
                 CaseOptions.ExecuteSingleInSingleOutSearch(pictFiles, Search.SearchPicture);
                 break;
             }
             case "2":
             {
+                // Search phrase in pdf
                 CaseOptions.ExecuteSingleInSingleOutSearch(pdfFiles, Search.SearchPdf);
                 break;
             }
