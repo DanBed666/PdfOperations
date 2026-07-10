@@ -2,7 +2,7 @@
 
 public class CheckParams
 {
-    public static bool TryPrepareParams(string input, string? dir, string? output, 
+    public static bool TryPrepareOutputParams(string input, string? dir, string? output, 
         out string finalDir, out string finalOutput)
     {
         finalDir = dir ?? "";
@@ -41,7 +41,7 @@ public class CheckParams
         return true;
     }
     
-    public static bool TryPrepareParamsArg(string input, string arg, string mess, string? dir, string? output, 
+    public static bool TryPrepareOutputParamsArg(string input, string arg, string mess, string? dir, string? output, 
         out string finalDir, out string finalOutput)
     {
         finalDir = dir ?? "";
@@ -86,7 +86,7 @@ public class CheckParams
         return true;
     }
     
-    public static bool TryPrepareParams(string [] input, string? dir, string? output, 
+    public static bool TryPrepareOutputParams(string [] input, string? dir, string? output, 
             out string finalDir, out string finalOutput)
         {
             finalDir = dir ?? "";
@@ -128,7 +128,7 @@ public class CheckParams
             return true;
         }
     
-    public static bool TryPrepareParamsArg(string [] input, string arg, string mess, string? dir, string? output, 
+    public static bool TryPrepareOutputParamsArg(string [] input, string arg, string mess, string? dir, string? output, 
         out string finalDir, out string finalOutput)
     {
         finalDir = dir ?? "";
