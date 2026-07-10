@@ -4,6 +4,51 @@ public class CaseOptions
 {
     public static void ExecuteSingleInSingleOut(string filter, Action<string, string> operation)
     {
+        bool choosenFile = false;
+        string input = "";
+
+        while (!choosenFile)
+        {
+            Console.WriteLine("Podaj nazwę pdf: ");
+            input = Files.AddFile(filter);
+
+            if (!Files.CheckFileOrDir(input))
+            {
+                return;
+            }
+
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(input)}");
+
+            choosenFile = Files.ViewFileChoosen(input);
+        }
+
+        string dir = Files.AddDirectory();
+
+        Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+        string output = Console.ReadLine()!;
+        
+        if (!CheckParams.TryPrepareOutputParams(input, dir, output, out string finalDir, out string finalOutput))
+        {
+            return;
+        }
+        
+        try
+        {
+            Console.WriteLine("Trwa konwersja...");
+            operation(input, finalOutput);
+            Console.WriteLine("Operacja zakończona pomyślnie!");
+
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalOutput)}");
+            Files.ViewFile(finalOutput);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Wystąpił błąd: {e.Message}");
+        }
+    }
+    
+    public static void ExecuteSingleInManyOut(string filter, Action<string, string> operation)
+    {
         Console.WriteLine("Podaj nazwę pdf: ");
         string input = Files.AddFile(filter);
 
@@ -20,7 +65,7 @@ public class CaseOptions
         Console.WriteLine("Podaj nazwę pliku wynikowego: ");
         string output = Console.ReadLine()!;
         
-        if (!CheckParams.TryPrepareOutputParams(input, dir, output, out string finalDir, out string finalOutput))
+        if (!CheckParams.TryPrepareOutputParamsMultiple(input, dir, output, out string finalDir, out string finalOutput))
         {
             return;
         }
@@ -167,7 +212,7 @@ public class CaseOptions
             }
         }
         
-    public static void ExecuteManyInSingleOutFormat(string filter, Action<string [], string, string> operation)
+    public static void ExecuteManyInDirOutFormat(string filter, Action<string [], string, string> operation)
         {
             Console.WriteLine("Podaj nazwę pdf: ");
             string [] input = Files.AddFiles(filter);
@@ -203,7 +248,6 @@ public class CaseOptions
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
                 Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalDir)}");
-                //Files.ViewFile(finalOutput);
             }
             catch (Exception e)
             {

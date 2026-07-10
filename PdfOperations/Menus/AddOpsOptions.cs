@@ -23,13 +23,13 @@ public class AddOpsOptions
             case "1":
             {
                 // File to pdf
-                CaseOptions.ExecuteManyInSingleOutFormat(allFiles, Convert.FileToPdf);
+                CaseOptions.ExecuteManyInDirOutFormat(allFiles, Convert.FileToPdf);
                 break;
             }
             case "2":
             {
                 // Pdf to picture
-                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToPict);
+                CaseOptions.ExecuteSingleInManyOut(pdfFiles, Convert.PdfToPict);
                 break;
             }
             case "3":
@@ -110,7 +110,7 @@ public class AddOpsOptions
             case "2":
             {
                 // Separate one to many
-                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Divide.OneToMany);
+                CaseOptions.ExecuteSingleInManyOut(pdfFiles, Divide.OneToMany);
                 break;
             }
             case "3":

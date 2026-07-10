@@ -83,14 +83,46 @@ public class Files
         Console.WriteLine($"Plik już istnieje! Utworzono nowy plik {output}!");
         return output;
     }
-
+    
     public static void ViewFile(string path)
     {
-        Console.WriteLine("Czy chesz zrobić podgląd pliku (T/N)");
+        Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
         string opt = Console.ReadLine()!;
         
         if (opt.ToLower().Equals("t"))
             RunClass.RunFile(path);
+    }
+
+    public static bool ViewFileChoosen(string path)
+    {
+        bool choosen = false;
+        Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
+        string opt = Console.ReadLine()!;
+        
+        if (opt.ToLower().Equals("t"))
+        {
+            RunClass.RunFile(path);
+            choosen = ChoosenFile("Czy to właściwy plik? (T / N)");
+        }
+        else
+        {
+            choosen = ChoosenFile("KOntynuować z tym plikiem? (T / N)");
+        }
+        
+        return choosen;
+    }
+
+    public static bool ChoosenFile(string message)
+    {
+        Console.WriteLine(message);
+        string opt = Console.ReadLine()!;
+
+        if (opt.ToLower().Equals("t"))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public static void SaveInFolder(string file)
