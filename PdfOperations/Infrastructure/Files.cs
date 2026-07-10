@@ -61,12 +61,14 @@ public class Files
 
     public static string GetAvailableFileName(string output)
     {
+        string? dir = Path.GetDirectoryName(output);
+        string name = Path.GetFileNameWithoutExtension(output);
         string ext = Path.GetExtension(output);
         int i = 2;
         
         while (File.Exists(output))
         {
-            output = $"{Path.GetFileNameWithoutExtension(output)}-{i}{ext}";
+            output = Path.Combine(dir ?? "", $"{name}-{i}{ext}");
             i++;
         }
 
@@ -101,7 +103,7 @@ public class Files
     {
         string dirDefault = Path.Combine(AppContext.BaseDirectory, "output");
         
-        if (Directory.Exists(dirDefault))
+        if (!Directory.Exists(dirDefault))
         {
             Directory.CreateDirectory(dirDefault);
         }

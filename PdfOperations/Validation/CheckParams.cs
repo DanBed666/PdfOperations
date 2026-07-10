@@ -20,18 +20,20 @@ public class CheckParams
             finalDir = Files.GetDefaultDirectory();
         }
 
-        if (string.IsNullOrEmpty(output))
+        if (string.IsNullOrEmpty(finalOutput))
         {
             Console.WriteLine("Domyslny plik");
             finalOutput = Files.GetDefaultOutputFile(input);
         }
+        
+        finalOutput = Path.Combine(finalDir, finalOutput);
 
-        if (File.Exists(output))
+        if (File.Exists(finalOutput))
         {
-            finalOutput = Files.GetAvailableFileName(output);
+            finalOutput = Files.GetAvailableFileName(finalOutput);
         }
 
-        if (!CheckFileFormat(output))
+        if (!CheckFileFormat(finalOutput))
         {
             return false;
         }
@@ -63,18 +65,20 @@ public class CheckParams
             finalDir = Files.GetDefaultDirectory();
         }
 
-        if (string.IsNullOrEmpty(output))
+        if (string.IsNullOrEmpty(finalOutput))
         {
             Console.WriteLine("Domyslny plik");
             finalOutput = Files.GetDefaultOutputFile(input);
         }
+        
+        finalOutput = Path.Combine(finalDir, finalOutput);
 
-        if (File.Exists(output))
+        if (File.Exists(finalOutput))
         {
-            finalOutput = Files.GetAvailableFileName(output);
+            finalOutput = Files.GetAvailableFileName(finalOutput);
         }
 
-        if (!CheckFileFormat(output))
+        if (!CheckFileFormat(finalOutput))
         {
             return false;
         }
@@ -100,7 +104,7 @@ public class CheckParams
                 finalDir = Files.GetDefaultDirectory();
             }
     
-            if (string.IsNullOrEmpty(output))
+            if (string.IsNullOrEmpty(finalOutput))
             {
                 Console.WriteLine("Domyslny plik");
                 string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
@@ -108,13 +112,15 @@ public class CheckParams
                 string outfile = Path.Combine(dirDef, "output");
                 finalOutput = Files.GetDefaultOutputFile(outfile);
             }
+            
+            finalOutput = Path.Combine(finalDir, finalOutput);
     
-            if (File.Exists(output))
+            if (File.Exists(finalOutput))
             {
-                finalOutput = Files.GetAvailableFileName(output);
+                finalOutput = Files.GetAvailableFileName(finalOutput);
             }
     
-            if (!CheckFileFormat(output))
+            if (!CheckFileFormat(finalOutput))
             {
                 return false;
             }
@@ -146,7 +152,7 @@ public class CheckParams
             finalDir = Files.GetDefaultDirectory();
         }
     
-        if (string.IsNullOrEmpty(output))
+        if (string.IsNullOrEmpty(finalOutput))
         {
             Console.WriteLine("Domyslny plik");
             string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
@@ -154,13 +160,15 @@ public class CheckParams
             string outfile = Path.Combine(dirDef, "output");
             finalOutput = Files.GetDefaultOutputFile(outfile);
         }
+        
+        finalOutput = Path.Combine(finalDir, finalOutput);
     
-        if (File.Exists(output))
+        if (File.Exists(finalOutput))
         {
-            finalOutput = Files.GetAvailableFileName(output);
+            finalOutput = Files.GetAvailableFileName(finalOutput);
         }
     
-        if (!CheckFileFormat(output))
+        if (!CheckFileFormat(finalOutput))
         {
             return false;
         }
