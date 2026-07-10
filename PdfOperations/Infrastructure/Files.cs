@@ -38,8 +38,16 @@ public class Files
     
     public static string AddDirectory()
     {
-        string file = Dialog.SelectDirectory();
-        return file;
+        Console.WriteLine("Czy chcesz dodać plik do folderu (T/N)");
+        string opt = Console.ReadLine()!;
+        string dir = "";
+        
+        if (opt.ToLower().Equals("t"))
+            dir = Dialog.SelectDirectory();
+        else
+            Console.WriteLine("Dodano plik do folderu domyślnego");
+        
+        return dir;
     } 
 
     public static string [] ReadFile(string input)

@@ -12,8 +12,7 @@ public class CaseOptions
             return;
         }
 
-        Console.WriteLine("Wybrano plik: ");
-        Console.WriteLine(Path.GetFullPath(input));
+        Console.WriteLine($"Wybrano plik: {Path.GetFullPath(input)}");
                 
         Files.ViewFile(input);
         string dir = Files.AddDirectory();
@@ -32,8 +31,7 @@ public class CaseOptions
             operation(input, finalOutput);
             Console.WriteLine("Operacja zakończona pomyślnie!");
 
-            Console.WriteLine("Zapisano w: ");
-            Console.WriteLine(Path.GetFullPath(finalOutput));
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalOutput)}");
             Files.ViewFile(finalOutput);
         }
         catch (Exception e)
@@ -54,8 +52,7 @@ public class CaseOptions
 
         foreach (string file in input)
         {
-            Console.WriteLine("Wybrano plik: ");
-            Console.WriteLine(Path.GetFullPath(file));
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
         }
 
         if (input.Length == 1)
@@ -77,8 +74,7 @@ public class CaseOptions
             operation(input, finalOutput);
             Console.WriteLine("Operacja zakończona pomyślnie!");
 
-            Console.WriteLine("Zapisano w: ");
-            Console.WriteLine(Path.GetFullPath(finalOutput));
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalOutput)}");
             Files.ViewFile(finalOutput);
         }
         catch (Exception e)
@@ -97,8 +93,7 @@ public class CaseOptions
                 return;
             }
     
-            Console.WriteLine("Wybrano plik: ");
-            Console.WriteLine(Path.GetFullPath(input));
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(input)}");
             
             Console.WriteLine("Podaj strony: ");
             string pages = Console.ReadLine()!;
@@ -121,8 +116,7 @@ public class CaseOptions
                 operation(input, pages, finalOutput);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
-                Console.WriteLine("Zapisano w: ");
-                Console.WriteLine(Path.GetFullPath(finalOutput));
+                Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalOutput)}");
                 Files.ViewFile(finalOutput);
             }
             catch (Exception e)
@@ -141,8 +135,7 @@ public class CaseOptions
                 return;
             }
     
-            Console.WriteLine("Wybrano plik: ");
-            Console.WriteLine(Path.GetFullPath(input));
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(input)}");
             
             Console.WriteLine("Podaj frazę: ");
             string phrase = Console.ReadLine()!;
@@ -165,8 +158,7 @@ public class CaseOptions
                 operation(input, phrase, finalOutput);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
-                Console.WriteLine("Zapisano w: ");
-                Console.WriteLine(Path.GetFullPath(finalOutput));
+                Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalOutput)}");
                 Files.ViewFile(finalOutput);
             }
             catch (Exception e)
@@ -187,8 +179,7 @@ public class CaseOptions
 
             foreach (string file in input)
             {
-                Console.WriteLine("Wybrano plik: ");
-                Console.WriteLine(Path.GetFullPath(file));
+                Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
             }
 
             Console.WriteLine("Podaj format: ");
@@ -198,11 +189,9 @@ public class CaseOptions
                 Files.ViewFile(input[0]);
             
             string dir = Files.AddDirectory();
-    
-            Console.WriteLine("Podaj nazwę pliku wynikowego: ");
-            string output = Console.ReadLine()!;
+            Console.WriteLine(dir);
             
-            if (!CheckParams.TryPrepareOutputParamsArg(input, format, "Brak formatu!", dir, output, out string finalDir, out string finalOutput))
+            if (!CheckParams.TryPrepareOutputOnlyDir(input, format, "Brak formatu!", dir, out string finalDir))
             {
                 return;
             }
@@ -210,12 +199,11 @@ public class CaseOptions
             try
             {
                 Console.WriteLine("Trwa konwersja...");
-                operation(input, format, finalOutput);
+                operation(input, format, finalDir);
                 Console.WriteLine("Operacja zakończona pomyślnie!");
     
-                Console.WriteLine("Zapisano w: ");
-                Console.WriteLine(Path.GetFullPath(finalOutput));
-                Files.ViewFile(finalOutput);
+                Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalDir)}");
+                //Files.ViewFile(finalOutput);
             }
             catch (Exception e)
             {

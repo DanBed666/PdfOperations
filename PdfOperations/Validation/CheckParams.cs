@@ -128,11 +128,10 @@ public class CheckParams
             return true;
         }
     
-    public static bool TryPrepareOutputParamsArg(string [] input, string arg, string mess, string? dir, string? output, 
-        out string finalDir, out string finalOutput)
+    public static bool TryPrepareOutputOnlyDir(string [] input, string arg, string mess, string? dir, 
+        out string finalDir)
     {
         finalDir = dir ?? "";
-        finalOutput = output ?? "";
             
         if (input.Length == 0)
         {
@@ -151,24 +150,8 @@ public class CheckParams
             Console.WriteLine("Domyslny dir");
             finalDir = Files.GetDefaultDirectory();
         }
-    
-        if (string.IsNullOrEmpty(finalOutput))
-        {
-            Console.WriteLine("Domyslny plik");
-            string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
-            Directory.CreateDirectory(dirDef);
-            string outfile = Path.Combine(dirDef, "output");
-            finalOutput = Files.GetDefaultOutputFile(outfile);
-        }
-        
-        finalOutput = Path.Combine(finalDir, finalOutput);
-    
-        if (File.Exists(finalOutput))
-        {
-            finalOutput = Files.GetAvailableFileName(finalOutput);
-        }
-    
-        if (!CheckFileFormat(finalOutput))
+
+        if (!CheckFormat(arg))
         {
             return false;
         }
@@ -181,6 +164,18 @@ public class CheckParams
         string format = Path.GetExtension(output).Replace(".", "");
 
         if (!Enum.TryParse(typeof(FileExtension), format, ignoreCase: true, out object? ext))
+        {
+            Console.WriteLine("Zły format!");
+            return false;
+        }
+        
+        Console.WriteLine($"Wybrano format {ext}");
+        return true;
+    }
+    
+    public static bool CheckFormat(string output)
+    {
+        if (!Enum.TryParse(typeof(FileExtension), output, ignoreCase: true, out object? ext))
         {
             Console.WriteLine("Zły format!");
             return false;
