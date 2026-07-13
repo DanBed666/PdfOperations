@@ -26,6 +26,7 @@ public class CaseOptions
 
         Console.WriteLine("Podaj nazwę pliku wynikowego: ");
         string output = Console.ReadLine()!;
+        //ReadInput output
         
         if (!CheckParams.TryPrepareOutputParams(input, dir, output, out string finalDir, out string finalOutput))
         {
@@ -64,6 +65,7 @@ public class CaseOptions
 
         Console.WriteLine("Podaj nazwę pliku wynikowego: ");
         string output = Console.ReadLine()!;
+        //ReadInput output
         
         if (!CheckParams.TryPrepareOutputParamsMultiple(input, dir, output, out string finalDir, out string finalOutput))
         {
@@ -107,6 +109,7 @@ public class CaseOptions
 
         Console.WriteLine("Podaj nazwę pliku wynikowego: ");
         string output = Console.ReadLine()!;
+        //ReadInput output
         
         if (!CheckParams.TryPrepareOutputParams(input, dir, output, out string finalDir, out string finalOutput))
         {
@@ -142,12 +145,14 @@ public class CaseOptions
             
             Console.WriteLine("Podaj strony: ");
             string pages = Console.ReadLine()!;
+            //ReadInput pages
                     
             Files.ViewFile(input);
             string dir = Files.AddDirectory();
     
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
+            //ReadInput output
             
             if (!CheckParams.TryPrepareOutputParamsArg(input, pages, "Brak stron!", dir,  
                     output, out string finalDir, out string finalOutput))
@@ -184,12 +189,14 @@ public class CaseOptions
             
             Console.WriteLine("Podaj frazę: ");
             string phrase = Console.ReadLine()!;
+            //ReadInput phrase
                     
             Files.ViewFile(input);
             string dir = Files.AddDirectory();
     
             Console.WriteLine("Podaj nazwę pliku wynikowego: ");
             string output = Console.ReadLine()!;
+            //ReadInput output
             
             if (!CheckParams.TryPrepareOutputParamsArg(input, phrase, "Brak frazy!", dir,  
                     output, out string finalDir, out string finalOutput))
@@ -229,6 +236,7 @@ public class CaseOptions
 
             Console.WriteLine("Podaj format: ");
             string format = Console.ReadLine()!;
+            //ReadInput format
                     
             if (input.Length == 1)
                 Files.ViewFile(input[0]);

@@ -40,6 +40,8 @@ public class Files
     {
         Console.WriteLine("Czy chcesz dodać plik do folderu (T/N)");
         string opt = Console.ReadLine()!;
+        //ReadInput options
+        
         string dir = "";
         
         if (opt.ToLower().Equals("t"))
@@ -88,6 +90,7 @@ public class Files
     {
         Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
         string opt = Console.ReadLine()!;
+        //ReadInput options
         
         if (opt.ToLower().Equals("t"))
             RunClass.RunFile(path);
@@ -98,6 +101,7 @@ public class Files
         bool choosen = false;
         Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
         string opt = Console.ReadLine()!;
+        //ReadInput options
         
         if (opt.ToLower().Equals("t"))
         {
@@ -116,6 +120,7 @@ public class Files
     {
         Console.WriteLine(message);
         string opt = Console.ReadLine()!;
+        //ReadInput options
 
         if (opt.ToLower().Equals("t"))
         {
@@ -131,6 +136,7 @@ public class Files
         
         Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
         string opt = Console.ReadLine()!;
+        //ReadInput options but not used
 
         if (opt.ToLower().Equals("t"))
             folder = AddDirectory();
