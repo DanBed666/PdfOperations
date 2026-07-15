@@ -39,7 +39,69 @@ public class RunClass
         };
         
         using Process process = Process.Start(run)!;
-        process.WaitForExit();
+        //process.WaitForExit();
+    }
+    
+    public static void RunFiles(string [] files)
+    {
+        foreach (string file in files)
+        {
+            var run = new ProcessStartInfo
+            {
+                FileName = file,
+                UseShellExecute = true,
+            };
+            
+            using Process process = Process.Start(run)!;
+            //process.WaitForExit();
+        }
+    }
+    
+    public static void RunFiles(string [] files, string app)
+    {
+        foreach (string file in files)
+        {
+            var run = new ProcessStartInfo
+            {
+                FileName = app,
+                Arguments = $"\"{file}\"",
+                UseShellExecute = true,
+            };
+            
+            using Process process = Process.Start(run)!;
+            //process.WaitForExit();
+        }
+    }
+    
+    public static void RunFilesDraw(string [] files, string app)
+    {
+        string soffice = Path.Combine(
+            AppContext.BaseDirectory,
+            "tools",
+            "libreoffice",
+            "program",
+            "soffice.exe"
+        );
+
+        string profile = Path.Combine(AppContext.BaseDirectory, "lo-profile");
+        Directory.CreateDirectory(profile);
+        string profileUri = new Uri(profile).AbsoluteUri;
+
+        foreach (string file in files)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = soffice,
+                UseShellExecute = false,
+                CreateNoWindow = false
+            };
+
+            psi.ArgumentList.Add($"-env:UserInstallation={profileUri}");
+            psi.ArgumentList.Add("--draw");
+            psi.ArgumentList.Add(file);
+
+            Process.Start(psi);
+        }
     }
     
     public static string RunWithOutput(string exe, params  string[] arguments)

@@ -185,4 +185,35 @@ public class AddOpsOptions
                 break;
         }
     }
+    
+    public static void OpenOptions()
+    {
+        Console.WriteLine("1. Otwieranie wi3lu plików");
+        Console.WriteLine("2. Otwieranie wilu plików z wybraną aplikacją");
+        Console.WriteLine("0. Wyjscie");
+        Console.WriteLine("Wpisz opcje: ");
+        string znak = Console.ReadLine();
+
+        switch (znak)
+        {
+            case "1":
+            {
+                // Open multiple files
+                CaseOptions.ExecuteManyRun(allFiles);
+                break;
+            }
+            case "2":
+            {
+                // Open multiple files
+                CaseOptions.ExecuteManyRunApp(pdfFiles);
+                break;
+            }
+            case "0":
+                Environment.Exit(0);
+                break;
+            default:
+                Console.WriteLine("nic");
+                break;
+        }
+    }
 }
