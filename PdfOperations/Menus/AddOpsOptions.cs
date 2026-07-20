@@ -116,7 +116,7 @@ public class AddOpsOptions
             case "2":
             {
                 // Separate one to many
-                CaseOptions.ExecuteSingleInManyOut(pdfFiles, Divide.OneToMany);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, Divide.OnesToMany);
                 break;
             }
             case "3":

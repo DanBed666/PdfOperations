@@ -11,6 +11,20 @@ public class Divide
         RunClass.Run(tool, arguments);
     }
     
+    public static void OnesToMany(string [] input, string outputDir)
+    {
+        int i = 0;
+        
+        foreach (string file in input)
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            string newOutputName = Path.Combine(outputDir, $"%d_{name}.pdf");
+            
+            OneToMany(file, newOutputName);
+            i++;
+        }
+    }
+    
     public static void ManyToOne(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
