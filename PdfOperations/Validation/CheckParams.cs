@@ -2,45 +2,6 @@
 
 public class CheckParams
 {
-    public static bool TryPrepareOutputParams(string input, string? dir, string? output, 
-        out string finalDir, out string finalOutput)
-    {
-        finalDir = dir ?? "";
-        finalOutput = output ?? "";
-        
-        if (string.IsNullOrEmpty(input))
-        {
-            Console.WriteLine("No input file provided!");
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(dir))
-        {
-            Console.WriteLine("Domyslny dir");
-            finalDir = Files.GetDefaultDirectory();
-        }
-
-        if (string.IsNullOrEmpty(finalOutput))
-        {
-            Console.WriteLine("Domyslny plik");
-            finalOutput = Files.GetDefaultOutputFile(input);
-        }
-        
-        finalOutput = Path.Combine(finalDir, finalOutput);
-
-        if (File.Exists(finalOutput))
-        {
-            finalOutput = Files.GetAvailableFileName(finalOutput);
-        }
-
-        if (!CheckFileFormat(finalOutput))
-        {
-            return false;
-        }
-
-        return true;
-    }
-    
     public static bool TryPrepareOutputParamsArg(string input, string arg, string mess, string? dir, string? output, 
         out string finalDir, out string finalOutput)
     {
@@ -234,33 +195,6 @@ public class CheckParams
         }
         
         Console.WriteLine($"Wybrano format {ext}");
-        return true;
-    }
-    
-    public static bool TryPrepareOutputParamsMultiple(string input, string? dir, string? output, 
-        out string finalDir, out string finalOutput)
-    {
-        finalDir = dir ?? "";
-        finalOutput = output ?? "";
-        
-        if (string.IsNullOrEmpty(input))
-        {
-            Console.WriteLine("No input file provided!");
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(dir))
-        {
-            Console.WriteLine("Domyslny dir");
-            finalDir = Files.GetDefaultDirectory();
-        }
-
-        if (string.IsNullOrEmpty(finalOutput))
-        {
-            Console.WriteLine("Domyslna nazwa");
-            finalOutput = "output";
-        }
-
         return true;
     }
 }
