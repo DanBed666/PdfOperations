@@ -10,5 +10,7 @@ public enum Tool
     Tesseract,
     Qpdf,
     PdfInfo,
-    PdfSeparate
+    PdfSeparate,
+    PdfFonts,
+    PdfImages
 }

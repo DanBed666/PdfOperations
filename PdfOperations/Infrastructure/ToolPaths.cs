@@ -22,6 +22,10 @@ public class ToolPaths
                 [Tool.Qpdf] = Path.Combine(ToolsDir, "qpdf-12.3.2-msvc64", "bin", "qpdf.exe"),
                 [Tool.PdfInfo] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
                     "bin", "pdfinfo.exe"), 
+                [Tool.PdfFonts] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
+                    "bin", "pdffonts.exe"), 
+                [Tool.PdfImages] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
+                    "bin", "pdfimages.exe"),
                 [Tool.PdfSeparate] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
                     "bin", "pdfseparate.exe"),
             }

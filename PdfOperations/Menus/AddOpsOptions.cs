@@ -134,7 +134,9 @@ public class AddOpsOptions
     public static void InfoOptions()
     {
         Console.WriteLine("1. Wyswietl info o pdf");
-        Console.WriteLine("2. Menu główne");
+        Console.WriteLine("2. Wyswietl info o czcionce w pdf");
+        Console.WriteLine("3. Wyciągnij obrazy z pdf");
+        Console.WriteLine("4. Menu główne");
         Console.WriteLine("0. Wyjscie");
         Console.WriteLine("Wpisz opcje: ");
         string znak = Console.ReadLine();
@@ -147,6 +149,16 @@ public class AddOpsOptions
                 Info.ShowInfo(Files.AddFile(pdfFiles));
                 break;
             case "2":
+                //Show info
+                Console.WriteLine("Podaj nazwę pdf: ");
+                Info.ShowFontInfo(Files.AddFile(pdfFiles));
+                break;
+            case "3":
+                //Show info
+                Console.WriteLine("Podaj nazwę pdf: ");
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, Info.ExtractPicts);
+                break;
+            case "4":
                 MainMenu.MainMenuF();
                 break;
             case "0":
