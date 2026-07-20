@@ -13,15 +13,14 @@ public class Divide
     
     public static void OnesToMany(string [] input, string outputDir)
     {
-        int i = 0;
         
+      
         foreach (string file in input)
         {
             string name = Path.GetFileNameWithoutExtension(file);
             string newOutputName = Path.Combine(outputDir, $"%d_{name}.pdf");
             
             OneToMany(file, newOutputName);
-            i++;
         }
     }
     

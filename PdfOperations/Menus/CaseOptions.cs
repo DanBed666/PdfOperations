@@ -258,6 +258,47 @@ public class CaseOptions
                 Console.WriteLine($"Wystąpił błąd: {e.Message}");
             }
         }
+    
+    public static void ExecuteManyInSingleOutSearch(string filter, Action<string[], string, string> operation)
+    {
+        Console.WriteLine("Podaj nazwę pdf: ");
+        string [] input = Files.AddFiles(filter);
+
+        foreach (string file in input)
+        {
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
+        }
+
+        Console.WriteLine("Podaj frazę: ");
+        string phrase = Console.ReadLine()!;
+        //ReadInput phrase
+                    
+        //Files.ViewFile(input);
+        string dir = Files.AddDirectory();
+    
+        //Console.WriteLine("Podaj nazwę pliku wynikowego: ");
+        //string output = Console.ReadLine()!;
+        //ReadInput output
+            
+        if (!CheckParams.TryPrepareOutputSearch(input, phrase, "Brak frazy!", dir, out string finalDir))
+        {
+            return;
+        }
+            
+        try
+        {
+            Console.WriteLine("Trwa konwersja...");
+            operation(input, phrase, finalDir);
+            Console.WriteLine("Operacja zakończona pomyślnie!");
+    
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalDir)}");
+            Files.ViewFile(finalDir);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Wystąpił błąd: {e.Message}");
+        }
+    }
         
     public static void ExecuteManyInDirOutFormat(string filter, Action<string [], string, string> operation)
         {

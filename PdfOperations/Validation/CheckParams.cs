@@ -159,6 +159,38 @@ public class CheckParams
         return true;
     }
     
+    public static bool TryPrepareOutputSearch(string [] input, string arg, string mess, string? dir, 
+            out string finalDir)
+        {
+            finalDir = dir ?? "";
+                
+            if (input.Length == 0)
+            {
+                Console.WriteLine("No input file provided!");
+                return false;
+            }
+    
+            if (string.IsNullOrEmpty(arg))
+            {
+                Console.WriteLine(mess);
+                return false;
+            }
+        
+            if (string.IsNullOrEmpty(dir))
+            {
+                Console.WriteLine("Domyslny dir");
+                finalDir = Files.GetDefaultDirectory();
+            }
+    
+            if (string.IsNullOrEmpty(arg))
+            {
+                Console.WriteLine("Nie podano frazy!");
+                return false;
+            }
+        
+            return true;
+        }
+    
     public static bool TryPrepareOutputOnlyDirLight(string [] input, string? dir, 
         out string finalDir)
     {

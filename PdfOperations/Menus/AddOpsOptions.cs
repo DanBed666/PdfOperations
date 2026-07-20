@@ -171,13 +171,13 @@ public class AddOpsOptions
             case "1":
             {
                 // Search phrase in picture
-                CaseOptions.ExecuteSingleInSingleOutSearch(pictFiles, Search.SearchPicture);
+                CaseOptions.ExecuteManyInSingleOutSearch(pictFiles, Search.SearchMultiplePict);
                 break;
             }
             case "2":
             {
                 // Search phrase in pdf
-                CaseOptions.ExecuteSingleInSingleOutSearch(pdfFiles, Search.SearchPdf);
+                CaseOptions.ExecuteManyInSingleOutSearch(pdfFiles, Search.SearchMultiplePdf);
                 break;
             }
             case "3":
