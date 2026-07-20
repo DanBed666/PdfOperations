@@ -84,6 +84,20 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
+    public static void PictsToTxt(string [] input, string outputDir)
+    {
+        int i = 0;
+        
+        foreach (string file in input)
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
+            
+            PictToTxt(file, newOutputName);
+            i++;
+        }
+    }
+    
     public static void PictToPdf(string [] input, string output)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];

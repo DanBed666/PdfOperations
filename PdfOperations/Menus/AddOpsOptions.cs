@@ -13,7 +13,7 @@ public class AddOpsOptions
         Console.WriteLine("3. Sklej obrazy w pdf");
         Console.WriteLine("4. Pdf na tekst");
         Console.WriteLine("5. Obraz na tekst");
-        Console.WriteLine("7. Menu główne");
+        Console.WriteLine("6. Menu główne");
         Console.WriteLine("0. Wyjscie");
         Console.WriteLine("Wpisz opcje: ");
         string znak = Console.ReadLine()!;
@@ -52,7 +52,8 @@ public class AddOpsOptions
             case "5":
             {
                 // Picture to txt
-                CaseOptions.ExecuteSingleInSingleOut(pictFiles, Convert.PictToTxt);
+                //CaseOptions.ExecuteSingleInSingleOut(pictFiles, Convert.PictToTxt);
+                CaseOptions.ExecuteManyInManyOut(pictFiles, Convert.PictsToTxt);
                 break;
             }
             case "6":
