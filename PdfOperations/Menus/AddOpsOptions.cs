@@ -9,11 +9,12 @@ public class AddOpsOptions
     public static void ConvertOptions()
     {
         Console.WriteLine("1. Plik na PDF");
-        Console.WriteLine("2. Pdf na obraz");
+        Console.WriteLine("2. Pdf na obraz (1 plik)");
         Console.WriteLine("3. Sklej obrazy w pdf");
         Console.WriteLine("4. Pdf na tekst");
         Console.WriteLine("5. Obraz na tekst");
-        Console.WriteLine("6. Menu główne");
+        Console.WriteLine("6. Pdf na obraz (multi)");
+        Console.WriteLine("7. Menu główne");
         Console.WriteLine("0. Wyjscie");
         Console.WriteLine("Wpisz opcje: ");
         string znak = Console.ReadLine()!;
@@ -28,7 +29,7 @@ public class AddOpsOptions
             }
             case "2":
             {
-                // Pdf to picture
+                // Pdf to picture (1 file)
                 CaseOptions.ExecuteSingleInManyOut(pdfFiles, Convert.PdfToPict);
                 break;
             }
@@ -51,6 +52,12 @@ public class AddOpsOptions
                 break;
             }
             case "6":
+            {
+                // Multiple pdfs to picture
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToPict);
+                break;
+            }
+            case "7":
                 MainMenu.MainMenuF();
                 break;
             case "0":

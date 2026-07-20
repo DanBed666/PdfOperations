@@ -131,6 +131,46 @@ public class CaseOptions
         }
     }
     
+    public static void ExecuteManyInManyOut(string filter, Action<string [], string> operation)
+    {
+        Console.WriteLine("Podaj nazwę pdf: ");
+        string [] input = Files.AddFiles(filter);
+        
+        if (!Files.CheckFiles(input))
+        {
+            return;
+        }
+
+        foreach (string file in input)
+        {
+            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
+        }
+
+        if (input.Length == 1)
+            Files.ViewFile(input[0]);
+        
+        string dir = Files.AddDirectory();
+
+        if (!CheckParams.TryPrepareOutputOnlyDirLight(input, dir, out string finalDir))
+        {
+            return;
+        }
+        
+        try
+        {
+            Console.WriteLine("Trwa konwersja...");
+            operation(input, finalDir);
+            Console.WriteLine("Operacja zakończona pomyślnie!");
+
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalDir)}");
+            Files.ViewFile(finalDir);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Wystąpił błąd: {e.Message}");
+        }
+    }
+    
     public static void ExecuteSingleInSingleOutPages(string filter, Action<string, string, string> operation)
         {
             Console.WriteLine("Podaj nazwę pdf: ");

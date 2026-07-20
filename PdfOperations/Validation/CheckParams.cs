@@ -158,6 +158,26 @@ public class CheckParams
     
         return true;
     }
+    
+    public static bool TryPrepareOutputOnlyDirLight(string [] input, string? dir, 
+        out string finalDir)
+    {
+        finalDir = dir ?? "";
+            
+        if (input.Length == 0)
+        {
+            Console.WriteLine("No input file provided!");
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(dir))
+        {
+            Console.WriteLine("Domyslny dir");
+            finalDir = Files.GetDefaultDirectory();
+        }
+
+        return true;
+    }
 
     public static bool CheckFileFormat(string output)
     {

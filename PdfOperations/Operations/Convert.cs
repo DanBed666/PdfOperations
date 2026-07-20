@@ -37,6 +37,20 @@ public static class Convert
         arguments.AddRange(["-r", "300", "-jpeg", input, output]);
         RunClass.Run(tool, arguments);
     }
+
+    public static void PdfsToPict(string [] input, string outputDir)
+    {
+        int i = 0;
+        
+        foreach (string file in input)
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            string new_output_name = Path.Combine(outputDir, $"{i + 1}_{name}");
+            
+            PdfToPict(file, new_output_name);
+            i++;
+        }
+    }
     
     public static void PdfToTxt(string input, string output)
     {
