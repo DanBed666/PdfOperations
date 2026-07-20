@@ -9,11 +9,10 @@ public class AddOpsOptions
     public static void ConvertOptions()
     {
         Console.WriteLine("1. Plik na PDF");
-        Console.WriteLine("2. Pdf na obraz (1 plik)");
+        Console.WriteLine("2. Pdf na obraz");
         Console.WriteLine("3. Sklej obrazy w pdf");
         Console.WriteLine("4. Pdf na tekst");
         Console.WriteLine("5. Obraz na tekst");
-        Console.WriteLine("6. Pdf na obraz (multi)");
         Console.WriteLine("7. Menu główne");
         Console.WriteLine("0. Wyjscie");
         Console.WriteLine("Wpisz opcje: ");
@@ -30,7 +29,11 @@ public class AddOpsOptions
             case "2":
             {
                 // Pdf to picture (1 file)
-                CaseOptions.ExecuteSingleInManyOut(pdfFiles, Convert.PdfToPict);
+                //CaseOptions.ExecuteSingleInManyOut(pdfFiles, Convert.PdfToPict);
+                //break;
+                
+                // Multiple pdfs to picture
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToPict);
                 break;
             }
             case "3":
@@ -42,7 +45,8 @@ public class AddOpsOptions
             case "4":
             {
                 // Pdf to txt
-                CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToTxt);
+                //CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToTxt);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToTxt);
                 break;
             }
             case "5":
@@ -52,12 +56,6 @@ public class AddOpsOptions
                 break;
             }
             case "6":
-            {
-                // Multiple pdfs to picture
-                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToPict);
-                break;
-            }
-            case "7":
                 MainMenu.MainMenuF();
                 break;
             case "0":

@@ -45,9 +45,9 @@ public static class Convert
         foreach (string file in input)
         {
             string name = Path.GetFileNameWithoutExtension(file);
-            string new_output_name = Path.Combine(outputDir, $"{i + 1}_{name}");
+            string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}");
             
-            PdfToPict(file, new_output_name);
+            PdfToPict(file, newOutputName);
             i++;
         }
     }
@@ -59,6 +59,20 @@ public static class Convert
         
         arguments.AddRange([input, output]);
         RunClass.Run(tool, arguments);
+    }
+    
+    public static void PdfsToTxt(string [] input, string outputDir)
+    {
+        int i = 0;
+        
+        foreach (string file in input)
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
+            
+            PdfToTxt(file, newOutputName);
+            i++;
+        }
     }
     
     public static void PictToTxt(string input, string output)
