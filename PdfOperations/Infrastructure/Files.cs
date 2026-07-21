@@ -165,4 +165,26 @@ public class Files
         Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
         return output;
     }
+
+    public static void MultipleConv(string [] files, string outputDir, string outputFile, 
+        string ext, Action<string, string> operation)
+    {
+        int i = 0;
+
+        if (files.Length >= 2)
+        {
+            foreach (string file in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+                string newOutput = Path.Combine(outputDir, $"{i}_{name}{ext}");
+                operation(file, newOutput);
+                i++;
+            }
+        }
+        else
+        {
+            string newOutput = Path.Combine(outputDir, outputFile);
+            operation(files[0], newOutput);
+        }
+    }
 }

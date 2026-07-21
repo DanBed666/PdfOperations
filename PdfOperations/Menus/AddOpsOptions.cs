@@ -33,7 +33,7 @@ public class AddOpsOptions
                 //break;
                 
                 // Multiple pdfs to picture
-                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToPict);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, "", Convert.PdfToPict);
                 break;
             }
             case "3":
@@ -46,14 +46,14 @@ public class AddOpsOptions
             {
                 // Pdf to txt
                 //CaseOptions.ExecuteSingleInSingleOut(pdfFiles, Convert.PdfToTxt);
-                CaseOptions.ExecuteManyInManyOut(pdfFiles, Convert.PdfsToTxt);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, ".txt", Convert.PdfToTxt);
                 break;
             }
             case "5":
             {
                 // Picture to txt
                 //CaseOptions.ExecuteSingleInSingleOut(pictFiles, Convert.PictToTxt);
-                CaseOptions.ExecuteManyInManyOut(pictFiles, Convert.PictsToTxt);
+                CaseOptions.ExecuteManyInManyOut(pictFiles, ".txt", Convert.PictToTxt);
                 break;
             }
             case "6":
@@ -116,7 +116,7 @@ public class AddOpsOptions
             case "2":
             {
                 // Separate one to many
-                CaseOptions.ExecuteManyInManyOut(pdfFiles, Divide.OnesToMany);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, "", Divide.OneToMany);
                 break;
             }
             case "3":
@@ -156,7 +156,7 @@ public class AddOpsOptions
             case "3":
                 //Show info
                 Console.WriteLine("Podaj nazwę pdf: ");
-                CaseOptions.ExecuteManyInManyOut(pdfFiles, Info.ExtractPicts);
+                CaseOptions.ExecuteManyInManyOut(pdfFiles, "", Info.ExtractPict);
                 break;
             case "4":
                 MainMenu.MainMenuF();

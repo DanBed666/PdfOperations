@@ -152,10 +152,11 @@ public class CheckParams
             return true;
         }
     
-    public static bool TryPrepareOutputOnlyDirLight(string [] input, string? dir, 
-        out string finalDir)
+    public static bool TryPrepareOutputOnlyDirLight(string [] input, string? dir, string? output, 
+        out string finalDir, out string finalOutput)
     {
         finalDir = dir ?? "";
+        finalOutput = output ?? "";
             
         if (input.Length == 0)
         {
@@ -167,6 +168,15 @@ public class CheckParams
         {
             Console.WriteLine("Domyslny dir");
             finalDir = Files.GetDefaultDirectory();
+        }
+        
+        if (string.IsNullOrEmpty(finalOutput))
+        {
+            Console.WriteLine("Domyslny plik");
+            string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
+            Directory.CreateDirectory(dirDef);
+            string outfile = Path.Combine(dirDef, "output");
+            finalOutput = Files.GetDefaultOutputFile(outfile);
         }
 
         return true;

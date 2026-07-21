@@ -48,7 +48,7 @@ public class CaseOptions
         }
     }
     
-    public static void ExecuteManyInManyOut(string filter, Action<string [], string> operation)
+    public static void ExecuteManyInManyOut(string filter, string ext, Action<string, string> ope)
     {
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] input = Files.AddFiles(filter);
@@ -63,12 +63,17 @@ public class CaseOptions
             Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
         }
 
-        if (input.Length == 1)
-            Files.ViewFile(input[0]);
-        
         string dir = Files.AddDirectory();
+        string output = "";
+        
+        if (input.Length == 1)
+        {
+            Files.ViewFile(input[0]);
+            Console.WriteLine("Podaj output: ");
+            output = Console.ReadLine()!;
+        }
 
-        if (!CheckParams.TryPrepareOutputOnlyDirLight(input, dir, out string finalDir))
+        if (!CheckParams.TryPrepareOutputOnlyDirLight(input, dir, output, out string finalDir, out string finalOutput))
         {
             return;
         }
@@ -76,7 +81,7 @@ public class CaseOptions
         try
         {
             Console.WriteLine("Trwa konwersja...");
-            operation(input, finalDir);
+            Files.MultipleConv(input, finalDir, finalOutput, ext, ope);
             Console.WriteLine("Operacja zakończona pomyślnie!");
 
             Console.WriteLine($"Zapisano w: {Path.GetFullPath(finalDir)}");
