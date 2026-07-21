@@ -96,26 +96,6 @@ public class Files
             RunClass.RunFile(path);
     }
 
-    public static bool ViewFileChoosen(string path)
-    {
-        bool choosen = false;
-        Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
-        string opt = Console.ReadLine()!;
-        //ReadInput options
-        
-        if (opt.ToLower().Equals("t"))
-        {
-            RunClass.RunFile(path);
-            choosen = ChoosenFile("Czy to właściwy plik? (T / N)");
-        }
-        else
-        {
-            choosen = ChoosenFile("KOntynuować z tym plikiem? (T / N)");
-        }
-        
-        return choosen;
-    }
-
     public static bool ChoosenFile(string message)
     {
         Console.WriteLine(message);
@@ -129,22 +109,7 @@ public class Files
 
         return false;
     }
-
-    public static void SaveInFolder(string file)
-    {
-        string folder = Path.Combine(AppContext.BaseDirectory, "output");
-        
-        Console.WriteLine("Czy chesz zapisać w folderze (T/N)");
-        string opt = Console.ReadLine()!;
-        //ReadInput options but not used
-
-        if (opt.ToLower().Equals("t"))
-            folder = AddDirectory();
-
-        string path = Path.Combine(folder, file);
-        Directory.CreateDirectory(path);
-    }
-
+    
     public static string GetDefaultDirectory()
     {
         string dirDefault = Path.Combine(AppContext.BaseDirectory, "output");
