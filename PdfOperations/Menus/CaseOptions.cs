@@ -42,7 +42,9 @@ public class CaseOptions
         }
         catch (Exception e)
         {
+            ErrorLogger.Log(e);
             Console.WriteLine($"Wystąpił błąd: {e.Message}");
+            Console.WriteLine("Szczegóły zapisano w logs/error_log.txt");
         }
     }
     
@@ -82,7 +84,9 @@ public class CaseOptions
         }
         catch (Exception e)
         {
+            ErrorLogger.Log(e);
             Console.WriteLine($"Wystąpił błąd: {e.Message}");
+            Console.WriteLine("Szczegóły zapisano w logs/error_log.txt");
         }
     }
     
@@ -126,7 +130,9 @@ public class CaseOptions
             }
             catch (Exception e)
             {
+                ErrorLogger.Log(e);
                 Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                Console.WriteLine("Szczegóły zapisano w logs/error_log.txt");
             }
         }
     
@@ -167,7 +173,9 @@ public class CaseOptions
         }
         catch (Exception e)
         {
+            ErrorLogger.Log(e);
             Console.WriteLine($"Wystąpił błąd: {e.Message}");
+            Console.WriteLine("Szczegóły zapisano w logs/error_log.txt");
         }
     }
         
@@ -211,7 +219,9 @@ public class CaseOptions
             }
             catch (Exception e)
             {
+                ErrorLogger.Log(e);
                 Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                Console.WriteLine("Szczegóły zapisano w logs/error_log.txt");
             }
         }
     
