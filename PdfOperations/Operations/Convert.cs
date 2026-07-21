@@ -9,6 +9,7 @@ public static class Convert
         string profileDir = Path.Combine(Path.GetTempPath(), "PdfOperationsProfile", Guid.NewGuid().ToString());
         string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
         List<string> arguments = new List<string>();
+        List<string> arguments2 = new List<string>();
 
         if (string.IsNullOrEmpty(directory))
         {
@@ -20,13 +21,15 @@ public static class Convert
             if (Path.GetExtension(files[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
                 && format.Equals("docx"))
             {
-                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", format, ..files, "--outdir", directory]);
+                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", "odt", ..files, "--outdir", directory]);
+                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--convert-to", format, ..files, "--outdir", directory]);
             }
             
             arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", format, ..files, "--outdir", directory]);
         }
         
         RunClass.Run(tool, arguments);
+        RunClass.Run(tool, arguments2);
     }
     
     public static void PdfToPict(string input, string output)

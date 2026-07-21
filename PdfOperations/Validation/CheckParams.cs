@@ -160,7 +160,7 @@ public class CheckParams
             
         if (input.Length == 0)
         {
-            Console.WriteLine("No input file provided!");
+            Console.WriteLine("Brak pliku wejściowego! Anulowano operacje!");
             return false;
         }
 
@@ -169,14 +169,17 @@ public class CheckParams
             Console.WriteLine("Domyslny dir");
             finalDir = Files.GetDefaultDirectory();
         }
-        
-        if (string.IsNullOrEmpty(finalOutput))
+
+        if (input.Length == 1)
         {
-            Console.WriteLine("Domyslny plik");
-            string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
-            Directory.CreateDirectory(dirDef);
-            string outfile = Path.Combine(dirDef, "output");
-            finalOutput = Files.GetDefaultOutputFile(outfile);
+            if (string.IsNullOrEmpty(finalOutput))
+            {
+                Console.WriteLine("Domyslny plik");
+                string dirDef = Path.Combine(AppContext.BaseDirectory, "output");
+                Directory.CreateDirectory(dirDef);
+                string outfile = Path.Combine(dirDef, "output");
+                finalOutput = Files.GetDefaultOutputFile(outfile);
+            }
         }
 
         return true;
