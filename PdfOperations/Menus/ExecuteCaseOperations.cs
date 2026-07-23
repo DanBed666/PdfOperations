@@ -5,18 +5,28 @@ public class ExecuteCaseOperations
     public static void InputOpe(OperationDefinition operation)
     {
         string output = "";
+        string phrase = "";
         
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] input = Files.AddFiles(operation.Filter);
-        
-        if (!Files.CheckFiles(input))
-        {
-            return;
-        }
+
+        if (input.Length == 0) return;
 
         foreach (string file in input)
         {
             Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
+        }
+
+        if (operation.Phrase == "search")
+        {
+            if (!InputSearchOpe(out string value)) return;
+            phrase = value;
+        }
+        
+        if (operation.Phrase == "format")
+        {
+            if (!InputFormatOpe(out string value)) return;
+            phrase = value;
         }
         
         if (input.Length == 1)
@@ -27,56 +37,122 @@ public class ExecuteCaseOperations
         }
         
         string dir = Files.AddDirectory();
-        
-        InputClass inputClass = new InputClass
-        {
-            inputFiles = input,
-            outputFile = output,
-            dir = dir
-        };
 
-        if (BuildPaths(inputClass))
+        foreach (string file in input)
         {
-            ExecuteOpe(inputClass, operation);
-        }
-    }
-    
-    public static bool BuildPaths(InputClass inputClass)
-    {
-        if (inputClass.inputFiles.Length == 0)
-        {
-            Console.WriteLine("Brak pliku wejściowego! Anulowano operacje!");
-            return false;
-        }
-        
-        if (string.IsNullOrEmpty(inputClass.dir))
-        {
-            Console.WriteLine("Domyslny dir");
-            inputClass.dir = Files.GetDefaultDirectory();
-        }
-
-        if (inputClass.inputFiles.Length == 1)
-        {
-            if (string.IsNullOrEmpty(inputClass.outputFile))
+            InputClass inputFile = new InputClass
             {
-                Console.WriteLine("Domyslny plik");
-                inputClass.outputFile = Files.GetDefaultOutputFile(inputClass.inputFiles[0]);
-            }
+                inputFile = file,
+                outputFile = output,
+                dir = dir,
+                phrase = phrase
+            };
+            
+            PreparePath(inputFile, operation);
+        }
+        
+        Files.ViewFile(dir);
+        
+        /*
+        foreach (string fileInput in input)
+        {
+            InputClass inputClass = new InputClass
+            {
+                inputFiles = fileInput,
+                outputFile = output,
+                dir = dir,
+                phrase = phrase
+            };
+            
+            operation.GetOutputPathMultipleAction(inputClass, operation);
+        }
+        */
+    }
+
+    public static bool InputSearchOpe(out string value)
+    {
+        Console.WriteLine("Podaj fraze: ");
+        string phrase = Console.ReadLine()!;
+        value = phrase;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            Console.WriteLine("Nie podano frazy!");
+            return false;
         }
 
         return true;
     }
+
+    public static bool InputFormatOpe(out string value)
+    {
+        Console.WriteLine("Podaj format: ");
+        string format = Console.ReadLine()!;
+        value = format;
+
+        if (CheckParams.CheckFileFormat(value))
+        {
+            Console.WriteLine("Niepoprawny format!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public static void PreparePath(InputClass input, OperationDefinition operation)
+    {
+        int i = 1;
+        string name = Path.GetFileNameWithoutExtension(input.inputFile);
+        input.outputPath = Path.Combine(input.dir, $"{name}{operation.Extension}");
+        
+        while (Path.Exists(input.outputPath))
+        {
+            input.outputPath = Path.Combine(input.dir, $"{name}_{i}{operation.Extension}");
+            i++;
+        }
+                
+        ExecuteOpe(input, operation);
+    }
     
-    public static void ExecuteOpe(InputClass inputClass, OperationDefinition operation)
+    public static void GetOutputPathMultiple(InputClass inputClass, OperationDefinition operation)
+    {
+        int i = 1;
+
+        /*
+        if (inputClass.inputFiles.Length >= 2)
+        {
+            foreach (string file in inputClass.inputFiles)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+
+                inputClass.outputPath = Path.Combine(inputClass.dir, $"{name}{operation.Extension}");
+                
+                if (File.Exists(inputClass.outputPath))
+                {
+                    inputClass.outputPath = Path.Combine(inputClass.dir, $"{name}_{i}{operation.Extension}");
+                    i++;
+                }
+                
+                ExecuteOpe(inputClass, operation);
+            }
+        }
+        else
+        {
+            inputClass.outputPath = Path.Combine(inputClass.dir, inputClass.outputFile);
+            ExecuteOpe(inputClass, operation);
+        }
+        */
+    }
+    
+    public static void ExecuteOpe(InputClass input, OperationDefinition operation)
     {
         try
         {
             Console.WriteLine("Trwa konwersja...");
-            operation.MultipleFilesAction(inputClass, operation);
+            
+            operation.FileOperationAction(input);
             Console.WriteLine("Operacja zakończona pomyślnie!");
-
-            Console.WriteLine($"Zapisano w: {Path.GetFullPath(inputClass.dir)}");
-            Files.ViewFile(inputClass.dir);
+            Console.WriteLine($"Zapisano w: {Path.GetFullPath(input.outputPath)}");
         }
         catch (Exception e)
         {
