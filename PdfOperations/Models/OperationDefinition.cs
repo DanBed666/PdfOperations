@@ -5,7 +5,9 @@ public class OperationDefinition
     public string Name { get; init; } = "";
     public string Extension { get; init; } = "";
     public string Filter { get; init; } = "";
-    
-    public Action<InputClass, OperationDefinition> MultipleFilesAction { get; init; }
-    public Action<string, string> FileOperationAction { get; init; }
+    public string Phrase { get; init; } = "";
+    public Tool Tool { get; init; }
+    public string [] Command { get; init; } = Array.Empty<string>();
+
+    public Action<InputClass> FileOperationAction { get; init; }
 }
