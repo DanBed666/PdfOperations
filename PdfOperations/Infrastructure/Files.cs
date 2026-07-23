@@ -131,25 +131,31 @@ public class Files
         return output;
     }
 
-    public static void MultipleConv(string [] files, string outputDir, string outputFile, 
-        string ext, Action<string, string> operation)
+    public static void MultipleConv(InputClass inputClass, OperationDefinition operation)
     {
-        int i = 0;
+        int i = 1;
 
-        if (files.Length >= 2)
+        if (inputClass.inputFiles.Length >= 2)
         {
-            foreach (string file in files)
+            foreach (string file in inputClass.inputFiles)
             {
                 string name = Path.GetFileNameWithoutExtension(file);
-                string newOutput = Path.Combine(outputDir, $"{i}_{name}{ext}");
-                operation(file, newOutput);
-                i++;
+
+                string newOutput = Path.Combine(inputClass.dir, $"{name}{operation.Extension}");
+                
+                if (File.Exists(newOutput))
+                {
+                    newOutput = Path.Combine(inputClass.dir, $"{name}_{i}{operation.Extension}");
+                    i++;
+                }
+
+                operation.FileOperationAction(file, newOutput);
             }
         }
         else
         {
-            string newOutput = Path.Combine(outputDir, outputFile);
-            operation(files[0], newOutput);
+            string newOutput = Path.Combine(inputClass.dir, inputClass.outputFile);
+            operation.FileOperationAction(inputClass.inputFiles[0], newOutput);
         }
     }
 }

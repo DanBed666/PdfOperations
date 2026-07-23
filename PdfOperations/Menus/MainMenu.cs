@@ -6,43 +6,16 @@ public class MainMenu
     {
         while (true)
         {
-            Console.WriteLine("1. Konwersja");
-            Console.WriteLine("2. Strony");
-            Console.WriteLine("3. Rozdzielanie");
-            Console.WriteLine("4. Informacje");
-            Console.WriteLine("5. Wyszukiwanie");
-            Console.WriteLine("6. Otwieranie");
-            Console.WriteLine("0. Wyjscie");
-            Console.WriteLine("Wpisz opcje: ");
-            string znak = Console.ReadLine()!;
-            
-            switch (znak)
+            for (int i = 1; i <= OperationPaths.OperationDefinitions.Count; i++)
             {
-                case "1":
-                    AddOpsOptions.ConvertOptions();
-                    break;    
-                case "2":
-                    AddOpsOptions.PagesOptions();
-                    break; 
-                case "3":
-                    AddOpsOptions.DivideOptions();
-                    break; 
-                case "4":
-                    AddOpsOptions.InfoOptions();
-                    break; 
-                case "5":
-                    AddOpsOptions.SearchOptions();
-                    break; 
-                case "6":
-                    AddOpsOptions.OpenOptions();
-                    break; 
-                case "0":
-                    Environment.Exit(0);
-                    break; 
-                default:
-                    Console.WriteLine("Nie ma takiej opcji!");
-                    break; 
+                Console.WriteLine($"[{i}] {OperationPaths.OperationDefinitions[i].Name}");
             }
+            
+            Console.WriteLine("Wpisz opcje: ");
+            Int32.TryParse(Console.ReadLine(), out int znak);
+
+            OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
+            ExecuteCaseOperations.InputOpe(value!);
         }
     }
 }
