@@ -32,30 +32,30 @@ public static class Convert
         RunClass.Run(tool, arguments2);
     }
     
-    public static void PdfToPict(string input, string output)
+    public static void PdfToPict(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange(["-r", "300", "-jpeg", input, output]);
+        arguments.AddRange(["-r", "300", "-jpeg", file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void PdfToTxt(string input, string output)
+    public static void PdfToTxt(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([input, output]);
+        arguments.AddRange([file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToTxt(string input, string output)
+    public static void PictToTxt(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([input, output, "-l", "pol"]);
+        arguments.AddRange([file.inputFile, file.outputPath, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }
     

@@ -2,12 +2,12 @@
 
 public class Divide
 {
-    public static void OneToMany(string input, string output)
+    public static void OneToMany(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfSeparate];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([input, output]);
+        arguments.AddRange([file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
     }
     

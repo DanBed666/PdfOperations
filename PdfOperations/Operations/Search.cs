@@ -2,37 +2,24 @@
 
 public class Search
 {
-    public static string filename = "rnd_fname.txt";
-    public static void SearchPicture(string input, string phrase, string output)
+    public static void SearchPicture(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
 
-        if (string.IsNullOrEmpty(phrase))
-        {
-            Console.WriteLine("Nie podano hasła do wyszukiwania!");
-            return;
-        }
-        
-        arguments.AddRange([input, Path.ChangeExtension(filename, null), "-l", "pol"]);
+        arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(filename, phrase), output);
+        Files.SaveToFile(SearchNewTxt(file.inputFile, file.phrase), file.outputPath);
     }
 
-    public static void SearchPdf(string input, string phrase, string output)
+    public static void SearchPdf(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
-        
-        if (string.IsNullOrEmpty(phrase))
-        {
-            Console.WriteLine("Nie podano hasła do wyszukiwania!");
-            return;
-        }
-        
-        arguments.AddRange([input, filename]);
+
+        arguments.AddRange([file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(filename, phrase), output);
+        Files.SaveToFile(SearchNewTxt(file.inputFile, file.phrase), file.outputPath);
     }
 
     public static void SearchMultiplePdf(string [] input, string phrase, string outputDir)
@@ -44,7 +31,7 @@ public class Search
             string name = Path.GetFileNameWithoutExtension(file);
             string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
             
-            SearchPdf(file, phrase, newOutputName);
+            //SearchPdf(file, phrase, newOutputName);
             i++;
         }
     }
@@ -58,7 +45,7 @@ public class Search
             string name = Path.GetFileNameWithoutExtension(file);
             string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
             
-            SearchPicture(file, phrase, newOutputName);
+            //SearchPicture(file, phrase, newOutputName);
             i++;
         }
     }
