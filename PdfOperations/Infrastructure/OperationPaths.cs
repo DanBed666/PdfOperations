@@ -16,7 +16,8 @@ public class OperationPaths
             {
                 Name = "Pdf to Picture",
                 Filter = FileFilters.PdfFiles,
-                MultipleFilesAction = Files.MultipleConv
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Convert.PdfToPict
             },
             [3] = new OperationDefinition
             {
@@ -35,23 +36,28 @@ public class OperationPaths
             {
                 Name = "Picture To Text",
                 Filter = FileFilters.PictFiles,
-                Extension = ".txt"
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Convert.PictToTxt
             },
             [6] = new OperationDefinition
             {
                 Name = "Extract Pictures from Pdf",
-                Filter = FileFilters.PdfFiles
+                Filter = FileFilters.PdfFiles,
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Info.ExtractPict
             },
             [7] = new OperationDefinition
             {
                 Name = "Create Pdf with pages",
-                Filter = FileFilters.PdfFiles
+                Filter = FileFilters.PdfFiles,
             },
             [8] = new OperationDefinition
             {
                 Name = "Pdf Separate",
                 Filter = FileFilters.PdfFiles,
-                Extension = "%d"
+                Extension = "%d",
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Divide.OneToMany
             },
             [9] = new OperationDefinition
             {
@@ -62,13 +68,17 @@ public class OperationPaths
             {
                 Name = "Search Text in Pdf",
                 Filter = FileFilters.PdfFiles,
-                Extension = ".txt"
+                Extension = ".txt",
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Search.SearchPdf
             },
             [11] = new OperationDefinition
             {
                 Name = "Search Text in Picture",
                 Filter = FileFilters.PictFiles,
-                Extension = ".txt"
+                Extension = ".txt",
+                MultipleFilesAction = Files.MultipleConv,
+                FileOperationAction = Search.SearchPicture
             },
             [12] = new OperationDefinition
             {
