@@ -6,5 +6,6 @@ public enum OperationFlow
     FilesToFilesWithFormat,
     FilesToFilesWithSearch,
     FilesToSingleFile,
-    PdfReport
+    PdfReport,
+    RunApp
 }
