@@ -51,6 +51,12 @@ public class ExecuteCaseOperations
             phrase = value;
         }
         
+        if (operation.Phrase == "pages")
+        {
+            if (!InputPagesOpe(out string value)) return;
+            phrase = value;
+        }
+        
         if (input.Length == 1)
         {
             Files.ViewFile(input[0]);
@@ -112,6 +118,21 @@ public class ExecuteCaseOperations
     public static bool InputSearchOpe(out string value)
     {
         Console.WriteLine("Podaj fraze: ");
+        string phrase = Console.ReadLine()!;
+        value = phrase;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            Console.WriteLine("Nie podano frazy!");
+            return false;
+        }
+
+        return true;
+    }
+    
+    public static bool InputPagesOpe(out string value)
+    {
+        Console.WriteLine("Podaj strony: ");
         string phrase = Console.ReadLine()!;
         value = phrase;
 

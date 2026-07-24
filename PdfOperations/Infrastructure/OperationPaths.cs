@@ -56,7 +56,9 @@ public class OperationPaths
                 Name = "Create Pdf with pages",
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesToFiles,
-                FileOperationAction = Pages.CreateWithPages
+                FileOperationAction = Pages.CreateWithPages,
+                Phrase = "pages",
+                Extension = ".pdf"
             },
             [8] = new OperationDefinition
             {

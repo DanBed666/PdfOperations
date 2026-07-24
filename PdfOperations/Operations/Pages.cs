@@ -7,7 +7,7 @@ public class Pages
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([file.inputFile, "--pages", ".", file.phrase, "--", file.outputFile]);
+        arguments.AddRange([file.inputFile, "--pages", ".", file.phrase, "--", file.outputPath]);
         RunClass.Run(tool, arguments);
     }
 }
