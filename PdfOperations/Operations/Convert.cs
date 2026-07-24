@@ -2,7 +2,7 @@
 
 public static class Convert
 {
-    public static void FileToPdf(string [] files, string format, string directory)
+    public static void FileToPdf(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.LibreOffice];
 
@@ -11,21 +11,21 @@ public static class Convert
         List<string> arguments = new List<string>();
         List<string> arguments2 = new List<string>();
 
-        if (string.IsNullOrEmpty(directory))
+        if (string.IsNullOrEmpty(file.dir))
         {
             Console.WriteLine("Nie podano katalogu! Dlatego plik zostanie utworzony w katalogu domyślnym!");
         }
 
-        for (int i = 0; i < files.Length; i++)
+        for (int i = 0; i < file.inputFiles.Length; i++)
         {
-            if (Path.GetExtension(files[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
-                && format.Equals("docx"))
+            if (Path.GetExtension(file.inputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
+                && file.phrase.Equals("docx"))
             {
-                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--infilter=writer_pdf_import", "--convert-to", "odt", ..files, "--outdir", directory]);
-                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--convert-to", format, ..files, "--outdir", directory]);
+                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--infilter=writer_pdf_import", "--convert-to", "odt", ..file.inputFiles, "--outdir", file.dir]);
+                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.dir]);
             }
             
-            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", format, ..files, "--outdir", directory]);
+            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.dir]);
         }
         
         RunClass.Run(tool, arguments);
@@ -59,12 +59,12 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToPdf(string [] input, string output)
+    public static void PictToPdf(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..input, output]);
+        arguments.AddRange([..file.inputFiles, file.outputFile]);
         RunClass.Run(tool, arguments);
     }
 }

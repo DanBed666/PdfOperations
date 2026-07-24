@@ -11,12 +11,12 @@ public class Divide
         RunClass.Run(tool, arguments);
     }
     
-    public static void ManyToOne(string [] input, string output)
+    public static void ManyToOne(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..input, output]);
+        arguments.AddRange([..file.inputFiles, file.outputFile]);
         RunClass.Run(tool, arguments);
     }
 }

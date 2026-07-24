@@ -2,12 +2,12 @@
 
 public class Pages
 {
-    public static void CreateWithPages(string input, string pages, string output)
+    public static void CreateWithPages(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([input, "--pages", ".", pages, "--", output]);
+        arguments.AddRange([file.inputFile, "--pages", ".", file.phrase, "--", file.outputFile]);
         RunClass.Run(tool, arguments);
     }
 }

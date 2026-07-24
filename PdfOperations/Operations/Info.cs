@@ -2,26 +2,26 @@
 
 public class Info
 {
-    public static void ShowInfo(string input)
+    public static void ShowInfo(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfInfo];
-        string output = RunClass.RunWithOutput(tool, input);
+        string output = RunClass.RunWithOutput(tool, file.inputFile);
         Console.WriteLine(output);
     }
     
-    public static void ShowFontInfo(string input)
+    public static void ShowFontInfo(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfFonts];
-        string output = RunClass.RunWithOutput(tool, input);
+        string output = RunClass.RunWithOutput(tool, file.inputFile);
         Console.WriteLine(output);
     }
     
-    public static void ExtractPict(string input, string output)
+    public static void ExtractPict(InputClass file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange(["-all", input, output]);
+        arguments.AddRange(["-all", file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
     }
 
@@ -34,7 +34,7 @@ public class Info
             string name = Path.GetFileNameWithoutExtension(file);
             string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}");
             
-            ExtractPict(file, newOutputName);
+            //ExtractPict(file, newOutputName);
             i++;
         }
     }
