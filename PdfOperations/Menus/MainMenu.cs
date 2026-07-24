@@ -15,7 +15,15 @@ public class MainMenu
             Int32.TryParse(Console.ReadLine(), out int znak);
 
             OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
-            ExecuteCaseOperations.InputOpe(value!);
+
+            if (znak >= 1 && znak <= 13)
+                ExecuteCaseOperations.InputOpe(value!);
+            else if (znak >= 14 && znak <= 15)
+                value!.RunOperationAction(value);
+            else if (znak == 16)
+                Environment.Exit(0);
+            else
+                Console.WriteLine("Niepoprawna opcja!");
         }
     }
 }

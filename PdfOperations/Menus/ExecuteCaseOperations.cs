@@ -2,8 +2,30 @@
 
 public class ExecuteCaseOperations
 {
+    public static void InputInfo(OperationDefinition operation)
+    {
+        Console.WriteLine("Podaj nazwę pdf: ");
+        string [] input = Files.AddFiles(operation.Filter);
+        
+        foreach (string file in input)
+        {
+            InputClass inputFile = new InputClass
+            {
+                inputFile = file,
+            };
+
+            ExecuteOpe(inputFile, operation);
+        }
+    }
+    
     public static void InputOpe(OperationDefinition operation)
     {
+        if (operation.OperationFlow == OperationFlow.PdfReport)
+        {
+            InputInfo(operation);
+            return;
+        }
+        
         string output = "";
         string phrase = "";
         
@@ -34,23 +56,41 @@ public class ExecuteCaseOperations
             Files.ViewFile(input[0]);
             Console.WriteLine("Podaj output: ");
             output = Console.ReadLine()!;
+
+            if (!CheckParams.CheckFileFormat(output))
+                return;
         }
         
         string dir = Files.AddDirectory();
 
-        foreach (string file in input)
+        if (operation.OperationFlow == OperationFlow.FilesToFiles)
+        {
+            foreach (string file in input)
+            {
+                InputClass inputFile = new InputClass
+                {
+                    inputFile = file,
+                    outputFile = output,
+                    dir = dir,
+                    phrase = phrase
+                };
+
+                PreparePath(inputFile, operation);
+            }
+        }
+        else
         {
             InputClass inputFile = new InputClass
             {
-                inputFile = file,
+                inputFiles = input,
                 outputFile = output,
                 dir = dir,
                 phrase = phrase
             };
             
-            PreparePath(inputFile, operation);
+            ExecuteOpe(inputFile, operation);
         }
-        
+
         Files.ViewFile(dir);
         
         /*
@@ -90,7 +130,7 @@ public class ExecuteCaseOperations
         string format = Console.ReadLine()!;
         value = format;
 
-        if (CheckParams.CheckFileFormat(value))
+        if (!CheckParams.CheckFormat(value))
         {
             Console.WriteLine("Niepoprawny format!");
             return false;
