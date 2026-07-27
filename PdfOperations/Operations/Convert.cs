@@ -22,7 +22,15 @@ public static class Convert
                 && file.phrase.Equals("docx"))
             {
                 arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--infilter=writer_pdf_import", "--convert-to", "odt", ..file.inputFiles, "--outdir", file.dir]);
-                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.dir]);
+                
+                string [] filesOdt = new string[file.inputFiles.Length];
+                
+                for (int k = 0; i < file.inputFiles.Length; i++)
+                {
+                    filesOdt[k] = Path.Combine(file.dir, Path.GetFileNameWithoutExtension(file.inputFiles[i]) + ".odt");
+                }
+                
+                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..filesOdt, "--outdir", file.dir]);
             }
             
             arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.dir]);

@@ -9,7 +9,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file.inputFile, file.phrase), file.outputPath);
+        Files.SaveToFile(SearchNewTxt(file.outputPath, file.phrase), file.outputPath);
     }
 
     public static void SearchPdf(InputClass file)
@@ -19,7 +19,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file.inputFile, file.phrase), file.outputPath);
+        Files.SaveToFile(SearchNewTxt(file.outputPath, file.phrase), file.outputPath);
     }
 
     public static void SearchMultiplePdf(string [] input, string phrase, string outputDir)
