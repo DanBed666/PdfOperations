@@ -28,6 +28,8 @@ public class ExecuteCaseOperations
         
         string output = "";
         string phrase = "";
+        int before = 0;
+        int after = 0;
         
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] input = Files.AddFiles(operation.Filter);
@@ -43,6 +45,14 @@ public class ExecuteCaseOperations
         {
             if (!InputSearchOpe(out string value)) return;
             phrase = value;
+            
+            Console.WriteLine("Linie przed: ");
+            Int32.TryParse(Console.ReadLine(), out before);
+            before = -before;
+            
+            Console.WriteLine("Linie po: ");
+            Int32.TryParse(Console.ReadLine(), out after);
+            after = after;
         }
         
         if (operation.Phrase == "format")
@@ -78,7 +88,9 @@ public class ExecuteCaseOperations
                     inputFile = file,
                     outputFile = output,
                     dir = dir,
-                    phrase = phrase
+                    phrase = phrase,
+                    before = before,
+                    after = after
                 };
 
                 PreparePath(inputFile, operation);

@@ -9,7 +9,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file.outputPath, file.phrase), file.outputPath);
+        Files.SaveToFile(SearchNewTxt(file), file.outputPath);
     }
 
     public static void SearchPdf(InputClass file)
@@ -19,7 +19,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, file.outputPath]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file.outputPath, file.phrase), file.outputPath);
+        Files.SaveToFile(SearchNewTxt(file), file.outputPath);
     }
 
     public static void SearchMultiplePdf(string [] input, string phrase, string outputDir)
@@ -50,18 +50,18 @@ public class Search
         }
     }
 
-    public static List<List<string>> SearchNewTxt(string input, string phrase)
+    public static List<List<string>> SearchNewTxt(InputClass file)
     {
         List<List<string>> found = new();
-        string[] test = Files.ReadFile(input);
+        string[] test = Files.ReadFile(file.outputPath);
 
         for (int i = 0; i < test.Length; i++)
         {
-            if (test[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (test[i].Contains(file.phrase.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 List<string> lines = new List<string>();
                 
-                for (int k = -2; k <= 2; k++)
+                for (int k = file.before; k <= file.after; k++)
                 {
                     int idx = i + k;
                     
