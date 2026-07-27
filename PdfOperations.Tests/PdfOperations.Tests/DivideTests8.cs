@@ -1,24 +1,21 @@
-﻿using System.Globalization;
-
-namespace PdfOperations.Tests;
+﻿namespace PdfOperations.Tests;
 
 [TestClass]
-public class PagesTests
+public class DivideTests8
 {
     [TestMethod]
-    public void CreateWithPages()
+    public void OneToMany()
     {
         string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
         string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDir);
         List<InputClass> inputFiles = new List<InputClass>();
         string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
-        string format = ".pdf";
+        string format = "%d.pdf";
 
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            phrase = "2-3",
             outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
@@ -27,7 +24,6 @@ public class PagesTests
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            phrase = "2-3",
             outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
@@ -36,7 +32,6 @@ public class PagesTests
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            phrase = "2-3",
             outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
@@ -46,7 +41,7 @@ public class PagesTests
         {
             foreach (InputClass item in inputFiles)
             {
-                Pages.CreateWithPages(item);
+                Divide.OneToMany(item);
             }
             
             foreach (string file in Directory.GetFiles(tempDir))
@@ -55,7 +50,47 @@ public class PagesTests
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(3, Directory.GetFiles(tempDir));
+            Assert.HasCount(12, Directory.GetFiles(tempDir));
+        }
+        catch (Exception e)
+        {
+            ErrorLogger.Log(e);
+            Console.WriteLine(e.Message);
+            throw;
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void ManyToOne()
+    {
+        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
+        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+        
+        string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
+        string inputPath2 = Path.Combine(dir, "ocr_test_2.pdf");
+        string inputPath3 = Path.Combine(dir, "ocr_test_3.pdf");
+        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
+        //string format = ".pdf";
+
+        InputClass input = new InputClass
+        {
+            inputFiles = inputs,
+            outputFile = Path.Combine(tempDir, "output.pdf")
+        };
+        
+        try
+        {
+            Divide.ManyToOne(input);
+
+            Assert.IsTrue(File.Exists(input.outputFile));
+            Assert.IsGreaterThan(0, new FileInfo(input.outputFile).Length);
+            
         }
         catch (Exception e)
         {
