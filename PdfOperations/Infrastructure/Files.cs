@@ -2,38 +2,11 @@
 
 public class Files
 {
-    public static string AddFile(string filter)
-    {
-        string file = Dialog.SelectFile(filter);
-        return file;
-    } 
-    
-    public static bool CheckFileOrDir(string file)
-    {
-        if (string.IsNullOrEmpty(file))
-        {
-            Console.WriteLine("Brak plików!");
-            return false;
-        }
-        
-        return true;
-    }
     
     public static string [] AddFiles(string filter)
     {
         string [] files = Dialog.SelectFiles(filter);
         return files;
-    }
-    
-    public static bool CheckFiles(string [] files)
-    {
-        if (files.Length == 0)
-        {
-            Console.WriteLine("Brak plików!");
-            return false;
-        }
-        
-        return true;
     }
     
     public static string AddDirectory()
@@ -95,20 +68,6 @@ public class Files
         if (opt.ToLower().Equals("t"))
             RunClass.RunFile(path);
     }
-
-    public static bool ChoosenFile(string message)
-    {
-        Console.WriteLine(message);
-        string opt = Console.ReadLine()!;
-        //ReadInput options
-
-        if (opt.ToLower().Equals("t"))
-        {
-            return true;
-        }
-
-        return false;
-    }
     
     public static string GetDefaultDirectory()
     {
@@ -129,33 +88,5 @@ public class Files
         string output = $"{fileName}{ext}";
         Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
         return output;
-    }
-
-    public static void MultipleConv(InputClass inputClass, OperationDefinition operation)
-    {
-        int i = 1;
-
-        if (inputClass.inputFiles.Length >= 2)
-        {
-            foreach (string file in inputClass.inputFiles)
-            {
-                string name = Path.GetFileNameWithoutExtension(file);
-
-                string newOutput = Path.Combine(inputClass.dir, $"{name}{operation.Extension}");
-                
-                if (File.Exists(newOutput))
-                {
-                    newOutput = Path.Combine(inputClass.dir, $"{name}_{i}{operation.Extension}");
-                    i++;
-                }
-
-                operation.FileOperationAction(file, newOutput);
-            }
-        }
-        else
-        {
-            string newOutput = Path.Combine(inputClass.dir, inputClass.outputFile);
-            operation.FileOperationAction(inputClass.inputFiles[0], newOutput);
-        }
     }
 }
