@@ -67,9 +67,9 @@ public class SearchTests
         }
         finally
         {
-            //File.Delete(file1);
-            //File.Delete(file2);
-            //File.Delete(file3);
+            File.Delete(file1);
+            File.Delete(file2);
+            File.Delete(file3);
         }
     }
 }

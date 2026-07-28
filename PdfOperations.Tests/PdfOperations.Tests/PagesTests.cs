@@ -52,6 +52,7 @@ public class PagesTests
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(format, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             

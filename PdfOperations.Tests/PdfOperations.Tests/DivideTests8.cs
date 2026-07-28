@@ -47,6 +47,7 @@ public class DivideTests8
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(".pdf", Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
@@ -76,7 +77,7 @@ public class DivideTests8
         string inputPath2 = Path.Combine(dir, "ocr_test_2.pdf");
         string inputPath3 = Path.Combine(dir, "ocr_test_3.pdf");
         string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
-        //string format = ".pdf";
+        string format = ".pdf";
 
         InputClass input = new InputClass
         {
@@ -89,6 +90,7 @@ public class DivideTests8
             Divide.ManyToOne(input);
 
             Assert.IsTrue(File.Exists(input.outputFile));
+            Assert.AreEqual(format, Path.GetExtension(input.outputFile));
             Assert.IsGreaterThan(0, new FileInfo(input.outputFile).Length);
             
         }

@@ -34,6 +34,7 @@ public class ConvertTests8()
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(format, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
         }
@@ -94,6 +95,7 @@ public class ConvertTests8()
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(format, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
@@ -107,8 +109,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(tempDir))
-                //Directory.Delete(tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -156,6 +158,7 @@ public class ConvertTests8()
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(format, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
@@ -218,6 +221,7 @@ public class ConvertTests8()
             foreach (string file in Directory.GetFiles(tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(".txt", Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
@@ -247,7 +251,7 @@ public class ConvertTests8()
         string inputPath2 = Path.Combine(dir, "ocr2.jpg");
         string inputPath3 = Path.Combine(dir, "ocr3.jpg");
         string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
-        //string format = ".pdf";
+        string format = ".pdf";
 
         InputClass input = new InputClass
         {
@@ -260,6 +264,7 @@ public class ConvertTests8()
             Convert.PictToPdf(input);
 
             Assert.IsTrue(File.Exists(input.outputFile));
+            Assert.AreEqual(format, Path.GetExtension(input.outputFile));
             Assert.IsGreaterThan(0, new FileInfo(input.outputFile).Length);
             
         }
