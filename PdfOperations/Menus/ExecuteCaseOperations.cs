@@ -2,30 +2,8 @@
 
 public class ExecuteCaseOperations
 {
-    public static void InputInfo(OperationDefinition operation)
-    {
-        Console.WriteLine("Podaj nazwę pdf: ");
-        string [] input = Files.AddFiles(operation.Filter);
-        
-        foreach (string file in input)
-        {
-            InputClass inputFile = new InputClass
-            {
-                inputFile = file,
-            };
-
-            ExecuteOpe(inputFile, operation);
-        }
-    }
-    
     public static void InputOpe(OperationDefinition operation)
     {
-        if (operation.OperationFlow == OperationFlow.PdfReport)
-        {
-            InputInfo(operation);
-            return;
-        }
-        
         string output = "";
         string phrase = "";
         int before = 0;
@@ -40,6 +18,9 @@ public class ExecuteCaseOperations
         {
             Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
         }
+        
+        if (input.Length == 1)
+            Files.ViewFile(input[0]);
 
         if (operation.Phrase == "search")
         {
@@ -67,9 +48,8 @@ public class ExecuteCaseOperations
             phrase = value;
         }
         
-        if (input.Length == 1)
+        if (input.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile)
         {
-            Files.ViewFile(input[0]);
             Console.WriteLine("Podaj output: ");
             output = Console.ReadLine()!;
 
@@ -81,50 +61,61 @@ public class ExecuteCaseOperations
 
         if (operation.OperationFlow == OperationFlow.FilesToFiles)
         {
-            foreach (string file in input)
+            if (input.Length > 1)
             {
-                InputClass inputFile = new InputClass
+                foreach (string file in input)
                 {
-                    inputFile = file,
-                    outputFile = output,
-                    dir = dir,
-                    phrase = phrase,
-                    before = before,
-                    after = after
-                };
-
-                PreparePath(inputFile, operation);
+                    InputClass inputFile = PrepareInput(file, output, dir, phrase, before, after);
+                    PreparePath(inputFile, operation);
+                }
+            }
+            else
+            {
+                InputClass inputFile = PrepareInput(input[0], output, dir, phrase, before, after);
+                PreparePathSingle(inputFile, operation);
             }
         }
         else
         {
-            InputClass inputFile = new InputClass
-            {
-                inputFiles = input,
-                outputFile = output,
-                dir = dir,
-                phrase = phrase
-            };
+            InputClass inputFileAlt = PrepareInput(input, output, dir, phrase);
             
-            ExecuteOpe(inputFile, operation);
+            if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+                ExecuteOpe(inputFileAlt, operation);
+            else
+            {
+                PreparePathSingle(inputFileAlt, operation);
+            }
         }
 
         Files.ViewFile(dir);
-        
-        /*
-        foreach (string fileInput in input)
+    }
+
+    public static InputClass PrepareInput(string file, string output, string dir, string phrase ,int before = 0, int after = 0)
+    {
+        InputClass inputFile = new InputClass
         {
-            InputClass inputClass = new InputClass
-            {
-                inputFiles = fileInput,
-                outputFile = output,
-                dir = dir,
-                phrase = phrase
-            };
-            
-            operation.GetOutputPathMultipleAction(inputClass, operation);
-        }
-        */
+            inputFile = file,
+            outputFile = output,
+            dir = dir,
+            phrase = phrase,
+            before = before,
+            after = after
+        };
+        
+        return inputFile;
+    }
+    
+    public static InputClass PrepareInput(string [] files, string output, string dir, string phrase)
+    {
+        InputClass inputFile = new InputClass
+        {
+            inputFiles = files,
+            outputFile = output,
+            dir = dir,
+            phrase = phrase,
+        };
+        
+        return inputFile;
     }
 
     public static bool InputSearchOpe(out string value)
@@ -175,6 +166,7 @@ public class ExecuteCaseOperations
     public static void PreparePath(InputClass input, OperationDefinition operation)
     {
         int i = 1;
+
         string name = Path.GetFileNameWithoutExtension(input.inputFile);
         input.outputPath = Path.Combine(input.dir, $"{name}{operation.Extension}");
         
@@ -186,35 +178,26 @@ public class ExecuteCaseOperations
                 
         ExecuteOpe(input, operation);
     }
-    
-    public static void GetOutputPathMultiple(InputClass inputClass, OperationDefinition operation)
+
+    public static void PreparePathSingle(InputClass input, OperationDefinition operation)
     {
         int i = 1;
+        
+        input.outputPath = Path.Combine(input.dir, input.outputFile);
 
-        /*
-        if (inputClass.inputFiles.Length >= 2)
+        if (string.IsNullOrEmpty(Path.GetExtension(input.outputFile)))
         {
-            foreach (string file in inputClass.inputFiles)
-            {
-                string name = Path.GetFileNameWithoutExtension(file);
-
-                inputClass.outputPath = Path.Combine(inputClass.dir, $"{name}{operation.Extension}");
-                
-                if (File.Exists(inputClass.outputPath))
-                {
-                    inputClass.outputPath = Path.Combine(inputClass.dir, $"{name}_{i}{operation.Extension}");
-                    i++;
-                }
-                
-                ExecuteOpe(inputClass, operation);
-            }
+            input.outputPath = Path.Combine(input.dir, input.outputFile + operation.Extension);
         }
-        else
+        
+        while (Path.Exists(input.outputPath))
         {
-            inputClass.outputPath = Path.Combine(inputClass.dir, inputClass.outputFile);
-            ExecuteOpe(inputClass, operation);
+            string name = Path.GetFileNameWithoutExtension(input.outputFile);
+            input.outputPath = Path.Combine(input.dir, $"{name}_{i}{operation.Extension}");
+            i++;
         }
-        */
+                
+        ExecuteOpe(input, operation);
     }
     
     public static void ExecuteOpe(InputClass input, OperationDefinition operation)

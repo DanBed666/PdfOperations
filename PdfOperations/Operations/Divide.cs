@@ -16,7 +16,7 @@ public class Divide
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..file.inputFiles, file.outputFile]);
+        arguments.AddRange([..file.inputFiles, file.outputPath]);
         RunClass.Run(tool, arguments);
     }
 }
