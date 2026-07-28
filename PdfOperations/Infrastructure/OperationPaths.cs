@@ -97,14 +97,14 @@ public class OperationPaths
             {
                 Name = "Pdf Info",
                 Filter = FileFilters.PdfFiles,
-                OperationFlow = OperationFlow.PdfReport,
+                OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationAction = Info.ShowInfo
             },
             [13] = new OperationDefinition
             {
                 Name = "Pdf Font",
                 Filter = FileFilters.PdfFiles,
-                OperationFlow = OperationFlow.PdfReport,
+                OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationAction = Info.ShowFontInfo
             },
             [14] = new OperationDefinition
