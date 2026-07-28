@@ -10,6 +10,7 @@ public class ConvertTests8()
     {
         string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
         string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string tempDir8 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDir);
         
         string inputPath = Path.Combine(dir, "word.docx");
@@ -23,7 +24,8 @@ public class ConvertTests8()
         {
             inputFiles = inputs,
             phrase = "pdf",
-            dir = tempDir
+            dir = tempDir,
+            tempDir = tempDir8
         };
         
         try
