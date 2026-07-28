@@ -48,7 +48,7 @@ public class OperationPaths
             {
                 Name = "Extract Pictures from Pdf",
                 Filter = FileFilters.PdfFiles,
-                FileOperationAction = Info.ExtractPict,
+                FileOperationAction = Convert.ExtractPict,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [7] = new OperationDefinition

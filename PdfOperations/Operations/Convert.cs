@@ -21,7 +21,11 @@ public static class Convert
             if (Path.GetExtension(file.inputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
                 && file.phrase.Equals("docx"))
             {
-                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--infilter=writer_pdf_import", "--convert-to", "odt", ..file.inputFiles, "--outdir", file.dir]);
+                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
+                    "--nologo",
+                    "--nodefault",
+                    "--nofirststartwizard",
+                    "--norestore","--infilter=writer_pdf_import", "--convert-to", "odt", ..file.inputFiles, "--outdir", file.tempDir]);
                 
                 string [] filesOdt = new string[file.inputFiles.Length];
                 
@@ -30,14 +34,34 @@ public static class Convert
                     filesOdt[k] = Path.Combine(file.dir, Path.GetFileNameWithoutExtension(file.inputFiles[i]) + ".odt");
                 }
                 
-                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..filesOdt, "--outdir", file.dir]);
+                arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
+                    "--nologo",
+                    "--nodefault",
+                    "--nofirststartwizard",
+                    "--norestore","--convert-to", file.phrase, ..filesOdt, "--outdir", file.tempDir]);
             }
             
-            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", "--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.dir]);
+            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
+                "--nologo",
+                "--nodefault",
+                "--nofirststartwizard",
+                "--norestore","--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.tempDir]);
         }
         
         RunClass.Run(tool, arguments);
         RunClass.Run(tool, arguments2);
+        
+        string [] filesTab = new string[file.inputFiles.Length];
+        int j = 0;
+
+        foreach (string f in Directory.GetFiles(file.tempDir))
+        {
+            filesTab[j] = Path.GetFullPath(f);
+            j++;
+        }
+        
+        file.inputFiles = filesTab;
+        Files.PreparePathLibre(file);
     }
     
     public static void PdfToPict(InputClass file)

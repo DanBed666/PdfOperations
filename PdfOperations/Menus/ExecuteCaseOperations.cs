@@ -80,7 +80,7 @@ public class ExecuteCaseOperations
             InputClass inputFileAlt = PrepareInput(input, output, dir, phrase);
             
             if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
-                ExecuteOpe(inputFileAlt, operation);
+                PreparePathLibre(inputFileAlt, operation);
             else
             {
                 PreparePathSingle(inputFileAlt, operation);
@@ -200,6 +200,15 @@ public class ExecuteCaseOperations
         ExecuteOpe(input, operation);
     }
     
+    public static void PreparePathLibre(InputClass input, OperationDefinition operation)
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+        input.tempDir = tempDir;
+
+        ExecuteOpe(input, operation);
+    }
+    
     public static void ExecuteOpe(InputClass input, OperationDefinition operation)
     {
         try
@@ -208,7 +217,17 @@ public class ExecuteCaseOperations
             
             operation.FileOperationAction(input);
             Console.WriteLine("Operacja zakończona pomyślnie!");
-            Console.WriteLine($"Zapisano w: {Path.GetFullPath(input.outputPath)}");
+
+            if (operation.OperationFlow != OperationFlow.FilesToFilesWithFormat)
+            {
+                if (!string.IsNullOrEmpty(Path.GetFullPath(input.outputPath)))
+                    Console.WriteLine($"Zapisano w: {Path.GetFullPath(input.outputPath)}");
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(Path.GetFullPath(input.dir)))
+                    Console.WriteLine($"Zapisano w: {Path.GetFullPath(input.dir)}");
+            }
         }
         catch (Exception e)
         {

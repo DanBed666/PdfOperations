@@ -89,4 +89,26 @@ public class Files
         Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
         return output;
     }
+
+    public static void PreparePathLibre(InputClass file)
+    {
+        int i = 1;
+        
+        foreach (string f in file.inputFiles)
+        {
+            file.outputPath = Path.Combine(file.dir, new FileInfo(f).Name);
+            Console.WriteLine(file.outputPath);
+
+            while (File.Exists(file.outputPath))
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file.outputPath) + $"_{i}" + Path.GetExtension(file.outputPath);
+                file.outputPath = Path.Combine(file.dir, fileName);
+                Console.WriteLine(file.outputPath);
+                i++;
+            }
+
+            File.Move(f, file.outputPath);
+            i = 1;
+        }
+    }
 }
