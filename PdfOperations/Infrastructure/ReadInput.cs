@@ -8,12 +8,8 @@ public class ReadInput
 
         if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
         {
+            Console.WriteLine("Nastąpiło wyjście!");
             return null;
-        }
-
-        if (string.IsNullOrEmpty(input))
-        {
-            return "default";
         }
 
         return input;
@@ -27,6 +23,7 @@ public class ReadInput
         {
             if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
             {
+                Console.WriteLine("Nastąpiło wyjście!");
                 return null;
             }
             

@@ -12,7 +12,7 @@ public class Files
     public static string AddDirectory()
     {
         Console.WriteLine("Czy chcesz dodać plik do folderu (T/N)");
-        string opt = Console.ReadLine()!;
+        string opt = ReadInput.ReadOption();
         //ReadInput options
         
         string dir = "";
@@ -41,55 +41,17 @@ public class Files
         
         File.WriteAllLines(output, outputLines);
     }
-
-    public static string GetAvailableFileName(string output)
-    {
-        string? dir = Path.GetDirectoryName(output);
-        string name = Path.GetFileNameWithoutExtension(output);
-        string ext = Path.GetExtension(output);
-        int i = 2;
-        
-        while (File.Exists(output))
-        {
-            output = Path.Combine(dir ?? "", $"{name}-{i}{ext}");
-            i++;
-        }
-
-        Console.WriteLine($"Plik już istnieje! Utworzono nowy plik {output}!");
-        return output;
-    }
     
     public static void ViewFile(string path)
     {
         Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
-        string opt = Console.ReadLine()!;
+        string opt = ReadInput.ReadOption();
         //ReadInput options
         
         if (opt.ToLower().Equals("t"))
             RunClass.RunFile(path);
     }
     
-    public static string GetDefaultDirectory()
-    {
-        string dirDefault = Path.Combine(AppContext.BaseDirectory, "output");
-        
-        if (!Directory.Exists(dirDefault))
-        {
-            Directory.CreateDirectory(dirDefault);
-        }
-
-        return dirDefault;
-    }
-    
-    public static string GetDefaultOutputFile(string input)
-    {
-        string fileName = Path.GetFileNameWithoutExtension(input);
-        string ext = Path.GetExtension(input);
-        string output = $"{fileName}{ext}";
-        Console.WriteLine($"Nie podano nazwy pliku! Utworzono nowy plik {output}!");
-        return output;
-    }
-
     public static void PreparePathLibre(InputClass file)
     {
         int i = 1;

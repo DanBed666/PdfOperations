@@ -51,7 +51,7 @@ public class ExecuteCaseOperations
         if (input.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile)
         {
             Console.WriteLine("Podaj output: ");
-            output = Console.ReadLine()!;
+            output = ReadInput.ReadOutputFile();
 
             if (!CheckParams.CheckFileFormat(output))
                 return;
@@ -121,7 +121,7 @@ public class ExecuteCaseOperations
     public static bool InputSearchOpe(out string value)
     {
         Console.WriteLine("Podaj fraze: ");
-        string phrase = Console.ReadLine()!;
+        string phrase = ReadInput.ReadOutputFile();
         value = phrase;
 
         if (string.IsNullOrEmpty(value))
@@ -136,7 +136,7 @@ public class ExecuteCaseOperations
     public static bool InputPagesOpe(out string value)
     {
         Console.WriteLine("Podaj strony: ");
-        string phrase = Console.ReadLine()!;
+        string phrase = ReadInput.ReadOutputFile();
         value = phrase;
 
         if (string.IsNullOrEmpty(value))
@@ -151,7 +151,7 @@ public class ExecuteCaseOperations
     public static bool InputFormatOpe(out string value)
     {
         Console.WriteLine("Podaj format: ");
-        string format = Console.ReadLine()!;
+        string format = ReadInput.ReadOutputFile();
         value = format;
 
         if (!CheckParams.CheckFormat(value))
