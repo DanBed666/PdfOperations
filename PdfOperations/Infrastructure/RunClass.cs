@@ -19,6 +19,8 @@ public class RunClass
             info.ArgumentList.Add(argument);
         }
         
+        Console.WriteLine("Uruchamiam");
+        Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         using Process process = Process.Start(info)!;
         process.WaitForExit();
         
