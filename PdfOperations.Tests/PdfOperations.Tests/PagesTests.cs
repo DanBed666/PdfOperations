@@ -19,7 +19,7 @@ public class PagesTests
         {
             inputFile = inputPath,
             phrase = "2-3",
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_2.pdf");
@@ -28,7 +28,7 @@ public class PagesTests
         {
             inputFile = inputPath,
             phrase = "2-3",
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_3.pdf");
@@ -37,7 +37,7 @@ public class PagesTests
         {
             inputFile = inputPath,
             phrase = "2-3",
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputFiles.AddRange([input, input2, input3]);

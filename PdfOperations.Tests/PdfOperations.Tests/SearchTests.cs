@@ -21,7 +21,7 @@ public class SearchTests
 
         InputClass input = new InputClass
         {
-            outputPath = file1,
+            tempPath = file1,
             phrase = "hydraulika",
             before = -2,
             after = 2
@@ -29,7 +29,7 @@ public class SearchTests
         
         InputClass input2 = new InputClass
         {
-            outputPath = file2,
+            tempPath = file2,
             phrase = "hydraulika",
             before = -2,
             after = 2
@@ -37,7 +37,7 @@ public class SearchTests
         
         InputClass input3 = new InputClass
         {
-            outputPath = file3,
+            tempPath = file3,
             phrase = "hydraulika",
             before = -2,
             after = 2

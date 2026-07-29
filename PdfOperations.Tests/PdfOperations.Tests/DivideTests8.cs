@@ -16,7 +16,7 @@ public class DivideTests8
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_2.pdf");
@@ -24,7 +24,7 @@ public class DivideTests8
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_3.pdf");
@@ -32,7 +32,7 @@ public class DivideTests8
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputFiles.AddRange([input, input2, input3]);
@@ -82,16 +82,16 @@ public class DivideTests8
         InputClass input = new InputClass
         {
             inputFiles = inputs,
-            outputFile = Path.Combine(tempDir, "output.pdf")
+            tempPath = Path.Combine(tempDir, "output.pdf")
         };
         
         try
         {
             Divide.ManyToOne(input);
 
-            Assert.IsTrue(File.Exists(input.outputFile));
-            Assert.AreEqual(format, Path.GetExtension(input.outputFile));
-            Assert.IsGreaterThan(0, new FileInfo(input.outputFile).Length);
+            Assert.IsTrue(File.Exists(input.tempPath));
+            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
+            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
             
         }
         catch (Exception e)

@@ -19,16 +19,16 @@ public class InfoTests
         InputClass input = new InputClass
         {
             inputFiles = inputs,
-            outputPath = Path.Combine(tempDir, "zapis.txt")
+            tempPath = Path.Combine(tempDir, "zapis.txt")
         };
         
         try
         {
             Info.ShowInfo(input);
 
-            Assert.IsTrue(File.Exists(input.outputPath));
-            Assert.AreEqual(format, Path.GetExtension(input.outputPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.outputPath).Length);
+            Assert.IsTrue(File.Exists(input.tempPath));
+            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
+            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
             
         }
         catch (Exception e)
@@ -60,16 +60,16 @@ public class InfoTests
         InputClass input = new InputClass
         {
             inputFiles = inputs,
-            outputPath = Path.Combine(tempDir, "zapis.txt")
+            tempPath = Path.Combine(tempDir, "zapis.txt")
         };
         
         try
         {
             Info.ShowFontInfo(input);
 
-            Assert.IsTrue(File.Exists(input.outputPath));
-            Assert.AreEqual(format, Path.GetExtension(input.outputPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.outputPath).Length);
+            Assert.IsTrue(File.Exists(input.tempPath));
+            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
+            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
             
         }
         catch (Exception e)

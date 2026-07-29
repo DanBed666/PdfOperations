@@ -31,9 +31,9 @@ public class ConvertTests8()
         try
         {
             Convert.FileToPdf(input);
-            Assert.HasCount(3, Directory.GetFiles(tempDir));
+            Assert.HasCount(3, Directory.GetFiles(input.tempDir));
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(input.tempDir))
             {
                 Assert.IsTrue(File.Exists(file));
                 Assert.AreEqual(format, Path.GetExtension(file));
@@ -66,7 +66,7 @@ public class ConvertTests8()
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
         };
         
         inputPath = Path.Combine(dir, "ocr_test_2.pdf");
@@ -74,7 +74,7 @@ public class ConvertTests8()
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
         };
         
         inputPath = Path.Combine(dir, "ocr_test_3.pdf");
@@ -82,7 +82,7 @@ public class ConvertTests8()
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
         };
         
         inputFiles.AddRange([input, input2, input3]);
@@ -129,7 +129,7 @@ public class ConvertTests8()
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "test2.pdf");
@@ -137,7 +137,7 @@ public class ConvertTests8()
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "test3.pdf");
@@ -145,7 +145,7 @@ public class ConvertTests8()
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputFiles.AddRange([input, input2, input3]);
@@ -192,7 +192,7 @@ public class ConvertTests8()
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr2.jpg");
@@ -200,7 +200,7 @@ public class ConvertTests8()
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr3.jpg");
@@ -208,7 +208,7 @@ public class ConvertTests8()
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputFiles.AddRange([input, input2, input3]);
@@ -258,16 +258,16 @@ public class ConvertTests8()
         InputClass input = new InputClass
         {
             inputFiles = inputs,
-            outputPath = Path.Combine(tempDir, "output.pdf")
+            tempPath = Path.Combine(tempDir, "output.pdf")
         };
         
         try
         {
             Convert.PictToPdf(input);
 
-            Assert.IsTrue(File.Exists(input.outputPath));
-            Assert.AreEqual(format, Path.GetExtension(input.outputPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.outputPath).Length);
+            Assert.IsTrue(File.Exists(input.tempPath));
+            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
+            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
             
         }
         catch (Exception e)
@@ -296,7 +296,7 @@ public class ConvertTests8()
         InputClass input = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_2.pdf");
@@ -304,7 +304,7 @@ public class ConvertTests8()
         InputClass input2 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputPath = Path.Combine(dir, "ocr_test_3.pdf");
@@ -312,7 +312,7 @@ public class ConvertTests8()
         InputClass input3 = new InputClass
         {
             inputFile = inputPath,
-            outputPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
+            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
         };
         
         inputFiles.AddRange([input, input2, input3]);
