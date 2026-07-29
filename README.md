@@ -32,10 +32,6 @@ The application uses portable command-line tools stored in the `tools` folder:
 - Tesseract OCR
 - QPDF
 
-These tools are not intended to be committed to the repository because they can
-be large. They should be included only in a published release package if the app
-is meant to work out of the box.
-
 ## Running
 
 From the published application folder:
