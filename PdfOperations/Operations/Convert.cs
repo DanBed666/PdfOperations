@@ -50,18 +50,6 @@ public static class Convert
         
         RunClass.Run(tool, arguments);
         RunClass.Run(tool, arguments2);
-        
-        string [] filesTab = new string[file.inputFiles.Length];
-        int j = 0;
-
-        foreach (string f in Directory.GetFiles(file.tempDir))
-        {
-            filesTab[j] = Path.GetFullPath(f);
-            j++;
-        }
-        
-        file.inputFiles = filesTab;
-        Files.PreparePathLibre(file);
     }
     
     public static void PdfToPict(InputClass file)
@@ -69,7 +57,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange(["-r", "300", "-jpeg", file.inputFile, file.outputPath]);
+        arguments.AddRange(["-r", "300", "-jpeg", file.inputFile, file.tempPath]);
         RunClass.Run(tool, arguments);
     }
     
@@ -78,7 +66,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([file.inputFile, file.outputPath]);
+        arguments.AddRange([file.inputFile, file.tempPath]);
         RunClass.Run(tool, arguments);
     }
     
@@ -87,7 +75,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([file.inputFile, file.outputPath, "-l", "pol"]);
+        arguments.AddRange([file.inputFile, file.tempPath, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }
     
@@ -96,7 +84,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..file.inputFiles, file.outputPath]);
+        arguments.AddRange([..file.inputFiles, file.tempPath]);
         RunClass.Run(tool, arguments);
     }
     
@@ -105,7 +93,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange(["-all", file.inputFile, file.outputPath]);
+        arguments.AddRange(["-all", file.inputFile, file.tempPath]);
         RunClass.Run(tool, arguments);
     }
 }

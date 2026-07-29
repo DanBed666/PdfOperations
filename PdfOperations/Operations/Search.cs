@@ -9,7 +9,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file), file.outputPath);
+        Files.SaveToFile(SearchNewTxt(file), file.tempPath);
     }
 
     public static void SearchPdf(InputClass file)
@@ -17,43 +17,15 @@ public class Search
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange([file.inputFile, file.outputPath]);
+        arguments.AddRange([file.inputFile, file.tempPath]);
         RunClass.Run(tool, arguments);
-        Files.SaveToFile(SearchNewTxt(file), file.outputPath);
-    }
-
-    public static void SearchMultiplePdf(string [] input, string phrase, string outputDir)
-    {
-        int i = 0;
-        
-        foreach (string file in input)
-        {
-            string name = Path.GetFileNameWithoutExtension(file);
-            string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
-            
-            //SearchPdf(file, phrase, newOutputName);
-            i++;
-        }
+        Files.SaveToFile(SearchNewTxt(file), file.tempPath);
     }
     
-    public static void SearchMultiplePict(string [] input, string phrase, string outputDir)
-    {
-        int i = 0;
-        
-        foreach (string file in input)
-        {
-            string name = Path.GetFileNameWithoutExtension(file);
-            string newOutputName = Path.Combine(outputDir, $"{i + 1}_{name}.txt");
-            
-            //SearchPicture(file, phrase, newOutputName);
-            i++;
-        }
-    }
-
     public static List<List<string>> SearchNewTxt(InputClass file)
     {
         List<List<string>> found = new();
-        string[] test = Files.ReadFile(file.outputPath);
+        string[] test = Files.ReadFile(file.tempPath);
 
         for (int i = 0; i < test.Length; i++)
         {

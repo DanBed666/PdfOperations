@@ -11,7 +11,7 @@ public class Info
         foreach (string f in file.inputFiles)
         {
             string output = RunClass.RunWithOutput(tool, f);
-            SaveToFile(file.outputPath, output, f);
+            SaveToFile(file.tempPath, output, f);
         }
     }
     
@@ -22,7 +22,7 @@ public class Info
         foreach (string f in file.inputFiles)
         {
             string output = RunClass.RunWithOutput(tool, f);
-            SaveToFile(file.outputPath, output, f);
+            SaveToFile(file.tempPath, output, f);
         }
     }
     
