@@ -4,7 +4,7 @@ public class TestHelper
 {
     public static string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
     
-    public static List<InputClass> PrepareFilesToFiles(string fileName, string format, int count, out string tempDir)
+    public static List<InputClass> PrepareFilesToFiles(string fileName, string format, int count, out string tempDir, string phrase = "", int before = 0, int after = 0)
     {
         tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDir);
@@ -17,6 +17,14 @@ public class TestHelper
             
             testInput.inputFile = Path.Combine(dir, Path.GetFileNameWithoutExtension(file) + $"_{i + 1}" + Path.GetExtension(file));
             testInput.tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(testInput.inputFile) + format);
+
+            if (!string.IsNullOrEmpty(phrase))
+            {
+                testInput.phrase = phrase;
+                testInput.before = before;
+                testInput.after = after;
+            }
+
             testInputs.Add(testInput);
         }
 

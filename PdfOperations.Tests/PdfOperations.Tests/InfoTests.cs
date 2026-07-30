@@ -6,36 +6,23 @@ public class InfoTests
     [TestMethod]
     public void ShowInfoTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        
-        string inputPath = Path.Combine(dir, "test.pdf");
-        string inputPath2 = Path.Combine(dir, "test2.pdf");
-        string inputPath3 = Path.Combine(dir, "test3.pdf");
-        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
+        string fileName = "ocr_test.pdf";
         string format = ".txt";
-
-        InputClass input = new InputClass
-        {
-            inputFiles = inputs,
-            tempPath = Path.Combine(tempDir, "zapis.txt")
-        };
+        int count = 3;
+        
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        string tempDir = temp;
         
         try
         {
-            Info.ShowInfo(input);
+            Info.ShowInfo(testFile);
 
-            Assert.IsTrue(File.Exists(input.tempPath));
-            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
+            foreach (string file in Directory.GetFiles(tempDir))
+            {
+                TestHelper.AssertForOneFile(file, format);
+            }
             
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(1, Directory.GetFiles(tempDir));
         }
         finally
         {
@@ -47,36 +34,23 @@ public class InfoTests
     [TestMethod]
     public void ShowFontInfoTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        
-        string inputPath = Path.Combine(dir, "test.pdf");
-        string inputPath2 = Path.Combine(dir, "test2.pdf");
-        string inputPath3 = Path.Combine(dir, "test3.pdf");
-        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
+        string fileName = "test.pdf";
         string format = ".txt";
-
-        InputClass input = new InputClass
-        {
-            inputFiles = inputs,
-            tempPath = Path.Combine(tempDir, "zapis.txt")
-        };
+        int count = 3;
+        
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        string tempDir = temp;
         
         try
         {
-            Info.ShowFontInfo(input);
+            Info.ShowFontInfo(testFile);
 
-            Assert.IsTrue(File.Exists(input.tempPath));
-            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
+            foreach (string file in Directory.GetFiles(tempDir))
+            {
+                TestHelper.AssertForOneFile(file, format);
+            }
             
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(1, Directory.GetFiles(tempDir));
         }
         finally
         {

@@ -72,4 +72,41 @@ public class SearchTests
             File.Delete(file3);
         }
     }
+    
+    [TestMethod]
+    public void SearchTxtTest()
+    {
+        string fileName = "search.txt";
+        string format = ".txt";
+        int count = 3;
+        string phrase = "hydraulika";
+        List<List<string>> found = new List<List<string>>();
+            
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, phrase, -2, 2);
+        string tempDir = temp;
+            
+        try
+        {
+            foreach (InputClass item in testFiles)
+            {
+                found = Search.SearchNewTxt(item);
+            }
+    
+            foreach (string file in Directory.GetFiles(tempDir))
+            {
+                TestHelper.AssertForOneFile(file, format);
+            }
+
+            Assert.IsTrue(found.Any(group =>
+                    group.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
+            
+                
+            //Assert.HasCount(3, Directory.GetFiles(tempDir));
+        }
+        finally
+        {
+            //if (Directory.Exists(tempDir))
+                //Directory.Delete(tempDir, true);
+        }    
+    }
 }

@@ -82,7 +82,7 @@ public class OperationPaths
                 Extension = ".txt",
                 FileOperationAction = Search.SearchPdf,
                 Phrase = "search",
-                OperationFlow = OperationFlow.FilesToFiles
+                OperationFlow = OperationFlow.FilesToSingleFile
             },
             [11] = new OperationDefinition
             {
@@ -91,7 +91,7 @@ public class OperationPaths
                 Extension = ".txt",
                 FileOperationAction = Search.SearchPicture,
                 Phrase = "search",
-                OperationFlow = OperationFlow.FilesToFiles
+                OperationFlow = OperationFlow.FilesToSingleFile
             },
             [12] = new OperationDefinition
             {

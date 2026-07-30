@@ -1,4 +1,6 @@
-﻿namespace PdfOperations;
+﻿using System.Text;
+
+namespace PdfOperations;
 
 public class Search
 {
@@ -9,6 +11,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
         RunClass.Run(tool, arguments);
+        
         Files.SaveToFile(SearchNewTxt(file), file.tempPath);
     }
 
@@ -19,6 +22,7 @@ public class Search
 
         arguments.AddRange([file.inputFile, file.tempPath]);
         RunClass.Run(tool, arguments);
+        
         Files.SaveToFile(SearchNewTxt(file), file.tempPath);
     }
     
@@ -56,5 +60,38 @@ public class Search
         }
         
         return found;
+    }
+    
+    public static void ShowFontInfo(InputClass file)
+    {
+        string tool = ToolPaths.ToolPathsDict[Tool.PdfFonts];
+        
+        foreach (string f in file.inputFiles)
+        {
+            string output = RunClass.RunWithOutput(tool, f);
+            SaveToFile(file.tempPath, output, f);
+        }
+    }
+    
+    public static void SaveToFile(string file, string output, string f)
+    {
+        if (!File.Exists(file))
+        {
+            File.WriteAllText(file, f, new UTF8Encoding(true));
+            File.AppendAllText(file, "\n\n");
+            File.AppendAllText(file, output);
+            File.AppendAllText(file, "-------------------------");
+            File.AppendAllText(file, "\n\n");
+        }
+        else
+        {
+            File.AppendAllText(file, f, new UTF8Encoding(true));
+            File.AppendAllText(file, "\n\n");
+            File.AppendAllText(file, output);
+            File.AppendAllText(file, "-------------------------");
+            File.AppendAllText(file, "\n\n");
+        }
+
+        Console.WriteLine(File.Exists(file));
     }
 }
