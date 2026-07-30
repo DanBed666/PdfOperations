@@ -8,341 +8,180 @@ public class ConvertTests8()
     [TestMethod]
     public void FileToPdfTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        string tempDir8 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        
-        string inputPath = Path.Combine(dir, "word.docx");
-        string inputPath2 = Path.Combine(dir, "kompy.docx");
-        string inputPath3 = Path.Combine(dir, "pdf_test.docx");
-        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
-        
+        string fileName = "word.docx";
         string format = ".pdf";
-
-        InputClass input = new InputClass
-        {
-            inputFiles = inputs,
-            phrase = "pdf",
-            dir = tempDir,
-            tempDir = tempDir8
-        };
+        int count = 3;
+        
+        InputClass testInput = TestHelper.PrepareFilesLibre(fileName, format, count, out string temp);
+        string tempDir = temp;
         
         try
         {
-            Convert.FileToPdf(input);
-            Assert.HasCount(3, Directory.GetFiles(input.tempDir));
+            Convert.FileToPdf(testInput);
 
-            foreach (string file in Directory.GetFiles(input.tempDir))
+            foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(format, Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            
+            Assert.HasCount(count, Directory.GetFiles(tempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
     
     [TestMethod]
     public void PdfToPictTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        List<InputClass> inputFiles = new List<InputClass>();
-        string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
+        string fileName = "ocr_test.pdf";
         string format = ".jpg";
-
-        InputClass input = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
-        };
+        int count = 3;
         
-        inputPath = Path.Combine(dir, "ocr_test_2.pdf");
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        string tempDir = temp;
         
-        InputClass input2 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
-        };
-        
-        inputPath = Path.Combine(dir, "ocr_test_3.pdf");
-        
-        InputClass input3 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath))
-        };
-        
-        inputFiles.AddRange([input, input2, input3]);
-
         try
         {
-            foreach (InputClass item in inputFiles)
+            foreach (InputClass item in testFiles)
             {
                 Convert.PdfToPict(item);
             }
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(format, Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(12, Directory.GetFiles(tempDir));
         }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
-        }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
     
     [TestMethod]
     public void PdfToTxtTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        List<InputClass> inputFiles = new List<InputClass>();
-        string inputPath = Path.Combine(dir, "test.pdf");
+        string fileName = "test.pdf";
         string format = ".txt";
-
-        InputClass input = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
+        int count = 3;
         
-        inputPath = Path.Combine(dir, "test2.pdf");
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        string tempDir = temp;
         
-        InputClass input2 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputPath = Path.Combine(dir, "test3.pdf");
-        
-        InputClass input3 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputFiles.AddRange([input, input2, input3]);
-
         try
         {
-            foreach (InputClass item in inputFiles)
+            foreach (InputClass item in testFiles)
             {
                 Convert.PdfToTxt(item);
             }
-            
+
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(format, Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
             
-            Assert.HasCount(3, Directory.GetFiles(tempDir));
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(count, Directory.GetFiles(tempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
     
     [TestMethod]
     public void PictToTxtTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        List<InputClass> inputFiles = new List<InputClass>();
-        string inputPath = Path.Combine(dir, "ocr1.jpg");
-        string format = "";
-
-        InputClass input = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
+        string fileName = "ocr.jpg";
+        string format = ".txt";
+        int count = 3;
         
-        inputPath = Path.Combine(dir, "ocr2.jpg");
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        string tempDir = temp;
         
-        InputClass input2 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputPath = Path.Combine(dir, "ocr3.jpg");
-        
-        InputClass input3 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputFiles.AddRange([input, input2, input3]);
-
         try
         {
-            foreach (InputClass item in inputFiles)
+            foreach (InputClass item in testFiles)
             {
                 Convert.PictToTxt(item);
             }
-            
+
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(".txt", Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
             
-            Assert.HasCount(3, Directory.GetFiles(tempDir));
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(count, Directory.GetFiles(tempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
     
     [TestMethod]
     public void PictToPdfTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        
-        string inputPath = Path.Combine(dir, "ocr1.jpg");
-        string inputPath2 = Path.Combine(dir, "ocr2.jpg");
-        string inputPath3 = Path.Combine(dir, "ocr3.jpg");
-        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
+        string fileName = "ocr.jpg";
         string format = ".pdf";
-
-        InputClass input = new InputClass
-        {
-            inputFiles = inputs,
-            tempPath = Path.Combine(tempDir, "output.pdf")
-        };
+        int count = 3;
+        
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        string tempDir = temp;
         
         try
         {
-            Convert.PictToPdf(input);
+            Convert.PictToPdf(testFile);
 
-            Assert.IsTrue(File.Exists(input.tempPath));
-            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
+            foreach (string file in Directory.GetFiles(tempDir))
+            {
+                TestHelper.AssertForOneFile(file, format);
+            }
             
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(1, Directory.GetFiles(tempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
     
     [TestMethod]
     public void ExtractPictTest()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        List<InputClass> inputFiles = new List<InputClass>();
-        string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
+        string fileName = "ocr_test.pdf";
         string format = ".jpg";
-
-        InputClass input = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
+        int count = 3;
         
-        inputPath = Path.Combine(dir, "ocr_test_2.pdf");
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        string tempDir = temp;
         
-        InputClass input2 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputPath = Path.Combine(dir, "ocr_test_3.pdf");
-        
-        InputClass input3 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputFiles.AddRange([input, input2, input3]);
-
         try
         {
-            foreach (InputClass item in inputFiles)
+            foreach (InputClass item in testFiles)
             {
                 Convert.ExtractPict(item);
             }
-            
+
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(format, Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(12, Directory.GetFiles(tempDir));
         }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
-        }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(TestHelper.tempDir))
+                //Directory.Delete(TestHelper.tempDir, true);
         }
     }
 }

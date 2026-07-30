@@ -38,14 +38,14 @@ public static class Convert
                     "--nologo",
                     "--nodefault",
                     "--nofirststartwizard",
-                    "--norestore","--convert-to", file.phrase, ..filesOdt, "--outdir", file.tempDir]);
+                    "--norestore","--convert-to", file.format, ..filesOdt, "--outdir", file.tempDir]);
             }
             
             arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
                 "--nologo",
                 "--nodefault",
                 "--nofirststartwizard",
-                "--norestore","--convert-to", file.phrase, ..file.inputFiles, "--outdir", file.tempDir]);
+                "--norestore","--convert-to", file.format, ..file.inputFiles, "--outdir", file.tempDir]);
         }
         
         RunClass.Run(tool, arguments);

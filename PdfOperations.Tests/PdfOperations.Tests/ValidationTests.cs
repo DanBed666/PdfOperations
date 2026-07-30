@@ -3,5 +3,9 @@
 [TestClass]
 public class ValidationTests
 {
-    
+    [TestMethod]
+    public void FilesValidationTest()
+    {
+        
+    }
 }
