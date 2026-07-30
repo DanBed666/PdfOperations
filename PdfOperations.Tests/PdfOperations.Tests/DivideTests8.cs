@@ -6,58 +6,26 @@ public class DivideTests8
     [TestMethod]
     public void OneToMany()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        List<InputClass> inputFiles = new List<InputClass>();
-        string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
-        string format = "%d.pdf";
-
-        InputClass input = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
+        string fileName = "ocr_test.pdf";
+        string format = ".pdf";
+        int count = 3;
         
-        inputPath = Path.Combine(dir, "ocr_test_2.pdf");
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        string tempDir = temp;
         
-        InputClass input2 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputPath = Path.Combine(dir, "ocr_test_3.pdf");
-        
-        InputClass input3 = new InputClass
-        {
-            inputFile = inputPath,
-            tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputPath) + format)
-        };
-        
-        inputFiles.AddRange([input, input2, input3]);
-
         try
         {
-            foreach (InputClass item in inputFiles)
+            foreach (InputClass item in testFiles)
             {
                 Divide.OneToMany(item);
             }
-            
+
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(".pdf", Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(12, Directory.GetFiles(tempDir));
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
         }
         finally
         {
@@ -69,36 +37,23 @@ public class DivideTests8
     [TestMethod]
     public void ManyToOne()
     {
-        string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
-        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        
-        string inputPath = Path.Combine(dir, "ocr_test_1.pdf");
-        string inputPath2 = Path.Combine(dir, "ocr_test_2.pdf");
-        string inputPath3 = Path.Combine(dir, "ocr_test_3.pdf");
-        string[] inputs = new[] { inputPath, inputPath2, inputPath3 };
+        string fileName = "ocr_test.pdf";
         string format = ".pdf";
-
-        InputClass input = new InputClass
-        {
-            inputFiles = inputs,
-            tempPath = Path.Combine(tempDir, "output.pdf")
-        };
+        int count = 3;
+        
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        string tempDir = temp;
         
         try
         {
-            Divide.ManyToOne(input);
+            Divide.ManyToOne(testFile);
 
-            Assert.IsTrue(File.Exists(input.tempPath));
-            Assert.AreEqual(format, Path.GetExtension(input.tempPath));
-            Assert.IsGreaterThan(0, new FileInfo(input.tempPath).Length);
+            foreach (string file in Directory.GetFiles(tempDir))
+            {
+                TestHelper.AssertForOneFile(file, format);
+            }
             
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            Console.WriteLine(e.Message);
-            throw;
+            Assert.HasCount(1, Directory.GetFiles(tempDir));
         }
         finally
         {

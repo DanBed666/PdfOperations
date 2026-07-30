@@ -28,8 +28,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -59,8 +59,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -90,8 +90,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -121,8 +121,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -149,8 +149,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
     
@@ -180,8 +180,8 @@ public class ConvertTests8()
         }
         finally
         {
-            //if (Directory.Exists(TestHelper.tempDir))
-                //Directory.Delete(TestHelper.tempDir, true);
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
 }

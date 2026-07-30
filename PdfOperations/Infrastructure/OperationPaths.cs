@@ -64,7 +64,7 @@ public class OperationPaths
             {
                 Name = "Pdf Separate",
                 Filter = FileFilters.PdfFiles,
-                Extension = "%d",
+                Extension = ".pdf",
                 FileOperationAction = Divide.OneToMany,
                 OperationFlow = OperationFlow.FilesToFiles
             },
