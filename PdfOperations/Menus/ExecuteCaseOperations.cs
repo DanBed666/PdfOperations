@@ -8,6 +8,8 @@ public class ExecuteCaseOperations
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] files = Files.AddFiles(operation.Filter);
 
+        input.move = true;
+
         if (files.Length == 0)
             return;
         
@@ -47,7 +49,8 @@ public class ExecuteCaseOperations
             input.pages = value;
         }
         
-        if (files.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile)
+        if (files.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
+                              || operation.OperationFlow == OperationFlow.SearchReport)
         {
             Console.WriteLine("Podaj output: ");
             string output = ReadInput.ReadOutputFile();
@@ -66,6 +69,7 @@ public class ExecuteCaseOperations
         }
 
         input.dir = dir;
+        input.extension = operation.Extension;
         
         Files.PrepareTempPath(input, operation);
 

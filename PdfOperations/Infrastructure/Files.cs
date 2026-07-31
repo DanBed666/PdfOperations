@@ -32,14 +32,17 @@ public class Files
 
     public static void SaveToFile(List<List<string>> found, string output)
     {
-        List<string> outputLines = new();
+        List<string> outputLines = new List<string>();
         
         foreach (List<String> lista in found)
         {
             outputLines.AddRange(lista);
         }
         
-        File.WriteAllLines(output, outputLines);
+        if (!File.Exists(output))
+            File.WriteAllLines(output, outputLines);
+        else
+            File.AppendAllLines(output, outputLines);
     }
     
     public static void ViewFile(string path)
@@ -52,17 +55,43 @@ public class Files
             RunClass.RunFile(path);
     }
 
-    public static string GetUniqueFileName(string path, OperationDefinition operation)
+    public static string GetUniqueFileName(string path, string extension)
     {
         int i = 1;
         string finalPath = path;
 
         while (File.Exists(finalPath))
         {
-            finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{operation.Extension}");
+            finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{extension}");
         }
 
         return finalPath;
+    }
+
+    public static void FilesToFilesFlow(InputClass input, OperationDefinition operation)
+    {
+        if (input.inputFiles.Length > 1)
+        {
+            foreach (string file in input.inputFiles)
+            {
+                input.inputFile = file;
+                string name = Path.GetFileNameWithoutExtension(input.inputFile) + input.extension;
+                input.tempPath = Path.Combine(input.tempDir, name);
+                ExecuteOpe(input, operation);
+            }
+        }
+        else
+        {
+            input.tempPath = Path.Combine(input.tempDir, Path.GetFileName(input.output));
+            ExecuteOpe(input, operation);
+        }
+    }
+    
+    public static void FilesToSingleFlow(InputClass input, OperationDefinition operation)
+    {
+        string name = Path.GetFileNameWithoutExtension(input.inputFile) + input.extension;
+        input.tempPath = Path.Combine(input.tempDir, name);
+        ExecuteOpe(input, operation);
     }
 
     public static void PrepareTempPath(InputClass input, OperationDefinition operation)
@@ -73,29 +102,33 @@ public class Files
 
         if (operation.OperationFlow == OperationFlow.FilesToFiles)
         {
-            if (input.inputFiles.Length > 1)
-            {
-                foreach (string file in input.inputFiles)
-                {
-                    input.inputFile = file;
-                    input.tempPath = Path.Combine(input.tempDir, Path.GetFileName(input.inputFile));
-                    ExecuteOpe(input, operation);
-                }
-            }
-            else
-            {
-                input.tempPath = Path.Combine(input.tempDir, Path.GetFileName(input.output));
-                ExecuteOpe(input, operation);
-            }
+            FilesToFilesFlow(input, operation);
+        }
+        else if (operation.OperationFlow == OperationFlow.SearchReport)
+        {
+            input.move = false;
+            operation.OperationFlow = OperationFlow.FilesToFiles;
+            FilesToFilesFlow(input, operation);
+            
+            operation.OperationFlow = OperationFlow.SearchReport;
+            ExecuteOpe(input, operation);
         }
         else
         {
-            input.tempPath = Path.Combine(input.tempDir, Path.GetFileName(input.output));
-            ExecuteOpe(input, operation);
+            FilesToSingleFlow(input, operation);
         }
         
         Console.WriteLine("Trwa zapisywane...");
-        PrepareFinalPath(input, operation);
+
+        foreach (string file in Directory.GetFiles(Path.GetDirectoryName(input.tempPath)!))
+        {
+            string finalPath = PrepareFinalPath(input, file);
+            
+            if (input.move)
+                File.Move(file, finalPath);
+        }
+
+        //Directory.Delete(input.tempDir);
     }
     
     public static void ExecuteOpe(InputClass input, OperationDefinition operation)
@@ -103,8 +136,16 @@ public class Files
         try
         {
             Console.WriteLine("Trwa konwersja...");
-            
-            operation.FileOperationAction(input);
+
+            if (operation.OperationFlow == OperationFlow.SearchReport)
+            {
+                operation.ReportOperationAction(input);
+            }
+            else
+            {
+                operation.FileOperationAction(input);
+            }
+
             Console.WriteLine("Operacja zakończona pomyślnie!");
         }
         catch (Exception e)
@@ -115,16 +156,18 @@ public class Files
         }
     }
 
-    public static void PrepareFinalPath(InputClass input, OperationDefinition operation)
+    public static string PrepareFinalPath(InputClass input, string file = "")
     {
-        foreach (string file in Directory.GetFiles(Path.GetDirectoryName(input.tempPath)!))
-        {
-            string finalPath = Path.Combine(input.dir, Path.GetFileName(file));
+        string finalPath = "";
+        
+        if (string.IsNullOrEmpty(input.output))
+            finalPath = Path.Combine(input.dir, Path.GetFileName(file));
+        else
+            finalPath = Path.Combine(input.dir, input.output);
 
-            if (File.Exists(finalPath))
-                finalPath = GetUniqueFileName(finalPath, operation);
+        if (File.Exists(finalPath))
+            finalPath = GetUniqueFileName(finalPath, input.extension);
 
-            File.Move(file, finalPath);
-        }
+        return finalPath;
     }
 }
