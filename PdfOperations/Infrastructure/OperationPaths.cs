@@ -80,18 +80,20 @@ public class OperationPaths
                 Name = "Search Text in Pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
-                FileOperationAction = Search.SearchPdf,
+                FileOperationAction = Convert.PdfToTxt,
+                ReportOperationAction = Search.SearchPdf,
                 Phrase = "search",
-                OperationFlow = OperationFlow.FilesToSingleFile
+                OperationFlow = OperationFlow.SearchReport
             },
             [11] = new OperationDefinition
             {
                 Name = "Search Text in Picture",
                 Filter = FileFilters.PictFiles,
                 Extension = ".txt",
-                FileOperationAction = Search.SearchPicture,
+                FileOperationAction = Convert.PictToTxt,
+                ReportOperationAction = Search.SearchPicture,
                 Phrase = "search",
-                OperationFlow = OperationFlow.FilesToSingleFile
+                OperationFlow = OperationFlow.SearchReport
             },
             [12] = new OperationDefinition
             {
