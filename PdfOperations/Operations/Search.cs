@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.CodeDom.Compiler;
+using System.Text;
 
 namespace PdfOperations;
 
@@ -6,36 +7,37 @@ public class Search
 {
     public static void SearchPicture(InputClass file)
     {
-        string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
-        List<string> arguments = new List<string>();
-
-        arguments.AddRange([file.inputFile, Path.ChangeExtension(file.inputFile, null), "-l", "pol"]);
-        RunClass.Run(tool, arguments);
+        string save = Files.PrepareFinalPath(file);
         
-        Files.SaveToFile(SearchNewTxt(file), file.tempPath);
+        foreach (string f in Directory.GetFiles(file.tempDir))
+        {
+            Files.SaveToFile(SearchNewTxt(f, file), save);
+        }
     }
 
     public static void SearchPdf(InputClass file)
     {
-        string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
-        List<string> arguments = new List<string>();
-
-        arguments.AddRange([file.inputFile, file.tempPath]);
-        RunClass.Run(tool, arguments);
+        string save = Files.PrepareFinalPath(file);
         
-        Files.SaveToFile(SearchNewTxt(file), file.tempPath);
+        foreach (string f in Directory.GetFiles(file.tempDir))
+        {
+            Files.SaveToFile(SearchNewTxt(f, file), save);
+        }
     }
     
-    public static List<List<string>> SearchNewTxt(InputClass file)
+    public static List<List<string>> SearchNewTxt(string f, InputClass file)
     {
         List<List<string>> found = new();
-        string[] test = Files.ReadFile(file.tempPath);
+        string[] test = Files.ReadFile(f);
 
         for (int i = 0; i < test.Length; i++)
         {
             if (test[i].Contains(file.phrase.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 List<string> lines = new List<string>();
+                
+                lines.Add(f);
+                lines.Add("\n");
                 
                 for (int k = file.before; k <= file.after; k++)
                 {
@@ -48,6 +50,7 @@ public class Search
                 }
                 
                 lines.Add("------------------------------------");
+                lines.Add("\n");
                 found.Add(lines);
             }
         }
@@ -55,7 +58,11 @@ public class Search
         if (found.Count == 0)
         {
             List<string> lines = new List<string>();
+            lines.Add(f);
+            lines.Add("\n");
             lines.Add("Nie znaleziono podanej frazy w pliku!");
+            lines.Add("------------------------------------");
+            lines.Add("\n");
             found.Add(lines);
         }
         
