@@ -1,4 +1,6 @@
-﻿namespace PdfOperations;
+﻿using System.Runtime;
+
+namespace PdfOperations;
 
 public class Files
 {
@@ -120,15 +122,62 @@ public class Files
         
         Console.WriteLine("Trwa zapisywane...");
 
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+
         foreach (string file in Directory.GetFiles(Path.GetDirectoryName(input.tempPath)!))
         {
-            string finalPath = PrepareFinalPath(input, file);
-            
-            if (input.move)
-                File.Move(file, finalPath);
+            MoveFile(input, existing, file);
+        }
+
+        if (existing.Count != 0)
+        {
+            OverWriteFile(input, existing);
         }
 
         //Directory.Delete(input.tempDir);
+    }
+
+    public static void MoveFile(InputClass input, Dictionary <string, string> existing, string file)
+    {
+        string finalPath = PrepareFinalPath(input, file);
+            
+        if (File.Exists(finalPath))
+        {
+            existing[file] = finalPath;
+        }
+        else
+        {
+            if (input.move)
+                File.Move(file, finalPath);
+        }
+    }
+
+    public static void OverWriteFile(InputClass input, Dictionary <string, string> existing)
+    {
+        Console.WriteLine("Czy nadpisać plik t/n");
+        string wybor = Console.ReadLine()!;
+            
+        if (wybor.ToLower().Equals("n"))
+        {
+            foreach (var value in existing)
+            {
+                string newName = GetUniqueFileName(value.Value, input.extension);
+                Console.WriteLine(newName);
+
+                if (input.move)
+                {
+                    File.Move(value.Key, newName);
+                }
+            }
+        }
+        else
+        {
+            foreach (var value in existing)
+            {
+                if (input.move)
+                    File.Move(value.Key, value.Value, overwrite: true);
+            }
+        }
     }
     
     public static void ExecuteOpe(InputClass input, OperationDefinition operation)
@@ -159,14 +208,11 @@ public class Files
     public static string PrepareFinalPath(InputClass input, string file = "")
     {
         string finalPath = "";
-        
+
         if (string.IsNullOrEmpty(input.output))
             finalPath = Path.Combine(input.dir, Path.GetFileName(file));
         else
             finalPath = Path.Combine(input.dir, input.output);
-
-        if (File.Exists(finalPath))
-            finalPath = GetUniqueFileName(finalPath, input.extension);
 
         return finalPath;
     }

@@ -1,4 +1,5 @@
 ﻿namespace PdfOperations.Tests;
+using System.Linq;
 
 [TestClass]
 public class SearchTests
@@ -49,9 +50,12 @@ public class SearchTests
         {
             foreach (InputClass file in inputFiles)
             {
-                found = Search.SearchNewTxt(file);
+                foreach (string f in Directory.GetFiles(tempDir))
+                {
+                    Search.SearchNewTxt(f, file);
+                }
             }
-            
+
             Assert.HasCount(2, found);
 
             foreach (List<string> lst in found)
@@ -81,15 +85,26 @@ public class SearchTests
         int count = 3;
         string phrase = "hydraulika";
         List<List<string>> found = new List<List<string>>();
+        List<List<string>> allFound = new List<List<string>>();
             
         List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, phrase, -2, 2);
         string tempDir = temp;
-            
+        
+        foreach (InputClass file in testFiles)
+        {
+            File.Copy(file.inputFile, file.tempPath);
+        }
+        
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (InputClass file in testFiles)
             {
-                found = Search.SearchNewTxt(item);
+                foreach (string f in Directory.GetFiles(tempDir))
+                {
+                    List<List<string>> result = Search.SearchNewTxt(f, file);
+                    allFound.AddRange(result);
+                    Files.SaveToFile(Search.SearchNewTxt(f, file), Path.Combine(tempDir, "output.txt"));
+                }
             }
     
             foreach (string file in Directory.GetFiles(tempDir))
@@ -97,11 +112,13 @@ public class SearchTests
                 TestHelper.AssertForOneFile(file, format);
             }
 
-            Assert.IsTrue(found.Any(group =>
+            Assert.IsTrue(allFound.Any(group =>
                     group.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
             
-                
-            //Assert.HasCount(3, Directory.GetFiles(tempDir));
+            //Assert.AreEqual(15, found.Sum(x => x.Count));
+            Assert.AreEqual(2, allFound.Sum(group => group.Count(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
+            
+            Assert.HasCount(4, Directory.GetFiles(tempDir));
         }
         finally
         {
