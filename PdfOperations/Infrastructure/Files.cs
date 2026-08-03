@@ -154,28 +154,28 @@ public class Files
 
     public static void OverWriteFile(InputClass input, Dictionary <string, string> existing)
     {
-        Console.WriteLine("Czy nadpisać plik t/n");
+        Console.WriteLine("Znaleziono istniejące pliki! Nadpisać wszystkie? (T/N)");
         string wybor = Console.ReadLine()!;
             
-        if (wybor.ToLower().Equals("n"))
-        {
-            foreach (var value in existing)
-            {
-                string newName = GetUniqueFileName(value.Value, input.extension);
-                Console.WriteLine(newName);
-
-                if (input.move)
-                {
-                    File.Move(value.Key, newName);
-                }
-            }
-        }
-        else
+        if (wybor.ToLower().Equals("t"))
         {
             foreach (var value in existing)
             {
                 if (input.move)
                     File.Move(value.Key, value.Value, overwrite: true);
+            }
+        }
+        else
+        {
+            foreach (var file in existing)
+            {
+                string newName = GetUniqueFileName(file.Value, Path.GetExtension(file.Value));
+                Console.WriteLine(newName);
+
+                if (input.move)
+                {
+                    File.Move(file.Key, newName);
+                }
             }
         }
     }
