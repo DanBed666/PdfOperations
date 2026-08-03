@@ -84,6 +84,7 @@ public class Files
         }
         else
         {
+            input.inputFile = input.inputFiles[0];
             input.tempPath = Path.Combine(input.tempDir, Path.GetFileName(input.output));
             ExecuteOpe(input, operation);
         }
@@ -196,6 +197,7 @@ public class Files
             }
 
             Console.WriteLine("Operacja zakończona pomyślnie!");
+            Console.WriteLine($"Zapisano do {input.dir}!");
         }
         catch (Exception e)
         {

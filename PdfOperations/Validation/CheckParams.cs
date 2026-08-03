@@ -2,8 +2,9 @@
 
 public class CheckParams
 {
-    public static bool CheckFileFormat(string output)
+    public static bool CheckFileFormat(string output, out string formatStart)
     {
+        formatStart = Path.GetExtension(output);
         string format = Path.GetExtension(output).Replace(".", "");
 
         if (!Enum.TryParse(typeof(FileExtension), format, ignoreCase: true, out object? ext))

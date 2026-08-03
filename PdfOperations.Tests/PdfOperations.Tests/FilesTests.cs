@@ -4,7 +4,7 @@
 public class FilesTests
 {
     [TestMethod]
-    public void Deupa()
+    public void GetUniqueFileNameTest()
     {
         
     }

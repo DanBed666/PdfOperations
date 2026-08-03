@@ -55,8 +55,17 @@ public class ExecuteCaseOperations
             Console.WriteLine("Podaj output: ");
             string output = ReadInput.ReadOutputFile();
 
-            if (!CheckParams.CheckFileFormat(output))
+            if (!CheckParams.CheckFileFormat(output, out string format))
+            {
+                Console.WriteLine("Nie ma takiego formatu!");
                 return;
+            }
+
+            if (!format.Equals(operation.Extension))
+            {
+                Console.WriteLine($"Niepoprawny format! Poprawny format to {operation.Extension}");
+                return;
+            }
 
             input.output = output;
         }
