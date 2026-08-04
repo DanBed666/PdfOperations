@@ -28,4 +28,58 @@ public class CheckParams
         Console.WriteLine($"Wybrano format {ext}");
         return true;
     }
+
+    public static string GetOutput()
+    {
+        Console.WriteLine("Podaj output: ");
+        string output = ReadInput.ReadOutputFile();
+        return output;
+    }
+
+    public static bool CheckIfFormatNotExist(OperationDefinition operation, InputClass input, string output, string format, bool finish)
+    {
+        if (string.IsNullOrEmpty(format))
+        {
+            format = operation.Extension;
+
+            if (output[^1] == '.')
+                output = output.Replace(".", "");
+
+            input.output = Path.GetFileNameWithoutExtension(output) + format;
+            finish = true;
+            Console.WriteLine($"Uzupełniono plik o format {operation.Extension}!");
+        }
+        else
+        {
+            Console.WriteLine("Format nieobsługiwany!");
+            Console.WriteLine("Czy poprawić?");
+            string inp = ReadInput.ReadOption();
+
+            if (inp == "t")
+            {
+                format = operation.Extension;
+                input.output = Path.GetFileNameWithoutExtension(output) + format;
+                finish = true;
+                Console.WriteLine($"Poprawiono format na {operation.Extension}!");
+            }
+        }
+
+        return finish;
+    }
+    
+    public static bool CheckIfFormatExist(OperationDefinition operation, InputClass input, string output, string format, bool finish)
+    {
+        Console.WriteLine($"Niepoprawny format! Poprawny format to {operation.Extension}");
+        Console.WriteLine("Czy poprawić?");
+        string inp = ReadInput.ReadOption();
+
+        if (inp == "t")
+        {
+            format = operation.Extension;
+            input.output = Path.GetFileNameWithoutExtension(output) + format;
+            finish = true;
+        }
+        
+        return finish;
+    }
 }

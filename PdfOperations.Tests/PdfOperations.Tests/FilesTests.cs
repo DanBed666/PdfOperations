@@ -8,4 +8,22 @@ public class FilesTests
     {
         
     }
+    
+    [TestMethod]
+    public void PreparePathTest()
+    {
+        
+    }
+    
+    [TestMethod]
+    public void AddFilesTest()
+    {
+        
+    }
+    
+    [TestMethod]
+    public void AddDirectoryTest()
+    {
+        
+    }
 }

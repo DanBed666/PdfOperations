@@ -48,26 +48,32 @@ public class ExecuteCaseOperations
             if (!InputPagesOpe(out string value)) return;
             input.pages = value;
         }
-        
+
+        bool finish = false;
+
         if (files.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
                               || operation.OperationFlow == OperationFlow.SearchReport)
         {
-            Console.WriteLine("Podaj output: ");
-            string output = ReadInput.ReadOutputFile();
-
-            if (!CheckParams.CheckFileFormat(output, out string format))
+            while (!finish)
             {
-                Console.WriteLine("Nie ma takiego formatu!");
-                return;
-            }
+                string output = CheckParams.GetOutput();
 
-            if (!format.Equals(operation.Extension))
-            {
-                Console.WriteLine($"Niepoprawny format! Poprawny format to {operation.Extension}");
-                return;
+                if (!CheckParams.CheckFileFormat(output, out string format))
+                {
+                    if (CheckParams.CheckIfFormatNotExist(operation, input, output, format, finish))
+                        break;
+                }
+                else if (!format.Equals(operation.Extension))
+                {
+                    if (CheckParams.CheckIfFormatExist(operation, input, output, format, finish))
+                        break;
+                }
+                else
+                {
+                    input.output = output;
+                    break;
+                }
             }
-
-            input.output = output;
         }
         
         string dir = Files.AddDirectory();
