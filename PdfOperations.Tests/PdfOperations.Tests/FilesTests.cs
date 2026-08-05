@@ -18,7 +18,7 @@ public class FilesTests
     [TestMethod]
     public void AddFilesTest()
     {
-        
+        FileTestHelper.CreateFiles();
     }
     
     [TestMethod]

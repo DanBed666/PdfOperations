@@ -13,7 +13,7 @@ public class PagesTests
         int count = 3;
         string pages = "2-3";
         
-        List<InputClass> testFiles = IntegrationTestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, pages);
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, pages);
         string tempDir = temp;
         
         try
@@ -25,7 +25,7 @@ public class PagesTests
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                IntegrationTestHelper.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(3, Directory.GetFiles(tempDir));

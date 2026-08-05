@@ -1,13 +1,19 @@
 ﻿namespace PdfOperations.Tests;
 
-public class IntegrationTestHelper
+public class TestHelper
 {
     public static string dir = Path.Combine(AppContext.BaseDirectory, "TestData");
+
+    public static string CreateTempFolder()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+        return tempDir;
+    }
     
     public static List<InputClass> PrepareFilesToFiles(string fileName, string format, int count, out string tempDir, string phrase = "", int before = 0, int after = 0)
     {
-        tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        tempDir = CreateTempFolder();
         List<InputClass> testInputs = new List<InputClass>();
 
         for (int i = 0; i < count; i++)
@@ -33,8 +39,7 @@ public class IntegrationTestHelper
     
     public static InputClass PrepareFilesToSingle(string fileName, string format, int count, out string tempDir)
     {
-        tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        tempDir = CreateTempFolder();
         string [] inputs = new string[count];
         InputClass testInput = new InputClass();
 
@@ -54,8 +59,7 @@ public class IntegrationTestHelper
     
     public static InputClass PrepareFilesLibre(string fileName, string format, int count, out string tempDir)
     {
-        tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        tempDir = CreateTempFolder();
         string [] inputs = new string[count];
         InputClass testInput = new InputClass();
 

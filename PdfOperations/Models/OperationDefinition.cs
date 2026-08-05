@@ -3,7 +3,7 @@
 public class OperationDefinition
 {
     public string Name { get; init; } = "";
-    public string Extension { get; init; } = "";
+    public string Extension { get; set; } = "";
     public string Filter { get; init; } = "";
     public string Phrase { get; init; } = "";
     public OperationFlow OperationFlow { get; set; }

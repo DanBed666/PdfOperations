@@ -10,7 +10,7 @@ public class InfoTests
         string format = ".txt";
         int count = 3;
         
-        InputClass testFile = IntegrationTestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
         string tempDir = temp;
         
         try
@@ -19,7 +19,7 @@ public class InfoTests
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                IntegrationTestHelper.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(1, Directory.GetFiles(tempDir));
@@ -38,7 +38,7 @@ public class InfoTests
         string format = ".txt";
         int count = 3;
         
-        InputClass testFile = IntegrationTestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
         string tempDir = temp;
         
         try
@@ -47,7 +47,7 @@ public class InfoTests
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                IntegrationTestHelper.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(1, Directory.GetFiles(tempDir));

@@ -10,7 +10,7 @@ public class DivideTests8
         string format = ".pdf";
         int count = 3;
         
-        List<InputClass> testFiles = IntegrationTestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
+        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
         string tempDir = temp;
         
         try
@@ -22,7 +22,7 @@ public class DivideTests8
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                IntegrationTestHelper.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(12, Directory.GetFiles(tempDir));
@@ -41,7 +41,7 @@ public class DivideTests8
         string format = ".pdf";
         int count = 3;
         
-        InputClass testFile = IntegrationTestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
+        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
         string tempDir = temp;
         
         try
@@ -50,7 +50,7 @@ public class DivideTests8
 
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                IntegrationTestHelper.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, format);
             }
             
             Assert.HasCount(1, Directory.GetFiles(tempDir));
