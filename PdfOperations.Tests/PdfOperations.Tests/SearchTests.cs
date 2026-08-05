@@ -13,7 +13,7 @@ public class SearchTests
         string phrase = "hydraulika";
         List<List<string>> allFound = new List<List<string>>();
             
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, phrase, -2, 2);
+        List<InputClass> testFiles = IntegrationTestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, phrase, -2, 2);
         string tempDir = temp;
         
         foreach (InputClass file in testFiles)
@@ -32,7 +32,7 @@ public class SearchTests
     
             foreach (string file in Directory.GetFiles(tempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                IntegrationTestHelper.AssertForOneFile(file, format);
             }
 
             Assert.IsTrue(allFound.Any(group =>

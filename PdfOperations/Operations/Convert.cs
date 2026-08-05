@@ -19,7 +19,7 @@ public static class Convert
         for (int i = 0; i < file.inputFiles.Length; i++)
         {
             if (Path.GetExtension(file.inputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
-                && file.phrase.Equals("docx"))
+                && file.format.Equals("docx"))
             {
                 arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
                     "--nologo",
@@ -29,9 +29,9 @@ public static class Convert
                 
                 string [] filesOdt = new string[file.inputFiles.Length];
                 
-                for (int k = 0; i < file.inputFiles.Length; i++)
+                for (int k = 0; k < file.inputFiles.Length; k++)
                 {
-                    filesOdt[k] = Path.Combine(file.dir, Path.GetFileNameWithoutExtension(file.inputFiles[i]) + ".odt");
+                    filesOdt[k] = Path.Combine(file.tempDir, Path.GetFileNameWithoutExtension(file.inputFiles[k]) + ".odt");
                 }
                 
                 arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
@@ -40,12 +40,14 @@ public static class Convert
                     "--nofirststartwizard",
                     "--norestore","--convert-to", file.format, ..filesOdt, "--outdir", file.tempDir]);
             }
-            
-            arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
-                "--nologo",
-                "--nodefault",
-                "--nofirststartwizard",
-                "--norestore","--convert-to", file.format, ..file.inputFiles, "--outdir", file.tempDir]);
+            else
+            {
+                arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
+                    "--nologo",
+                    "--nodefault",
+                    "--nofirststartwizard",
+                    "--norestore","--convert-to", file.format, ..file.inputFiles, "--outdir", file.tempDir]);
+            }
         }
         
         RunClass.Run(tool, arguments);
