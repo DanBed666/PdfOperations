@@ -4,9 +4,8 @@ public enum OperationFlow
 {
     FilesToFiles,
     FilesToFilesWithFormat,
-    FilesToFilesWithSearch,
     FilesToSingleFile,
-    PdfReport,
+    FilesPages,
     RunApp,
     SearchReport
 }

@@ -5,12 +5,15 @@ public class OperationDefinition
     public string Name { get; init; } = "";
     public string Extension { get; set; } = "";
     public string Filter { get; init; } = "";
-    public string Phrase { get; init; } = "";
+    public string AddInfo { get; init; } = "";
     public OperationFlow OperationFlow { get; set; }
     public bool SingleFile { get; set; } = false;
 
-    public Action<InputClass> FileOperationAction { get; init; }
+    public Action<OperationInput, FileJob> FileOperationActionSingle { get; init; }
+    public Action<List<FileJob>> FileOperationActionMultiple { get; init; }
+    public Action<OperationInput, List<FileJob>> FileOperationActionPages { get; init; }
+    public Action<OperationInput, OperationContext> FileOperationActionLibre { get; init; }
     
-    public Action<InputClass> ReportOperationAction { get; init; }
+    public Action<OperationInput, OperationContext, FileJob> ReportOperationAction { get; init; }
     public Action<OperationDefinition> RunOperationAction { get; init; }
 }
