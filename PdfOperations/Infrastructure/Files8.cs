@@ -93,24 +93,32 @@ public class Files8
         return finalPath;
     }
 
-    public static void FindExisitingFiles(OperationInput operationInput)
+    public static Dictionary <string, string> FindNotExisitingFiles(List<FileJob> fileJobs)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
 
-        //foreach (string file in Directory.GetFiles(Path.GetDirectoryName(operationInput.TempPath)!))
-        //{
-            
-        //}
-
-        if (existing.Count != 0)
+        foreach (FileJob fileJob in fileJobs)
         {
-            //OverWriteFile(operationInput, existing);
+            if (!File.Exists(fileJob.FinalPath))
+            {
+                existing.Add(fileJob.TempPath, fileJob.FinalPath);
+            }
         }
+
+        return existing;
     }
 
-    public static void OverWriteFile()
+    public static void OverWriteFile(Dictionary <string, string> existing)
     {
         
+    }
+    
+    public static void MoveFiles(Dictionary <string, string> existing)
+    {
+        foreach (KeyValuePair<string, string> item in existing)
+        {
+            File.Move(item.Key, item.Value);
+        }
     }
     
     public static void SaveToFile(List<List<string>> found, string output)
