@@ -2,11 +2,8 @@
 
 public class Execute
 {
-    public static void ExecuteOpe(OperationInput fileInput, OperationDefinition operation)
+    public static void SaveToTempDir(OperationDefinition operation, OperationInput fileInput, OperationContext context, List<FileJob> fileJobs)
     {
-        OperationContext context = ExecutionBuilder.SetOperationContext();
-        List<FileJob> fileJobs = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-
         foreach (FileJob fileJob in fileJobs)
         {
             try
@@ -50,6 +47,35 @@ public class Execute
                 throw;
             }
         }
+    }
+
+    public static void MoveToFinalDir(List<FileJob> fileJobs)
+    {
+        Dictionary <string, string> notExisting = new Dictionary<string, string>();
+        notExisting = Files8.FindNotExisitingFiles(fileJobs);
+        
+        foreach (KeyValuePair<string, string> item in notExisting)
+        {
+            Console.WriteLine(item.Key + ": " + item.Value);
+        }
+
+        if (notExisting.Count != 0)
+        {
+            Files8.MoveFiles(notExisting);
+        }
+        else
+        {
+            Files8.MoveFiles(notExisting);
+        }
+    }
+    
+    public static void ExecuteOpe(OperationInput fileInput, OperationDefinition operation)
+    {
+        OperationContext context = ExecutionBuilder.SetOperationContext();
+        List<FileJob> fileJobs = ExecutionBuilder.SetFileJob(fileInput, context, operation);
+        
+        SaveToTempDir(operation, fileInput, context, fileJobs);
+        MoveToFinalDir(fileJobs);
     }
     
     public static void ExecuteOpeFilesToFiles(OperationDefinition operation, FileJob fileJob)
