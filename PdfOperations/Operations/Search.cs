@@ -5,41 +5,37 @@ namespace PdfOperations;
 
 public class Search
 {
-    public static void SearchPicture(InputClass file)
+    public static void SearchPicture(OperationInput input, OperationContext context, FileJob file)
     {
-        string save = Files.PrepareFinalPath(file);
-        
-        foreach (string f in Directory.GetFiles(file.tempDir))
+        foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files.SaveToFile(SearchNewTxt(f, file), save);
+            Files8.SaveToFile(SearchNewTxt(f, input), file.FinalPath);
         }
     }
 
-    public static void SearchPdf(InputClass file)
+    public static void SearchPdf(OperationInput input, OperationContext context, FileJob file)
     {
-        string save = Files.PrepareFinalPath(file);
-        
-        foreach (string f in Directory.GetFiles(file.tempDir))
+        foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files.SaveToFile(SearchNewTxt(f, file), save);
+            Files8.SaveToFile(SearchNewTxt(f, input), file.FinalPath);
         }
     }
     
-    public static List<List<string>> SearchNewTxt(string f, InputClass file)
+    public static List<List<string>> SearchNewTxt(string f, OperationInput fileInput)
     {
         List<List<string>> found = new();
-        string[] test = Files.ReadFile(f);
+        string[] test = Files8.ReadFile(f);
 
         for (int i = 0; i < test.Length; i++)
         {
-            if (test[i].Contains(file.phrase.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (test[i].Contains(fileInput.PhraseToFind.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 List<string> lines = new List<string>();
                 
                 lines.Add(f);
                 lines.Add("\n");
                 
-                for (int k = file.before; k <= file.after; k++)
+                for (int k = fileInput.Before; k <= fileInput.After; k++)
                 {
                     int idx = i + k;
                     
@@ -67,17 +63,6 @@ public class Search
         }
         
         return found;
-    }
-    
-    public static void ShowFontInfo(InputClass file)
-    {
-        string tool = ToolPaths.ToolPathsDict[Tool.PdfFonts];
-        
-        foreach (string f in file.inputFiles)
-        {
-            string output = RunClass.RunWithOutput(tool, f);
-            SaveToFile(file.tempPath, output, f);
-        }
     }
     
     public static void SaveToFile(string file, string output, string f)

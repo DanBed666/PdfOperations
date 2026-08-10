@@ -2,7 +2,7 @@
 
 public static class Convert
 {
-    public static void FileToPdf(InputClass file)
+    public static void FileToPdf(OperationInput fileInput, OperationContext context)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.LibreOffice];
 
@@ -10,35 +10,30 @@ public static class Convert
         string profileUri = new Uri(profileDir + Path.DirectorySeparatorChar).AbsoluteUri;
         List<string> arguments = new List<string>();
         List<string> arguments2 = new List<string>();
-
-        if (string.IsNullOrEmpty(file.dir))
+        
+        for (int i = 0; i < fileInput.InputFiles.Length; i++)
         {
-            Console.WriteLine("Nie podano katalogu! Dlatego plik zostanie utworzony w katalogu domyślnym!");
-        }
-
-        for (int i = 0; i < file.inputFiles.Length; i++)
-        {
-            if (Path.GetExtension(file.inputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
-                && file.format.Equals("docx"))
+            if (Path.GetExtension(fileInput.InputFiles[i]).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
+                && fileInput.Format.Equals("docx"))
             {
                 arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
                     "--nologo",
                     "--nodefault",
                     "--nofirststartwizard",
-                    "--norestore","--infilter=writer_pdf_import", "--convert-to", "odt", ..file.inputFiles, "--outdir", file.tempDir]);
+                    "--norestore","--infilter=writer_pdf_import", "--convert-to", "odt", ..fileInput.InputFiles, "--outdir", context.TempDir]);
                 
-                string [] filesOdt = new string[file.inputFiles.Length];
+                string [] filesOdt = new string[fileInput.InputFiles.Length];
                 
-                for (int k = 0; k < file.inputFiles.Length; k++)
+                for (int k = 0; k < fileInput.InputFiles.Length; k++)
                 {
-                    filesOdt[k] = Path.Combine(file.tempDir, Path.GetFileNameWithoutExtension(file.inputFiles[k]) + ".odt");
+                    filesOdt[k] = Path.Combine(context.TempDir, Path.GetFileNameWithoutExtension(fileInput.InputFiles[k]) + ".odt");
                 }
                 
                 arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
                     "--nologo",
                     "--nodefault",
                     "--nofirststartwizard",
-                    "--norestore","--convert-to", file.format, ..filesOdt, "--outdir", file.tempDir]);
+                    "--norestore","--convert-to", fileInput.Format, ..filesOdt, "--outdir", context.TempDir]);
             }
             else
             {
@@ -46,7 +41,7 @@ public static class Convert
                     "--nologo",
                     "--nodefault",
                     "--nofirststartwizard",
-                    "--norestore","--convert-to", file.format, ..file.inputFiles, "--outdir", file.tempDir]);
+                    "--norestore","--convert-to", fileInput.Format, ..fileInput.InputFiles, "--outdir", context.TempDir]);
             }
         }
         
@@ -54,48 +49,60 @@ public static class Convert
         RunClass.Run(tool, arguments2);
     }
     
-    public static void PdfToPict(InputClass file)
+    public static void PdfToPict(List<FileJob> files)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange(["-r", "300", "-jpeg", file.inputFile, file.tempPath]);
-        RunClass.Run(tool, arguments);
+        foreach (FileJob file in files)
+        {
+            arguments.AddRange(["-r", "300", "-jpeg", file.InputFile, file.TempPath]);
+            RunClass.Run(tool, arguments);
+        }
     }
     
-    public static void PdfToTxt(InputClass file)
+    public static void PdfToTxt(List<FileJob> files)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
-        
-        arguments.AddRange([file.inputFile, file.tempPath]);
-        RunClass.Run(tool, arguments);
+
+        foreach (FileJob file in files)
+        {
+            arguments.AddRange([file.InputFile, file.TempPath]);
+            RunClass.Run(tool, arguments);
+        }
     }
     
-    public static void PictToTxt(InputClass file)
+    public static void PictToTxt(List<FileJob> files)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([file.inputFile, file.tempPath, "-l", "pol"]);
-        RunClass.Run(tool, arguments);
+        foreach (FileJob file in files)
+        {
+            arguments.AddRange([file.InputFile, file.TempPath, "-l", "pol"]);
+            RunClass.Run(tool, arguments);
+        }
     }
     
-    public static void PictToPdf(InputClass file)
+    public static void PictToPdf(OperationInput input, FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..file.inputFiles, file.tempPath]);
+        arguments.AddRange([..input.InputFiles, file.TempPath]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void ExtractPict(InputClass file)
+    public static void ExtractPict(List<FileJob> files)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
-        
-        arguments.AddRange(["-all", file.inputFile, file.tempPath]);
-        RunClass.Run(tool, arguments);
+
+        foreach (FileJob file in files)
+        {
+            arguments.AddRange(["-all", file.InputFile, file.TempPath]);
+            RunClass.Run(tool, arguments);
+        }
     }
 }

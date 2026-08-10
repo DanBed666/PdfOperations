@@ -11,15 +11,15 @@ public class OperationPaths
             {
                 Name = "File to File (LibreOffice)",
                 Filter = FileFilters.LibreOfficeFiles,
-                Phrase = "format",
+                AddInfo = "format",
                 OperationFlow = OperationFlow.FilesToFilesWithFormat,
-                FileOperationAction = Convert.FileToPdf
+                FileOperationActionLibre = Convert.FileToPdf
             },
             [2] = new OperationDefinition
             {
                 Name = "Pdf to Picture",
                 Filter = FileFilters.PdfFiles,
-                FileOperationAction = Convert.PdfToPict,
+                FileOperationActionMultiple = Convert.PdfToPict,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [3] = new OperationDefinition
@@ -27,37 +27,37 @@ public class OperationPaths
                 Name = "Pictures to Pdf",
                 Filter = FileFilters.PictFiles,
                 OperationFlow = OperationFlow.FilesToSingleFile,
-                FileOperationAction = Convert.PictToPdf
+                FileOperationActionSingle = Convert.PictToPdf
             },
             [4] = new OperationDefinition
             {
                 Name = "Pdf to Text",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
-                FileOperationAction = Convert.PdfToTxt,
+                FileOperationActionMultiple = Convert.PdfToTxt,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [5] = new OperationDefinition
             {
                 Name = "Picture To Text",
                 Filter = FileFilters.PictFiles,
-                FileOperationAction = Convert.PictToTxt,
+                FileOperationActionMultiple = Convert.PictToTxt,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [6] = new OperationDefinition
             {
                 Name = "Extract Pictures from Pdf",
                 Filter = FileFilters.PdfFiles,
-                FileOperationAction = Convert.ExtractPict,
+                FileOperationActionMultiple = Convert.ExtractPict,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [7] = new OperationDefinition
             {
                 Name = "Create Pdf with pages",
                 Filter = FileFilters.PdfFiles,
-                OperationFlow = OperationFlow.FilesToFiles,
-                FileOperationAction = Pages.CreateWithPages,
-                Phrase = "pages",
+                OperationFlow = OperationFlow.FilesPages,
+                FileOperationActionPages = Pages.CreateWithPages,
+                AddInfo = "pages",
                 Extension = ".pdf"
             },
             [8] = new OperationDefinition
@@ -65,7 +65,7 @@ public class OperationPaths
                 Name = "Pdf Separate",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".pdf",
-                FileOperationAction = Divide.OneToMany,
+                FileOperationActionMultiple = Divide.OneToMany,
                 OperationFlow = OperationFlow.FilesToFiles
             },
             [9] = new OperationDefinition
@@ -73,16 +73,16 @@ public class OperationPaths
                 Name = "Pdf Unite",
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesToSingleFile,
-                FileOperationAction = Divide.ManyToOne
+                FileOperationActionSingle = Divide.ManyToOne
             },
             [10] = new OperationDefinition
             {
                 Name = "Search Text in Pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
-                FileOperationAction = Convert.PdfToTxt,
+                FileOperationActionMultiple = Convert.PdfToTxt,
                 ReportOperationAction = Search.SearchPdf,
-                Phrase = "search",
+                AddInfo = "search",
                 OperationFlow = OperationFlow.SearchReport
             },
             [11] = new OperationDefinition
@@ -90,9 +90,9 @@ public class OperationPaths
                 Name = "Search Text in Picture",
                 Filter = FileFilters.PictFiles,
                 Extension = ".txt",
-                FileOperationAction = Convert.PictToTxt,
+                FileOperationActionMultiple = Convert.PictToTxt,
                 ReportOperationAction = Search.SearchPicture,
-                Phrase = "search",
+                AddInfo = "search",
                 OperationFlow = OperationFlow.SearchReport
             },
             [12] = new OperationDefinition
@@ -100,14 +100,14 @@ public class OperationPaths
                 Name = "Pdf Info",
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesToSingleFile,
-                FileOperationAction = Info.ShowInfo
+                FileOperationActionSingle = Info.ShowInfo
             },
             [13] = new OperationDefinition
             {
                 Name = "Pdf Font",
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesToSingleFile,
-                FileOperationAction = Info.ShowFontInfo
+                FileOperationActionSingle = Info.ShowFontInfo
             },
             [14] = new OperationDefinition
             {
