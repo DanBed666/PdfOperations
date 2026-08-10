@@ -16,10 +16,10 @@ public class ExecutionBuilder
         OperationDefinition operation)
     {
         List<FileJob> fileJobs = new List<FileJob>();
-        FileJob fileJob = new FileJob();
 
         foreach (string file in input.InputFiles)
         {
+            FileJob fileJob = new FileJob();
             fileJob.InputFile = file;
             
             if (operation.OperationFlow == OperationFlow.FilesToFiles)

@@ -49,40 +49,31 @@ public static class Convert
         RunClass.Run(tool, arguments2);
     }
     
-    public static void PdfToPict(List<FileJob> files)
+    public static void PdfToPict(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
 
-        foreach (FileJob file in files)
-        {
-            arguments.AddRange(["-r", "300", "-jpeg", file.InputFile, file.TempPath]);
-            RunClass.Run(tool, arguments);
-        }
+        arguments.AddRange(["-r", "300", "-jpeg", file.InputFile, file.TempPath]);
+        RunClass.Run(tool, arguments);
     }
     
-    public static void PdfToTxt(List<FileJob> files)
+    public static void PdfToTxt(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
 
-        foreach (FileJob file in files)
-        {
-            arguments.AddRange([file.InputFile, file.TempPath]);
-            RunClass.Run(tool, arguments);
-        }
+        arguments.AddRange([file.InputFile, file.TempPath]);
+        RunClass.Run(tool, arguments);
     }
     
-    public static void PictToTxt(List<FileJob> files)
+    public static void PictToTxt(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        foreach (FileJob file in files)
-        {
-            arguments.AddRange([file.InputFile, file.TempPath, "-l", "pol"]);
-            RunClass.Run(tool, arguments);
-        }
+        arguments.AddRange([file.InputFile, file.TempPath, "-l", "pol"]);
+        RunClass.Run(tool, arguments);
     }
     
     public static void PictToPdf(OperationInput input, FileJob file)
@@ -94,15 +85,12 @@ public static class Convert
         RunClass.Run(tool, arguments);
     }
     
-    public static void ExtractPict(List<FileJob> files)
+    public static void ExtractPict(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
 
-        foreach (FileJob file in files)
-        {
-            arguments.AddRange(["-all", file.InputFile, file.TempPath]);
-            RunClass.Run(tool, arguments);
-        }
+        arguments.AddRange(["-all", file.InputFile, file.TempPath]);
+        RunClass.Run(tool, arguments);
     }
 }

@@ -83,11 +83,11 @@ public class Files8
     public static string GetUniqueFileName(OperationInput operationInput)
     {
         int i = 1;
-        string finalPath = path;
+        string finalPath = "path";
 
-        while (File.Exists(finalPath))
+        //while (File.Exists(finalPath))
         {
-            finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{extension}");
+            //finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{extension}");
         }
 
         return finalPath;
@@ -97,14 +97,14 @@ public class Files8
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
 
-        foreach (string file in Directory.GetFiles(Path.GetDirectoryName(operationInput.TempPath)!))
-        {
+        //foreach (string file in Directory.GetFiles(Path.GetDirectoryName(operationInput.TempPath)!))
+        //{
             
-        }
+        //}
 
         if (existing.Count != 0)
         {
-            OverWriteFile(operationInput, existing);
+            //OverWriteFile(operationInput, existing);
         }
     }
 

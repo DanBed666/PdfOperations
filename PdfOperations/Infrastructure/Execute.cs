@@ -6,62 +6,65 @@ public class Execute
     {
         OperationContext context = ExecutionBuilder.SetOperationContext();
         List<FileJob> fileJobs = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-        
-        try
+
+        foreach (FileJob fileJob in fileJobs)
         {
-            switch (operation.OperationFlow)
+            try
             {
-                case OperationFlow.FilesToFiles:
-                    ExecuteOpeFilesToFiles(operation, fileJobs);
-                    break;
+                switch (operation.OperationFlow)
+                {
+                    case OperationFlow.FilesToFiles:
+                        ExecuteOpeFilesToFiles(operation, fileJob);
+                        break;
 
-                case OperationFlow.FilesToSingleFile:
-                    ExecuteOpeFilesToSingleFile(operation, fileInput, fileJobs);
-                    break;
+                    case OperationFlow.FilesToSingleFile:
+                        ExecuteOpeFilesToSingleFile(operation, fileInput, fileJob);
+                        break;
 
-                case OperationFlow.FilesToFilesWithFormat:
-                    ExecuteOpeLibre(operation, fileInput, context);
-                    break;
+                    case OperationFlow.FilesToFilesWithFormat:
+                        ExecuteOpeLibre(operation, fileInput, context);
+                        break;
 
-                case OperationFlow.SearchReport:
-                    ExecuteOpeSearch(operation, fileInput, context, fileJobs);
-                    break;
-                
-                case OperationFlow.FilesPages:
-                    ExecuteOpePages(operation, fileInput, fileJobs);
-                    break;
-                
-                case OperationFlow.RunApp:
-                    ExecuteRunApp(operation);
-                    break;
+                    case OperationFlow.SearchReport:
+                        ExecuteOpeSearch(operation, fileInput, context, fileJob);
+                        break;
 
-                default:
-                    Console.WriteLine("Brak flow");
-                    break;
+                    case OperationFlow.FilesPages:
+                        ExecuteOpePages(operation, fileInput, fileJob);
+                        break;
+
+                    case OperationFlow.RunApp:
+                        ExecuteRunApp(operation);
+                        break;
+
+                    default:
+                        Console.WriteLine("Brak flow");
+                        break;
+                }
+
+                Console.WriteLine("Operacja zakończona pomyślnie!");
             }
-            
-            Console.WriteLine("Operacja zakończona pomyślnie!");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            throw;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
     }
     
-    public static void ExecuteOpeFilesToFiles(OperationDefinition operation, List<FileJob> fileJobs)
+    public static void ExecuteOpeFilesToFiles(OperationDefinition operation, FileJob fileJob)
     {
-        operation.FileOperationActionMultiple(fileJobs);
+        operation.FileOperationActionMultiple(fileJob);
     }
     
-    public static void ExecuteOpeFilesToSingleFile(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobs)
+    public static void ExecuteOpeFilesToSingleFile(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
     {
-        operation.FileOperationActionSingle(fileInput, fileJobs[0]);
+        operation.FileOperationActionSingle(fileInput, fileJob);
     }
     
-    public static void ExecuteOpePages(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobs)
+    public static void ExecuteOpePages(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
     {
-        operation.FileOperationActionPages(fileInput, fileJobs);
+        operation.FileOperationActionPages(fileInput, fileJob);
     }
     
     public static void ExecuteOpeLibre(OperationDefinition operation, OperationInput fileInput, OperationContext context)
@@ -69,9 +72,9 @@ public class Execute
         operation.FileOperationActionLibre(fileInput, context);
     }
     
-    public static void ExecuteOpeSearch(OperationDefinition operation, OperationInput fileInput, OperationContext context, List<FileJob> fileJobs)
+    public static void ExecuteOpeSearch(OperationDefinition operation, OperationInput fileInput, OperationContext context, FileJob fileJob)
     {
-        operation.ReportOperationAction(fileInput, context, fileJobs[0]);
+        operation.ReportOperationAction(fileInput, context, fileJob);
     }
     
     public static void ExecuteRunApp(OperationDefinition operation)
