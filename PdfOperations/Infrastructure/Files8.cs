@@ -1,0 +1,145 @@
+﻿namespace PdfOperations;
+
+public class Files8
+{
+    public static string [] AddFiles(string filter)
+    {
+        string [] files = Dialog.SelectFiles(filter);
+        return files;
+    }
+    
+    public static string AddDirectory()
+    {
+        Console.WriteLine("Czy chcesz dodać plik do folderu (T/N)");
+        string opt = ReadInput.ReadOption();
+
+        string dir = "";
+
+        if (opt.ToLower().Equals("t"))
+        {
+            dir = Dialog.SelectDirectory();
+        }
+        else if (opt.ToLower().Equals("n"))
+        {
+            dir = GetDefaultDirectory();
+            Console.WriteLine("Dodano plik do folderu domyślnego");
+        }
+
+        return dir;
+    }
+
+    public static string GetDefaultDirectory()
+    {
+        string defDir = Path.Combine(AppContext.BaseDirectory, "output");
+        
+        if (!Directory.Exists(defDir))
+            Directory.CreateDirectory(defDir);
+
+        return defDir;
+    }
+
+    public static string PrepareTempDir()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        return tempDir;
+    }
+
+    public static string PrepareTempPathMultiple(string inputPath, OperationContext context, OperationDefinition operation)
+    {
+        string tempPath = "";
+        string name = Path.GetFileNameWithoutExtension(inputPath) + operation.Extension;
+        tempPath = Path.Combine(context.TempDir, name);
+
+        return tempPath;
+    }
+    
+    public static string PrepareTempPathMultipleOne(string inputPath, OperationContext context, OperationDefinition operation)
+    {
+        string tempPath = "";
+        tempPath = Path.Combine(context.TempDir, Path.GetFileName(inputPath));
+
+        return tempPath;
+    }
+    
+    public static string PrepareTempPathSingle(string inputPath, OperationContext context, OperationDefinition operation)
+    {
+        string tempPath = "";
+        string name = Path.GetFileNameWithoutExtension(inputPath) + operation.Extension;
+        tempPath = Path.Combine(context.TempDir, name);
+        
+        return tempPath;
+    }
+    
+    public static string PrepareFinalOutputPath(OperationInput inputFile, string tempPath)
+    {
+        string finalPath = "";
+        finalPath = Path.Combine(inputFile.Dir, Path.GetFileName(tempPath));
+
+        return finalPath;
+    }
+    
+    public static string GetUniqueFileName(OperationInput operationInput)
+    {
+        int i = 1;
+        string finalPath = path;
+
+        while (File.Exists(finalPath))
+        {
+            finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{extension}");
+        }
+
+        return finalPath;
+    }
+
+    public static void FindExisitingFiles(OperationInput operationInput)
+    {
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+
+        foreach (string file in Directory.GetFiles(Path.GetDirectoryName(operationInput.TempPath)!))
+        {
+            
+        }
+
+        if (existing.Count != 0)
+        {
+            OverWriteFile(operationInput, existing);
+        }
+    }
+
+    public static void OverWriteFile()
+    {
+        
+    }
+    
+    public static void SaveToFile(List<List<string>> found, string output)
+    {
+        List<string> outputLines = new List<string>();
+        
+        foreach (List<String> lista in found)
+        {
+            outputLines.AddRange(lista);
+        }
+        
+        if (!File.Exists(output))
+            File.WriteAllLines(output, outputLines);
+        else
+            File.AppendAllLines(output, outputLines);
+    }
+    
+    public static void ViewFile(string path)
+    {
+        Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
+        string opt = ReadInput.ReadOption();
+        //ReadInput options
+        
+        if (opt.ToLower().Equals("t"))
+            RunClass.RunFile(path);
+    }
+    
+    public static string [] ReadFile(string input)
+    {
+        return File.ReadAllLines(input);
+    }
+}

@@ -2,57 +2,51 @@
 
 public class ExecuteCaseOperations
 {
-    public static void InputOpe(OperationDefinition operation)
+    public static OperationInput InputOpe(OperationDefinition operation)
     {
-        InputClass input = new InputClass();
+        OperationInput operationInput = new OperationInput();
+
         Console.WriteLine("Podaj nazwę pdf: ");
-        string [] files = Files.AddFiles(operation.Filter);
+        operationInput.InputFiles = Files8.AddFiles(operation.Filter);
 
-        input.move = true;
-
-        if (files.Length == 0)
-            return;
-        
-        input.inputFiles = files;
-
-        foreach (string file in files)
+        foreach (string file in operationInput.InputFiles)
         {
             Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
         }
         
-        if (files.Length == 1)
-            Files.ViewFile(files[0]);
+        if (operationInput.InputFiles.Length == 1)
+            Files8.ViewFile(operationInput.InputFiles[0]);
 
-        if (operation.Phrase == "search")
+        if (operation.AddInfo == "search")
         {
-            if (!InputSearchOpe(out string value)) return;
-            input.phrase = value;
+            if (!InputSearchOpe(out string value)) return null;
+            operationInput.PhraseToFind = value;
             
             Console.WriteLine("Linie przed: ");
             Int32.TryParse(Console.ReadLine(), out int before);
-            input.before = -before;
+            operationInput.Before = -before;
             
             Console.WriteLine("Linie po: ");
             Int32.TryParse(Console.ReadLine(), out int after);
-            input.after = after;
+            operationInput.After = after;
         }
         
-        if (operation.Phrase == "format")
+        if (operation.AddInfo == "format")
         {
-            if (!InputFormatOpe(out string value)) return;
-            input.format = value;
+            if (!InputFormatOpe(out string value)) return null;
+            operationInput.Format = value;
         }
         
-        if (operation.Phrase == "pages")
+        if (operation.AddInfo == "pages")
         {
-            if (!InputPagesOpe(out string value)) return;
-            input.pages = value;
+            if (!InputPagesOpe(out string value)) return null;
+            operationInput.Pages = value;
         }
 
         bool finish = false;
 
-        if (files.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
-                              || operation.OperationFlow == OperationFlow.SearchReport)
+        if (operationInput.InputFiles.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
+                                         || operation.OperationFlow == OperationFlow.SearchReport)
         {
             while (!finish)
             {
@@ -60,35 +54,25 @@ public class ExecuteCaseOperations
 
                 if (!CheckParams.CheckFileFormat(output, out string format))
                 {
-                    if (CheckParams.CheckIfFormatNotExist(operation, input, output, format, finish))
+                    if (CheckParams.CheckIfFormatNotExist(operation, operationInput, output, format, finish))
                         break;
                 }
                 else if (!format.Equals(operation.Extension))
                 {
-                    if (CheckParams.CheckIfFormatExist(operation, input, output, format, finish))
+                    if (CheckParams.CheckIfFormatExist(operation, operationInput, output, format, finish))
                         break;
                 }
                 else
                 {
-                    input.output = output;
+                    operationInput.Output = output;
                     break;
                 }
             }
         }
         
-        string dir = Files.AddDirectory();
+        operationInput.Dir = Files8.AddDirectory();
 
-        if (string.IsNullOrEmpty(dir))
-        {
-            dir = Path.Combine(AppContext.BaseDirectory, "output");
-        }
-
-        input.dir = dir;
-        input.extension = operation.Extension;
-        
-        Files.PrepareTempPath(input, operation);
-
-        Files.ViewFile(dir);
+        return operationInput;
     }
     
     public static bool InputSearchOpe(out string value)

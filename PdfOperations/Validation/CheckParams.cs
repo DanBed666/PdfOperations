@@ -36,7 +36,7 @@ public class CheckParams
         return output;
     }
 
-    public static bool CheckIfFormatNotExist(OperationDefinition operation, InputClass input, string output, string format, bool finish)
+    public static bool CheckIfFormatNotExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
     {
         if (string.IsNullOrEmpty(format))
         {
@@ -45,7 +45,7 @@ public class CheckParams
             if (output[^1] == '.')
                 output = output.Replace(".", "");
 
-            input.output = Path.GetFileNameWithoutExtension(output) + format;
+            operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
             finish = true;
             Console.WriteLine($"Uzupełniono plik o format {operation.Extension}!");
         }
@@ -58,7 +58,7 @@ public class CheckParams
             if (inp == "t")
             {
                 format = operation.Extension;
-                input.output = Path.GetFileNameWithoutExtension(output) + format;
+                operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
                 finish = true;
                 Console.WriteLine($"Poprawiono format na {operation.Extension}!");
             }
@@ -67,7 +67,7 @@ public class CheckParams
         return finish;
     }
     
-    public static bool CheckIfFormatExist(OperationDefinition operation, InputClass input, string output, string format, bool finish)
+    public static bool CheckIfFormatExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
     {
         Console.WriteLine($"Niepoprawny format! Poprawny format to {operation.Extension}");
         Console.WriteLine("Czy poprawić?");
@@ -76,7 +76,7 @@ public class CheckParams
         if (inp == "t")
         {
             format = operation.Extension;
-            input.output = Path.GetFileNameWithoutExtension(output) + format;
+            operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
             finish = true;
         }
         

@@ -10,16 +10,30 @@ public class MainMenu
             {
                 Console.WriteLine($"[{i}] {OperationPaths.OperationDefinitions[i].Name}");
             }
-            
+
             Console.WriteLine("Wpisz opcje: ");
             Int32.TryParse(Console.ReadLine(), out int znak);
 
             OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
 
             if (znak >= 1 && znak <= 13)
-                ExecuteCaseOperations.InputOpe(value!);
+            {
+                OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
+
+                if (operationInput == null)
+                    return;
+                
+                Execute.ExecuteOpe(operationInput, value!);
+            }
             else if (znak >= 14 && znak <= 15)
-                value!.RunOperationAction(value);
+            {
+                OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
+                
+                if (operationInput == null)
+                    return;
+                
+                Execute.ExecuteOpe(operationInput, value!);
+            }
             else if (znak == 16)
                 Environment.Exit(0);
             else
