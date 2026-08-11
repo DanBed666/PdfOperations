@@ -9,7 +9,7 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input), file.FinalPath);
+            Files8.SaveToFile(SearchNewTxt(f, input), file.TempPath);
         }
     }
 
@@ -17,7 +17,7 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input), file.FinalPath);
+            Files8.SaveToFile(SearchNewTxt(f, input), file.TempPath);
         }
     }
     

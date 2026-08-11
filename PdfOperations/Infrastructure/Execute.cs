@@ -15,6 +15,10 @@ public class Execute
                 case OperationFlow.FilesPages:
                     ExecuteOpePages(operation, fileInput, fileJobList);
                     break;
+                
+                case OperationFlow.SearchReport:
+                    ExecuteOpeSearch(operation, fileJobList);
+                    break;
             }
 
             Console.WriteLine("Operacja zakończona pomyślnie!");
@@ -39,7 +43,7 @@ public class Execute
                 case OperationFlow.FilesToFilesWithFormat:
                     ExecuteOpeLibre(operation, fileInput, context);
                     break;
-
+                
                 case OperationFlow.SearchReport:
                     ExecuteOpeSearch(operation, fileInput, context, fileJob);
                     break;
@@ -100,10 +104,20 @@ public class Execute
             SaveToTempDirList(operation, fileInput, fileJobList);
             MoveToFinalDir(operation, fileJobList);
         }
+        else if (operation.OperationFlow == OperationFlow.SearchReport)
+        {
+            fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
+            SaveToTempDirList(operation, fileInput, fileJobList);
+            
+            fileJob = ExecutionBuilder.SetFileJob(fileInput, context);
+            SaveToTempDir(operation, fileInput, context, fileJob);
+            MoveToFinalDir(operation, fileJob);
+        }
         else
         {
             fileJob = ExecutionBuilder.SetFileJob(fileInput, context);
             SaveToTempDir(operation, fileInput, context, fileJob);
+
             MoveToFinalDir(operation, fileJob);
         }
     }
@@ -132,6 +146,16 @@ public class Execute
     public static void ExecuteOpeLibre(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
         operation.FileOperationActionLibre(fileInput, context);
+    }
+    
+    public static void ExecuteOpeSearch(OperationDefinition operation, List<FileJob> fileJobList)
+    {
+        foreach (FileJob fileJob in fileJobList)
+        {
+            operation.FileOperationActionMultiple(fileJob);
+        }
+        
+        //operation.ReportOperationAction()
     }
     
     public static void ExecuteOpeSearch(OperationDefinition operation, OperationInput fileInput, OperationContext context, FileJob fileJob)
