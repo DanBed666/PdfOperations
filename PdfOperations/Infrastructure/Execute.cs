@@ -49,23 +49,24 @@ public class Execute
         }
     }
 
-    public static void MoveToFinalDir(List<FileJob> fileJobs)
+    public static void MoveToFinalDir(OperationDefinition operation, List<FileJob> fileJobs)
     {
-        Dictionary <string, string> notExisting = new Dictionary<string, string>();
-        notExisting = Files8.FindNotExisitingFiles(fileJobs);
-        
-        foreach (KeyValuePair<string, string> item in notExisting)
-        {
-            Console.WriteLine(item.Key + ": " + item.Value);
-        }
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+        existing = Files8.FindNotExisitingFiles(fileJobs);
 
-        if (notExisting.Count != 0)
+        if (existing.Count != 0)
         {
-            Files8.MoveFiles(notExisting);
-        }
-        else
-        {
-            Files8.MoveFiles(notExisting);
+            Console.WriteLine("Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N):");
+            string opt = ReadInput.ReadOption();
+
+            if (opt == "t")
+            {
+                Files8.OverWriteFile(existing);
+            }
+            else if (opt == "n")
+            {
+                Files8.SaveWithUniqueFileName(operation, existing);
+            }
         }
     }
     
@@ -75,7 +76,7 @@ public class Execute
         List<FileJob> fileJobs = ExecutionBuilder.SetFileJob(fileInput, context, operation);
         
         SaveToTempDir(operation, fileInput, context, fileJobs);
-        MoveToFinalDir(fileJobs);
+        MoveToFinalDir(operation, fileJobs);
     }
     
     public static void ExecuteOpeFilesToFiles(OperationDefinition operation, FileJob fileJob)

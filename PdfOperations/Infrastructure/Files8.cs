@@ -80,17 +80,17 @@ public class Files8
         return finalPath;
     }
     
-    public static string GetUniqueFileName(OperationInput operationInput)
+    public static void SaveWithUniqueFileName(OperationDefinition operation, Dictionary <string, string> existing)
     {
         int i = 1;
-        string finalPath = "path";
 
-        //while (File.Exists(finalPath))
+        foreach (KeyValuePair<string, string> item in existing)
         {
-            //finalPath = Path.Combine(Path.GetDirectoryName(path)!, $"{Path.GetFileNameWithoutExtension(path)}_{i++}{extension}");
+            string finalPath = Path.Combine(Path.GetDirectoryName(item.Value)!, 
+                $"{Path.GetFileNameWithoutExtension(item.Value)}_{i++}{operation.Extension}");
+            
+            File.Move(item.Key, finalPath);
         }
-
-        return finalPath;
     }
 
     public static Dictionary <string, string> FindNotExisitingFiles(List<FileJob> fileJobs)
@@ -99,9 +99,13 @@ public class Files8
 
         foreach (FileJob fileJob in fileJobs)
         {
-            if (!File.Exists(fileJob.FinalPath))
+            if (File.Exists(fileJob.FinalPath))
             {
                 existing.Add(fileJob.TempPath, fileJob.FinalPath);
+            }
+            else
+            {
+                File.Move(fileJob.TempPath, fileJob.FinalPath);
             }
         }
 
@@ -110,7 +114,10 @@ public class Files8
 
     public static void OverWriteFile(Dictionary <string, string> existing)
     {
-        
+        foreach (KeyValuePair<string, string> item in existing)
+        {
+            File.Move(item.Key, item.Value, overwrite: true);
+        }
     }
     
     public static void MoveFiles(Dictionary <string, string> existing)
