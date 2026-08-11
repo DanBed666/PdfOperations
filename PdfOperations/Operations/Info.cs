@@ -4,21 +4,21 @@ namespace PdfOperations;
 
 public class Info
 {
-    public static void ShowInfo(OperationInput fileInput, FileJob file)
+    public static void ShowInfo(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfInfo];
 
         string output = RunClass.RunWithOutput(tool, file.InputFile);
-        SaveToFile(file.TempPath, output, fileInput.InputFiles);
+        SaveToFile(file.TempPath, output, file.InputFiles);
         
     }
     
-    public static void ShowFontInfo(OperationInput fileInput, FileJob file)
+    public static void ShowFontInfo(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfFonts];
 
         string output = RunClass.RunWithOutput(tool, file.InputFile);
-        SaveToFile(file.TempPath, output, fileInput.InputFiles);
+        SaveToFile(file.TempPath, output, file.InputFiles);
         
     }
     

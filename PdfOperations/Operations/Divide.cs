@@ -14,12 +14,12 @@ public class Divide
         RunClass.Run(tool, arguments);
     }
     
-    public static void ManyToOne(OperationInput input, FileJob file)
+    public static void ManyToOne(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..input.InputFiles, file.TempPath]);
+        arguments.AddRange([..file.InputFiles, file.TempPath]);
         RunClass.Run(tool, arguments);
     }
 }

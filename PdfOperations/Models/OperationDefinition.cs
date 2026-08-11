@@ -9,7 +9,7 @@ public class OperationDefinition
     public OperationFlow OperationFlow { get; set; }
     public bool SingleFile { get; set; } = false;
 
-    public Action<OperationInput, FileJob> FileOperationActionSingle { get; init; }
+    public Action<FileJob> FileOperationActionSingle { get; init; }
     public Action<FileJob> FileOperationActionMultiple { get; init; }
     public Action<OperationInput, FileJob> FileOperationActionPages { get; init; }
     public Action<OperationInput, OperationContext> FileOperationActionLibre { get; init; }

@@ -19,6 +19,7 @@ public class OperationPaths
             {
                 Name = "Pdf to Picture",
                 Filter = FileFilters.PdfFiles,
+                Extension = ".jpg",
                 FileOperationActionMultiple = Convert.PdfToPict,
                 OperationFlow = OperationFlow.FilesToFiles
             },
@@ -26,6 +27,7 @@ public class OperationPaths
             {
                 Name = "Pictures to Pdf",
                 Filter = FileFilters.PictFiles,
+                Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Convert.PictToPdf
             },
@@ -41,6 +43,7 @@ public class OperationPaths
             {
                 Name = "Picture To Text",
                 Filter = FileFilters.PictFiles,
+                Extension = ".txt",
                 FileOperationActionMultiple = Convert.PictToTxt,
                 OperationFlow = OperationFlow.FilesToFiles
             },
@@ -48,6 +51,7 @@ public class OperationPaths
             {
                 Name = "Extract Pictures from Pdf",
                 Filter = FileFilters.PdfFiles,
+                Extension = ".jpg",
                 FileOperationActionMultiple = Convert.ExtractPict,
                 OperationFlow = OperationFlow.FilesToFiles
             },
@@ -72,6 +76,7 @@ public class OperationPaths
             {
                 Name = "Pdf Unite",
                 Filter = FileFilters.PdfFiles,
+                Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Divide.ManyToOne
             },
@@ -99,6 +104,7 @@ public class OperationPaths
             {
                 Name = "Pdf Info",
                 Filter = FileFilters.PdfFiles,
+                Extension = ".txt",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Info.ShowInfo
             },
@@ -106,6 +112,7 @@ public class OperationPaths
             {
                 Name = "Pdf Font",
                 Filter = FileFilters.PdfFiles,
+                Extension = ".txt",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Info.ShowFontInfo
             },

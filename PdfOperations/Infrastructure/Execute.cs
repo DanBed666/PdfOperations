@@ -2,51 +2,69 @@
 
 public class Execute
 {
-    public static void SaveToTempDir(OperationDefinition operation, OperationInput fileInput, OperationContext context, List<FileJob> fileJobs)
+    public static void SaveToTempDirList(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobList)
     {
-        foreach (FileJob fileJob in fileJobs)
+        try
         {
-            try
+            switch (operation.OperationFlow)
             {
-                switch (operation.OperationFlow)
-                {
-                    case OperationFlow.FilesToFiles:
-                        ExecuteOpeFilesToFiles(operation, fileJob);
-                        break;
-
-                    case OperationFlow.FilesToSingleFile:
-                        ExecuteOpeFilesToSingleFile(operation, fileInput, fileJob);
-                        break;
-
-                    case OperationFlow.FilesToFilesWithFormat:
-                        ExecuteOpeLibre(operation, fileInput, context);
-                        break;
-
-                    case OperationFlow.SearchReport:
-                        ExecuteOpeSearch(operation, fileInput, context, fileJob);
-                        break;
-
-                    case OperationFlow.FilesPages:
-                        ExecuteOpePages(operation, fileInput, fileJob);
-                        break;
-
-                    case OperationFlow.RunApp:
-                        ExecuteRunApp(operation);
-                        break;
-
-                    default:
-                        Console.WriteLine("Brak flow");
-                        break;
-                }
-
-                Console.WriteLine("Operacja zakończona pomyślnie!");
+                case OperationFlow.FilesToFiles:
+                    ExecuteOpeFilesToFiles(operation, fileJobList);
+                    break;
+                
+                case OperationFlow.FilesPages:
+                    ExecuteOpePages(operation, fileInput, fileJobList);
+                    break;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
+
+            Console.WriteLine("Operacja zakończona pomyślnie!");
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
+    public static void SaveToTempDir(OperationDefinition operation, OperationInput fileInput,
+        OperationContext context, FileJob fileJob)
+    {
+        try
+        {
+            switch (operation.OperationFlow)
+            {
+                case OperationFlow.FilesToSingleFile:
+                    ExecuteOpeFilesToSingleFile(operation, fileJob);
+                    break;
+
+                case OperationFlow.FilesToFilesWithFormat:
+                    ExecuteOpeLibre(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.SearchReport:
+                    ExecuteOpeSearch(operation, fileInput, context, fileJob);
+                    break;
+
+                case OperationFlow.RunApp:
+                    ExecuteRunApp(operation);
+                    break;
+
+                default:
+                    Console.WriteLine("Brak flow");
+                    break;
+            }
+
+            Console.WriteLine("Operacja zakończona pomyślnie!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
+
+    public static void MoveToFinalDir(OperationDefinition operation, FileJob fileJob)
+    {
+        MoveToFinalDir(operation, [fileJob]);
     }
 
     public static void MoveToFinalDir(OperationDefinition operation, List<FileJob> fileJobs)
@@ -73,25 +91,42 @@ public class Execute
     public static void ExecuteOpe(OperationInput fileInput, OperationDefinition operation)
     {
         OperationContext context = ExecutionBuilder.SetOperationContext();
-        List<FileJob> fileJobs = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-        
-        SaveToTempDir(operation, fileInput, context, fileJobs);
-        MoveToFinalDir(operation, fileJobs);
+        List<FileJob> fileJobList = new List<FileJob>();
+        FileJob fileJob = new FileJob();
+
+        if (operation.OperationFlow == OperationFlow.FilesToFiles || operation.OperationFlow == OperationFlow.FilesPages)
+        {
+            fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
+            SaveToTempDirList(operation, fileInput, fileJobList);
+            MoveToFinalDir(operation, fileJobList);
+        }
+        else
+        {
+            fileJob = ExecutionBuilder.SetFileJob(fileInput, context);
+            SaveToTempDir(operation, fileInput, context, fileJob);
+            MoveToFinalDir(operation, fileJob);
+        }
     }
     
-    public static void ExecuteOpeFilesToFiles(OperationDefinition operation, FileJob fileJob)
+    public static void ExecuteOpeFilesToFiles(OperationDefinition operation, List<FileJob> fileJobList)
     {
-        operation.FileOperationActionMultiple(fileJob);
+        foreach (FileJob fileJob in fileJobList)
+        {
+            operation.FileOperationActionMultiple(fileJob);
+        }
     }
     
-    public static void ExecuteOpeFilesToSingleFile(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
+    public static void ExecuteOpeFilesToSingleFile(OperationDefinition operation, FileJob fileJob)
     {
-        operation.FileOperationActionSingle(fileInput, fileJob);
+        operation.FileOperationActionSingle(fileJob);
     }
     
-    public static void ExecuteOpePages(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
+    public static void ExecuteOpePages(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobList)
     {
-        operation.FileOperationActionPages(fileInput, fileJob);
+        foreach (FileJob fileJob in fileJobList)
+        {
+            operation.FileOperationActionPages(fileInput, fileJob);
+        }
     }
     
     public static void ExecuteOpeLibre(OperationDefinition operation, OperationInput fileInput, OperationContext context)

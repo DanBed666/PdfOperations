@@ -55,19 +55,16 @@ public class Files8
         return tempPath;
     }
     
-    public static string PrepareTempPathMultipleOne(string inputPath, OperationContext context, OperationDefinition operation)
+    public static string PrepareTempPathMultipleOne(OperationInput input, OperationContext context)
     {
-        string tempPath = "";
-        tempPath = Path.Combine(context.TempDir, Path.GetFileName(inputPath));
+        string tempPath = Path.Combine(context.TempDir, input.Output);
 
         return tempPath;
     }
     
-    public static string PrepareTempPathSingle(string inputPath, OperationContext context, OperationDefinition operation)
+    public static string PrepareTempPathSingle(OperationInput input, OperationContext context)
     {
-        string tempPath = "";
-        string name = Path.GetFileNameWithoutExtension(inputPath) + operation.Extension;
-        tempPath = Path.Combine(context.TempDir, name);
+        string tempPath = Path.Combine(context.TempDir, input.Output);
         
         return tempPath;
     }
