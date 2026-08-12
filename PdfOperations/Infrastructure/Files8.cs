@@ -46,45 +46,38 @@ public class Files8
         return tempDir;
     }
 
-    public static string PrepareTempPathMultiple(string inputPath, OperationContext context, OperationDefinition operation)
+    public static string PrepareTempPathMultiple(string tempDir, string file, string extension)
     {
         string tempPath = "";
-        string name = Path.GetFileNameWithoutExtension(inputPath) + operation.Extension;
-        tempPath = Path.Combine(context.TempDir, name);
+        string name = Path.GetFileNameWithoutExtension(file) + extension;
+        tempPath = Path.Combine(tempDir, name);
 
         return tempPath;
     }
     
-    public static string PrepareTempPathMultipleOne(OperationInput input, OperationContext context)
+    public static string PrepareTempPathSingle(string tempDir, string output)
     {
-        string tempPath = Path.Combine(context.TempDir, input.Output);
-
-        return tempPath;
-    }
-    
-    public static string PrepareTempPathSingle(OperationInput input, OperationContext context)
-    {
-        string tempPath = Path.Combine(context.TempDir, input.Output);
+        string tempPath = Path.Combine(tempDir, output);
         
         return tempPath;
     }
     
-    public static string PrepareFinalOutputPath(OperationInput inputFile, string tempPath)
+    public static string PrepareFinalOutputPath(string outputDir, string tempPath)
     {
         string finalPath = "";
-        finalPath = Path.Combine(inputFile.Dir, Path.GetFileName(tempPath));
+        finalPath = Path.Combine(outputDir, Path.GetFileName(tempPath));
 
         return finalPath;
     }
     
-    public static void SaveWithUniqueFileName(OperationDefinition operation, Dictionary <string, string> existing)
+    public static void SaveWithUniqueFileName(string extension, Dictionary <string, string> existing)
     {
         int i = 1;
 
         foreach (KeyValuePair<string, string> item in existing)
         {
             string finalPath = Path.Combine(Path.GetDirectoryName(item.Value)!, 
-                $"{Path.GetFileNameWithoutExtension(item.Value)}_{i++}{operation.Extension}");
+                $"{Path.GetFileNameWithoutExtension(item.Value)}_{i++}{extension}");
             
             File.Move(item.Key, finalPath);
         }
@@ -116,15 +109,7 @@ public class Files8
             File.Move(item.Key, item.Value, overwrite: true);
         }
     }
-    
-    public static void MoveFiles(Dictionary <string, string> existing)
-    {
-        foreach (KeyValuePair<string, string> item in existing)
-        {
-            File.Move(item.Key, item.Value);
-        }
-    }
-    
+
     public static void SaveToFile(List<List<string>> found, string output)
     {
         List<string> outputLines = new List<string>();

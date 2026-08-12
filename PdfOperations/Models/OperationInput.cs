@@ -2,7 +2,6 @@
 
 public class OperationInput
 {
-    public string InputFile { get; set; } = "";
     public string[] InputFiles { get; set; } = [];
     public string Dir { get; set; } = "";
     public string PhraseToFind { get; set; } = "";

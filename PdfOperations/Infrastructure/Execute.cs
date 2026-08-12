@@ -87,7 +87,7 @@ public class Execute
             }
             else if (opt == "n")
             {
-                Files8.SaveWithUniqueFileName(operation, existing);
+                Files8.SaveWithUniqueFileName(operation.Extension, existing);
             }
         }
     }

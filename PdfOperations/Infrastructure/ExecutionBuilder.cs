@@ -23,11 +23,11 @@ public class ExecutionBuilder
             fileJob.InputFile = file;
 
             if (input.InputFiles.Length > 1)
-                fileJob.TempPath = Files8.PrepareTempPathMultiple(fileJob.InputFile, operationContext, operation);
+                fileJob.TempPath = Files8.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
             else
-                fileJob.TempPath = Files8.PrepareTempPathMultipleOne(input, operationContext);
+                fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, fileJob.InputFile);
 
-            fileJob.FinalPath = Files8.PrepareFinalOutputPath(input, fileJob.TempPath);
+            fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
             fileJobs.Add(fileJob);
         }
 
@@ -39,8 +39,8 @@ public class ExecutionBuilder
         FileJob fileJob = new FileJob();
         
         fileJob.InputFiles = input.InputFiles;
-        fileJob.TempPath = Files8.PrepareTempPathSingle(input, operationContext);
-        fileJob.FinalPath = Files8.PrepareFinalOutputPath(input, fileJob.TempPath);
+        fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, input.Output);
+        fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
 
         return fileJob;
     }
