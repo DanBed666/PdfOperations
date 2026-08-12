@@ -7,17 +7,26 @@ public class Info
     public static void ShowInfo(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfInfo];
+        string output = "";
 
-        string output = RunClass.RunWithOutput(tool, file.InputFile);
-        SaveToFile(file.TempPath, output, file.InputFiles);
+        foreach (string f in file.InputFiles)
+        {
+            output = RunClass.RunWithOutput(tool, f);
+        }
         
+        SaveToFile(file.TempPath, output, file.InputFiles);
     }
     
     public static void ShowFontInfo(FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfFonts];
+        string output = "";
 
-        string output = RunClass.RunWithOutput(tool, file.InputFile);
+        foreach (string f in file.InputFiles)
+        {
+            output = RunClass.RunWithOutput(tool, f);
+        }
+        
         SaveToFile(file.TempPath, output, file.InputFiles);
         
     }

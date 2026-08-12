@@ -8,7 +8,7 @@ public class InfoTests
     {
         string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
         string extension = ".txt";
-        string output = "final.pdf";
+        string output = "final.txt";
         int count = 1;
 
         string[] inputFiles = TestHelper8.SetInputPaths(inputs);
@@ -42,7 +42,7 @@ public class InfoTests
     {
         string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
         string extension = ".txt";
-        string output = "final.pdf";
+        string output = "final.txt";
         int count = 1;
 
         string[] inputFiles = TestHelper8.SetInputPaths(inputs);
