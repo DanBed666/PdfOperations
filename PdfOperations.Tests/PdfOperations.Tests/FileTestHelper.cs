@@ -4,8 +4,8 @@ public class FileTestHelper
 {
     public static void CreateFiles()
     {
-        string tempDir = TestHelper.CreateTempFolder();
-        InputClass input = new InputClass();
+        //string tempDir = TestHelper8.CreateTempFolder();
+        //InputClass input = new InputClass();
         OperationDefinition ope =  new OperationDefinition();
         int length = 3;
         string[] files = new string[length];
@@ -15,10 +15,10 @@ public class FileTestHelper
 
         for (int i = 0; i < length; i++)
         {
-            files[i] = Path.Combine(TestHelper.dir, $"{Path.GetFileNameWithoutExtension(fileName)}_{i + 1}{ope.Extension}");
+            //files[i] = Path.Combine(TestHelper8.dir, $"{Path.GetFileNameWithoutExtension(fileName)}_{i + 1}{ope.Extension}");
         }
 
-        input.inputFiles = files;
-        input.dir = tempDir;
+        //input.inputFiles = files;
+        //input.dir = tempDir;
     }
 }

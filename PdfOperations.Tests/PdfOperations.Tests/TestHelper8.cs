@@ -2,21 +2,35 @@
 
 public class TestHelper8
 {
-    public static OperationDefinition SetOperationDefinition()
+    public static string TestDir = Path.Combine(AppContext.BaseDirectory, "TestData");
+
+    public static string [] SetInputPaths(string [] inputs)
+    {
+        for (int i = 0; i <inputs.Length; i++)
+        {
+            inputs[i] = Path.Combine(TestDir, inputs[i]);
+        }
+
+        return inputs;
+    }
+    
+    public static OperationDefinition SetOperationDefinition(string extension)
     {
         OperationDefinition operationDefinition = new OperationDefinition()
         {
-
+            Extension = extension
         };
 
         return operationDefinition;
     }
     
-    public static OperationInput SetOperationInput()
+    public static OperationInput SetOperationInput(string [] inputFiles, string output = "", string pages = "")
     {
         OperationInput operationInput = new OperationInput()
         {
-
+            InputFiles = inputFiles,
+            Output = output,
+            Pages = pages
         };
 
         return operationInput;
@@ -26,7 +40,7 @@ public class TestHelper8
     {
         OperationContext operationContext = new OperationContext()
         {
-
+            TempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"))
         };
         
         return operationContext;
@@ -40,5 +54,12 @@ public class TestHelper8
         };
         
         return fileJob;
+    }
+    
+    public static void AssertForOneFile(string file, string format)
+    {
+        Assert.IsTrue(File.Exists(file));
+        Assert.AreEqual(format, Path.GetExtension(file));
+        Assert.IsGreaterThan(0, new FileInfo(file).Length);
     }
 }

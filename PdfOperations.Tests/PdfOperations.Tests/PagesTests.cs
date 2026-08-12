@@ -8,32 +8,37 @@ public class PagesTests
     [TestMethod]
     public void CreateWithPages()
     {
-        string fileName = "ocr_test.pdf";
-        string format = ".pdf";
-        int count = 3;
+        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
+        string extension = ".pdf";
         string pages = "2-3";
+        int count = 3;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles, pages: pages);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp, pages);
-        string tempDir = temp;
-        
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (FileJob fileJob in fileJobList)
             {
-                Pages.CreateWithPages(item);
+                Pages.CreateWithPages(input, fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(3, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
 }

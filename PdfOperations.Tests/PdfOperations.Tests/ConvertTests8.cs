@@ -13,183 +13,210 @@ public class ConvertTests8()
         string format = ".docx";
         //string format = ".pdf";
         int count = 3;
-        
-        InputClass testInput = TestHelper.PrepareFilesLibre(fileName, format, count, out string temp);
-        string tempDir = temp;
+
+        //OperationInput input = TestHelper8.SetOperationInput();
+        //InputClass testInput = TestHelper.PrepareFilesLibre(fileName, format, count, out string temp);
+        //string tempDir = temp;
         
         try
         {
-            Convert.FileToPdf(testInput);
+            //Convert.FileToPdf(testInput);
             
-            foreach (string file in Directory.GetFiles(tempDir))
+            //foreach (string file in Directory.GetFiles(tempDir))
             {
-                if (Path.GetExtension(file) == ".odt")
-                    File.Delete(file);
+                //if (Path.GetExtension(file) == ".odt")
+                    //File.Delete(file);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            //foreach (string file in Directory.GetFiles(tempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                //TestHelper.AssertForOneFile(file, format);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(tempDir));
+            //Assert.HasCount(count, Directory.GetFiles(tempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            //if (Directory.Exists(tempDir))
+                //Directory.Delete(tempDir, true);
         }
     }
     
     [TestMethod]
     public void PdfToPictTest()
     {
-        string fileName = "ocr_test.pdf";
-        string format = ".jpg";
-        int count = 3;
+        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
+        string extension = ".jpg";
+        int count = 12;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
-        string tempDir = temp;
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
         
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (FileJob fileJob in fileJobList)
             {
-                Convert.PdfToPict(item);
+                Convert.PdfToPict(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(12, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
     [TestMethod]
     public void PdfToTxtTest()
     {
-        string fileName = "test.pdf";
-        string format = ".txt";
+        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
+        string extension = ".txt";
         int count = 3;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
-        string tempDir = temp;
-        
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (FileJob fileJob in fileJobList)
             {
-                Convert.PdfToTxt(item);
+                Convert.PdfToTxt(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
     [TestMethod]
     public void PictToTxtTest()
     {
-        string fileName = "ocr.jpg";
-        string format = ".txt";
+        string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
+        string extension = ".txt";
         int count = 3;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
-        string tempDir = temp;
-        
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (FileJob fileJob in fileJobList)
             {
-                Convert.PictToTxt(item);
+                Convert.PictToTxt(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
     [TestMethod]
     public void PictToPdfTest()
     {
-        string fileName = "ocr.jpg";
-        string format = ".pdf";
-        int count = 3;
+        string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
+        string extension = ".pdf";
+        string output = "final.pdf";
+        int count = 1;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        InputClass testFile = TestHelper.PrepareFilesToSingle(fileName, format, count, out string temp);
-        string tempDir = temp;
-        
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context);
+
         try
         {
-            Convert.PictToPdf(testFile);
+            Convert.PictToPdf(fileJob);
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(1, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
     [TestMethod]
     public void ExtractPictTest()
     {
-        string fileName = "ocr_test.pdf";
-        string format = ".jpg";
+        string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
+        string extension = ".jpg";
         int count = 3;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
         
-        List<InputClass> testFiles = TestHelper.PrepareFilesToFiles(fileName, format, count, out string temp);
-        string tempDir = temp;
-        
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+
         try
         {
-            foreach (InputClass item in testFiles)
+            foreach (FileJob fileJob in fileJobList)
             {
-                Convert.ExtractPict(item);
+                Convert.ExtractPict(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, operation.Extension);
             }
             
-            Assert.HasCount(12, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
 }

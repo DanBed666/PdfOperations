@@ -123,6 +123,7 @@ public class RunClass
         }
         
         using Process process = Process.Start(info)!;
+        Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         string output = process.StandardOutput.ReadToEnd();
         string error = process.StandardError.ReadToEnd();
         process.WaitForExit();
