@@ -40,13 +40,7 @@ public class CheckParams
     {
         if (string.IsNullOrEmpty(format))
         {
-            format = operation.Extension;
-
-            if (output[^1] == '.')
-                output = output.Replace(".", "");
-
-            operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
-            finish = true;
+            finish = FixFormatNotExist(operation.Extension, operationInput, output);
             Console.WriteLine($"Uzupełniono plik o format {operation.Extension}!");
         }
         else
@@ -57,9 +51,7 @@ public class CheckParams
 
             if (inp == "t")
             {
-                format = operation.Extension;
-                operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
-                finish = true;
+                finish = FixFormatExist(operation.Extension, operationInput, output);
                 Console.WriteLine($"Poprawiono format na {operation.Extension}!");
             }
         }
@@ -75,11 +67,29 @@ public class CheckParams
 
         if (inp == "t")
         {
-            format = operation.Extension;
-            operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
-            finish = true;
+            finish = FixFormatExist(operation.Extension, operationInput, output);
         }
         
         return finish;
+    }
+
+    public static bool FixFormatExist(string format, OperationInput operationInput, string output)
+    {
+        operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
+        return true;
+    }
+    
+    public static bool FixFormatNotExist(string format, OperationInput operationInput, string output)
+    {
+        if (output[^1] == '.')
+            output = output.Replace(".", "");
+        
+        operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
+        return true;
+    }
+
+    public static string NormalizeExtension(string extension)
+    {
+        return extension.StartsWith(".") ? extension : "." + extension;
     }
 }

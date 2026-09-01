@@ -49,12 +49,12 @@ public class Files8
     public static string PrepareTempPathMultiple(string tempDir, string file, string extension)
     {
         string tempPath = "";
-        string name = Path.GetFileNameWithoutExtension(file) + extension;
+        string name = Path.GetFileNameWithoutExtension(file) + CheckParams.NormalizeExtension(extension);
         tempPath = Path.Combine(tempDir, name);
 
         return tempPath;
     }
-    
+
     public static string PrepareTempPathSingle(string tempDir, string output)
     {
         string tempPath = Path.Combine(tempDir, output);
@@ -83,7 +83,7 @@ public class Files8
         }
     }
 
-    public static Dictionary <string, string> FindNotExisitingFiles(List<FileJob> fileJobs)
+    public static Dictionary <string, string> MoveNewFilesAndReturnConflicts(List<FileJob> fileJobs)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
 

@@ -34,14 +34,39 @@ public class ExecutionBuilder
         return fileJobs;
     }
     
-    public static FileJob SetFileJob(OperationInput input, OperationContext operationContext)
+    public static FileJob SetFileJob(OperationInput input, OperationContext operationContext, OperationDefinition operation)
     {
         FileJob fileJob = new FileJob();
         
         fileJob.InputFiles = input.InputFiles;
+
+        if (string.IsNullOrEmpty(input.Output))
+            input.Output = "default" + operation.Extension;
+        
         fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, input.Output);
         fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
 
         return fileJob;
+    }
+    
+    public static List<FileJob> SetFileJobLibre(OperationInput input, OperationContext operationContext)
+    {
+        List<FileJob> fileJobs = new List<FileJob>();
+
+            foreach (string file in input.InputFiles)
+            {
+                FileJob fileJob = new FileJob();
+                fileJob.InputFiles = input.InputFiles;
+                fileJob.TempPath = Files8.PrepareTempPathMultiple(operationContext.TempDir, file, input.Format);
+                fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+                fileJobs.Add(fileJob);
+            }
+            
+            foreach (FileJob fj in fileJobs)
+            {
+                Console.WriteLine("Final: " + fj.FinalPath);
+            }
+
+            return fileJobs;
     }
 }
