@@ -2,7 +2,7 @@
 
 public class ErrorLogger
 {
-    public static void Log(Exception ex, string? message = null)
+    public static void Log(Exception ex)
     {
         string logDir = Path.Combine(AppContext.BaseDirectory, "logs");
         Directory.CreateDirectory(logDir);

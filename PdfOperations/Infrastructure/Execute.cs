@@ -25,7 +25,7 @@ public class Execute
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            ErrorLogger.Log(e);
             throw;
         }
     }
@@ -61,7 +61,7 @@ public class Execute
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            ErrorLogger.Log(e);
             throw;
         }
     }
@@ -74,7 +74,7 @@ public class Execute
     public static void MoveToFinalDir(OperationDefinition operation, List<FileJob> fileJobs)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files8.FindNotExisitingFiles(fileJobs);
+        existing = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
 
         if (existing.Count != 0)
         {
@@ -88,6 +88,27 @@ public class Execute
             else if (opt == "n")
             {
                 Files8.SaveWithUniqueFileName(operation.Extension, existing);
+            }
+        }
+    }
+    
+    public static void MoveToFinalDir(string format, List<FileJob> fileJobs)
+    {
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+        existing = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+
+        if (existing.Count != 0)
+        {
+            Console.WriteLine("Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N):");
+            string opt = ReadInput.ReadOption();
+
+            if (opt == "t")
+            {
+                Files8.OverWriteFile(existing);
+            }
+            else if (opt == "n")
+            {
+                Files8.SaveWithUniqueFileName(CheckParams.NormalizeExtension(format), existing);
             }
         }
     }
@@ -109,17 +130,18 @@ public class Execute
             fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
             SaveToTempDirList(operation, fileInput, fileJobList);
             
-            fileJob = ExecutionBuilder.SetFileJob(fileInput, context);
+            fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
             SaveToTempDir(operation, fileInput, context, fileJob);
             MoveToFinalDir(operation, fileJob);
         }
         else
         {
-            fileJob = ExecutionBuilder.SetFileJob(fileInput, context);
-            SaveToTempDir(operation, fileInput, context, fileJob);
-
-            MoveToFinalDir(operation, fileJob);
+            fileJobList = ExecutionBuilder.SetFileJobLibre(fileInput, context);
+            ExecuteOpeLibre(operation, fileInput, context);
+            MoveToFinalDir(fileInput.Format, fileJobList);
         }
+        
+        Files8.ViewFile(fileInput.Dir);
     }
     
     public static void ExecuteOpeFilesToFiles(OperationDefinition operation, List<FileJob> fileJobList)
