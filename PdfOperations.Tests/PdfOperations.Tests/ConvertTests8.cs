@@ -8,37 +8,30 @@ public class ConvertTests8()
     [TestMethod]
     public void FileToPdfTest()
     {
-        //string fileName = "word.docx";
-        string fileName = "test.pdf";
-        string format = ".docx";
-        //string format = ".pdf";
+        string [] inputs = new [] {"word_1.docx", "word_2.docx", "word_3.docx"};
+        string extension = "pdf";
         int count = 3;
 
-        //OperationInput input = TestHelper8.SetOperationInput();
-        //InputClass testInput = TestHelper.PrepareFilesLibre(fileName, format, count, out string temp);
-        //string tempDir = temp;
-        
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles, format: extension);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
+
         try
         {
-            //Convert.FileToPdf(testInput);
-            
-            //foreach (string file in Directory.GetFiles(tempDir))
-            {
-                //if (Path.GetExtension(file) == ".odt")
-                    //File.Delete(file);
-            }
+            Convert.FileToPdf(input, context);
 
-            //foreach (string file in Directory.GetFiles(tempDir))
+            foreach (string file in Directory.GetFiles(context.TempDir))
             {
-                //TestHelper.AssertForOneFile(file, format);
+                TestHelper8.AssertForOneFile(file, CheckParams.NormalizeExtension(extension));
             }
             
-            //Assert.HasCount(count, Directory.GetFiles(tempDir));
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
         }
         finally
         {
-            //if (Directory.Exists(tempDir))
-                //Directory.Delete(tempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
@@ -164,7 +157,7 @@ public class ConvertTests8()
         OperationContext context = TestHelper8.SetOperationContext();
         Directory.CreateDirectory(context.TempDir);
         
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
 
         try
         {

@@ -53,7 +53,7 @@ public class DivideTests8
         OperationContext context = TestHelper8.SetOperationContext();
         Directory.CreateDirectory(context.TempDir);
         
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
 
         try
         {

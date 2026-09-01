@@ -17,7 +17,7 @@ public class InfoTests
         OperationContext context = TestHelper8.SetOperationContext();
         Directory.CreateDirectory(context.TempDir);
         
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
 
         try
         {
@@ -51,7 +51,7 @@ public class InfoTests
         OperationContext context = TestHelper8.SetOperationContext();
         Directory.CreateDirectory(context.TempDir);
         
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
 
         try
         {
@@ -68,6 +68,40 @@ public class InfoTests
         {
             if (Directory.Exists(context.TempDir))
                 Directory.Delete(context.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void SaveInfoTest()
+    {
+        string[] inputs = new[] { "search_1.txt", "search_2.txt", "search_3.txt" };
+        string extension = ".txt";
+        string output = "final.txt";
+        int count = 1;
+
+        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
+        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
+        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
+        OperationContext context = TestHelper8.SetOperationContext();
+        Directory.CreateDirectory(context.TempDir);
+        
+        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
+
+        try
+        {
+            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", input.InputFiles);
+
+            foreach (string file in Directory.GetFiles(context.TempDir))
+            {
+                TestHelper8.AssertForOneFile(file, operation.Extension);
+            }
+            
+            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
+        }
+        finally
+        {
+            //if (Directory.Exists(context.TempDir))
+                //Directory.Delete(context.TempDir, true);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace PdfOperations.Tests;
+﻿using System.CodeDom.Compiler;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+
+namespace PdfOperations.Tests;
 
 public class TestHelper8
 {
@@ -24,13 +27,19 @@ public class TestHelper8
         return operationDefinition;
     }
     
-    public static OperationInput SetOperationInput(string [] inputFiles, string output = "", string pages = "")
+    public static OperationInput SetOperationInput(string [] inputFiles, string output = "", string pages = "", string dir = "", 
+        string format = "", string phrase = "", int before = 0, int after = 0)
     {
         OperationInput operationInput = new OperationInput()
         {
             InputFiles = inputFiles,
             Output = output,
-            Pages = pages
+            Pages = pages,
+            Dir = dir,
+            Format = format,
+            PhraseToFind = phrase,
+            Before = before,
+            After = after
         };
 
         return operationInput;
@@ -40,17 +49,18 @@ public class TestHelper8
     {
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"))
+            TempDir = Files8.PrepareTempDir()
         };
         
         return operationContext;
     }
 
-    public static FileJob SetFileJob()
+    public static FileJob SetFileJob(string temp, string final)
     {
         FileJob fileJob = new FileJob()
         {
-
+            TempPath = temp,
+            FinalPath = final
         };
         
         return fileJob;
