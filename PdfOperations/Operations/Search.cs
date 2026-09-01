@@ -9,7 +9,7 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input), file.TempPath);
+            Files8.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
         }
     }
 
@@ -17,25 +17,25 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input), file.TempPath);
+            Files8.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
         }
     }
     
-    public static List<List<string>> SearchNewTxt(string f, OperationInput fileInput)
+    public static List<List<string>> SearchNewTxt(string f, string phrase, int before, int after)
     {
         List<List<string>> found = new();
         string[] test = Files8.ReadFile(f);
 
         for (int i = 0; i < test.Length; i++)
         {
-            if (test[i].Contains(fileInput.PhraseToFind.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (test[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 List<string> lines = new List<string>();
                 
                 lines.Add(f);
                 lines.Add("\n");
                 
-                for (int k = fileInput.Before; k <= fileInput.After; k++)
+                for (int k = before; k <= after; k++)
                 {
                     int idx = i + k;
                     
@@ -63,27 +63,5 @@ public class Search
         }
         
         return found;
-    }
-    
-    public static void SaveToFile(string file, string output, string f)
-    {
-        if (!File.Exists(file))
-        {
-            File.WriteAllText(file, f, new UTF8Encoding(true));
-            File.AppendAllText(file, "\n\n");
-            File.AppendAllText(file, output);
-            File.AppendAllText(file, "-------------------------");
-            File.AppendAllText(file, "\n\n");
-        }
-        else
-        {
-            File.AppendAllText(file, f, new UTF8Encoding(true));
-            File.AppendAllText(file, "\n\n");
-            File.AppendAllText(file, output);
-            File.AppendAllText(file, "-------------------------");
-            File.AppendAllText(file, "\n\n");
-        }
-
-        Console.WriteLine(File.Exists(file));
     }
 }
