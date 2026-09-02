@@ -25,7 +25,7 @@ public class ExecutionBuilder
             if (input.InputFiles.Length > 1)
                 fileJob.TempPath = Files8.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
             else
-                fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, fileJob.InputFile);
+                fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, input.Output);
 
             fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
             fileJobs.Add(fileJob);

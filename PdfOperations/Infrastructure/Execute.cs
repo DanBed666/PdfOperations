@@ -134,11 +134,17 @@ public class Execute
             SaveToTempDir(operation, fileInput, context, fileJob);
             MoveToFinalDir(operation, fileJob);
         }
-        else
+        else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
         {
             fileJobList = ExecutionBuilder.SetFileJobLibre(fileInput, context);
             ExecuteOpeLibre(operation, fileInput, context);
             MoveToFinalDir(fileInput.Format, fileJobList);
+        }
+        else
+        {
+            fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
+            SaveToTempDir(operation, fileInput, context, fileJob);
+            MoveToFinalDir(operation, fileJob);
         }
         
         Files8.ViewFile(fileInput.Dir);
