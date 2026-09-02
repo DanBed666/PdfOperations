@@ -66,15 +66,15 @@ public class Execute
         }
     }
 
-    public static void MoveToFinalDir(OperationDefinition operation, FileJob fileJob)
-    {
-        MoveToFinalDir(operation, [fileJob]);
-    }
+    //public static void MoveToFinalDir(OperationDefinition operation, )
+    //{
+        //MoveToFinalDir(operation, [fileJob]);
+    //}
 
-    public static void MoveToFinalDir(OperationDefinition operation, List<FileJob> fileJobs)
+    public static void MoveToFinalDir(OperationDefinition operation, string finalDir, string tempDir)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+        existing = Files8.MoveNewFilesAndReturnConflicts8(finalDir, tempDir);
 
         if (existing.Count != 0)
         {
@@ -92,10 +92,10 @@ public class Execute
         }
     }
     
-    public static void MoveToFinalDir(string format, List<FileJob> fileJobs)
+    public static void MoveToFinalDir(string format, string finalDir, string tempDir)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+        existing = Files8.MoveNewFilesAndReturnConflicts8(finalDir, tempDir);
 
         if (existing.Count != 0)
         {
@@ -123,7 +123,7 @@ public class Execute
         {
             fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
             SaveToTempDirList(operation, fileInput, fileJobList);
-            MoveToFinalDir(operation, fileJobList);
+            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
         }
         else if (operation.OperationFlow == OperationFlow.SearchReport)
         {
@@ -132,19 +132,19 @@ public class Execute
             
             fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
             SaveToTempDir(operation, fileInput, context, fileJob);
-            MoveToFinalDir(operation, fileJob);
+            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
         }
         else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
         {
             fileJobList = ExecutionBuilder.SetFileJobLibre(fileInput, context);
             ExecuteOpeLibre(operation, fileInput, context);
-            MoveToFinalDir(fileInput.Format, fileJobList);
+            MoveToFinalDir(fileInput.Format, fileInput.Dir, context.TempDir);
         }
         else
         {
             fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
             SaveToTempDir(operation, fileInput, context, fileJob);
-            MoveToFinalDir(operation, fileJob);
+            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
         }
         
         Files8.ViewFile(fileInput.Dir);

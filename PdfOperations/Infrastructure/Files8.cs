@@ -101,6 +101,27 @@ public class Files8
 
         return existing;
     }
+    
+    public static Dictionary <string, string> MoveNewFilesAndReturnConflicts8(string finalDir, string tempDir)
+    {
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+
+        foreach (string tempFile in Directory.GetFiles(tempDir))
+        {
+            string finalPath = Path.Combine(finalDir, Path.GetFileName(tempFile));
+            
+            if (File.Exists(finalPath))
+            {
+                existing.Add(tempFile, finalPath);
+            }
+            else
+            {
+                File.Move(tempFile, finalPath);
+            }
+        }
+
+        return existing;
+    }
 
     public static void OverWriteFile(Dictionary <string, string> existing)
     {
