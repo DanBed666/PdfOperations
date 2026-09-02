@@ -17,13 +17,16 @@ public class FilesTests
         string dir = Files8.GetDefaultDirectory();
         
         Assert.IsTrue(Directory.Exists(dir));
+        Assert.AreEqual(defDir, dir);
     }
     
     [TestMethod]
     public void PrepareTempDirTest()
     {
         string tempDir = Files8.PrepareTempDir();
+        
         Assert.IsTrue(Directory.Exists(tempDir));
+        StringAssert.StartsWith(tempDir, Path.GetTempPath());
     }
     
     [TestMethod]
@@ -44,10 +47,14 @@ public class FilesTests
             Console.WriteLine(path);
             tempPaths.Add(path);
         }
+        
+        Assert.HasCount(3, tempPaths);
 
         foreach (string path in tempPaths)
         {
             Assert.IsNotNull(path);
+            Assert.AreEqual(extension, Path.GetExtension(path));
+            StringAssert.StartsWith(path, context.TempDir);
         }
     }
     
@@ -65,6 +72,7 @@ public class FilesTests
         Console.WriteLine(path);
         
         Assert.IsNotNull(path);
+        Assert.AreEqual(Path.Combine(context.TempDir, output), path);
     }
     
     [TestMethod]
@@ -81,6 +89,7 @@ public class FilesTests
         Console.WriteLine(path);
         
         Assert.IsNotNull(path);
+        Assert.AreEqual(Path.Combine(context.TempDir, output), path);
     }
     
     [TestMethod]
@@ -101,7 +110,11 @@ public class FilesTests
             string tempPath = Files8.PrepareTempPathMultiple(context.TempDir, file, operation.Extension);
             string path = Files8.PrepareFinalOutputPath(input.Dir, tempPath);
             Console.WriteLine(path);
+            
             Assert.IsNotNull(path);
+            
+            Assert.AreEqual(operation.Extension, Path.GetExtension(path));
+            StringAssert.StartsWith(path, dir);
         }
     }
     
@@ -123,6 +136,8 @@ public class FilesTests
         Console.WriteLine(path);
         
         Assert.IsNotNull(path);
+        Assert.AreEqual(Path.GetFileName(tempPath), Path.GetFileName(path));
+        Assert.AreEqual(Path.Combine(dir, output), path);
     }
     
     [TestMethod]
@@ -158,8 +173,9 @@ public class FilesTests
             }
 
             fileJobs.Add(fileJob);
-            Assert.HasCount(3, fileJobs);
         }
+        
+        Assert.HasCount(3, fileJobs);
 
         Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
 
@@ -168,6 +184,11 @@ public class FilesTests
             Console.WriteLine(item.Key);
             Console.WriteLine(item.Value);
         }
+        
+        Assert.HasCount(1, exist);
+        Assert.IsTrue(File.Exists(fileJobs[0].FinalPath));
+        Assert.IsTrue(File.Exists(fileJobs[1].TempPath));
+        Assert.IsTrue(File.Exists(fileJobs[2].FinalPath));
     }
     
     [TestMethod]
@@ -203,11 +224,20 @@ public class FilesTests
             }
 
             fileJobs.Add(fileJob);
-            Assert.HasCount(3, fileJobs);
         }
+        
+        Assert.HasCount(3, fileJobs);
         
         Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
         Files8.OverWriteFile(exist);
+        
+        Assert.HasCount(1, exist);
+        Assert.IsTrue(File.Exists(fileJobs[0].FinalPath));
+        Assert.IsTrue(File.Exists(fileJobs[1].FinalPath));
+        Assert.IsTrue(File.Exists(fileJobs[2].FinalPath));
+        Assert.IsFalse(File.Exists(fileJobs[0].TempPath));
+        Assert.IsFalse(File.Exists(fileJobs[1].TempPath));
+        Assert.IsFalse(File.Exists(fileJobs[2].TempPath));
     }
     
     [TestMethod]
@@ -222,19 +252,17 @@ public class FilesTests
         bool check = CheckParams.CheckFileFormat(input.Output, out string format);
         Console.WriteLine(format);
         Console.WriteLine(check);
+        
+        Assert.AreEqual(".pdf", format);
+        Assert.IsTrue(check);
     }
     
     [TestMethod]
     public void CheckFormatTest()
     {
-        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
-        string output = "test2.pdf";
-
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
-        
-        bool check = CheckParams.CheckFormat(input.Output);
-        Console.WriteLine(check);
+        Assert.IsTrue(CheckParams.CheckFormat("pdf"));
+        Assert.IsTrue(CheckParams.CheckFormat("jpg"));
+        Assert.IsFalse(CheckParams.CheckFormat("xdd"));
     }
     
     [TestMethod]
@@ -243,6 +271,7 @@ public class FilesTests
         string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
         string output = "test2.pdf";
         string extension = ".jpg";
+        string finalOut = "test2.jpg";
 
         string[] inputFiles = TestHelper8.SetInputPaths(inputs);
         OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
@@ -250,6 +279,8 @@ public class FilesTests
 
         CheckParams.FixFormatExist(operation.Extension, input, input.Output);
         Console.WriteLine(input.Output);
+        
+        Assert.AreEqual(finalOut, input.Output);
     }
     
     [TestMethod]
@@ -258,6 +289,7 @@ public class FilesTests
         string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
         string output = "test2";
         string extension = ".pdf";
+        string finalOut = "test2.pdf";
 
         string[] inputFiles = TestHelper8.SetInputPaths(inputs);
         OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
@@ -265,6 +297,8 @@ public class FilesTests
 
         CheckParams.FixFormatNotExist(operation.Extension, input, input.Output);
         Console.WriteLine(input.Output);
+        
+        Assert.AreEqual(finalOut, input.Output);
     }
     
     [TestMethod]
@@ -283,6 +317,10 @@ public class FilesTests
         
         FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
         Console.WriteLine(JsonSerializer.Serialize(fileJob, new JsonSerializerOptions {WriteIndented = true}));
+        
+        Assert.IsNotNull(fileJob);
+        Assert.AreEqual(Path.Combine(context.TempDir, "default.pdf"), fileJob.TempPath);
+        Assert.AreEqual(Path.Combine(dir, "default.pdf"), fileJob.FinalPath);
     }
     
     [TestMethod]
@@ -305,6 +343,11 @@ public class FilesTests
         {
             Console.WriteLine(JsonSerializer.Serialize(fileJob, new JsonSerializerOptions {WriteIndented = true}));
         }
+        
+        Assert.HasCount(3, fileJobList);
+        Assert.IsTrue(fileJobList.All(fj => fj.TempPath.StartsWith(context.TempDir)));
+        Assert.IsTrue(fileJobList.All(fj => fj.FinalPath.StartsWith(dir)));
+        Assert.IsTrue(fileJobList.All(fj => Path.GetExtension(fj.TempPath) == extension));
     }
     
     [TestMethod]
@@ -326,6 +369,11 @@ public class FilesTests
             {
                 Console.WriteLine(JsonSerializer.Serialize(fileJob, new JsonSerializerOptions {WriteIndented = true}));
             }
+            
+            Assert.HasCount(3, fileJobList);
+            Assert.IsTrue(fileJobList.All(fj => fj.TempPath.StartsWith(context.TempDir)));
+            Assert.IsTrue(fileJobList.All(fj => fj.FinalPath.StartsWith(dir)));
+            Assert.IsTrue(fileJobList.All(fj => Path.GetExtension(fj.TempPath) == extension));
         }
     
     [TestMethod]
@@ -333,6 +381,8 @@ public class FilesTests
     {
         OperationContext context = ExecutionBuilder.SetOperationContext();
         Console.WriteLine(context.TempDir);
+        
+        Assert.IsTrue(Directory.Exists(context.TempDir));
     }
     
     [TestMethod]
@@ -372,13 +422,22 @@ public class FilesTests
         
         Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
         Files8.SaveWithUniqueFileName(extension, exist);
+        
+        Assert.HasCount(1, exist);
+        Assert.IsFalse(File.Exists(fileJobs[1].TempPath));
+        Assert.IsTrue(Directory.GetFiles(dir).Any(f => Path.GetFileName(f).StartsWith("ocr_test_2_")));
     }
 
     [TestMethod]
     public void ErrorLoggerTest()
     {
-        var ex = new Exception("Testowy błąd Loggera");
+        string message = "Testowy błąd Loggera";
+        var ex = new Exception(message);
         ErrorLogger.Log(ex);
+        
+        string path = Path.Combine(AppContext.BaseDirectory, "logs", "error_log.txt");
+        Assert.IsTrue(File.Exists(path));
+        StringAssert.Contains( File.ReadAllText(path), message);
     }
 
     [TestMethod]
@@ -420,6 +479,8 @@ public class FilesTests
         
         Assert.IsTrue(Path.Exists(Path.Combine(context.TempDir, "output.txt")));
         Assert.IsGreaterThan(0, new FileInfo(Path.Combine(context.TempDir, "output.txt")).Length);
+        string saved = File.ReadAllText(Path.Combine(context.TempDir, "output.txt"));
+        Assert.IsTrue(saved.Contains("hydraulika", StringComparison.OrdinalIgnoreCase));
     }
     
     [TestMethod]
@@ -447,6 +508,9 @@ public class FilesTests
             {
                 Console.WriteLine(t);
             }
+            
+            Assert.IsGreaterThan(0, text.Length);
+            Assert.IsTrue(text.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase)));
         }
     }
 

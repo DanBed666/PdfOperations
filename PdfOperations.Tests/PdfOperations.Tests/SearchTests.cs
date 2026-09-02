@@ -86,6 +86,12 @@ public class SearchTests
         };
         
         Search.SearchPicture(input, context, reportJob);
+        
+        Assert.IsTrue(File.Exists(reportJob.TempPath));
+        Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
+        
+        string text = File.ReadAllText(reportJob.TempPath);
+        Assert.IsTrue(text.Contains(phrase, StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -114,5 +120,11 @@ public class SearchTests
         };
         
         Search.SearchPdf(input, context, reportJob);
+        
+        Assert.IsTrue(File.Exists(reportJob.TempPath));
+        Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
+        
+        string text = File.ReadAllText(reportJob.TempPath);
+        Assert.IsTrue(text.Contains(phrase, StringComparison.OrdinalIgnoreCase));
     }
 }
