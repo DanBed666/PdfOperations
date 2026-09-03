@@ -15,6 +15,7 @@ public class CaseOptions
         Console.WriteLine("Podaj nazwę pdf: ");
         string [] input = Files8.AddFiles(ope.Filter);
 
+        Console.WriteLine("Podaj nazwę aplikacji: ");
         string app = Console.ReadLine();
         string appConv = "";
 

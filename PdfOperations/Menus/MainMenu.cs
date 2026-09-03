@@ -27,12 +27,7 @@ public class MainMenu
             }
             else if (znak >= 14 && znak <= 15)
             {
-                OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
-                
-                if (operationInput == null)
-                    return;
-                
-                Execute.ExecuteOpe(operationInput, value!);
+                Execute.ExecuteRunApp(value!);
             }
             else if (znak == 16)
                 Environment.Exit(0);
