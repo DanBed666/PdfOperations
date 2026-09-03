@@ -4,91 +4,46 @@ public class Execute
 {
     public static void SaveToTempDirList(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobList)
     {
-        try
+        switch (operation.OperationFlow)
         {
-            switch (operation.OperationFlow)
-            {
-                case OperationFlow.FilesToFiles:
-                    ExecuteOpeFilesToFiles(operation, fileJobList);
-                    break;
-                
-                case OperationFlow.FilesPages:
-                    ExecuteOpePages(operation, fileInput, fileJobList);
-                    break;
-                
-                case OperationFlow.SearchReport:
-                    ExecuteOpeSearch(operation, fileJobList);
-                    break;
-            }
-
-            Console.WriteLine("Operacja zakończona pomyślnie!");
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            throw;
+            case OperationFlow.FilesToFiles:
+                ExecuteOpeFilesToFiles(operation, fileJobList);
+                break;
+            
+            case OperationFlow.FilesPages:
+                ExecuteOpePages(operation, fileInput, fileJobList);
+                break;
+            
+            case OperationFlow.SearchReport:
+                ExecuteOpeSearch(operation, fileJobList);
+                break;
         }
     }
+    
     public static void SaveToTempDir(OperationDefinition operation, OperationInput fileInput,
         OperationContext context, FileJob fileJob)
     {
-        try
+        switch (operation.OperationFlow)
         {
-            switch (operation.OperationFlow)
-            {
-                case OperationFlow.FilesToSingleFile:
-                    ExecuteOpeFilesToSingleFile(operation, fileJob);
-                    break;
+            case OperationFlow.FilesToSingleFile:
+                ExecuteOpeFilesToSingleFile(operation, fileJob);
+                break;
 
-                case OperationFlow.FilesToFilesWithFormat:
-                    ExecuteOpeLibre(operation, fileInput, context);
-                    break;
-                
-                case OperationFlow.SearchReport:
-                    ExecuteOpeSearch(operation, fileInput, context, fileJob);
-                    break;
+            case OperationFlow.FilesToFilesWithFormat:
+                ExecuteOpeLibre(operation, fileInput, context);
+                break;
+            
+            case OperationFlow.SearchReport:
+                ExecuteOpeSearch(operation, fileInput, context, fileJob);
+                break;
 
-                case OperationFlow.RunApp:
-                    ExecuteRunApp(operation);
-                    break;
+            case OperationFlow.RunApp:
+                ExecuteRunApp(operation);
+                break;
 
-                default:
-                    Console.WriteLine("Brak flow");
-                    break;
-            }
-
-            Console.WriteLine("Operacja zakończona pomyślnie!");
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            throw;
-        }
-    }
-
-    //public static void MoveToFinalDir(OperationDefinition operation, )
-    //{
-        //MoveToFinalDir(operation, [fileJob]);
-    //}
-
-    public static void MoveToFinalDir(OperationDefinition operation, string finalDir, string tempDir)
-    {
-        Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files8.MoveNewFilesAndReturnConflicts8(finalDir, tempDir);
-
-        if (existing.Count != 0)
-        {
-            Console.WriteLine("Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N):");
-            string opt = ReadInput.ReadOption();
-
-            if (opt == "t")
-            {
-                Files8.OverWriteFile(existing);
-            }
-            else if (opt == "n")
-            {
-                Files8.SaveWithUniqueFileName(operation.Extension, existing);
-            }
+            default:
+                Console.WriteLine("Brak flow");
+                break;
         }
     }
     
@@ -119,35 +74,49 @@ public class Execute
         List<FileJob> fileJobList = new List<FileJob>();
         FileJob fileJob = new FileJob();
 
-        if (operation.OperationFlow == OperationFlow.FilesToFiles || operation.OperationFlow == OperationFlow.FilesPages)
+        try
         {
-            fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-            SaveToTempDirList(operation, fileInput, fileJobList);
-            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
+            if (operation.OperationFlow == OperationFlow.FilesToFiles ||
+                operation.OperationFlow == OperationFlow.FilesPages)
+            {
+                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
+                SaveToTempDirList(operation, fileInput, fileJobList);
+                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+            }
+            else if (operation.OperationFlow == OperationFlow.SearchReport)
+            {
+                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
+                SaveToTempDirList(operation, fileInput, fileJobList);
+
+                fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
+                SaveToTempDir(operation, fileInput, context, fileJob);
+                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+            }
+            else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+            {
+                ExecuteOpeLibre(operation, fileInput, context);
+                MoveToFinalDir(fileInput.Format, fileInput.Dir, context.TempDir);
+            }
+            else
+            {
+                fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
+                SaveToTempDir(operation, fileInput, context, fileJob);
+                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+            }
+
+            Console.WriteLine("Operacja zakończona pomyślnie!");
+            Files8.ViewFile(fileInput.Dir);
         }
-        else if (operation.OperationFlow == OperationFlow.SearchReport)
+        catch (Exception e)
         {
-            fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-            SaveToTempDirList(operation, fileInput, fileJobList);
-            
-            fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-            SaveToTempDir(operation, fileInput, context, fileJob);
-            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
+            ErrorLogger.Log(e);
+            throw;
         }
-        else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+        finally
         {
-            fileJobList = ExecutionBuilder.SetFileJobLibre(fileInput, context);
-            ExecuteOpeLibre(operation, fileInput, context);
-            MoveToFinalDir(fileInput.Format, fileInput.Dir, context.TempDir);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
-        else
-        {
-            fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-            SaveToTempDir(operation, fileInput, context, fileJob);
-            MoveToFinalDir(operation, fileInput.Dir, context.TempDir);
-        }
-        
-        Files8.ViewFile(fileInput.Dir);
     }
     
     public static void ExecuteOpeFilesToFiles(OperationDefinition operation, List<FileJob> fileJobList)

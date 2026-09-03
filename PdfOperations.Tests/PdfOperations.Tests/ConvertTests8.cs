@@ -180,9 +180,9 @@ public class ConvertTests8()
     [TestMethod]
     public void ExtractPictTest()
     {
-        string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
+        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
         string extension = ".jpg";
-        int count = 3;
+        int count = 12;
 
         string[] inputFiles = TestHelper8.SetInputPaths(inputs);
         OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
