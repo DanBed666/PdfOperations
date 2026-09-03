@@ -82,25 +82,6 @@ public class Files8
             File.Move(item.Key, finalPath);
         }
     }
-
-    public static Dictionary <string, string> MoveNewFilesAndReturnConflicts(List<FileJob> fileJobs)
-    {
-        Dictionary <string, string> existing = new Dictionary<string, string>();
-
-        foreach (FileJob fileJob in fileJobs)
-        {
-            if (File.Exists(fileJob.FinalPath))
-            {
-                existing.Add(fileJob.TempPath, fileJob.FinalPath);
-            }
-            else
-            {
-                File.Move(fileJob.TempPath, fileJob.FinalPath);
-            }
-        }
-
-        return existing;
-    }
     
     public static Dictionary <string, string> MoveNewFilesAndReturnConflicts8(string finalDir, string tempDir)
     {

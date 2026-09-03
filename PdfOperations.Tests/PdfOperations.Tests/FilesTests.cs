@@ -177,7 +177,7 @@ public class FilesTests
         
         Assert.HasCount(3, fileJobs);
 
-        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts8(input.Dir, context.TempDir);
 
         foreach (KeyValuePair<string, string> item in exist)
         {
@@ -228,7 +228,7 @@ public class FilesTests
         
         Assert.HasCount(3, fileJobs);
         
-        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts8(input.Dir, context.TempDir);
         Files8.OverWriteFile(exist);
         
         Assert.HasCount(1, exist);
@@ -420,7 +420,7 @@ public class FilesTests
             fileJobs.Add(fileJob);
         }
         
-        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts(fileJobs);
+        Dictionary <string, string> exist = Files8.MoveNewFilesAndReturnConflicts8(input.Dir, context.TempDir);
         Files8.SaveWithUniqueFileName(extension, exist);
         
         Assert.HasCount(1, exist);
