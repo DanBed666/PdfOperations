@@ -49,7 +49,7 @@ public class TestHelper8
     {
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
         return operationContext;

@@ -11,29 +11,24 @@ public class InfoTests
         string output = "final.txt";
         int count = 1;
 
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
-        OperationContext context = TestHelper8.SetOperationContext();
-        Directory.CreateDirectory(context.TempDir);
-        
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
+        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
 
         try
         {
             Info.ShowInfo(fileJob);
 
-            foreach (string file in Directory.GetFiles(context.TempDir))
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
             {
-                TestHelper8.AssertForOneFile(file, operation.Extension);
+                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
+            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(context.TempDir))
-                Directory.Delete(context.TempDir, true);
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
     
@@ -45,29 +40,24 @@ public class InfoTests
         string output = "final.txt";
         int count = 1;
 
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
-        OperationContext context = TestHelper8.SetOperationContext();
-        Directory.CreateDirectory(context.TempDir);
-        
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
+        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
 
         try
         {
             Info.ShowFontInfo(fileJob);
 
-            foreach (string file in Directory.GetFiles(context.TempDir))
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
             {
-                TestHelper8.AssertForOneFile(file, operation.Extension);
+                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
+            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(context.TempDir))
-                Directory.Delete(context.TempDir, true);
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
     
@@ -79,29 +69,24 @@ public class InfoTests
         string output = "final.txt";
         int count = 1;
 
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, output: output);
-        OperationContext context = TestHelper8.SetOperationContext();
-        Directory.CreateDirectory(context.TempDir);
-        
-        FileJob fileJob = ExecutionBuilder.SetFileJob(input, context, operation);
+        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
+        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
 
         try
         {
-            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", input.InputFiles);
+            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", testInput.Input.InputFiles);
 
-            foreach (string file in Directory.GetFiles(context.TempDir))
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
             {
-                TestHelper8.AssertForOneFile(file, operation.Extension);
+                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
+            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
         }
         finally
         {
-            //if (Directory.Exists(context.TempDir))
-                //Directory.Delete(context.TempDir, true);
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
 }

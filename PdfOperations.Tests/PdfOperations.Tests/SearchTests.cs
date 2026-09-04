@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
-
-namespace PdfOperations.Tests;
+﻿namespace PdfOperations.Tests;
 using System.Linq;
 
 [TestClass]
@@ -10,17 +8,13 @@ public class SearchTests
     public void SearchTxtTest()
     {
         string [] inputs = new [] {"search_1.txt", "search_2.txt", "search_3.txt"};
-        string format = ".txt";
+        string extension = ".txt";
         int count = 3;
         string phrase = "hydraulika";
         List<List<string>> allFound = new List<List<string>>();
-        
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(format);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, phrase: phrase, before: -2, after: 2);
-        OperationContext context = TestHelper8.SetOperationContext();
-        
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+
+        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
         
         foreach (FileJob fileJob in fileJobList)
         {
@@ -31,14 +25,15 @@ public class SearchTests
         {
             foreach (FileJob fileJob in fileJobList)
             {
-                List<List<string>> result = Search.SearchNewTxt(fileJob.TempPath, input.PhraseToFind, input.Before, input.After);
+                List<List<string>> result = Search.SearchNewTxt(fileJob.TempPath, testInput.Input.PhraseToFind, 
+                    testInput.Input.Before, testInput.Input.After);
                 allFound.AddRange(result);
-                Files8.SaveToFile(result, Path.Combine(context.TempDir, "output.txt"));
+                Files.SaveToFile(result, Path.Combine(testInput.Context.TempDir, "output.txt"));
             }
     
-            foreach (string file in Directory.GetFiles(context.TempDir))
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
             {
-                TestHelper8.AssertForOneFile(file, format);
+                TestHelper.AssertForOneFile(file, extension);
             }
 
             Assert.IsTrue(allFound.Any(group =>
@@ -51,12 +46,12 @@ public class SearchTests
 
             Assert.HasCount(6, allFound);
             
-            Assert.HasCount(4, Directory.GetFiles(context.TempDir));
+            Assert.HasCount(4, Directory.GetFiles(testInput.Context.TempDir));
         }
         finally
         {
-             //if (Directory.Exists(context.TempDir))
-                //Directory.Delete(context.TempDir, true);
+             if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
     
@@ -64,16 +59,12 @@ public class SearchTests
     public void SearchPictureTest()
     {
         string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
-        string format = ".txt";
+        string extension = ".txt";
         int count = 3;
         string phrase = "testowy";
         
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(format);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, phrase: phrase, before: -2, after: 2);
-        OperationContext context = TestHelper8.SetOperationContext();
-        
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
         
         foreach (FileJob fileJob in fileJobList)
         {
@@ -82,10 +73,10 @@ public class SearchTests
 
         FileJob reportJob = new FileJob
         {
-            TempPath = Path.Combine(context.TempDir, "raport.txt")
+            TempPath = Path.Combine(testInput.Context.TempDir, "raport.txt")
         };
         
-        Search.SearchPicture(input, context, reportJob);
+        Search.SearchPicture(testInput.Input, testInput.Context, reportJob);
         
         Assert.IsTrue(File.Exists(reportJob.TempPath));
         Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
@@ -98,16 +89,12 @@ public class SearchTests
     public void SearchPdfTest()
     {
         string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string format = ".txt";
+        string extension = ".txt";
         int count = 3;
         string phrase = "testowy";
         
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(format);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, phrase: phrase, before: -2, after: 2);
-        OperationContext context = TestHelper8.SetOperationContext();
-        
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
         
         foreach (FileJob fileJob in fileJobList)
         {
@@ -116,10 +103,10 @@ public class SearchTests
         
         FileJob reportJob = new FileJob
         {
-            TempPath = Path.Combine(context.TempDir, "raport.txt")
+            TempPath = Path.Combine(testInput.Context.TempDir, "raport.txt")
         };
         
-        Search.SearchPdf(input, context, reportJob);
+        Search.SearchPdf(testInput.Input, testInput.Context, reportJob);
         
         Assert.IsTrue(File.Exists(reportJob.TempPath));
         Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);

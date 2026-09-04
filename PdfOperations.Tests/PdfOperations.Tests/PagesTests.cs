@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace PdfOperations.Tests;
+﻿namespace PdfOperations.Tests;
 
 [TestClass]
 public class PagesTests
@@ -13,32 +11,27 @@ public class PagesTests
         string pages = "2-3";
         int count = 3;
 
-        string[] inputFiles = TestHelper8.SetInputPaths(inputs);
-        OperationDefinition operation = TestHelper8.SetOperationDefinition(extension);
-        OperationInput input = TestHelper8.SetOperationInput(inputFiles, pages: pages);
-        OperationContext context = TestHelper8.SetOperationContext();
-        Directory.CreateDirectory(context.TempDir);
-        
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(input, context, operation);
+        TestInput testInput = TestHelper.PrepareMultipleInputsPages(inputs, extension, pages);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
 
         try
         {
             foreach (FileJob fileJob in fileJobList)
             {
-                Pages.CreateWithPages(input, fileJob);
+                Pages.CreateWithPages(testInput.Input, fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(context.TempDir))
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
             {
-                TestHelper8.AssertForOneFile(file, operation.Extension);
+                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(context.TempDir));
+            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
         }
         finally
         {
-            if (Directory.Exists(context.TempDir))
-                Directory.Delete(context.TempDir, true);
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
 }
