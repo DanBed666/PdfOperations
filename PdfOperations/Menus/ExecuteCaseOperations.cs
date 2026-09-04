@@ -7,7 +7,7 @@ public class ExecuteCaseOperations
         OperationInput operationInput = new OperationInput();
 
         Console.WriteLine("Podaj nazwę pdf: ");
-        operationInput.InputFiles = Files8.AddFiles(operation.Filter);
+        operationInput.InputFiles = Files.AddFiles(operation.Filter);
 
         foreach (string file in operationInput.InputFiles)
         {
@@ -15,7 +15,7 @@ public class ExecuteCaseOperations
         }
         
         if (operationInput.InputFiles.Length == 1)
-            Files8.ViewFile(operationInput.InputFiles[0]);
+            Files.ViewFile(operationInput.InputFiles[0]);
 
         if (operation.AddInfo == "search")
         {
@@ -70,7 +70,7 @@ public class ExecuteCaseOperations
             }
         }
         
-        operationInput.Dir = Files8.AddDirectory();
+        operationInput.Dir = Files.AddDirectory();
 
         return operationInput;
     }

@@ -6,7 +6,7 @@ public class ExecutionBuilder
     {
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
         return operationContext;
@@ -23,11 +23,11 @@ public class ExecutionBuilder
             fileJob.InputFile = file;
 
             if (input.InputFiles.Length > 1)
-                fileJob.TempPath = Files8.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
+                fileJob.TempPath = Files.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
             else
-                fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, input.Output);
+                fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
 
-            fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+            fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
             fileJobs.Add(fileJob);
         }
 
@@ -43,8 +43,8 @@ public class ExecutionBuilder
         if (string.IsNullOrEmpty(input.Output))
             input.Output = "default" + operation.Extension;
         
-        fileJob.TempPath = Files8.PrepareTempPathSingle(operationContext.TempDir, input.Output);
-        fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+        fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
+        fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
 
         return fileJob;
     }
@@ -57,8 +57,8 @@ public class ExecutionBuilder
             {
                 FileJob fileJob = new FileJob();
                 fileJob.InputFiles = input.InputFiles;
-                fileJob.TempPath = Files8.PrepareTempPathMultiple(operationContext.TempDir, file, input.Format);
-                fileJob.FinalPath = Files8.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+                fileJob.TempPath = Files.PrepareTempPathMultiple(operationContext.TempDir, file, input.Format);
+                fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
                 fileJobs.Add(fileJob);
             }
             

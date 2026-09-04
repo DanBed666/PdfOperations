@@ -9,7 +9,7 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
+            Files.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
         }
     }
 
@@ -17,14 +17,14 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            Files8.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
+            Files.SaveToFile(SearchNewTxt(f, input.PhraseToFind, input.Before, input.After), file.TempPath);
         }
     }
     
     public static List<List<string>> SearchNewTxt(string f, string phrase, int before, int after)
     {
         List<List<string>> found = new();
-        string[] test = Files8.ReadFile(f);
+        string[] test = Files.ReadFile(f);
 
         for (int i = 0; i < test.Length; i++)
         {

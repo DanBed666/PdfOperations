@@ -5,7 +5,7 @@ public class CaseOptions
     public static void ExecuteManyRun(OperationDefinition ope)
     {
         Console.WriteLine("Podaj nazwę pdf: ");
-        string [] input = Files8.AddFiles(ope.Filter);
+        string [] input = Files.AddFiles(ope.Filter);
         
         RunClass.RunFiles(input);
     }
@@ -13,7 +13,7 @@ public class CaseOptions
     public static void ExecuteManyRunApp(OperationDefinition ope)
     {
         Console.WriteLine("Podaj nazwę pdf: ");
-        string [] input = Files8.AddFiles(ope.Filter);
+        string [] input = Files.AddFiles(ope.Filter);
 
         Console.WriteLine("Podaj nazwę aplikacji: ");
         string app = Console.ReadLine();

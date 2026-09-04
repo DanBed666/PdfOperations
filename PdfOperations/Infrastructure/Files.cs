@@ -1,6 +1,6 @@
 ﻿namespace PdfOperations;
 
-public class Files8
+public class Files
 {
     public static string [] AddFiles(string filter)
     {
@@ -83,7 +83,7 @@ public class Files8
         }
     }
     
-    public static Dictionary <string, string> MoveNewFilesAndReturnConflicts8(string finalDir, string tempDir)
+    public static Dictionary <string, string> MoveNewFilesAndReturnConflicts(string finalDir, string tempDir)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
 
@@ -131,7 +131,6 @@ public class Files8
     {
         Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
         string opt = ReadInput.ReadOption();
-        //ReadInput options
         
         if (opt.ToLower().Equals("t"))
             RunClass.RunFile(path);

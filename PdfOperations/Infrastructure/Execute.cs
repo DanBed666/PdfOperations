@@ -50,7 +50,7 @@ public class Execute
     public static void MoveToFinalDir(string format, string finalDir, string tempDir)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files8.MoveNewFilesAndReturnConflicts8(finalDir, tempDir);
+        existing = Files.MoveNewFilesAndReturnConflicts(finalDir, tempDir);
 
         if (existing.Count != 0)
         {
@@ -59,11 +59,11 @@ public class Execute
 
             if (opt == "t")
             {
-                Files8.OverWriteFile(existing);
+                Files.OverWriteFile(existing);
             }
             else if (opt == "n")
             {
-                Files8.SaveWithUniqueFileName(CheckParams.NormalizeExtension(format), existing);
+                Files.SaveWithUniqueFileName(CheckParams.NormalizeExtension(format), existing);
             }
         }
     }
@@ -105,7 +105,7 @@ public class Execute
             }
 
             Console.WriteLine("Operacja zakończona pomyślnie!");
-            Files8.ViewFile(fileInput.Dir);
+            Files.ViewFile(fileInput.Dir);
         }
         catch (Exception e)
         {
