@@ -461,8 +461,9 @@ public class FilesTests
 
             foreach (FileJob fileJob in fileJobList)
             {
+                string originalFile = Files.FindOriginalFileForTemp(fileJob.TempPath, fileJob.InputFiles);
                 List<List<string>> result =
-                    Search.SearchNewTxt(fileJob.TempPath, testInput.Input.PhraseToFind, testInput.Input.Before,
+                    Search.SearchNewTxt(fileJob.TempPath, originalFile, testInput.Input.PhraseToFind, testInput.Input.Before,
                         testInput.Input.After);
                 allFound.AddRange(result);
                 Files.SaveToFile(result, Path.Combine(testInput.Context.TempDir, "output.txt"));
@@ -504,6 +505,40 @@ public class FilesTests
                 Assert.IsGreaterThan(0, text.Length);
                 Assert.IsTrue(text.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase)));
             }
+        }
+        finally
+        {
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void FindOriginalFileForTempTest()
+    {
+        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
+        string extension = ".pdf";
+        List<string> originalFiles = new List<string>();
+
+        TestInput testInput = TestHelper.PrepareMultipleInputs(inputs, extension);
+
+        try
+        {
+            foreach (string inputFile in testInput.InputFiles)
+            {
+                string tempPath = Path.Combine(testInput.Context.TempDir, Path.GetFileName(inputFile));
+                File.Copy(inputFile, tempPath);
+            }
+
+            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            {
+                string originalFile = Files.FindOriginalFileForTemp(file, testInput.InputFiles);
+                Assert.IsNotNull(originalFile);
+                originalFiles.Add(originalFile);
+            }
+
+            Assert.HasCount(3, originalFiles);
+            Assert.IsTrue(originalFiles.All(file => testInput.InputFiles.Contains(file)));
         }
         finally
         {

@@ -140,4 +140,14 @@ public class Files
     {
         return File.ReadAllLines(input);
     }
+
+    public static string FindOriginalFileForTemp(string tempFile, string [] inputFiles)
+    {
+        string tempName = Path.GetFileName(tempFile);
+
+        string? originalFile = inputFiles.FirstOrDefault(fileName =>
+            Path.GetFileName(fileName).Equals(tempName, StringComparison.OrdinalIgnoreCase));
+
+        return originalFile ?? tempName;
+    }
 }
