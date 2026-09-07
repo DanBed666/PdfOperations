@@ -9,7 +9,7 @@ public class OperationPaths
         {
             [1] = new OperationDefinition
             {
-                Name = "File to File (LibreOffice)",
+                Name = "Konwersja plików dowolnego typu (LibreOffice)",
                 Filter = FileFilters.LibreOfficeFiles,
                 AddInfo = "format",
                 OperationFlow = OperationFlow.FilesToFilesWithFormat,
@@ -20,7 +20,7 @@ public class OperationPaths
             },
             [2] = new OperationDefinition
             {
-                Name = "Pdf to Picture",
+                Name = "Rozdziel Pdf na obrazy",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".jpg",
                 FileOperationActionMultiple = Convert.PdfToPict,
@@ -30,7 +30,7 @@ public class OperationPaths
             },
             [3] = new OperationDefinition
             {
-                Name = "Pictures to Pdf",
+                Name = "Złącz obrazy do pliku pdf",
                 Filter = FileFilters.PictFiles,
                 Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
@@ -40,7 +40,7 @@ public class OperationPaths
             },
             [4] = new OperationDefinition
             {
-                Name = "Pdf to Text",
+                Name = "Odczytaj tekst z pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PdfToTxt,
@@ -50,7 +50,7 @@ public class OperationPaths
             },
             [5] = new OperationDefinition
             {
-                Name = "Picture To Text",
+                Name = "Odczytaj tekst z obrazu",
                 Filter = FileFilters.PictFiles,
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PictToTxt,
@@ -60,7 +60,7 @@ public class OperationPaths
             },
             [6] = new OperationDefinition
             {
-                Name = "Extract Pictures from Pdf",
+                Name = "Wyciągnij obrazy z pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".jpg",
                 FileOperationActionMultiple = Convert.ExtractPict,
@@ -70,7 +70,7 @@ public class OperationPaths
             },
             [7] = new OperationDefinition
             {
-                Name = "Create Pdf with pages",
+                Name = "Utwórz pdf z wyznaczonymi stronami",
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesPages,
                 FileOperationActionPages = Pages.CreateWithPages,
@@ -82,7 +82,7 @@ public class OperationPaths
             },
             [8] = new OperationDefinition
             {
-                Name = "Pdf Separate",
+                Name = "Rozdziel na oddzielne pliki pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".pdf",
                 FileOperationActionMultiple = Divide.OneToMany,
@@ -92,7 +92,7 @@ public class OperationPaths
             },
             [9] = new OperationDefinition
             {
-                Name = "Pdf Unite",
+                Name = "Złącz wiele plików pdf do jednego",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
@@ -102,7 +102,7 @@ public class OperationPaths
             },
             [10] = new OperationDefinition
             {
-                Name = "Search Text in Pdf",
+                Name = "Znajdź szukaną frazę w pliku pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PdfToTxt,
@@ -117,7 +117,7 @@ public class OperationPaths
             },
             [11] = new OperationDefinition
             {
-                Name = "Search Text in Picture",
+                Name = "Znajdź szukaną frazę w obrazie",
                 Filter = FileFilters.PictFiles,
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PictToTxt,
@@ -132,7 +132,7 @@ public class OperationPaths
             },
             [12] = new OperationDefinition
             {
-                Name = "Pdf Info",
+                Name = "Wyświetl informacje o pliku pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
                 OperationFlow = OperationFlow.FilesToSingleFile,
@@ -142,7 +142,7 @@ public class OperationPaths
             },
             [13] = new OperationDefinition
             {
-                Name = "Pdf Font",
+                Name = "Wyświetl informacje o czcionce w pliku pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
                 OperationFlow = OperationFlow.FilesToSingleFile,
@@ -152,14 +152,14 @@ public class OperationPaths
             },
             [14] = new OperationDefinition
             {
-                Name = "Run App",
+                Name = "Otwórz wiele plików z użyciem programu domyślnego",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = CaseOptions.ExecuteManyRun,
                 InputPrompt = "Wybierz pliki do otwarcia:"
             },
             [15] = new OperationDefinition
             {
-                Name = "Run App with type",
+                Name = "Otwórz wiele plików z użyciem programu wybranego",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = CaseOptions.ExecuteManyRunApp,
                 InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
@@ -167,7 +167,7 @@ public class OperationPaths
             },
             [16] = new OperationDefinition
             {
-                Name = "Quit",
+                Name = "Wyjście",
             }
         }
     );
