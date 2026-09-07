@@ -106,7 +106,7 @@ public class RunClass
         }
     }
     
-    public static string RunWithOutput(string exe, params  string[] arguments)
+    public static string RunWithOutput(string exe, params string[] arguments)
     {
         var info = new ProcessStartInfo
         {

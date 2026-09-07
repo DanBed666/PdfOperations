@@ -162,7 +162,8 @@ public class OperationPaths
                 Name = "Run App with type",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = CaseOptions.ExecuteManyRunApp,
-                InputPrompt = "Wybierz pliki do otwarcia wybranym programem:"
+                InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
+                AppPrompt = "Wybierz program: w - Word, d - LibreOffice Draw, Enter - domyślny:"
             },
             [16] = new OperationDefinition
             {

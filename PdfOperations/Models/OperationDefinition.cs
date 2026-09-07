@@ -14,6 +14,7 @@ public class OperationDefinition
     public Action<OperationInput, OperationContext, FileJob> ReportOperationAction { get; init; }
     public Action<OperationDefinition> RunOperationAction { get; init; }
     public string InputPrompt { get; init; } = Messages.ChooseFiles;
+    public string AppPrompt { get; init; } = Messages.ChooseFiles;
     public string OutputPrompt { get; init; } = Messages.EnterOutputName;
     public string PagesPrompt { get; init; } = Messages.EnterPages;
     public string BeforePrompt { get; init; } = Messages.EnterBeforeLines;

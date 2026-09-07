@@ -14,7 +14,7 @@ public class ReadInput
 
         return input;
     }
-
+    
     public static string ReadOption()
     {
         string input = Console.ReadLine()!;

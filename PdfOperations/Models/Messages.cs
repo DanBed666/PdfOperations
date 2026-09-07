@@ -36,4 +36,5 @@ public class Messages
     public const string FormatAdded = "Uzupełniono plik o format: ";
     public const string FormatFixed = "Poprawiono format na: ";
     public const string ExpectedFormat = "Poprawny format to: ";
+    public const string CancelInfo = "Wpisz :q w dowolnym kroku, aby anulować operację.";
 }

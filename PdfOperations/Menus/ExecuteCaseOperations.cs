@@ -6,6 +6,7 @@ public class ExecuteCaseOperations
     {
         OperationInput operationInput = new OperationInput();
 
+        Console.WriteLine(Messages.CancelInfo);
         Console.WriteLine(operation.InputPrompt);
         operationInput.InputFiles = Files.AddFiles(operation.Filter);
 
@@ -45,6 +46,11 @@ public class ExecuteCaseOperations
         
         if (operation.AddInfo == "pages")
         {
+            foreach (string info in Info.GetPdfPages(operationInput.InputFiles))
+            {
+                Console.WriteLine(info);
+            }
+
             if (!InputPagesOpe(operation, out string value)) return null;
             operationInput.Pages = value;
         }
