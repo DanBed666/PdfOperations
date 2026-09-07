@@ -410,6 +410,7 @@ public class FilesTests
 
             Dictionary<string, string> exist =
                 Files.MoveNewFilesAndReturnConflicts(testInput.Input.Dir, testInput.Context.TempDir);
+            
             Files.SaveWithUniqueFileName(extension, exist);
 
             Assert.HasCount(1, exist);
