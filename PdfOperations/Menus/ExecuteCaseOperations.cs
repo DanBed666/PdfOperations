@@ -9,6 +9,12 @@ public class ExecuteCaseOperations
         Console.WriteLine(operation.InputPrompt);
         operationInput.InputFiles = Files.AddFiles(operation.Filter);
 
+        if (operationInput.InputFiles.Length == 0)
+        {
+            Console.WriteLine(Messages.NoFileSelected);
+            return null;
+        }
+
         foreach (string file in operationInput.InputFiles)
         {
             Console.WriteLine(Messages.ChoosenFile + Path.GetFullPath(file));

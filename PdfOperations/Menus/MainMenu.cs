@@ -21,8 +21,8 @@ public class MainMenu
                 OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
 
                 if (operationInput == null)
-                    return;
-                
+                    continue;
+
                 Execute.ExecuteOpe(operationInput, value!);
             }
             else if (znak >= 14 && znak <= 15)

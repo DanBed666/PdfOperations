@@ -19,7 +19,7 @@ public class RunClass
             info.ArgumentList.Add(argument);
         }
         
-        Console.WriteLine("Uruchamiam");
+        Console.WriteLine(Messages.RunningCommand);
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         using Process process = Process.Start(info)!;
         process.WaitForExit();
@@ -75,7 +75,7 @@ public class RunClass
         }
     }
     
-    public static void RunFilesDraw(string [] files, string app)
+    public static void RunFilesDraw(string [] files)
     {
         string soffice = Path.Combine(
             AppContext.BaseDirectory,

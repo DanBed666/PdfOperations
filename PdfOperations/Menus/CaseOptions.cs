@@ -26,18 +26,7 @@ public class CaseOptions
         }
         else if (app.Equals("d"))
         {
-            string dir = AppContext.BaseDirectory;
-
-            string soffice = Path.Combine(
-                dir,
-                "tools",
-                "libreoffice",
-                "program",
-                "soffice.exe"
-            );
-
-            appConv = soffice;
-            RunClass.RunFilesDraw(input, appConv);
+            RunClass.RunFilesDraw(input);
         }
     }
 }
