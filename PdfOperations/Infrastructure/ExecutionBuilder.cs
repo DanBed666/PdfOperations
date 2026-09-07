@@ -61,12 +61,7 @@ public class ExecutionBuilder
                 fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
                 fileJobs.Add(fileJob);
             }
-            
-            foreach (FileJob fj in fileJobs)
-            {
-                Console.WriteLine("Final: " + fj.FinalPath);
-            }
 
-            return fileJobs;
+        return fileJobs;
     }
 }

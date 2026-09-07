@@ -97,7 +97,7 @@ public class OperationPaths
                 Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Divide.ManyToOne,
-                InputPrompt = "Wybierz pliki PDF do połączenia:",
+                InputPrompt = "Wybierz pliki PDF do połączenia. Kolejność zostanie ustalona według nazw plików:",
                 OutputPrompt = "Podaj nazwę połączonego pliku PDF:"
             },
             [10] = new OperationDefinition

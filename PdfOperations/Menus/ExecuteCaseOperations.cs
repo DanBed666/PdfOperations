@@ -21,7 +21,7 @@ public class ExecuteCaseOperations
         }
         
         if (operationInput.InputFiles.Length == 1)
-            Files.ViewFile(operationInput.InputFiles[0]);
+            Files.OpenPath(operationInput.InputFiles[0], "file");
 
         if (operation.AddInfo == "search")
         {

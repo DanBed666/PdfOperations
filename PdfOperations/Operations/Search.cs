@@ -1,7 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Text;
-
-namespace PdfOperations;
+﻿namespace PdfOperations;
 
 public class Search
 {

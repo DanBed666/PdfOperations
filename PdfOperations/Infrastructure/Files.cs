@@ -72,12 +72,19 @@ public class Files
     
     public static void SaveWithUniqueFileName(string extension, Dictionary <string, string> existing)
     {
-        int i = 1;
-
         foreach (KeyValuePair<string, string> item in existing)
         {
-            string finalPath = Path.Combine(Path.GetDirectoryName(item.Value)!, 
-                $"{Path.GetFileNameWithoutExtension(item.Value)}_{i++}{extension}");
+            int i = 1;
+            string finalPath;
+            string directory = Path.GetDirectoryName(item.Value)!;
+            string fileName = Path.GetFileNameWithoutExtension(item.Value);
+
+            do
+            {
+                finalPath = Path.Combine(directory, $"{fileName}_{i}{extension}");
+                i++;
+            } 
+            while (File.Exists(finalPath));
             
             File.Move(item.Key, finalPath);
         }
@@ -127,9 +134,14 @@ public class Files
             File.AppendAllLines(output, outputLines);
     }
     
-    public static void ViewFile(string path)
+    public static void OpenPath(string path, string type)
     {
-        Console.WriteLine(Messages.PreviewFileQuestion);
+        if (type == "file")
+            Console.WriteLine(Messages.PreviewFileQuestion);
+        
+        if (type == "dir")
+            Console.WriteLine(Messages.PreviewFolderQuestion);
+        
         string opt = ReadInput.ReadOption();
         
         if (opt.ToLower().Equals("t"))
@@ -143,10 +155,10 @@ public class Files
 
     public static string FindOriginalFileForTemp(string tempFile, string [] inputFiles)
     {
-        string tempName = Path.GetFileName(tempFile);
+        string tempName = Path.GetFileNameWithoutExtension(tempFile);
 
         string? originalFile = inputFiles.FirstOrDefault(fileName =>
-            Path.GetFileName(fileName).Equals(tempName, StringComparison.OrdinalIgnoreCase));
+            Path.GetFileNameWithoutExtension(fileName).Equals(tempName, StringComparison.OrdinalIgnoreCase));
 
         return originalFile ?? tempName;
     }

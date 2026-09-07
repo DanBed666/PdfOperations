@@ -105,7 +105,7 @@ public class Execute
             }
 
             Console.WriteLine(Messages.OperationSuccess);
-            Files.ViewFile(fileInput.Dir);
+            Files.OpenPath(fileInput.Dir, "dir");
         }
         catch (Exception e)
         {
