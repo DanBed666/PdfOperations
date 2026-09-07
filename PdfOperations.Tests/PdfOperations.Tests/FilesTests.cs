@@ -546,4 +546,18 @@ public class FilesTests
                 Directory.Delete(testInput.Context.TempDir, true);
         }
     }
+
+    [TestMethod]
+    public void SortFilesByNumberAndNameTest()
+    {
+        string [] files = new string[]
+            { "zelazko.pdf", "strona_1.pdf", "strona_10.pdf", "strona_2.pdf", "alwernia.pdf" };
+        
+        string [] expected = new string[]
+            { "alwernia.pdf", "strona_1.pdf", "strona_2.pdf", "strona_10.pdf", "zelazko.pdf" };
+
+        string [] actual = FileSorter.SortFilesByNumberAndName(files);
+        
+        CollectionAssert.AreEqual(expected, actual);
+    }
 }

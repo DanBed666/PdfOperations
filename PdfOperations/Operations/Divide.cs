@@ -18,8 +18,8 @@ public class Divide
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfUnite];
         List<string> arguments = new List<string>();
-        
-        arguments.AddRange([..file.InputFiles.Reverse(), file.TempPath]);
+
+        arguments.AddRange([..FileSorter.SortFilesByNumberAndName(file.InputFiles), file.TempPath]);
         RunClass.Run(tool, arguments);
     }
 }
