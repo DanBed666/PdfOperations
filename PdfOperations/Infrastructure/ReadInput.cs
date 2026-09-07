@@ -8,7 +8,7 @@ public class ReadInput
 
         if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
         {
-            Console.WriteLine("Nastąpiło wyjście!");
+            Console.WriteLine(Messages.OperationCancelled);
             return null;
         }
 
@@ -23,7 +23,7 @@ public class ReadInput
         {
             if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Nastąpiło wyjście!");
+                Console.WriteLine(Messages.OperationCancelled);
                 return null;
             }
             
@@ -37,7 +37,7 @@ public class ReadInput
                 return "n";
             }
             
-            Console.WriteLine("Niepoprawna opcja!");
+            Console.WriteLine(Messages.InvalidOption);
         }
 
         return input;

@@ -28,7 +28,7 @@ public class RunClass
         
         if (process.ExitCode != 0)
         {
-            throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
+            throw new InvalidOperationException($"{Messages.OperationFailed} {process.ExitCode}: {error}");
         }
     }
 
@@ -130,7 +130,7 @@ public class RunClass
 
         if (process.ExitCode != 0)
         {
-            throw new InvalidOperationException($"Operacja zakończona z kodem {process.ExitCode}: {error}");
+            throw new InvalidOperationException($"{Messages.OperationFailed} {process.ExitCode}: {error}");
         }
         
         return output;

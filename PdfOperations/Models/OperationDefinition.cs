@@ -18,5 +18,6 @@ public class OperationDefinition
     public string PagesPrompt { get; init; } = Messages.EnterPages;
     public string BeforePrompt { get; init; } = Messages.EnterBeforeLines;
     public string AfterPrompt { get; init; } = Messages.EnterAfterLines;
-    public string PhrasePrompt { get; init; } = Messages.EnterPhrase;
+    public string PhrasePrompt { get; init; } = Messages.EnterSearchPhrase;
+    public string FormatPrompt { get; init; } = Messages.EnterFormat;
 }

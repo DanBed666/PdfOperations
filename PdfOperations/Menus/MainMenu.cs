@@ -11,7 +11,7 @@ public class MainMenu
                 Console.WriteLine($"[{i}] {OperationPaths.OperationDefinitions[i].Name}");
             }
 
-            Console.WriteLine("Wpisz opcje: ");
+            Console.WriteLine(Messages.ChooseOption);
             Int32.TryParse(Console.ReadLine(), out int znak);
 
             OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
@@ -32,7 +32,7 @@ public class MainMenu
             else if (znak == 16)
                 Environment.Exit(0);
             else
-                Console.WriteLine("Niepoprawna opcja!");
+                Console.WriteLine(Messages.InvalidOption);
         }
     }
 }

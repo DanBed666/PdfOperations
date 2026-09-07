@@ -10,7 +10,7 @@ public class Files
     
     public static string AddDirectory()
     {
-        Console.WriteLine("Czy chcesz dodać plik do folderu (T/N)");
+        Console.WriteLine(Messages.ChooseOutputDirectoryQuestion);
         string opt = ReadInput.ReadOption();
 
         string dir = "";
@@ -22,7 +22,7 @@ public class Files
         else if (opt.ToLower().Equals("n"))
         {
             dir = GetDefaultDirectory();
-            Console.WriteLine("Dodano plik do folderu domyślnego");
+            Console.WriteLine(Messages.AddedToDefaultDir);
         }
 
         return dir;
@@ -129,7 +129,7 @@ public class Files
     
     public static void ViewFile(string path)
     {
-        Console.WriteLine("Czy chcesz zrobić podgląd pliku (T/N)");
+        Console.WriteLine(Messages.PreviewFileQuestion);
         string opt = ReadInput.ReadOption();
         
         if (opt.ToLower().Equals("t"))

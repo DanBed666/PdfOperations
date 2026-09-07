@@ -9,11 +9,11 @@ public class CheckParams
 
         if (!Enum.TryParse(typeof(FileExtension), format, ignoreCase: true, out object? ext))
         {
-            Console.WriteLine("Zły format!");
+            Console.WriteLine(Messages.InvalidFormat);
             return false;
         }
         
-        Console.WriteLine($"Wybrano format {ext}");
+        Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
         return true;
     }
     
@@ -21,17 +21,17 @@ public class CheckParams
     {
         if (!Enum.TryParse(typeof(FileExtension), output, ignoreCase: true, out object? ext))
         {
-            Console.WriteLine("Zły format!");
+            Console.WriteLine(Messages.InvalidFormat);
             return false;
         }
         
-        Console.WriteLine($"Wybrano format {ext}");
+        Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
         return true;
     }
 
     public static string GetOutput()
     {
-        Console.WriteLine("Podaj output: ");
+        Console.WriteLine(Messages.EnterOutputName);
         string output = ReadInput.ReadOutputFile();
         return output;
     }
@@ -41,18 +41,18 @@ public class CheckParams
         if (string.IsNullOrEmpty(format))
         {
             finish = FixFormatNotExist(operation.Extension, operationInput, output);
-            Console.WriteLine($"Uzupełniono plik o format {operation.Extension}!");
+            Console.WriteLine($"{Messages.FormatAdded} {operation.Extension}!");
         }
         else
         {
-            Console.WriteLine("Format nieobsługiwany!");
-            Console.WriteLine("Czy poprawić?");
+            Console.WriteLine(Messages.UnsupportedFormat);
+            Console.WriteLine(Messages.FixFormatQuestion);
             string inp = ReadInput.ReadOption();
 
             if (inp == "t")
             {
                 finish = FixFormatExist(operation.Extension, operationInput, output);
-                Console.WriteLine($"Poprawiono format na {operation.Extension}!");
+                Console.WriteLine($"{Messages.FormatFixed} {operation.Extension}!");
             }
         }
 
@@ -61,8 +61,8 @@ public class CheckParams
     
     public static bool CheckIfFormatExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
     {
-        Console.WriteLine($"Niepoprawny format! Poprawny format to {operation.Extension}");
-        Console.WriteLine("Czy poprawić?");
+        Console.WriteLine($"{Messages.InvalidFormat} {Messages.ExpectedFormat} {operation.Extension}");
+        Console.WriteLine(Messages.FixFormatQuestion);
         string inp = ReadInput.ReadOption();
 
         if (inp == "t")

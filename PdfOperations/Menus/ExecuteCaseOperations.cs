@@ -6,12 +6,12 @@ public class ExecuteCaseOperations
     {
         OperationInput operationInput = new OperationInput();
 
-        Console.WriteLine("Podaj nazwę pdf: ");
+        Console.WriteLine(operation.InputPrompt);
         operationInput.InputFiles = Files.AddFiles(operation.Filter);
 
         foreach (string file in operationInput.InputFiles)
         {
-            Console.WriteLine($"Wybrano plik: {Path.GetFullPath(file)}");
+            Console.WriteLine(Messages.ChoosenFile + Path.GetFullPath(file));
         }
         
         if (operationInput.InputFiles.Length == 1)
@@ -19,27 +19,27 @@ public class ExecuteCaseOperations
 
         if (operation.AddInfo == "search")
         {
-            if (!InputSearchOpe(out string value)) return null;
+            if (!InputSearchOpe(operation, out string value)) return null;
             operationInput.PhraseToFind = value;
             
-            Console.WriteLine("Linie przed: ");
+            Console.WriteLine(operation.BeforePrompt);
             Int32.TryParse(Console.ReadLine(), out int before);
             operationInput.Before = -before;
             
-            Console.WriteLine("Linie po: ");
+            Console.WriteLine(operation.AfterPrompt);
             Int32.TryParse(Console.ReadLine(), out int after);
             operationInput.After = after;
         }
         
         if (operation.AddInfo == "format")
         {
-            if (!InputFormatOpe(out string value)) return null;
+            if (!InputFormatOpe(operation, out string value)) return null;
             operationInput.Format = value;
         }
         
         if (operation.AddInfo == "pages")
         {
-            if (!InputPagesOpe(out string value)) return null;
+            if (!InputPagesOpe(operation, out string value)) return null;
             operationInput.Pages = value;
         }
 
@@ -75,45 +75,45 @@ public class ExecuteCaseOperations
         return operationInput;
     }
     
-    public static bool InputSearchOpe(out string value)
+    public static bool InputSearchOpe(OperationDefinition operation, out string value)
     {
-        Console.WriteLine("Podaj fraze: ");
+        Console.WriteLine(operation.PhrasePrompt);
         string phrase = ReadInput.ReadOutputFile();
         value = phrase;
 
         if (string.IsNullOrEmpty(value))
         {
-            Console.WriteLine("Nie podano frazy!");
+            Console.WriteLine(Messages.NoSearchPhraseProvided);
             return false;
         }
 
         return true;
     }
     
-    public static bool InputPagesOpe(out string value)
+    public static bool InputPagesOpe(OperationDefinition operation, out string value)
     {
-        Console.WriteLine("Podaj strony: ");
+        Console.WriteLine(operation.PagesPrompt);
         string phrase = ReadInput.ReadOutputFile();
         value = phrase;
 
         if (string.IsNullOrEmpty(value))
         {
-            Console.WriteLine("Nie podano frazy!");
+            Console.WriteLine(Messages.NoPagesProvided);
             return false;
         }
 
         return true;
     }
 
-    public static bool InputFormatOpe(out string value)
+    public static bool InputFormatOpe(OperationDefinition operation, out string value)
     {
-        Console.WriteLine("Podaj format: ");
+        Console.WriteLine(operation.FormatPrompt);
         string format = ReadInput.ReadOutputFile();
         value = format;
 
         if (!CheckParams.CheckFormat(value))
         {
-            Console.WriteLine("Niepoprawny format!");
+            Console.WriteLine(Messages.InvalidFormat);
             return false;
         }
 

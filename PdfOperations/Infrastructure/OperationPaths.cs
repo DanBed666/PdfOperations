@@ -15,6 +15,7 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFilesWithFormat,
                 FileOperationActionLibre = Convert.FileToPdf,
                 InputPrompt = "Wybierz pliki do konwersji przez LibreOffice:",
+                FormatPrompt = "Podaj format pliku wynikowego:",
                 OutputPrompt = "Podaj nazwę pliku wynikowego:"
             },
             [2] = new OperationDefinition

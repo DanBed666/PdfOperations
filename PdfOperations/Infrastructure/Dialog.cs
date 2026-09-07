@@ -2,25 +2,11 @@
 
 public class Dialog
 {
-    public static string SelectFile(string filter)
-    {
-        using var dialog = new OpenFileDialog
-        {
-            Title = "Wybierz plik",
-            Filter = filter,
-            AutoUpgradeEnabled = true,
-            RestoreDirectory = true,
-            Multiselect = false
-        };
-        
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : "";
-    }
-    
     public static string [] SelectFiles(string filter)
     {
         using var dialog = new OpenFileDialog
         {
-            Title = "Wybierz pliki",
+            Title = Messages.ChooseFiles,
             Filter = filter,
             AutoUpgradeEnabled = true,
             RestoreDirectory = true,
@@ -34,21 +20,10 @@ public class Dialog
     {
         using var dialog = new FolderBrowserDialog()
         {
-            Description = "Wybierz folder",
+            Description = Messages.ChooseDirectory,
             ShowNewFolderButton = true,
         };
         
         return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPath : "";
-    }
-    
-    public static string [] SelectDirectories()
-    {
-        using var dialog = new FolderBrowserDialog()
-        {
-            Description = "Wybierz foldery",
-            ShowNewFolderButton = true,
-        };
-        
-        return dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPaths : [];
     }
 }

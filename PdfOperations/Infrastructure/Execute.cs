@@ -42,7 +42,7 @@ public class Execute
                 break;
 
             default:
-                Console.WriteLine("Brak flow");
+                Console.WriteLine(Messages.MissingFlow);
                 break;
         }
     }
@@ -54,7 +54,7 @@ public class Execute
 
         if (existing.Count != 0)
         {
-            Console.WriteLine("Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N):");
+            Console.WriteLine(Messages.OverwriteFilesQuestion);
             string opt = ReadInput.ReadOption();
 
             if (opt == "t")
@@ -104,7 +104,7 @@ public class Execute
                 MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
             }
 
-            Console.WriteLine("Operacja zakończona pomyślnie!");
+            Console.WriteLine(Messages.OperationSuccess);
             Files.ViewFile(fileInput.Dir);
         }
         catch (Exception e)
