@@ -22,7 +22,7 @@ public class ExecutionBuilder
             FileJob fileJob = new FileJob();
             fileJob.InputFile = file;
 
-            if (input.InputFiles.Length > 1)
+            if (input.InputFiles.Length > 1 || operation.OperationFlow == OperationFlow.SearchReport)
                 fileJob.TempPath = Files.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
             else
                 fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
