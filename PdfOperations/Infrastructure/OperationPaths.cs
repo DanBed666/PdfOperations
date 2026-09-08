@@ -152,12 +152,41 @@ public class OperationPaths
             },
             [14] = new OperationDefinition
             {
+                Name = "Zamień tekst PDF na placeholdery",
+                OperationFlow = OperationFlow.FilesToFiles,
+                Filter = FileFilters.WordFiles,
+                FilterPlc = FileFilters.TxtFiles,
+                //FileOperationActionMultiple = Replacement.ReplaceTextWithPlaceholders,
+                AddInfo = "replace",
+                InputPrompt = "Wybierz pliki do zamiany na placeholdery:",
+            },
+            [15] = new OperationDefinition
+            {
+                Name = "Wypełnij placeholdery w PDF",
+                OperationFlow = OperationFlow.FilesToFiles,
+                Filter = FileFilters.WordFiles,
+                FilterPlc = FileFilters.TxtFiles,
+                //FileOperationActionMultiple = Replacement.ReplacePlaceholdersWithText,
+                AddInfo = "replace",
+                InputPrompt = "Wybierz pliki do wypełnienia placeholderów",
+            },
+            [16] = new OperationDefinition
+            {
+                Name = "Złóż dokument PDF z wybranych stron",
+                OperationFlow = OperationFlow.FilesToSingleFile,
+                Filter = FileFilters.PdfFiles,
+                //FileOperationActionSingle = Pages.CreateWithCustomFiles,
+                AddInfo = "fragments",
+                InputPrompt = "Wybierz plik PDF:",
+            },
+            [17] = new OperationDefinition
+            {
                 Name = "Otwórz wiele plików z użyciem programu domyślnego",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = CaseOptions.ExecuteManyRun,
                 InputPrompt = "Wybierz pliki do otwarcia:"
             },
-            [15] = new OperationDefinition
+            [18] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu wybranego",
                 OperationFlow = OperationFlow.RunApp,
@@ -165,7 +194,7 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
                 AppPrompt = "Wybierz program: w - Word, d - LibreOffice Draw, Enter - domyślny:"
             },
-            [16] = new OperationDefinition
+            [19] = new OperationDefinition
             {
                 Name = "Wyjście",
             }

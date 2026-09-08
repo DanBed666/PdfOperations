@@ -23,4 +23,13 @@ public class FileFilters
         "PNG files (*.png)|*.png|" +
         "TIFF files (*.tif;*.tiff)|*.tif;*.tiff|" +
         "All files (*.*)|*.*";
+    
+    public const string TxtFiles =
+        "Pliki TXT (*.txt*)|*.txt*|" +
+        "All files (*.*)|*.*";
+    
+    public const string WordFiles =
+        "Word files (*.doc;*.docx;*.odt;*.rtf)|*.doc;*.docx;*.odt;*.rtf|" +
+        "Draw files (*.odg;*.fodg;*.svg)|*.odg;*.fodg;*.svg|" +
+        "All files (*.*)|*.*";
 }

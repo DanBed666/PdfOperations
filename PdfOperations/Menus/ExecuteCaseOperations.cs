@@ -5,10 +5,23 @@ public class ExecuteCaseOperations
     public static OperationInput InputOpe(OperationDefinition operation)
     {
         OperationInput operationInput = new OperationInput();
+        List<PdfFragment> pdfFragments = new List<PdfFragment>();
 
         Console.WriteLine(Messages.CancelInfo);
         Console.WriteLine(operation.InputPrompt);
-        operationInput.InputFiles = Files.AddFiles(operation.Filter);
+
+        if (operation.AddInfo != "fragments")
+            operationInput.InputFiles = Files.AddFiles(operation.Filter);
+        else
+        {
+            pdfFragments = ReadInput.GetFragmentsList(operation.Filter);
+        }
+
+        if (operation.AddInfo == "replace")
+        {
+            Console.WriteLine("Podaj plik z placeholderami");
+            operationInput.PlaceholderFile = Files.AddFile(operation.FilterPlc);
+        }
 
         if (operationInput.InputFiles.Length == 0)
         {
@@ -54,7 +67,7 @@ public class ExecuteCaseOperations
             if (!InputPagesOpe(operation, out string value)) return null;
             operationInput.Pages = value;
         }
-
+        
         bool finish = false;
 
         if (operationInput.InputFiles.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile

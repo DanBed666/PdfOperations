@@ -5,6 +5,7 @@ public class OperationDefinition
     public string Name { get; init; } = "";
     public string Extension { get; set; } = "";
     public string Filter { get; init; } = "";
+    public string FilterPlc { get; init; } = "";
     public string AddInfo { get; init; } = "";
     public OperationFlow OperationFlow { get; set; }
     public Action<FileJob> FileOperationActionSingle { get; init; }

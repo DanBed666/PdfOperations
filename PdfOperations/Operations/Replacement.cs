@@ -1,8 +1,8 @@
 ﻿namespace PdfOperations;
 
-public class Pages
+public class Replacement
 {
-    public static void CreateWithPages(OperationInput input, FileJob file)
+    public static void ReplaceTextWithPlaceholders(OperationInput input, FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         List<string> arguments = new List<string>();
@@ -11,7 +11,7 @@ public class Pages
         RunClass.Run(tool, arguments);
     }
     
-    public static void CreateWithCustomFiles(OperationInput input, FileJob file)
+    public static void ReplacePlaceholdersWithText(OperationInput input, FileJob file)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         List<string> arguments = new List<string>();

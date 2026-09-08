@@ -16,7 +16,7 @@ public class MainMenu
 
             OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
 
-            if (znak >= 1 && znak <= 13)
+            if (znak >= 1 && znak <= 16)
             {
                 OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
 
@@ -25,11 +25,11 @@ public class MainMenu
 
                 Execute.ExecuteOpe(operationInput, value!);
             }
-            else if (znak >= 14 && znak <= 15)
+            else if (znak >= 17 && znak <= 18)
             {
                 Execute.ExecuteRunApp(value!);
             }
-            else if (znak == 16)
+            else if (znak == 19)
                 Environment.Exit(0);
             else
                 Console.WriteLine(Messages.InvalidOption);

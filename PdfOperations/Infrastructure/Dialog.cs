@@ -16,6 +16,20 @@ public class Dialog
         return dialog.ShowDialog() == DialogResult.OK ? dialog.FileNames : [];
     }
     
+    public static string SelectFile(string filter)
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = Messages.ChooseFiles,
+            Filter = filter,
+            AutoUpgradeEnabled = true,
+            RestoreDirectory = true,
+            Multiselect = false
+        };
+        
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : "";
+    }
+    
     public static string SelectDirectory()
     {
         using var dialog = new FolderBrowserDialog()

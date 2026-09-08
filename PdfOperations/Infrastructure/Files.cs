@@ -8,6 +8,12 @@ public class Files
         return files;
     }
     
+    public static string AddFile(string filter)
+    {
+        string file = Dialog.SelectFile(filter);
+        return file;
+    }
+    
     public static string AddDirectory()
     {
         Console.WriteLine(Messages.ChooseOutputDirectoryQuestion);
