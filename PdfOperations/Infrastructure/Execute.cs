@@ -2,12 +2,17 @@
 
 public class Execute
 {
-    public static void SaveToTempDirList(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobList)
+    public static void SaveToTempDirList(OperationDefinition operation, OperationInput fileInput, 
+        List<FileJob> fileJobList, OperationContext context)
     {
         switch (operation.OperationFlow)
         {
             case OperationFlow.FilesToFiles:
                 ExecuteOpeFilesToFiles(operation, fileJobList);
+                break;
+            
+            case OperationFlow.FilesReplacement:
+                ExecuteOpeFilesReplace(operation, fileJobList, fileInput, context);
                 break;
             
             case OperationFlow.FilesPages:
@@ -16,6 +21,10 @@ public class Execute
             
             case OperationFlow.SearchReport:
                 ExecuteOpeSearch(operation, fileJobList);
+                break;
+            
+            default:
+                Console.WriteLine(Messages.MissingFlow);
                 break;
         }
     }
@@ -35,6 +44,10 @@ public class Execute
             
             case OperationFlow.SearchReport:
                 ExecuteOpeSearch(operation, fileInput, context, fileJob);
+                break;
+            
+            case OperationFlow.FilesPagesSingle:
+                ExecuteOpePagesSingle(operation, fileInput, fileJob);
                 break;
 
             case OperationFlow.RunApp:
@@ -77,16 +90,17 @@ public class Execute
         try
         {
             if (operation.OperationFlow == OperationFlow.FilesToFiles ||
-                operation.OperationFlow == OperationFlow.FilesPages)
+                operation.OperationFlow == OperationFlow.FilesPages || 
+                operation.OperationFlow == OperationFlow.FilesReplacement)
             {
                 fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-                SaveToTempDirList(operation, fileInput, fileJobList);
+                SaveToTempDirList(operation, fileInput, fileJobList, context);
                 MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
             }
             else if (operation.OperationFlow == OperationFlow.SearchReport)
             {
                 fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-                SaveToTempDirList(operation, fileInput, fileJobList);
+                SaveToTempDirList(operation, fileInput, fileJobList, context);
 
                 fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
                 SaveToTempDir(operation, fileInput, context, fileJob);
@@ -96,6 +110,12 @@ public class Execute
             {
                 ExecuteOpeLibre(operation, fileInput, context);
                 MoveToFinalDir(fileInput.Format, fileInput.Dir, context.TempDir);
+            }
+            else if (operation.OperationFlow == OperationFlow.FilesPagesSingle)
+            {
+                fileJob = ExecutionBuilder.SetFileJobFragment(fileInput, context, operation);
+                SaveToTempDir(operation, fileInput, context, fileJob);
+                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
             }
             else
             {
@@ -114,8 +134,8 @@ public class Execute
         }
         finally
         {
-            if (Directory.Exists(context.TempDir))
-                Directory.Delete(context.TempDir, true);
+            //if (Directory.Exists(context.TempDir))
+                //Directory.Delete(context.TempDir, true);
         }
     }
     
@@ -124,6 +144,15 @@ public class Execute
         foreach (FileJob fileJob in fileJobList)
         {
             operation.FileOperationActionMultiple(fileJob);
+        }
+    }
+    
+    public static void ExecuteOpeFilesReplace(OperationDefinition operation, List<FileJob> fileJobList, 
+        OperationInput input, OperationContext context)
+    {
+        foreach (FileJob fileJob in fileJobList)
+        {
+            operation.FileOperationActionReplace(fileJob, input, context);
         }
     }
     
@@ -138,6 +167,11 @@ public class Execute
         {
             operation.FileOperationActionPages(fileInput, fileJob);
         }
+    }
+    
+    public static void ExecuteOpePagesSingle(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
+    {
+        operation.FileOperationActionPages(fileInput, fileJob);
     }
     
     public static void ExecuteOpeLibre(OperationDefinition operation, OperationInput fileInput, OperationContext context)

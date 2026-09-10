@@ -7,5 +7,7 @@ public enum OperationFlow
     FilesToSingleFile,
     FilesPages,
     RunApp,
-    SearchReport
+    SearchReport,
+    FilesPagesSingle,
+    FilesReplacement
 }

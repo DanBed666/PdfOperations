@@ -14,6 +14,12 @@ public class TestHelper
         return inputs;
     }
     
+    public static string SetFilePath(string input)
+    {
+        string result = Path.Combine(TestDir, input);
+        return result;
+    }
+    
     public static OperationDefinition SetOperationDefinition(string extension)
     {
         OperationDefinition operationDefinition = new OperationDefinition()
@@ -25,7 +31,7 @@ public class TestHelper
     }
     
     public static OperationInput SetOperationInput(string [] inputFiles, string output = "", string pages = "", string dir = "", 
-        string format = "", string phrase = "", int before = 0, int after = 0)
+        string format = "", string phrase = "", int before = 0, int after = 0, List<PdfFragment>? pdfFragments = null, string plcFile = "")
     {
         OperationInput operationInput = new OperationInput()
         {
@@ -36,7 +42,9 @@ public class TestHelper
             Format = format,
             PhraseToFind = phrase,
             Before = before,
-            After = after
+            After = after,
+            PdfFragments = pdfFragments,
+            PlaceholderFile = plcFile
         };
 
         return operationInput;
@@ -85,6 +93,22 @@ public class TestHelper
 
         return testInput;
     }
+    
+    public static TestInput PrepareMultipleInputsReplacement(string [] inputs, string plcFile)
+    {
+        string[] inputFiles = SetInputPaths(inputs);
+        OperationInput input = SetOperationInput(inputFiles, plcFile: plcFile);
+        OperationContext context = SetOperationContext();
+
+        TestInput testInput = new TestInput()
+        {
+            InputFiles = inputFiles,
+            Input = input,
+            Context = context,
+        };
+
+        return testInput;
+    }
 
     public static TestInput PrepareMultipleInputs(string [] inputs, string extension)
     {
@@ -117,6 +141,37 @@ public class TestHelper
             Input = input,
             Context = context,
             Operation = operation
+        };
+
+        return testInput;
+    }
+    
+    public static TestInput PrepareInputWithOutputPages(string [] inputs, string extension, string pages, 
+        string output, List<PdfFragment> pdfFragments)
+    {
+        string[] inputFiles = SetInputPaths(inputs);
+
+        foreach (string file in inputFiles)
+        {
+            PdfFragment pdfFragment = new PdfFragment()
+            {
+                FileName = file,
+                PageNumbers = pages
+            };
+            
+            pdfFragments.Add(pdfFragment);
+        }
+        
+        OperationDefinition operation = SetOperationDefinition(extension);
+        OperationInput input = SetOperationInput(inputFiles, output: output, pages: pages, pdfFragments: pdfFragments);
+        OperationContext context = SetOperationContext();
+
+        TestInput testInput = new TestInput()
+        {
+            InputFiles = inputFiles,
+            Input = input,
+            Context = context,
+            Operation = operation,
         };
 
         return testInput;

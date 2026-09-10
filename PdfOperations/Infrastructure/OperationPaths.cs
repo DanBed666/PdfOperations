@@ -153,10 +153,10 @@ public class OperationPaths
             [14] = new OperationDefinition
             {
                 Name = "Zamień tekst PDF na placeholdery",
-                OperationFlow = OperationFlow.FilesToFiles,
+                OperationFlow = OperationFlow.FilesReplacement,
                 Filter = FileFilters.WordFiles,
                 FilterPlc = FileFilters.TxtFiles,
-                //FileOperationActionMultiple = Replacement.ReplaceTextWithPlaceholders,
+                FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
                 AddInfo = "replace",
                 InputPrompt = "Wybierz pliki do zamiany na placeholdery:",
             },
@@ -166,16 +166,17 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 Filter = FileFilters.WordFiles,
                 FilterPlc = FileFilters.TxtFiles,
-                //FileOperationActionMultiple = Replacement.ReplacePlaceholdersWithText,
+                FileOperationActionMultiple = Replacement.ReplacePlaceholdersWithText,
                 AddInfo = "replace",
                 InputPrompt = "Wybierz pliki do wypełnienia placeholderów",
             },
             [16] = new OperationDefinition
             {
                 Name = "Złóż dokument PDF z wybranych stron",
-                OperationFlow = OperationFlow.FilesToSingleFile,
+                OperationFlow = OperationFlow.FilesPagesSingle,
+                Extension = ".pdf",
                 Filter = FileFilters.PdfFiles,
-                //FileOperationActionSingle = Pages.CreateWithCustomFiles,
+                FileOperationActionPages = Pages.CreateWithCustomFiles,
                 AddInfo = "fragments",
                 InputPrompt = "Wybierz plik PDF:",
             },

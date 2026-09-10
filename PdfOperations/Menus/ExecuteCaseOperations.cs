@@ -5,30 +5,46 @@ public class ExecuteCaseOperations
     public static OperationInput InputOpe(OperationDefinition operation)
     {
         OperationInput operationInput = new OperationInput();
-        List<PdfFragment> pdfFragments = new List<PdfFragment>();
 
         Console.WriteLine(Messages.CancelInfo);
         Console.WriteLine(operation.InputPrompt);
 
         if (operation.AddInfo != "fragments")
+        {
             operationInput.InputFiles = Files.AddFiles(operation.Filter);
+            
+            if (operationInput.InputFiles.Length == 0)
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                return null;
+            }
+        }
         else
         {
+            List<PdfFragment> pdfFragments = new List<PdfFragment>();
             pdfFragments = ReadInput.GetFragmentsList(operation.Filter);
+            
+            operationInput.PdfFragments = pdfFragments;
+            
+            if (pdfFragments.Count == 0)
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                return null;
+            }
         }
 
         if (operation.AddInfo == "replace")
         {
             Console.WriteLine("Podaj plik z placeholderami");
             operationInput.PlaceholderFile = Files.AddFile(operation.FilterPlc);
+            
+            if (operationInput.PlaceholderFile == "")
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                return null;
+            }
         }
-
-        if (operationInput.InputFiles.Length == 0)
-        {
-            Console.WriteLine(Messages.NoFileSelected);
-            return null;
-        }
-
+        
         foreach (string file in operationInput.InputFiles)
         {
             Console.WriteLine(Messages.ChoosenFile + Path.GetFullPath(file));
@@ -59,9 +75,10 @@ public class ExecuteCaseOperations
         
         if (operation.AddInfo == "pages")
         {
-            foreach (string info in Info.GetPdfPages(operationInput.InputFiles))
+            foreach (string file in operationInput.InputFiles)
             {
-                Console.WriteLine(info);
+                int number = Info.GetPdfPagesSingle(file);
+                Console.WriteLine($"Liczba stron plik {Path.GetFileName(file)}: {number}");
             }
 
             if (!InputPagesOpe(operation, out string value)) return null;
@@ -71,7 +88,8 @@ public class ExecuteCaseOperations
         bool finish = false;
 
         if (operationInput.InputFiles.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
-                                         || operation.OperationFlow == OperationFlow.SearchReport)
+                                                  || operation.OperationFlow == OperationFlow.SearchReport
+                                                  || operation.OperationFlow == OperationFlow.FilesPagesSingle)
         {
             while (!finish)
             {
