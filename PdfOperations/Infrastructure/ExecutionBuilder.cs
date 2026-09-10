@@ -34,6 +34,19 @@ public class ExecutionBuilder
         return fileJobs;
     }
     
+    public static FileJob SetFileJobFragment(OperationInput input, OperationContext operationContext, OperationDefinition operation)
+    {
+        FileJob fileJob = new FileJob();
+
+        if (string.IsNullOrEmpty(input.Output))
+            input.Output = "default" + operation.Extension;
+        
+        fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
+        fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+
+        return fileJob;
+    }
+    
     public static FileJob SetFileJob(OperationInput input, OperationContext operationContext, OperationDefinition operation)
     {
         FileJob fileJob = new FileJob();

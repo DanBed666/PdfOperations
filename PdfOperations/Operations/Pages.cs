@@ -15,8 +15,15 @@ public class Pages
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
         List<string> arguments = new List<string>();
+        
+        arguments.AddRange(["--empty", "--pages"]);
 
-        arguments.AddRange([file.InputFile, "--pages", ".", input.Pages, "--", file.TempPath]);
+        foreach (PdfFragment fragment in input.PdfFragments)
+        {
+            arguments.AddRange([fragment.FileName, fragment.PageNumbers]);
+        }
+
+        arguments.AddRange(["--", file.TempPath]);
         RunClass.Run(tool, arguments);
     }
 }

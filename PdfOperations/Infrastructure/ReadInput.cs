@@ -46,6 +46,7 @@ public class ReadInput
     public static PdfFragment AddFragment8(string filter)
     {
         string file = Files.AddFile(filter);
+        Console.WriteLine(Info.GetPdfPagesSingle(file));
         Console.WriteLine("Numery podaj: ");
         string pages = Console.ReadLine()!;
 
