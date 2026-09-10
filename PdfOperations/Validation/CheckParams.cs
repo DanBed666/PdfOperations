@@ -90,6 +90,9 @@ public class CheckParams
 
     public static string NormalizeExtension(string extension)
     {
+        if (string.IsNullOrEmpty(extension))
+            return "";
+
         return extension.StartsWith(".") ? extension : "." + extension;
     }
 }
