@@ -95,11 +95,8 @@ public class InfoTests
     {
         string [] inputs = new[] { "ocr_test_1.pdf", "test_2.pdf" };
         string[] inputPaths = TestHelper.SetInputPaths(inputs);
-        
-        List<string> pages = new List<string>();
-        pages = Info.GetPdfPages(inputPaths);
 
-        Assert.AreEqual(4, int.Parse(pages[0].Split(":")[1].Trim()));
-        Assert.AreEqual(1, int.Parse(pages[1].Split(":")[1].Trim()));
+        Assert.AreEqual(4, Info.GetPdfPagesSingle(inputPaths[0]));
+        Assert.AreEqual(1, Info.GetPdfPagesSingle(inputPaths[1]));
     }
 }

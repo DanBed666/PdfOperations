@@ -16,22 +16,18 @@ public class Info
         
         SaveToFile(file.TempPath, output, file.InputFiles);
     }
-    
-    public static List<String> GetPdfPages(string [] inputs)
+
+    public static int GetPdfPagesSingle(string input)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfInfo];
         string output = "";
-        List<string> lines = new List<string>();
+        int number = 0;
 
-        foreach (string f in inputs)
-        {
-            output = RunClass.RunWithOutput(tool, f);
-            string line = output.Split("\n").FirstOrDefault(x => x.StartsWith("Pages: "))!;
-            int number = int.Parse(line.Split(":")[1].Trim());
-            lines.Add($"Liczba stron plik {Path.GetFileName(f)}: {number}");
-        }
+        output = RunClass.RunWithOutput(tool, input);
+        string line = output.Split("\n").FirstOrDefault(x => x.StartsWith("Pages: "))!;
+        number = int.Parse(line.Split(":")[1].Trim());
 
-        return lines;
+        return number;
     }
     
     public static void ShowFontInfo(FileJob file)
