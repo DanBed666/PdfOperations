@@ -7,16 +7,16 @@ public class Replacement
     public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context)
     {
         string tempDir = Path.Combine(context.TempDir, Path.GetFileNameWithoutExtension(file.InputFile));
-        string extenstion = Path.GetExtension(file.InputFile);
+        string extension = Path.GetExtension(file.InputFile);
         string path = "";
 
         ZipFile.ExtractToDirectory(file.InputFile, tempDir);
         string [] plcLines = File.ReadAllLines(input.PlaceholderFile);
         Dictionary<string, string> placeholders = new Dictionary<string, string>();
         
-        if (extenstion.Equals(".docx"))
+        if (extension.Equals(".docx"))
             path = Path.Combine(tempDir, "word", "document.xml");
-        else if (extenstion.Equals(".odg"))
+        else if (extension.Equals(".odg"))
             path = Path.Combine(tempDir, "content.xml");
         else
             Console.WriteLine("Nieprawidłowe rozszerzenie!");
@@ -48,7 +48,7 @@ public class Replacement
         }
         
         File.WriteAllText(path, text);
-        ZipFile.CreateFromDirectory(tempDir, file.TempPath + extenstion.Replace(".", ""));
+        ZipFile.CreateFromDirectory(tempDir, file.TempPath + extension);
     }
     
     public static void ReplacePlaceholdersWithText(FileJob file)

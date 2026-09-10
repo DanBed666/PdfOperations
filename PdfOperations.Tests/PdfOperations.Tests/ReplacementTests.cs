@@ -47,8 +47,8 @@ public class ReplacementTests
         }
         finally
         {
-            //if (Directory.Exists(testInput.Context.TempDir))
-                //Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(testInput.Context.TempDir))
+                Directory.Delete(testInput.Context.TempDir, true);
         }
     }
 }

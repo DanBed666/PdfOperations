@@ -134,8 +134,8 @@ public class Execute
         }
         finally
         {
-            //if (Directory.Exists(context.TempDir))
-                //Directory.Delete(context.TempDir, true);
+            if (Directory.Exists(context.TempDir))
+                Directory.Delete(context.TempDir, true);
         }
     }
     
