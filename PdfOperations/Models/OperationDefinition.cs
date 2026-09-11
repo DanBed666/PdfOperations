@@ -23,4 +23,5 @@ public class OperationDefinition
     public string AfterPrompt { get; init; } = Messages.EnterAfterLines;
     public string PhrasePrompt { get; init; } = Messages.EnterSearchPhrase;
     public string FormatPrompt { get; init; } = Messages.EnterFormat;
+    public string DefaultOutputName { get; init; } = "";
 }

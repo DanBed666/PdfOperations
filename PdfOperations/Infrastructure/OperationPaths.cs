@@ -16,7 +16,8 @@ public class OperationPaths
                 FileOperationActionLibre = Convert.FileToPdf,
                 InputPrompt = "Wybierz pliki do konwersji przez LibreOffice:",
                 FormatPrompt = "Podaj format pliku wynikowego:",
-                OutputPrompt = "Podaj nazwę pliku wynikowego:"
+                OutputPrompt = "Podaj nazwę pliku wynikowego:",
+                DefaultOutputName = "converted"
             },
             [2] = new OperationDefinition
             {
@@ -26,7 +27,8 @@ public class OperationPaths
                 FileOperationActionMultiple = Convert.PdfToPict,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do konwersji na obrazy:",
-                OutputPrompt = "Podaj nazwę obrazu wynikowego:"
+                OutputPrompt = "Podaj nazwę obrazu wynikowego:",
+                DefaultOutputName = "page"
             },
             [3] = new OperationDefinition
             {
@@ -36,7 +38,8 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Convert.PictToPdf,
                 InputPrompt = "Wybierz obrazy do połączenia w PDF:",
-                OutputPrompt = "Podaj nazwę pliku PDF:"
+                OutputPrompt = "Podaj nazwę pliku PDF:",
+                DefaultOutputName = "merged_images"
             },
             [4] = new OperationDefinition
             {
@@ -46,7 +49,8 @@ public class OperationPaths
                 FileOperationActionMultiple = Convert.PdfToTxt,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do konwersji na tekst:",
-                OutputPrompt = "Podaj nazwę pliku tekstowego:"
+                OutputPrompt = "Podaj nazwę pliku tekstowego:",
+                DefaultOutputName = "pdf_text"
             },
             [5] = new OperationDefinition
             {
@@ -56,7 +60,8 @@ public class OperationPaths
                 FileOperationActionMultiple = Convert.PictToTxt,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz obrazy do odczytu tekstu OCR:",
-                OutputPrompt = "Podaj nazwę pliku tekstowego:"
+                OutputPrompt = "Podaj nazwę pliku tekstowego:",
+                DefaultOutputName = "image_text"
             },
             [6] = new OperationDefinition
             {
@@ -66,7 +71,8 @@ public class OperationPaths
                 FileOperationActionMultiple = Convert.ExtractPict,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF, z których chcesz wyciągnąć obrazy:",
-                OutputPrompt = "Podaj nazwę obrazu wynikowego:"
+                OutputPrompt = "Podaj nazwę obrazu wynikowego:",
+                DefaultOutputName = "pdf_image"
             },
             [7] = new OperationDefinition
             {
@@ -78,7 +84,8 @@ public class OperationPaths
                 Extension = ".pdf",
                 InputPrompt = "Wybierz pliki PDF do utworzenia nowych plików ze wskazanymi stronami:",
                 PagesPrompt = "Podaj strony do zostawienia, np. 1,3-5:",
-                OutputPrompt = "Podaj nazwę pliku PDF:"
+                OutputPrompt = "Podaj nazwę pliku PDF:",
+                DefaultOutputName = "selected_pages"
             },
             [8] = new OperationDefinition
             {
@@ -88,7 +95,8 @@ public class OperationPaths
                 FileOperationActionMultiple = Divide.OneToMany,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do rozdzielenia na strony:",
-                OutputPrompt = "Podaj wzorzec nazwy plików wynikowych:"
+                OutputPrompt = "Podaj wzorzec nazwy plików wynikowych:",
+                DefaultOutputName = "page"
             },
             [9] = new OperationDefinition
             {
@@ -98,7 +106,8 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Divide.ManyToOne,
                 InputPrompt = "Wybierz pliki PDF do połączenia. Kolejność zostanie ustalona według nazw plików:",
-                OutputPrompt = "Podaj nazwę połączonego pliku PDF:"
+                OutputPrompt = "Podaj nazwę połączonego pliku PDF:",
+                DefaultOutputName = "merged_pdf"
             },
             [10] = new OperationDefinition
             {
@@ -113,7 +122,8 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę raportu tekstowego:",
                 BeforePrompt = "Ile linii przed wynikiem pokazać:",
                 AfterPrompt = "Ile linii po wyniku pokazać:",
-                PhrasePrompt = "Wpisz tekst, którego chcesz szukać:"
+                PhrasePrompt = "Wpisz tekst, którego chcesz szukać:",
+                DefaultOutputName = "pdf_search_report"
             },
             [11] = new OperationDefinition
             {
@@ -128,7 +138,8 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę raportu tekstowego:",
                 BeforePrompt = "Ile linii przed wynikiem pokazać:",
                 AfterPrompt = "Ile linii po wyniku pokazać:",
-                PhrasePrompt = "Wpisz tekst, którego chcesz szukać:"
+                PhrasePrompt = "Wpisz tekst, którego chcesz szukać:",
+                DefaultOutputName = "image_search_report"
             },
             [12] = new OperationDefinition
             {
@@ -138,7 +149,8 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Info.ShowInfo,
                 InputPrompt = "Wybierz pliki PDF do odczytu informacji:",
-                OutputPrompt = "Podaj nazwę raportu z informacjami:"
+                OutputPrompt = "Podaj nazwę raportu z informacjami:",
+                DefaultOutputName = "pdf_info_report"
             },
             [13] = new OperationDefinition
             {
@@ -148,7 +160,8 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Info.ShowFontInfo,
                 InputPrompt = "Wybierz pliki PDF do sprawdzenia czcionek:",
-                OutputPrompt = "Podaj nazwę raportu z czcionkami:"
+                OutputPrompt = "Podaj nazwę raportu z czcionkami:",
+                DefaultOutputName = "pdf_font_report"
             },
             [14] = new OperationDefinition
             {
@@ -159,6 +172,7 @@ public class OperationPaths
                 FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
                 AddInfo = "replace",
                 InputPrompt = "Wybierz pliki do zamiany na placeholdery:",
+                DefaultOutputName = "document_placeholders"
             },
             [15] = new OperationDefinition
             {
@@ -169,6 +183,7 @@ public class OperationPaths
                 FileOperationActionMultiple = Replacement.ReplacePlaceholdersWithText,
                 AddInfo = "replace",
                 InputPrompt = "Wybierz pliki do wypełnienia placeholderów",
+                DefaultOutputName = "filled_document"
             },
             [16] = new OperationDefinition
             {
@@ -179,6 +194,7 @@ public class OperationPaths
                 FileOperationActionPages = Pages.CreateWithCustomFiles,
                 AddInfo = "fragments",
                 InputPrompt = "Wybierz plik PDF:",
+                DefaultOutputName = "fragmented_pdf"
             },
             [17] = new OperationDefinition
             {
