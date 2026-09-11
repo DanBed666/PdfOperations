@@ -44,6 +44,10 @@ public class MainMenu
             {
                 Console.WriteLine(e.Message);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Wystąpił błąd: {e.Message}");
+            }
         }
     }
 }
