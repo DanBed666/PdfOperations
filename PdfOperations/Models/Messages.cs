@@ -22,9 +22,11 @@ public class Messages
     public const string NoFileSelected = "Nie wybrano plików!";
     public const string NoFormatProvided = "Nie podano formatu wyjściowego.";
     public const string NoSearchPhraseProvided = "Nie podano frazy do wyszukiwania.";
+    public const string NoLinesProvided = "Nie podano linii. Przydzielono domyślną wartość 0";
     public const string NoPagesProvided = "Nie podano stron.";
     public const string InvalidFormat = "Niepoprawny format";
     public const string InvalidOption = "Niepoprawna opcja! Wpisz t, n albo :q";
+    public const string NoOptionProvided = "Nie podano opcji! Wpisz t, n albo :q";
     public const string ChooseOutputDirectoryQuestion = "Czy chcesz wybrać folder zapisu? (T/N)";
     public const string PreviewFileQuestion = "Czy chcesz podejrzeć plik? (T/N)";
     public const string PreviewFolderQuestion = "Czy chcesz otworzyć folder wynikowy? (T/N)";
@@ -38,4 +40,5 @@ public class Messages
     public const string FormatFixed = "Poprawiono format na: ";
     public const string ExpectedFormat = "Poprawny format to: ";
     public const string CancelInfo = "Wpisz :q w dowolnym kroku, aby anulować operację.";
+    public const string InvalidNumber = "Podaj poprawną liczbę albo :q, aby anulować.";
 }

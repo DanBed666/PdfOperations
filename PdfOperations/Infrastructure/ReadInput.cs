@@ -6,59 +6,110 @@ public class ReadInput
     {
         string output = Console.ReadLine()!;
 
-        if (string.IsNullOrEmpty(output))
+        if (string.IsNullOrWhiteSpace(output))
         {
-            output = operation.DefaultOutputName;
             string extension = CheckParams.GetEffectiveExtension(operation, input);
-            Console.WriteLine($"Zapisano do {output}{extension}");
+            output = operation.DefaultOutputName + extension;
+            Console.WriteLine($"Zapisano do {output}");
         }
 
         if (output.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
-        {
-            Console.WriteLine(Messages.OperationCancelled);
-            return null;
-        }
+            throw new OperationCanceledException(Messages.OperationCancelled);
 
         return output;
     }
     
+    public static string ReadTextOrCancel(string prompt, string errMessage)
+    {
+        while (true)
+        {
+            Console.WriteLine(prompt);
+            string element = Console.ReadLine()!;
+            
+            if (element.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+                throw new OperationCanceledException(Messages.OperationCancelled);
+
+            if (string.IsNullOrWhiteSpace(element))
+            {
+                Console.WriteLine(errMessage);
+                continue;
+            }
+
+            return element.Trim();
+        }
+    }
+    
+    public static int ReadNumberOrCancel(string prompt, string errMessage)
+    {
+        while (true)
+        {
+            Console.WriteLine(prompt);
+            string element = Console.ReadLine()!;
+            
+            if (element.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+                throw new OperationCanceledException(Messages.OperationCancelled);
+
+            if (string.IsNullOrWhiteSpace(element))
+            {
+                Console.WriteLine(errMessage);
+                continue;
+            }
+
+            if (int.TryParse(element, out int result))
+                return result;
+            
+            Console.WriteLine(Messages.InvalidNumber);
+        }
+    }
+    
     public static string ReadOption()
     {
-        string input = Console.ReadLine()!;
-
-        if (string.IsNullOrEmpty(input))
-            return "n";
-
-        if (input.Trim().Equals("t", StringComparison.OrdinalIgnoreCase) || input.Trim().Equals("n", StringComparison.OrdinalIgnoreCase))
+        while (true)
         {
-            return input;
-        }
-        
-        if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
-        {
-            Console.WriteLine(Messages.OperationCancelled);
-            return null;
-        }
+            string input = Console.ReadLine()!;
 
-        Console.WriteLine(Messages.InvalidOption);
+            if (string.IsNullOrWhiteSpace(input))
+                return "n";
 
-        return input;
+            if (input.Trim().Equals("t", StringComparison.OrdinalIgnoreCase) ||
+                input.Trim().Equals("n", StringComparison.OrdinalIgnoreCase))
+            {
+                return input;
+            }
+
+            if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+                throw new OperationCanceledException(Messages.OperationCancelled);
+
+            Console.WriteLine(Messages.InvalidOption);
+        }
     }
 
     public static PdfFragment AddFragment8(string filter)
     {
-        string file = Files.AddFile(filter);
-        Console.WriteLine(Info.GetPdfPagesSingle(file));
-        Console.WriteLine("Numery podaj: ");
-        string pages = Console.ReadLine()!;
-
-        PdfFragment pdfFragment = new PdfFragment()
+        while (true)
         {
-            FileName = file,
-            PageNumbers = pages
-        };
+            string file = Files.AddFile(filter);
+            Console.WriteLine(Info.GetPdfPagesSingle(file));
+            Console.WriteLine("Numery podaj: ");
+            string pages = Console.ReadLine()!;
 
-        return pdfFragment;
+            if (string.IsNullOrWhiteSpace(pages))
+            {
+                Console.WriteLine(Messages.NoPagesProvided);
+                continue;
+            }
+
+            if (pages.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+                throw new OperationCanceledException(Messages.OperationCancelled);
+
+            PdfFragment pdfFragment = new PdfFragment()
+            {
+                FileName = file,
+                PageNumbers = pages
+            };
+
+            return pdfFragment;
+        }
     }
 
     public static List<PdfFragment> GetFragmentsList(string filter)
@@ -72,9 +123,12 @@ public class ReadInput
         {
             Console.WriteLine("Czy chcesz dodać fragment (T/N)");
             opt = ReadOption();
-            
-            if (string.IsNullOrEmpty(opt))
+
+            if (string.IsNullOrWhiteSpace(opt))
+            {
+                Console.WriteLine(Messages.NoOptionProvided);
                 continue;
+            }
 
             if (opt == "n")
                 break;
@@ -82,7 +136,6 @@ public class ReadInput
             if (opt == "t")
             {
                 pdfFragments.Add(AddFragment8(filter));
-                break;
             }
         }
 
