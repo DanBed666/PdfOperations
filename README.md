@@ -1,43 +1,104 @@
 # PdfOperations
 
-PdfOperations is a Windows console application for working with PDF files,
-images, OCR results, and office documents. It wraps external command-line tools
-behind a simpler menu-based interface.
+PdfOperations is a Windows console application for working with PDF files, images, OCR and office documents.
+
+The application is designed as a simple menu-based tool. It uses external command-line tools such as LibreOffice, Poppler, qpdf, Tesseract OCR and ImageMagick.
 
 ## Features
 
-- Convert office documents to PDF with LibreOffice
-- Convert PDF files to TXT
-- Convert PDF files to images
-- Convert images to PDF
-- Convert PDF files to DOCX/ODT with LibreOffice import filters
-- Run OCR on images and save the result as TXT
-- Merge multiple PDF files into one PDF
-- Split one PDF into separate pages
-- Create a new PDF from selected pages
-- Extract PDF information
-- Diagnose fonts used in PDF files
-- Extract embedded images from PDF files
-- Extract PDF attachments
-- Search for phrases in text files and PDF-derived text
-- Open generated files or output folders after an operation
+PdfOperations can:
 
-## External Tools
+- convert office documents with LibreOffice,
+- convert PDF files to images,
+- convert images to PDF,
+- extract text from PDF files,
+- extract text from images with OCR,
+- extract images from PDF files,
+- create new PDF files from selected pages,
+- split PDF files into separate pages,
+- merge PDF files into one PDF,
+- search for phrases in PDF files and images,
+- show PDF metadata,
+- show PDF font information,
+- replace text using placeholder files,
+- open multiple files with the default or selected application.
 
-The application uses portable command-line tools stored in the `tools` folder:
+## General usage
 
-- LibreOffice / `soffice`
-- Poppler, for example `pdftoppm`, `pdftotext`, `pdfinfo`, `pdffonts`
-- ImageMagick / `magick`
+Run the application and choose an option from the menu.
+
+Most operations follow this pattern:
+
+1. Choose one or more input files.
+2. Optionally preview the selected file.
+3. Provide additional data, such as output format, page range or search phrase.
+4. Choose the output folder.
+5. The program creates output files in the selected folder.
+
+At most prompts you can type `:q` to cancel the current operation.
+
+For yes/no questions:
+
+- `t` = yes
+- `n` = no
+- `Enter` = no
+
+If you do not provide an output file name, the program uses a default name.
+
+## Page ranges
+
+Some PDF operations ask for page numbers.
+
+Examples:
+
+- `1`
+- `2-5`
+- `1,3-5,8`
+
+The exact page syntax depends on the underlying PDF tool.
+
+## Placeholder replacement
+
+Placeholder replacement uses a text file with `Find:` and `Replace:` pairs.
+
+Example:
+
+Find: Jan Kowalski
+Replace: {{FULL_NAME}}
+
+Find: Gdansk
+Replace: {{CITY}}
+
+Find: 123/2026
+Replace: {{CASE_NUMBER}}
+
+The application searches for the text after `Find:` and replaces it with the text after `Replace:`.
+
+To reverse the operation, switch the values:
+
+Find: {{FULL_NAME}}
+Replace: Jan Kowalski
+
+## Notes
+
+- PDF merging sorts files by file name.
+- Some damaged PDF files may be processed with warnings.
+- LibreOffice conversion may depend on installed fonts.
+- OCR quality depends on image quality and available Tesseract languages.
+- Some operations create temporary files during processing.
+
+## External tools
+
+PdfOperations can use the following external tools:
+
+- LibreOffice
+- Poppler
+- qpdf
 - Tesseract OCR
-- QPDF
+- ImageMagick
 
-## Running
+These tools must be available in the expected application folders for all operations to work correctly.
 
-From the published application folder:
+## Project status
 
-```powershell
-.\PdfOperations.exe
-```
-
-The console menu guides the user through the available operations.
+This project is currently a console-based utility. A graphical interface may be added in the future.
