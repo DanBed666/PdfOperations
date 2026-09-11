@@ -11,7 +11,7 @@ public class Divide
         file.TempPath = Path.Combine(Path.GetDirectoryName(file.TempPath)!, name);
             
         arguments.AddRange([file.InputFile, file.TempPath]);
-        RunClass.Run(tool, arguments);
+        RunClass.Run(tool, arguments, 0, 3);
     }
     
     public static void ManyToOne(FileJob file)
@@ -38,7 +38,7 @@ public class Divide
                 Path.GetFileNameWithoutExtension(f) + "_odblokowany" + Path.GetExtension(f));
             
             arguments.AddRange(["--decrypt", f, unlocked]);
-            RunClass.Run(tool, arguments);
+            RunClass.Run(tool, arguments, 0, 3);
             decrypted.Add(unlocked);
         }
         

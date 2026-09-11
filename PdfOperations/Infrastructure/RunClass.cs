@@ -4,7 +4,7 @@ namespace PdfOperations;
 
 public class RunClass
 {
-    public static void Run(string exe, List<string> arguments)
+    public static void Run(string exe, List<string> arguments, params int [] allowedExitCodes)
     {
         var info = new ProcessStartInfo
         {
@@ -25,8 +25,11 @@ public class RunClass
         process.WaitForExit();
         
         string error = process.StandardError.ReadToEnd();
+
+        if (allowedExitCodes.Length == 0)
+            allowedExitCodes = [0];
         
-        if (process.ExitCode != 0)
+        if (!allowedExitCodes.Contains(process.ExitCode))
         {
             throw new InvalidOperationException($"{Messages.OperationFailed} {process.ExitCode}: {error}");
         }
