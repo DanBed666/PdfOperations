@@ -2,43 +2,45 @@
 
 public class ReadInput
 {
-    public static string ReadOutputFile()
+    public static string ReadOutputFile(OperationDefinition operation, OperationInput input)
+    {
+        string output = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(output))
+        {
+            output = operation.DefaultOutputName;
+            string extension = CheckParams.GetEffectiveExtension(operation, input);
+            Console.WriteLine($"Zapisano do {output}{extension}");
+        }
+
+        if (output.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine(Messages.OperationCancelled);
+            return null;
+        }
+
+        return output;
+    }
+    
+    public static string ReadOption()
     {
         string input = Console.ReadLine()!;
 
+        if (string.IsNullOrEmpty(input))
+            return "n";
+
+        if (input.Trim().Equals("t", StringComparison.OrdinalIgnoreCase) || input.Trim().Equals("n", StringComparison.OrdinalIgnoreCase))
+        {
+            return input;
+        }
+        
         if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
         {
             Console.WriteLine(Messages.OperationCancelled);
             return null;
         }
 
-        return input;
-    }
-    
-    public static string ReadOption()
-    {
-        string input = Console.ReadLine()!;
-        
-        while (string.IsNullOrEmpty(input))
-        {
-            if (input.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine(Messages.OperationCancelled);
-                return null;
-            }
-            
-            if (input.Trim().Equals("t", StringComparison.OrdinalIgnoreCase))
-            {
-                return "t";
-            }
-            
-            if (input.Trim().Equals("n", StringComparison.OrdinalIgnoreCase))
-            {
-                return "n";
-            }
-            
-            Console.WriteLine(Messages.InvalidOption);
-        }
+        Console.WriteLine(Messages.InvalidOption);
 
         return input;
     }
@@ -66,17 +68,23 @@ public class ReadInput
         
         pdfFragments.Add(AddFragment8(filter));
 
-        do
+        while(true)
         {
             Console.WriteLine("Czy chcesz dodać fragment (T/N)");
             opt = ReadOption();
+            
+            if (string.IsNullOrEmpty(opt))
+                continue;
 
             if (opt == "n")
                 break;
-                
-            pdfFragments.Add(AddFragment8(filter));
-        } 
-        while (opt != "n");
+
+            if (opt == "t")
+            {
+                pdfFragments.Add(AddFragment8(filter));
+                break;
+            }
+        }
 
         return pdfFragments;
     }

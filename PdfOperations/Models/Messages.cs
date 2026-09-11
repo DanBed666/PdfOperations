@@ -8,6 +8,7 @@ public class Messages
     public const string ChoosenFile = "Wybrano plik: ";
     public const string ChoosenFormat = "Wybrano format: ";
     public const string ChooseDirectory = "Wybierz folder:";
+    public const string ChoosenDirectory = "Wybrano folder:";
     public const string EnterOutputName = "Podaj nazwę pliku wynikowego:";
     public const string EnterPages = "Podaj strony:";
     public const string EnterFormat = "Wpisz format:";
@@ -23,7 +24,7 @@ public class Messages
     public const string NoSearchPhraseProvided = "Nie podano frazy do wyszukiwania.";
     public const string NoPagesProvided = "Nie podano stron.";
     public const string InvalidFormat = "Niepoprawny format";
-    public const string InvalidOption = "Niepoprawna opcja";
+    public const string InvalidOption = "Niepoprawna opcja! Wpisz t, n albo :q";
     public const string ChooseOutputDirectoryQuestion = "Czy chcesz wybrać folder zapisu? (T/N)";
     public const string PreviewFileQuestion = "Czy chcesz podejrzeć plik? (T/N)";
     public const string PreviewFolderQuestion = "Czy chcesz otworzyć folder wynikowy? (T/N)";

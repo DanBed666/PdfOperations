@@ -28,14 +28,7 @@ public class CheckParams
         Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
         return true;
     }
-
-    public static string GetOutput()
-    {
-        Console.WriteLine(Messages.EnterOutputName);
-        string output = ReadInput.ReadOutputFile();
-        return output;
-    }
-
+    
     public static bool CheckIfFormatNotExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
     {
         if (string.IsNullOrEmpty(format))
@@ -86,6 +79,20 @@ public class CheckParams
         
         operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
         return true;
+    }
+
+    public static string GetEffectiveExtension(OperationDefinition operation, OperationInput input)
+    {
+        if (!string.IsNullOrEmpty(operation.Extension))
+            return operation.Extension;
+        
+        if (!string.IsNullOrEmpty(input.Format))
+            return input.Format;
+        
+        if (!string.IsNullOrEmpty(input.InputFiles[0]))
+            return Path.GetExtension(input.InputFiles[0]);
+
+        return "";
     }
 
     public static string NormalizeExtension(string extension)
