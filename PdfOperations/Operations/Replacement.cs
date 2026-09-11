@@ -50,13 +50,4 @@ public class Replacement
         File.WriteAllText(path, text);
         ZipFile.CreateFromDirectory(tempDir, file.TempPath + extension);
     }
-    
-    public static void ReplacePlaceholdersWithText(FileJob file)
-    {
-        //string tool = ToolPaths.ToolPathsDict[Tool.Qpdf];
-        List<string> arguments = new List<string>();
-        
-        ZipFile.ExtractToDirectory(file.InputFile, file.TempPath);
-        //RunClass.Run(tool, arguments);
-    }
 }

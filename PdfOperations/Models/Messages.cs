@@ -19,7 +19,7 @@ public class Messages
     public const string OperationSuccess = "Operacja zakończona pomyślnie!";
     public const string OperationCancelled = "Operacja została anulowana!";
     public const string OperationFailed = "Operacja zakończona błędem!";
-    public const string NoFileSelected = "Nie wybrano plików!";
+    public const string NoFileSelected = "Nie wybrano plików! Operacja została anulowana!";
     public const string NoFormatProvided = "Nie podano formatu wyjściowego.";
     public const string NoSearchPhraseProvided = "Nie podano frazy do wyszukiwania.";
     public const string NoLinesProvided = "Nie podano linii. Przydzielono domyślną wartość 0";

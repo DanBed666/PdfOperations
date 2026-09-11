@@ -18,7 +18,7 @@ public class MainMenu
 
             try
             {
-                if (znak >= 1 && znak <= 16)
+                if (znak >= 1 && znak <= 15)
                 {
                     OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
 
@@ -27,11 +27,11 @@ public class MainMenu
 
                     Execute.ExecuteOpe(operationInput, value!);
                 }
-                else if (znak >= 17 && znak <= 18)
+                else if (znak >= 16 && znak <= 17)
                 {
                     Execute.ExecuteRunApp(value!);
                 }
-                else if (znak == 19)
+                else if (znak == 18)
                     Environment.Exit(0);
                 else
                     Console.WriteLine(Messages.InvalidOption);

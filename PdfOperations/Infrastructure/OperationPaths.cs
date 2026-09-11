@@ -105,7 +105,7 @@ public class OperationPaths
                 Extension = ".pdf",
                 OperationFlow = OperationFlow.FilesToSingleFile,
                 FileOperationActionSingle = Divide.ManyToOne,
-                InputPrompt = "Wybierz pliki PDF do połączenia. Kolejność zostanie ustalona według nazw plików:",
+                InputPrompt = "Wybierz pliki PDF do połączenia. Kolejność zostanie ustalona według nazw plików (A-Z):",
                 OutputPrompt = "Podaj nazwę połączonego pliku PDF:",
                 DefaultOutputName = "merged_pdf"
             },
@@ -165,27 +165,16 @@ public class OperationPaths
             },
             [14] = new OperationDefinition
             {
-                Name = "Zamień tekst PDF na placeholdery",
+                Name = "Wypełnij placeholdery w dokumencie",
                 OperationFlow = OperationFlow.FilesReplacement,
                 Filter = FileFilters.WordFiles,
                 FilterPlc = FileFilters.TxtFiles,
                 FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
                 AddInfo = "replace",
-                InputPrompt = "Wybierz pliki do zamiany na placeholdery:",
+                InputPrompt = "Wybierz pliki (docx / odt) do zamiany na placeholdery:",
                 DefaultOutputName = "document_placeholders"
             },
             [15] = new OperationDefinition
-            {
-                Name = "Wypełnij placeholdery w PDF",
-                OperationFlow = OperationFlow.FilesToFiles,
-                Filter = FileFilters.WordFiles,
-                FilterPlc = FileFilters.TxtFiles,
-                FileOperationActionMultiple = Replacement.ReplacePlaceholdersWithText,
-                AddInfo = "replace",
-                InputPrompt = "Wybierz pliki do wypełnienia placeholderów",
-                DefaultOutputName = "filled_document"
-            },
-            [16] = new OperationDefinition
             {
                 Name = "Złóż dokument PDF z wybranych stron",
                 OperationFlow = OperationFlow.FilesPagesSingle,
@@ -196,14 +185,14 @@ public class OperationPaths
                 InputPrompt = "Wybierz plik PDF:",
                 DefaultOutputName = "fragmented_pdf"
             },
-            [17] = new OperationDefinition
+            [16] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu domyślnego",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = CaseOptions.ExecuteManyRun,
                 InputPrompt = "Wybierz pliki do otwarcia:"
             },
-            [18] = new OperationDefinition
+            [17] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu wybranego",
                 OperationFlow = OperationFlow.RunApp,
@@ -211,7 +200,7 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
                 AppPrompt = "Wybierz program: w - Word, d - LibreOffice Draw, Enter - domyślny:"
             },
-            [19] = new OperationDefinition
+            [18] = new OperationDefinition
             {
                 Name = "Wyjście",
             }
