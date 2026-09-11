@@ -55,20 +55,30 @@ public class ExecuteCaseOperations
 
         if (operation.AddInfo == "search")
         {
-            operationInput.PhraseToFind = InputSearchOpe(operation, operationInput);
-            
-            Console.WriteLine(operation.BeforePrompt);
-            Int32.TryParse(Console.ReadLine(), out int before);
-            operationInput.Before = -before;
-            
-            Console.WriteLine(operation.AfterPrompt);
-            Int32.TryParse(Console.ReadLine(), out int after);
-            operationInput.After = after;
+            try
+            {
+                operationInput.PhraseToFind = ReadInput.ReadTextOrCancel(operation.PhrasePrompt, Messages.NoSearchPhraseProvided);
+                operationInput.Before = ReadInput.ReadNumberOrCancel(operation.BeforePrompt, Messages.NoLinesProvided);
+                operationInput.After = ReadInput.ReadNumberOrCancel(operation.AfterPrompt, Messages.NoLinesProvided);
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
         
         if (operation.AddInfo == "format")
         {
-            operationInput.Format = InputFormatOpe(operation, operationInput);
+            try
+            {
+                operationInput.Format = ReadInput.ReadTextOrCancel(operation.FormatPrompt, Messages.NoFormatProvided);
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
         
         if (operation.AddInfo == "pages")
@@ -78,8 +88,16 @@ public class ExecuteCaseOperations
                 int number = Info.GetPdfPagesSingle(file);
                 Console.WriteLine($"Liczba stron plik {Path.GetFileName(file)}: {number}");
             }
-
-            operationInput.Pages = InputPagesOpe(operation, operationInput);
+            
+            try
+            {
+                operationInput.Pages = ReadInput.ReadTextOrCancel(operation.PagesPrompt, Messages.NoPagesProvided);
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
         
         bool finish = false;
@@ -93,21 +111,8 @@ public class ExecuteCaseOperations
                 Console.WriteLine(Messages.EnterOutputName);
                 string output = ReadInput.ReadOutputFile(operation, operationInput);
 
-                if (!CheckParams.CheckFileFormat(output, out string format))
-                {
-                    if (CheckParams.CheckIfFormatNotExist(operation, operationInput, output, format, finish))
-                        break;
-                }
-                else if (!format.Equals(operation.Extension))
-                {
-                    if (CheckParams.CheckIfFormatExist(operation, operationInput, output, format, finish))
-                        break;
-                }
-                else
-                {
-                    operationInput.Output = output;
+                if (CheckParams.TryPrepareOutput(operation, operationInput, output))
                     break;
-                }
             }
         }
         
@@ -115,62 +120,5 @@ public class ExecuteCaseOperations
         Console.WriteLine($"{Messages.ChoosenDirectory} {operationInput.Dir}");
 
         return operationInput;
-    }
-    
-    public static string InputSearchOpe(OperationDefinition operation, OperationInput input)
-    {
-        while (true)
-        {
-            Console.WriteLine(operation.PhrasePrompt);
-            string phrase = ReadInput.ReadOutputFile(operation, input);
-
-            if (string.IsNullOrEmpty(phrase))
-            {
-                Console.WriteLine(Messages.NoSearchPhraseProvided);
-                continue;
-            }
-
-            return phrase;
-        }
-    }
-    
-    public static string InputPagesOpe(OperationDefinition operation, OperationInput input)
-    {
-        while (true)
-        {
-            Console.WriteLine(operation.PagesPrompt);
-            string pages = ReadInput.ReadOutputFile(operation, input);
-
-            if (string.IsNullOrEmpty(pages))
-            {
-                Console.WriteLine(Messages.NoPagesProvided);
-                continue;
-            }
-
-            return pages;
-        }
-    }
-
-    public static string InputFormatOpe(OperationDefinition operation, OperationInput input)
-    {
-        while (true)
-        {
-            Console.WriteLine(operation.FormatPrompt);
-            string format = ReadInput.ReadOutputFile(operation, input);
-            
-            if (string.IsNullOrEmpty(format))
-            {
-                Console.WriteLine(Messages.NoFormatProvided);
-                continue;
-            }
-
-            if (!CheckParams.CheckFormat(format))
-            {
-                Console.WriteLine(Messages.InvalidFormat);
-                continue;
-            }
-
-            return format;
-        }
     }
 }

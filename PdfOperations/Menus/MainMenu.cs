@@ -16,23 +16,30 @@ public class MainMenu
 
             OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
 
-            if (znak >= 1 && znak <= 16)
+            try
             {
-                OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
+                if (znak >= 1 && znak <= 16)
+                {
+                    OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
 
-                if (operationInput == null)
-                    continue;
+                    if (operationInput == null)
+                        continue;
 
-                Execute.ExecuteOpe(operationInput, value!);
+                    Execute.ExecuteOpe(operationInput, value!);
+                }
+                else if (znak >= 17 && znak <= 18)
+                {
+                    Execute.ExecuteRunApp(value!);
+                }
+                else if (znak == 19)
+                    Environment.Exit(0);
+                else
+                    Console.WriteLine(Messages.InvalidOption);
             }
-            else if (znak >= 17 && znak <= 18)
+            catch (OperationCanceledException e)
             {
-                Execute.ExecuteRunApp(value!);
+                Console.WriteLine(e.Message);
             }
-            else if (znak == 19)
-                Environment.Exit(0);
-            else
-                Console.WriteLine(Messages.InvalidOption);
         }
     }
 }

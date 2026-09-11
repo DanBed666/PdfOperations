@@ -16,8 +16,11 @@ public class CaseOptions
         string [] input = Files.AddFiles(ope.Filter);
 
         Console.WriteLine(Messages.ChooseApp);
-        string app = Console.ReadLine();
+        string app = Console.ReadLine()!;
         string appConv = "";
+        
+        if (app.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
+            throw new OperationCanceledException(Messages.OperationCancelled);
 
         if (app.Equals("w"))
         {

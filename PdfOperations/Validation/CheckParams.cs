@@ -89,7 +89,7 @@ public class CheckParams
         if (!string.IsNullOrEmpty(input.Format))
             return input.Format;
         
-        if (!string.IsNullOrEmpty(input.InputFiles[0]))
+        if (input.InputFiles.Length > 0 && !string.IsNullOrEmpty(input.InputFiles[0]))
             return Path.GetExtension(input.InputFiles[0]);
 
         return "";
@@ -101,5 +101,21 @@ public class CheckParams
             return "";
 
         return extension.StartsWith(".") ? extension : "." + extension;
+    }
+
+    public static bool TryPrepareOutput(OperationDefinition operation, OperationInput operationInput, string output)
+    {
+        if (!CheckFileFormat(output, out string format))
+        {
+            return CheckIfFormatNotExist(operation, operationInput, output, format, false);
+        }
+        
+        if (!format.Equals(operation.Extension))
+        {
+            return CheckIfFormatExist(operation, operationInput, output, format, false);
+        }
+
+        operationInput.Output = output;
+        return true;
     }
 }
