@@ -90,17 +90,8 @@ public class ReadInput
         {
             string file = Files.AddFile(filter);
             Console.WriteLine(Info.GetPdfPagesSingle(file));
-            Console.WriteLine("Numery podaj: ");
-            string pages = Console.ReadLine()!;
 
-            if (string.IsNullOrWhiteSpace(pages))
-            {
-                Console.WriteLine(Messages.NoPagesProvided);
-                continue;
-            }
-
-            if (pages.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
-                throw new OperationCanceledException(Messages.OperationCancelled);
+            string pages = ReadTextOrCancel(Messages.EnterPages, Messages.NoPagesProvided);
 
             PdfFragment pdfFragment = new PdfFragment()
             {

@@ -32,6 +32,10 @@ public class MainMenu
                     Execute.ExecuteRunApp(value!);
                 }
                 else if (znak == 18)
+                {
+                    Help.ShowHelp();
+                }
+                else if (znak == 19)
                     Environment.Exit(0);
                 else
                     Console.WriteLine(Messages.InvalidOption);

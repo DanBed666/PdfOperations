@@ -202,6 +202,10 @@ public class OperationPaths
             },
             [18] = new OperationDefinition
             {
+                Name = "Wyświetl instrukcję obsługi",
+            },
+            [19] = new OperationDefinition
+            {
                 Name = "Wyjście",
             }
         }

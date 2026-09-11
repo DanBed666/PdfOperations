@@ -41,4 +41,5 @@ public class Messages
     public const string ExpectedFormat = "Poprawny format to: ";
     public const string CancelInfo = "Wpisz :q w dowolnym kroku, aby anulować operację.";
     public const string InvalidNumber = "Podaj poprawną liczbę albo :q, aby anulować.";
+    public const string NoHelpFile = "Nie znaleziono pliku instrukcji";
 }
