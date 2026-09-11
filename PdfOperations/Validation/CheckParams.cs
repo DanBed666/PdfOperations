@@ -52,7 +52,7 @@ public class CheckParams
         return finish;
     }
     
-    public static bool CheckIfFormatExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
+    public static bool CheckIfFormatExist(OperationDefinition operation, OperationInput operationInput, string output, bool finish)
     {
         Console.WriteLine($"{Messages.InvalidFormat} {Messages.ExpectedFormat} {operation.Extension}");
         Console.WriteLine(Messages.FixFormatQuestion);
@@ -112,7 +112,7 @@ public class CheckParams
         
         if (!format.Equals(operation.Extension))
         {
-            return CheckIfFormatExist(operation, operationInput, output, format, false);
+            return CheckIfFormatExist(operation, operationInput, output, false);
         }
 
         operationInput.Output = output;

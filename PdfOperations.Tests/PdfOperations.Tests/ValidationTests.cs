@@ -64,4 +64,30 @@ public class ValidationTests
         Assert.AreEqual(".pdf", res);
         Assert.AreEqual(".jpg", res2);
     }
+    
+    [TestMethod]
+    public void TryPrepareOutputTest()
+    {
+        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
+        string extension = ".jpg";
+        string output = "filename";
+
+        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
+        CheckParams.TryPrepareOutput(testInput.Operation, testInput.Input, testInput.Input.Output);
+        
+        Assert.AreEqual("filename.jpg", testInput.Input.Output);
+    }
+    
+    [TestMethod]
+    public void GetEffectiveExtensionTest()
+    {
+        string [] inputs = new [] {"test_1.pdf"};
+        string extension = "";
+        string output = "filename";
+
+        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
+        //testInput.Input.Format = ".xml";
+        string ext = CheckParams.GetEffectiveExtension(testInput.Operation, testInput.Input);
+        Assert.AreEqual(".pdf", ext);
+    }
 }
