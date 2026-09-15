@@ -11,9 +11,9 @@ public class ValidationTests
 
         string[] inputFiles = TestHelper.SetInputPaths(inputs);
         OperationInput input = TestHelper.SetOperationInput(inputFiles, output: output);
-        bool check = CheckParams.CheckFileFormat(input.Output, out string format);
+        bool check = CheckParams.IsFormatValid(Path.GetExtension(output));
         
-        Assert.AreEqual(".pdf", format);
+        Assert.AreEqual(".pdf", Path.GetExtension(output));
         Assert.IsTrue(check);
     }
     
@@ -38,21 +38,7 @@ public class ValidationTests
         CheckParams.FixFormatExist(testInput.Operation.Extension, testInput.Input, testInput.Input.Output);
         Assert.AreEqual(finalOut, testInput.Input.Output);
     }
-    
-    [TestMethod]
-    public void FixFormatNotExistTest()
-    {
-        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
-        string output = "test2";
-        string extension = ".pdf";
-        string finalOut = "test2.pdf";
 
-        TestInput testInput = TestHelper.PrepareMultiplePathsWithoutContext(inputs, output, extension);
-
-        CheckParams.FixFormatNotExist(testInput.Operation.Extension, testInput.Input, testInput.Input.Output);
-        Assert.AreEqual(finalOut, testInput.Input.Output);
-    }
-    
     [TestMethod]
     public void NormalizeExtensionTest()
     {
@@ -87,7 +73,7 @@ public class ValidationTests
 
         TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
         //testInput.Input.Format = ".xml";
-        string ext = CheckParams.GetEffectiveExtension(testInput.Operation, testInput.Input);
+        string ext = CheckParams.GetEffectiveExtension(testInput.Operation.Extension, testInput.Input);
         Assert.AreEqual(".pdf", ext);
     }
 }

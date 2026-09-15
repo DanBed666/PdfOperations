@@ -411,7 +411,7 @@ public class FilesTests
             Dictionary<string, string> exist =
                 Files.MoveNewFilesAndReturnConflicts(testInput.Input.Dir, testInput.Context.TempDir);
             
-            Files.SaveWithUniqueFileName(extension, exist);
+            Files.SaveWithUniqueFileName(exist);
 
             Assert.HasCount(1, exist);
             Assert.IsFalse(File.Exists(fileJobs[1].TempPath));
