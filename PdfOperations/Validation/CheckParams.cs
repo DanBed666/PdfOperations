@@ -2,21 +2,6 @@
 
 public class CheckParams
 {
-    public static bool CheckFileFormat(string output, out string formatStart)
-    {
-        formatStart = Path.GetExtension(output);
-        string format = Path.GetExtension(output).Replace(".", "");
-
-        if (!Enum.TryParse(typeof(FileExtension), format, ignoreCase: true, out object? ext))
-        {
-            Console.WriteLine(Messages.InvalidFormat);
-            return false;
-        }
-        
-        Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
-        return true;
-    }
-    
     public static bool CheckFormat(string output)
     {
         if (!Enum.TryParse(typeof(FileExtension), output, ignoreCase: true, out object? ext))
@@ -29,40 +14,26 @@ public class CheckParams
         return true;
     }
     
-    public static bool CheckIfFormatNotExist(OperationDefinition operation, OperationInput operationInput, string output, string format, bool finish)
+    public static bool IsExpectedFormat(string format, OperationInput operationInput, string output, bool finish)
     {
+        Console.WriteLine($"{Messages.InvalidFormat} {Messages.ExpectedFormat} {GetEffectiveExtension(format, operationInput)}");
+        
         if (string.IsNullOrEmpty(format))
         {
-            finish = FixFormatNotExist(operation.Extension, operationInput, output);
-            Console.WriteLine($"{Messages.FormatAdded} {operation.Extension}!");
+            finish = FixFormatExist(format, operationInput, output);
+            Console.WriteLine($"{Messages.FormatAdded} {GetEffectiveExtension(format, operationInput)}!");
         }
-        else
+        else 
         {
-            Console.WriteLine(Messages.UnsupportedFormat);
             Console.WriteLine(Messages.FixFormatQuestion);
             string inp = ReadInput.ReadOption();
 
             if (inp == "t")
             {
-                finish = FixFormatExist(operation.Extension, operationInput, output);
-                Console.WriteLine($"{Messages.FormatFixed} {operation.Extension}!");
+                finish = FixFormatExist(format, operationInput, output);
             }
         }
 
-        return finish;
-    }
-    
-    public static bool CheckIfFormatExist(OperationDefinition operation, OperationInput operationInput, string output, bool finish)
-    {
-        Console.WriteLine($"{Messages.InvalidFormat} {Messages.ExpectedFormat} {operation.Extension}");
-        Console.WriteLine(Messages.FixFormatQuestion);
-        string inp = ReadInput.ReadOption();
-
-        if (inp == "t")
-        {
-            finish = FixFormatExist(operation.Extension, operationInput, output);
-        }
-        
         return finish;
     }
 
@@ -72,22 +43,13 @@ public class CheckParams
         return true;
     }
     
-    public static bool FixFormatNotExist(string format, OperationInput operationInput, string output)
+    public static string GetEffectiveExtension(string format, OperationInput input)
     {
-        if (output[^1] == '.')
-            output = output.Replace(".", "");
-        
-        operationInput.Output = Path.GetFileNameWithoutExtension(output) + format;
-        return true;
-    }
-
-    public static string GetEffectiveExtension(OperationDefinition operation, OperationInput input)
-    {
-        if (!string.IsNullOrEmpty(operation.Extension))
-            return operation.Extension;
+        if (!string.IsNullOrEmpty(format))
+            return format;
         
         if (!string.IsNullOrEmpty(input.Format))
-            return input.Format;
+            return "." + input.Format;
         
         if (input.InputFiles.Length > 0 && !string.IsNullOrEmpty(input.InputFiles[0]))
             return Path.GetExtension(input.InputFiles[0]);
@@ -105,17 +67,103 @@ public class CheckParams
 
     public static bool TryPrepareOutput(OperationDefinition operation, OperationInput operationInput, string output)
     {
-        if (!CheckFileFormat(output, out string format))
-        {
-            return CheckIfFormatNotExist(operation, operationInput, output, format, false);
-        }
+        string format = Path.GetExtension(output);
         
-        if (!format.Equals(operation.Extension))
+        if (!IsFormatValid(format) && !string.IsNullOrWhiteSpace(format))
+            return false;
+
+        if (operation.OperationFlow != OperationFlow.FilesToFilesWithFormat &&
+            operation.OperationFlow != OperationFlow.FilesReplacement)
         {
-            return CheckIfFormatExist(operation, operationInput, output, false);
+            if (!format.Equals(operation.Extension))
+            {
+                return IsExpectedFormat(operation.Extension, operationInput, output, false);
+            }
+        }
+        else
+        {
+            if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+            {
+                if (Path.GetExtension(output) != NormalizeExtension(operationInput.Format))
+                {
+                    return IsExpectedFormat(operationInput.Format, operationInput, output, false);
+                }
+            }
+            else if (operation.OperationFlow == OperationFlow.FilesReplacement)
+            {
+                if (Path.GetExtension(output) != NormalizeExtension(Path.GetExtension(operationInput.InputFiles[0])))
+                {
+                    return IsExpectedFormat(operationInput.InputFiles[0], operationInput, output, false);
+                }
+            }
         }
 
         operationInput.Output = output;
+        return true;
+    }
+    
+    public static bool IsFormatValid(string format)
+    {
+        if (string.IsNullOrWhiteSpace(format))
+            return false;
+
+        string normalize = format.Trim().TrimStart('.');
+
+        if (!Enum.TryParse(normalize, ignoreCase: true, out FileExtension ext))
+        {
+            Console.WriteLine($"{Messages.InvalidFormat}: {normalize}");
+            return false;
+        }
+        
+        Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
+
+        return true;
+    }
+    
+    public static bool IsSearchPhraseValid(string format)
+    {
+        if (string.IsNullOrWhiteSpace(format))
+            return false;
+
+        return true;
+    }
+
+    public static bool IsValidPageFormat(string pages)
+    {
+        if (string.IsNullOrWhiteSpace(pages))
+        {
+            Console.WriteLine(Messages.NoPagesProvided);
+            return false;
+        }
+
+        string [] parts = pages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (string part in parts)
+        {
+            if (int.TryParse(part, out int pageNumbuh))
+            {
+                if (pageNumbuh <= 0)
+                    return false;
+            }
+        }
+
+        string[] range = pages.Split('-', StringSplitOptions.TrimEntries);
+        
+        if (range.Length != 2)
+            return false;
+
+        if (!int.TryParse(range[0], out int start))
+            return false;
+        
+        if (!int.TryParse(range[1], out int finish))
+            return false;
+
+        if (start <= 0 || finish <= 0)
+            return false;
+
+        if (finish < start)
+            return false;
+        
         return true;
     }
 }

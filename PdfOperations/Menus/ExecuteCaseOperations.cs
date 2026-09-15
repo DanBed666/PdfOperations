@@ -57,7 +57,18 @@ public class ExecuteCaseOperations
         {
             try
             {
-                operationInput.PhraseToFind = ReadInput.ReadTextOrCancel(operation.PhrasePrompt, Messages.NoSearchPhraseProvided);
+                while (true)
+                {
+                    Console.WriteLine(operation.PhrasePrompt);
+                    string phrase = Console.ReadLine()!;
+
+                    if (CheckParams.IsSearchPhraseValid(phrase))
+                    {
+                        operationInput.PhraseToFind = phrase;
+                        break;
+                    }
+                }
+
                 operationInput.Before = ReadInput.ReadNumberOrCancel(operation.BeforePrompt, Messages.NoLinesProvided);
                 operationInput.After = ReadInput.ReadNumberOrCancel(operation.AfterPrompt, Messages.NoLinesProvided);
             }
@@ -72,7 +83,17 @@ public class ExecuteCaseOperations
         {
             try
             {
-                operationInput.Format = ReadInput.ReadTextOrCancel(operation.FormatPrompt, Messages.NoFormatProvided);
+                while (true)
+                {
+                    Console.WriteLine(operation.FormatPrompt);
+                    string format = Console.ReadLine()!;
+
+                    if (CheckParams.IsFormatValid(format))
+                    {
+                        operationInput.Format = format;
+                        break;
+                    }
+                }
             }
             catch (OperationCanceledException e)
             {
@@ -91,7 +112,17 @@ public class ExecuteCaseOperations
             
             try
             {
-                operationInput.Pages = ReadInput.ReadTextOrCancel(operation.PagesPrompt, Messages.NoPagesProvided);
+                while (true)
+                {
+                    Console.WriteLine(operation.PagesPrompt);
+                    string pages = Console.ReadLine()!;
+
+                    if (CheckParams.IsValidPageFormat(pages))
+                    {
+                        operationInput.Pages = pages;
+                        break;
+                    }
+                }
             }
             catch (OperationCanceledException e)
             {

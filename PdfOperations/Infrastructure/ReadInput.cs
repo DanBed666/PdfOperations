@@ -8,8 +8,15 @@ public class ReadInput
 
         if (string.IsNullOrWhiteSpace(output))
         {
-            string extension = CheckParams.GetEffectiveExtension(operation, input);
+            string extension = CheckParams.GetEffectiveExtension(operation.Extension, input);
             output = operation.DefaultOutputName + extension;
+            Console.WriteLine($"Zapisano do {output}");
+        }
+        
+        if (string.IsNullOrWhiteSpace(Path.GetExtension(output)))
+        {
+            string extension = CheckParams.GetEffectiveExtension(operation.Extension, input);
+            output += extension;
             Console.WriteLine($"Zapisano do {output}");
         }
 
@@ -18,34 +25,14 @@ public class ReadInput
 
         return output;
     }
-    
-    public static string ReadTextOrCancel(string prompt, string errMessage)
-    {
-        while (true)
-        {
-            Console.WriteLine(prompt);
-            string element = Console.ReadLine()!;
-            
-            if (element.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
-                throw new OperationCanceledException(Messages.OperationCancelled);
 
-            if (string.IsNullOrWhiteSpace(element))
-            {
-                Console.WriteLine(errMessage);
-                continue;
-            }
-
-            return element.Trim();
-        }
-    }
-    
     public static int ReadNumberOrCancel(string prompt, string errMessage)
     {
         while (true)
         {
             Console.WriteLine(prompt);
             string element = Console.ReadLine()!;
-            
+
             if (element.Trim().Equals(":q", StringComparison.OrdinalIgnoreCase))
                 throw new OperationCanceledException(Messages.OperationCancelled);
 
@@ -57,11 +44,11 @@ public class ReadInput
 
             if (int.TryParse(element, out int result))
                 return result;
-            
+
             Console.WriteLine(Messages.InvalidNumber);
         }
     }
-    
+
     public static string ReadOption()
     {
         while (true)
@@ -90,8 +77,13 @@ public class ReadInput
         {
             string file = Files.AddFile(filter);
             Console.WriteLine(Info.GetPdfPagesSingle(file));
+            string pages = "";
+            
+            Console.WriteLine("Podaj strony do zostawienia, np. 1,3-5:");
+            string p = Console.ReadLine()!;
 
-            string pages = ReadTextOrCancel(Messages.EnterPages, Messages.NoPagesProvided);
+            if (CheckParams.IsValidPageFormat(p))
+                pages = p;
 
             PdfFragment pdfFragment = new PdfFragment()
             {
@@ -107,10 +99,10 @@ public class ReadInput
     {
         List<PdfFragment> pdfFragments = new List<PdfFragment>();
         string opt = "";
-        
+
         pdfFragments.Add(AddFragment8(filter));
 
-        while(true)
+        while (true)
         {
             Console.WriteLine("Czy chcesz dodać fragment (T/N)");
             opt = ReadOption();

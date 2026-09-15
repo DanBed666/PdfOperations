@@ -12,5 +12,6 @@ public enum FileExtension
     Csv,
     Pptx,
     Png,
-    Jpg
+    Jpg,
+    Odg
 }
