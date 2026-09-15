@@ -35,6 +35,8 @@ public static class Convert
                 "--nodefault",
                 "--nofirststartwizard",
                 "--norestore","--convert-to", fileInput.Format, ..filesOdt, "--outdir", context.TempDir]);
+
+            fileInput.ExceptFormat = ".odt";
         }
         else
         {

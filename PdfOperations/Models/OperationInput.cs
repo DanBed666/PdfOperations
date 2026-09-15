@@ -10,6 +10,7 @@ public class OperationInput
     public string Pages { get; set; } = "";
     public string Format { get; set; } = "";
     public string Output { get; set; } = "";
+    public string ExceptFormat { get; set; } = "";
     public int Before { get; set; } = 0;
     public int After { get; set; } = 0;
 }

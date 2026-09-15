@@ -60,7 +60,7 @@ public class Execute
         }
     }
     
-    public static void MoveToFinalDir(string format, string finalDir, string tempDir)
+    public static void MoveToFinalDir(string finalDir, string tempDir)
     {
         Dictionary <string, string> existing = new Dictionary<string, string>();
         existing = Files.MoveNewFilesAndReturnConflicts(finalDir, tempDir);
@@ -76,7 +76,28 @@ public class Execute
             }
             else if (opt == "n")
             {
-                Files.SaveWithUniqueFileName(CheckParams.NormalizeExtension(format), existing);
+                Files.SaveWithUniqueFileName(existing);
+            }
+        }
+    }
+    
+    public static void MoveToFinalDirExcept(string format, string finalDir, string tempDir, OperationInput input)
+    {
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+        existing = Files.MoveNewFilesAndReturnConflictsWithExcept(finalDir, tempDir, input);
+
+        if (existing.Count != 0)
+        {
+            Console.WriteLine(Messages.OverwriteFilesQuestion);
+            string opt = ReadInput.ReadOption();
+
+            if (opt == "t")
+            {
+                Files.OverWriteFile(existing);
+            }
+            else if (opt == "n")
+            {
+                Files.SaveWithUniqueFileName(existing);
             }
         }
     }
@@ -90,12 +111,11 @@ public class Execute
         try
         {
             if (operation.OperationFlow == OperationFlow.FilesToFiles ||
-                operation.OperationFlow == OperationFlow.FilesPages || 
-                operation.OperationFlow == OperationFlow.FilesReplacement)
+                operation.OperationFlow == OperationFlow.FilesPages)
             {
                 fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
                 SaveToTempDirList(operation, fileInput, fileJobList, context);
-                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+                MoveToFinalDir(fileInput.Dir, context.TempDir);
             }
             else if (operation.OperationFlow == OperationFlow.SearchReport)
             {
@@ -104,24 +124,30 @@ public class Execute
 
                 fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
                 SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+                MoveToFinalDir(fileInput.Dir, context.TempDir);
             }
             else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
             {
                 ExecuteOpeLibre(operation, fileInput, context);
-                MoveToFinalDir(fileInput.Format, fileInput.Dir, context.TempDir);
+                MoveToFinalDirExcept(fileInput.Format, fileInput.Dir, context.TempDir, fileInput);
+            }
+            else if (operation.OperationFlow == OperationFlow.FilesReplacement)
+            {
+                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
+                SaveToTempDirList(operation, fileInput, fileJobList, context);
+                MoveToFinalDir(fileInput.Dir, context.TempDir);
             }
             else if (operation.OperationFlow == OperationFlow.FilesPagesSingle)
             {
                 fileJob = ExecutionBuilder.SetFileJobFragment(fileInput, context, operation);
                 SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+                MoveToFinalDir(fileInput.Dir, context.TempDir);
             }
             else
             {
                 fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
                 SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(operation.Extension, fileInput.Dir, context.TempDir);
+                MoveToFinalDir(fileInput.Dir, context.TempDir);
             }
 
             Console.WriteLine(Messages.OperationSuccess);

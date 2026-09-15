@@ -76,7 +76,7 @@ public class Files
         return finalPath;
     }
     
-    public static void SaveWithUniqueFileName(string extension, Dictionary <string, string> existing)
+    public static void SaveWithUniqueFileName(Dictionary <string, string> existing)
     {
         foreach (KeyValuePair<string, string> item in existing)
         {
@@ -84,6 +84,7 @@ public class Files
             string finalPath;
             string directory = Path.GetDirectoryName(item.Value)!;
             string fileName = Path.GetFileNameWithoutExtension(item.Value);
+            string extension = Path.GetExtension(item.Value);
 
             do
             {
@@ -111,6 +112,49 @@ public class Files
             else
             {
                 File.Move(tempFile, finalPath);
+            }
+        }
+
+        return existing;
+    }
+    
+    public static Dictionary <string, string> MoveNewFilesAndReturnConflictsWithExcept(string finalDir, string tempDir, 
+        OperationInput input)
+    {
+        Dictionary <string, string> existing = new Dictionary<string, string>();
+
+        string [] tempDirFiles = Directory.GetFiles(tempDir);
+        
+        if (tempDirFiles.Length == 1)
+        {
+            Console.WriteLine("plik: " + tempDirFiles[0]);
+            string output = "";
+
+            output = Path.Combine(Path.GetDirectoryName(tempDirFiles[0])!, input.Output);
+            Console.WriteLine("final = " + output);
+            File.Move(tempDirFiles[0], output, true);
+        }
+        
+        string [] tempDirNewFiles = Directory.GetFiles(tempDir);
+
+        foreach (string file in tempDirNewFiles)
+        {
+            if (input.ExceptFormat != null)
+            {
+                if (Path.GetExtension(file) == input.ExceptFormat)
+                    continue;
+            }
+            
+            Console.WriteLine("plik8: " + file);
+            string finalPath = Path.Combine(finalDir, Path.GetFileName(file));
+            
+            if (File.Exists(finalPath))
+            {
+                existing.Add(file, finalPath);
+            }
+            else
+            {
+                File.Move(file, finalPath);
             }
         }
 
