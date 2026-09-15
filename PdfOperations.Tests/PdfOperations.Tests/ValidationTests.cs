@@ -6,25 +6,42 @@ public class ValidationTests
     [TestMethod]
     public void CheckFileFormatTest()
     {
-        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
         string output = "test2.pdf";
-
-        string[] inputFiles = TestHelper.SetInputPaths(inputs);
-        OperationInput input = TestHelper.SetOperationInput(inputFiles, output: output);
         bool check = CheckParams.IsFormatValid(Path.GetExtension(output));
+        
+        string output2 = "test2.hhh";
+        bool check2 = CheckParams.IsFormatValid(Path.GetExtension(output2));
+        
+        string output3 = "aaaaaa";
+        bool check3 = CheckParams.IsFormatValid(Path.GetExtension(output3));
         
         Assert.AreEqual(".pdf", Path.GetExtension(output));
         Assert.IsTrue(check);
+        Assert.IsFalse(check2);
+        Assert.IsFalse(check3);
     }
     
     [TestMethod]
-    public void CheckFormatTest()
+    public void IsValidPageFormatTest()
     {
-        Assert.IsTrue(CheckParams.CheckFormat("pdf"));
-        Assert.IsTrue(CheckParams.CheckFormat("jpg"));
-        Assert.IsFalse(CheckParams.CheckFormat("xdd"));
+        string pages = "2-5";
+        bool check = CheckParams.IsValidPageFormat(pages);
+        
+        string pages2 = "1,3-6";
+        bool check2 = CheckParams.IsValidPageFormat(pages2);
+        
+        string pages3 = "5-2";
+        bool check3 = CheckParams.IsValidPageFormat(pages3);
+        
+        string pages4 = "xxxx8-9yyyy";
+        bool check4 = CheckParams.IsValidPageFormat(pages4);
+
+        Assert.IsTrue(check);
+        Assert.IsTrue(check2);
+        Assert.IsFalse(check3);
+        Assert.IsFalse(check4);
     }
-    
+
     [TestMethod]
     public void FixFormatExistTest()
     {

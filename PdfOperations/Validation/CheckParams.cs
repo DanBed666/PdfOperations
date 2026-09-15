@@ -2,18 +2,6 @@
 
 public class CheckParams
 {
-    public static bool CheckFormat(string output)
-    {
-        if (!Enum.TryParse(typeof(FileExtension), output, ignoreCase: true, out object? ext))
-        {
-            Console.WriteLine(Messages.InvalidFormat);
-            return false;
-        }
-        
-        Console.WriteLine($"{Messages.ChoosenFormat} {ext}");
-        return true;
-    }
-    
     public static bool IsExpectedFormat(string format, OperationInput operationInput, string output, bool finish)
     {
         Console.WriteLine($"{Messages.InvalidFormat} {Messages.ExpectedFormat} {GetEffectiveExtension(format, operationInput)}");
@@ -64,6 +52,43 @@ public class CheckParams
 
         return extension.StartsWith(".") ? extension : "." + extension;
     }
+    
+    public static bool TryPrepareOutput8(OperationDefinition operation, OperationInput operationInput, string output)
+    {
+        string format = Path.GetExtension(output);
+        
+        if (!IsFormatValid(format) && !string.IsNullOrWhiteSpace(format))
+            return false;
+
+        if (operation.OperationFlow != OperationFlow.FilesToFilesWithFormat &&
+            operation.OperationFlow != OperationFlow.FilesReplacement)
+        {
+            if (!format.Equals(operation.Extension))
+            {
+                return IsExpectedFormat(operation.Extension, operationInput, output, false);
+            }
+        }
+        else
+        {
+            if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+            {
+                if (Path.GetExtension(output) != NormalizeExtension(operationInput.Format))
+                {
+                    return IsExpectedFormat(operationInput.Format, operationInput, output, false);
+                }
+            }
+            else if (operation.OperationFlow == OperationFlow.FilesReplacement)
+            {
+                if (Path.GetExtension(output) != NormalizeExtension(Path.GetExtension(operationInput.InputFiles[0])))
+                {
+                    return IsExpectedFormat(Path.GetExtension(operationInput.InputFiles[0]), operationInput, output, false);
+                }
+            }
+        }
+
+        operationInput.Output = output;
+        return true;
+    }
 
     public static bool TryPrepareOutput(OperationDefinition operation, OperationInput operationInput, string output)
     {
@@ -93,7 +118,7 @@ public class CheckParams
             {
                 if (Path.GetExtension(output) != NormalizeExtension(Path.GetExtension(operationInput.InputFiles[0])))
                 {
-                    return IsExpectedFormat(operationInput.InputFiles[0], operationInput, output, false);
+                    return IsExpectedFormat(Path.GetExtension(operationInput.InputFiles[0]), operationInput, output, false);
                 }
             }
         }
@@ -144,26 +169,28 @@ public class CheckParams
             {
                 if (pageNumbuh <= 0)
                     return false;
+
+                continue;
             }
+
+            string[] range = pages.Split('-', StringSplitOptions.TrimEntries);
+
+            if (range.Length != 2)
+                return false;
+
+            if (!int.TryParse(range[0], out int start))
+                return false;
+
+            if (!int.TryParse(range[1], out int finish))
+                return false;
+
+            if (start <= 0 || finish <= 0)
+                return false;
+
+            if (finish < start)
+                return false;
         }
 
-        string[] range = pages.Split('-', StringSplitOptions.TrimEntries);
-        
-        if (range.Length != 2)
-            return false;
-
-        if (!int.TryParse(range[0], out int start))
-            return false;
-        
-        if (!int.TryParse(range[1], out int finish))
-            return false;
-
-        if (start <= 0 || finish <= 0)
-            return false;
-
-        if (finish < start)
-            return false;
-        
         return true;
     }
 }
