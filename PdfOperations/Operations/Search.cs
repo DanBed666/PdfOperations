@@ -36,7 +36,7 @@ public class Search
                 lines.Add(inputPath);
                 lines.Add("\n");
                 
-                for (int k = before; k <= after; k++)
+                for (int k = -before; k <= after; k++)
                 {
                     int idx = i + k;
                     
