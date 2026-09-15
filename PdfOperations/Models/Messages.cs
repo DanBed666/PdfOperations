@@ -3,7 +3,11 @@
 public class Messages
 {
     public const string ChooseOption = "Wybierz opcję:";
-    public const string ChooseApp = "Wybierz aplikację, którą chcesz otworzyć:";
+
+    public const string ChooseApp = "Wybierz aplikację do otwarcia pliku:\n" +
+                                    "w - Microsoft Word\n" +
+                                    "d - LibreOffice Draw\n" +
+                                    "p - Paint\n";
     public const string ChooseFiles = "Wybierz pliki:";
     public const string ChoosenFile = "Wybrano plik: ";
     public const string ChoosenFormat = "Wybrano format: ";
