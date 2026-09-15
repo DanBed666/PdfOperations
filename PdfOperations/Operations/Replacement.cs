@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Text.RegularExpressions;
 
 namespace PdfOperations;
 
@@ -48,6 +49,38 @@ public class Replacement
         }
         
         File.WriteAllText(path, text);
-        ZipFile.CreateFromDirectory(tempDir, file.TempPath + extension);
+
+        if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
+            UpdateDocxDates(tempDir);
+        
+        if (string.IsNullOrWhiteSpace(input.Output) && input.InputFiles.Length > 1)
+            ZipFile.CreateFromDirectory(tempDir, file.TempPath + extension);
+        else
+            ZipFile.CreateFromDirectory(tempDir, file.TempPath);
+    }
+
+    public static void UpdateDocxDates(string tempDir)
+    {
+        string corePath = Path.Combine(tempDir, "docProps", "core.xml");
+
+        if (!File.Exists(corePath))
+            return;
+        
+        string core = File.ReadAllText(corePath);
+        string now = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        
+        core = Regex.Replace(
+            core,
+            @"<dcterms:created\b[^>]*>.*?</dcterms:created>",
+            $@"<dcterms:created xsi:type=""dcterms:W3CDTF"">{now}</dcterms:created>",
+            RegexOptions.Singleline);
+
+        core = Regex.Replace(
+            core,
+            @"<dcterms:modified\b[^>]*>.*?</dcterms:modified>",
+            $@"<dcterms:modified xsi:type=""dcterms:W3CDTF"">{now}</dcterms:modified>",
+            RegexOptions.Singleline);
+        
+        File.WriteAllText(corePath, core);
     }
 }
