@@ -2,48 +2,6 @@
 
 public class Files
 {
-    public static string [] AddFiles(string filter)
-    {
-        string [] files = Dialog.SelectFiles(filter);
-        return files;
-    }
-    
-    public static string AddFile(string filter)
-    {
-        string file = Dialog.SelectFile(filter);
-        return file;
-    }
-    
-    public static string AddDirectory()
-    {
-        Console.WriteLine(Messages.ChooseOutputDirectoryQuestion);
-        string opt = ReadInput.ReadOption();
-
-        string dir = "";
-
-        if (opt.ToLower().Equals("t"))
-        {
-            dir = Dialog.SelectDirectory();
-        }
-        else if (opt.ToLower().Equals("n"))
-        {
-            dir = GetDefaultDirectory();
-            Console.WriteLine(Messages.AddedToDefaultDir);
-        }
-
-        return dir;
-    }
-
-    public static string GetDefaultDirectory()
-    {
-        string defDir = Path.Combine(AppContext.BaseDirectory, "output");
-        
-        if (!Directory.Exists(defDir))
-            Directory.CreateDirectory(defDir);
-
-        return defDir;
-    }
-
     public static string PrepareTempDir()
     {
         string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

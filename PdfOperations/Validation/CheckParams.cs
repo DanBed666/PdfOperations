@@ -155,12 +155,6 @@ public class CheckParams
 
     public static bool IsValidPageFormat(string pages)
     {
-        if (string.IsNullOrWhiteSpace(pages))
-        {
-            Console.WriteLine(Messages.NoPagesProvided);
-            return false;
-        }
-
         string [] parts = pages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         foreach (string part in parts)

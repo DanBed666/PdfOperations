@@ -75,8 +75,8 @@ public class ReadInput
     {
         while (true)
         {
-            string file = Files.AddFile(filter);
-            Console.WriteLine(Info.GetPdfPagesSingle(file));
+            //string file = Files.AddFile(filter);
+            //Console.WriteLine(Info.GetPdfPagesSingle(file));
             string pages = "";
             
             Console.WriteLine("Podaj strony do zostawienia, np. 1,3-5:");
@@ -87,7 +87,7 @@ public class ReadInput
 
             PdfFragment pdfFragment = new PdfFragment()
             {
-                FileName = file,
+                //FileName = file,
                 PageNumbers = pages
             };
 

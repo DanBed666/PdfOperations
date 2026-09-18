@@ -5,7 +5,7 @@ public class CaseOptions
     public static void ExecuteManyRun(OperationDefinition ope)
     {
         Console.WriteLine(Messages.ChooseFiles);
-        string [] input = Files.AddFiles(ope.Filter);
+        string []? input = UserInput.ReadFilesOrNull(ope.Filter);
         
         RunClass.RunFiles(input);
     }
@@ -13,7 +13,7 @@ public class CaseOptions
     public static void ExecuteManyRunApp(OperationDefinition ope)
     {
         Console.WriteLine(Messages.ChooseFiles);
-        string [] input = Files.AddFiles(ope.Filter);
+        string []? input = UserInput.ReadFilesOrNull(ope.Filter);
 
         Console.WriteLine(Messages.ChooseApp);
         string app = Console.ReadLine()!;

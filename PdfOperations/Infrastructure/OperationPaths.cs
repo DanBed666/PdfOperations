@@ -11,7 +11,6 @@ public class OperationPaths
             {
                 Name = "Konwersja plików dowolnego typu (LibreOffice)",
                 Filter = FileFilters.LibreOfficeFiles,
-                AddInfo = "format",
                 OperationFlow = OperationFlow.FilesToFilesWithFormat,
                 FileOperationActionLibre = Convert.FileToPdf,
                 InputPrompt = "Wybierz pliki do konwersji przez LibreOffice:",
@@ -80,7 +79,6 @@ public class OperationPaths
                 Filter = FileFilters.PdfFiles,
                 OperationFlow = OperationFlow.FilesPages,
                 FileOperationActionPages = Pages.CreateWithPages,
-                AddInfo = "pages",
                 Extension = ".pdf",
                 InputPrompt = "Wybierz pliki PDF do utworzenia nowych plików ze wskazanymi stronami:",
                 PagesPrompt = "Podaj strony do zostawienia, np. 1,3-5:",
@@ -116,7 +114,6 @@ public class OperationPaths
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PdfToTxt,
                 ReportOperationAction = Search.SearchPdf,
-                AddInfo = "search",
                 OperationFlow = OperationFlow.SearchReport,
                 InputPrompt = "Wybierz pliki PDF, w których chcesz wyszukać tekst:",
                 OutputPrompt = "Podaj nazwę raportu tekstowego:",
@@ -132,7 +129,6 @@ public class OperationPaths
                 Extension = ".txt",
                 FileOperationActionMultiple = Convert.PictToTxt,
                 ReportOperationAction = Search.SearchPicture,
-                AddInfo = "search",
                 OperationFlow = OperationFlow.SearchReport,
                 InputPrompt = "Wybierz obrazy, w których chcesz wyszukać tekst:",
                 OutputPrompt = "Podaj nazwę raportu tekstowego:",
@@ -170,18 +166,16 @@ public class OperationPaths
                 Filter = FileFilters.WordFiles,
                 FilterPlc = FileFilters.TxtFiles,
                 FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
-                AddInfo = "replace",
                 InputPrompt = "Wybierz pliki (docx / odt) do zamiany na placeholdery:",
                 DefaultOutputName = "document_placeholders"
             },
             [15] = new OperationDefinition
             {
                 Name = "Złóż dokument PDF z wybranych stron",
-                OperationFlow = OperationFlow.FilesPagesSingle,
+                OperationFlow = OperationFlow.FilesPagesFragments,
                 Extension = ".pdf",
                 Filter = FileFilters.PdfFiles,
                 FileOperationActionPages = Pages.CreateWithCustomFiles,
-                AddInfo = "fragments",
                 InputPrompt = "Wybierz plik PDF:",
                 DefaultOutputName = "fragmented_pdf"
             },

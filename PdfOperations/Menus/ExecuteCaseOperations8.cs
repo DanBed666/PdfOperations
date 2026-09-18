@@ -1,0 +1,101 @@
+﻿namespace PdfOperations;
+
+public class ExecuteCaseOperations8
+{
+    public static OperationInput? InputOpe(OperationDefinition operation)
+    {
+        OperationInput operationInput = new OperationInput();
+        Console.WriteLine(Messages.CancelInfo);
+        
+        //Set input files
+
+        if (operation.OperationFlow != OperationFlow.FilesPagesFragments)
+        {
+            string []? files = UserInput.ReadFilesOrNull(operation.Filter);
+
+            if (files is null || files.Length == 0)
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                return null;
+            }
+            
+            operationInput.InputFiles = files;
+            
+            foreach (string file in operationInput.InputFiles)
+            {
+                Console.WriteLine(Messages.ChoosenFile + Path.GetFullPath(file));
+            }
+        }
+
+        //Set file page fragment
+        
+        if (operation.OperationFlow == OperationFlow.FilesPagesFragments)
+        {
+            List<PdfFragment> pdfFragments = UserInput.ReadFragments(operation.Filter);
+            operationInput.PdfFragments = pdfFragments;
+        }
+        
+        //Set output file
+
+        if (operationInput.InputFiles.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
+                              || operation.OperationFlow == OperationFlow.SearchReport
+                              || operation.OperationFlow == OperationFlow.FilesPagesSingle)
+        {
+            string output = UserInput.ReadOutputOrCancel(operation.Extension);
+            operationInput.Output = output;
+        }
+        
+        //Set placeholder file
+        
+        if (operation.OperationFlow == OperationFlow.FilesReplacement)
+        {
+            Console.WriteLine(Messages.ChooseFiles);
+            string? file = UserInput.ReadFileOrNull(operation.Filter);
+
+            if (string.IsNullOrEmpty(file))
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                return null;
+            }
+
+            operationInput.PlaceholderFile = file;
+        }
+        
+        //Set pages
+
+        if (operation.OperationFlow == OperationFlow.FilesPages)
+        {
+            string pages = UserInput.ReadPagesOrCancel();
+            operationInput.Pages = pages;
+        }
+        
+        //Set search fields
+        
+        if (operation.OperationFlow == OperationFlow.SearchReport)
+        {
+            string searchPhrase = UserInput.ReadRequiredText();
+            int? before = UserInput.ReadIntOrDefaultZero();
+            int? after = UserInput.ReadIntOrDefaultZero();
+            
+            operationInput.PhraseToFind = searchPhrase;
+            operationInput.Before = before;
+            operationInput.After = after;
+        }
+        
+        //Set libre format
+        
+        if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
+        {
+            string format = UserInput.ReadFormatOrCancel();
+            operationInput.Format = InputValidator.NormalizeExtension(format);
+        }
+
+        //Files8.OpenPath(operationInput.InputFiles[0], "file");
+
+        //Set directory
+        
+        operationInput.Dir = UserInput.ReadDirectoryOrDefault();
+
+        return operationInput;
+    }
+}

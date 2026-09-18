@@ -6,8 +6,8 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            string originalInput = Files.FindOriginalFileForTemp(f, file.InputFiles);
-            Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
+            //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
+            //Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
             File.Delete(f);
         }
     }
@@ -16,8 +16,8 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            string originalInput = Files.FindOriginalFileForTemp(f, file.InputFiles);
-            Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
+            //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
+            //Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
             File.Delete(f);
         }
     }
@@ -25,7 +25,8 @@ public class Search
     public static List<List<string>> SearchNewTxt(string tempFile, string inputPath, string phrase, int before, int after)
     {
         List<List<string>> found = new();
-        string[] test = Files.ReadFile(tempFile);
+        //string[] test = Files8.ReadFile(tempFile);
+        string[] test = [];
 
         for (int i = 0; i < test.Length; i++)
         {

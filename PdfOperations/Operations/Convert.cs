@@ -56,54 +56,54 @@ public static class Convert
         }
     }
     
-    public static void PdfToPict(FileJob file)
+    public static void PdfToPict(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
         
-        string fileNotExt = Path.Combine(Path.GetDirectoryName(file.TempPath)!, 
-            Path.GetFileNameWithoutExtension(file.TempPath).TrimEnd('.'));
+        string fileNotExt = Path.Combine(Path.GetDirectoryName(fileJob.TempPath)!, 
+            Path.GetFileNameWithoutExtension(fileJob.TempPath).TrimEnd('.'));
 
-        arguments.AddRange(["-r", "300", "-jpeg", file.InputFile, fileNotExt]);
+        arguments.AddRange(["-r", "300", "-jpeg", fileJob.InputFile, fileNotExt]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void PdfToTxt(FileJob file)
+    public static void PdfToTxt(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange([file.InputFile, file.TempPath]);
+        arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToTxt(FileJob file)
+    public static void PictToTxt(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        string fileNotExt = Path.Combine(Path.GetDirectoryName(file.TempPath)!, 
-            Path.GetFileNameWithoutExtension(file.TempPath).TrimEnd('.'));
+        string fileNotExt = Path.Combine(Path.GetDirectoryName(fileJob.TempPath)!, 
+            Path.GetFileNameWithoutExtension(fileJob.TempPath).TrimEnd('.'));
         
-        arguments.AddRange([file.InputFile, fileNotExt, "-l", "pol"]);
+        arguments.AddRange([fileJob.InputFile, fileNotExt, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void PictToPdf(FileJob file)
+    public static void PictToPdf(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..file.InputFiles, file.TempPath]);
+        arguments.AddRange([..fileJob.InputFiles, fileJob.TempPath]);
         RunClass.Run(tool, arguments);
     }
     
-    public static void ExtractPict(FileJob file)
+    public static void ExtractPict(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange(["-all", file.InputFile, file.TempPath]);
+        arguments.AddRange(["-all", fileJob.InputFile, fileJob.TempPath]);
         RunClass.Run(tool, arguments);
     }
 }

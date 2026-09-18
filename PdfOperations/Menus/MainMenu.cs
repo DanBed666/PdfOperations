@@ -11,34 +11,47 @@ public class MainMenu
                 Console.WriteLine($"[{i}] {OperationPaths.OperationDefinitions[i].Name}");
             }
 
-            Console.WriteLine(Messages.ChooseOption);
-            Int32.TryParse(Console.ReadLine(), out int znak);
+            int? znak = UserInput.ReadRequiredInt();
 
-            OperationPaths.OperationDefinitions.TryGetValue(znak, out var value);
+            if (znak is null)
+            {
+                Console.WriteLine(Messages.InvalidOption);
+                continue;
+            }
+
+            if (!OperationPaths.OperationDefinitions.TryGetValue(znak.Value, out var value))
+            {
+                Console.WriteLine(Messages.InvalidOption);
+                continue;
+            }
 
             try
             {
                 if (znak >= 1 && znak <= 15)
                 {
-                    OperationInput operationInput = ExecuteCaseOperations.InputOpe(value!);
+                    OperationInput? operationInput = ExecuteCaseOperations8.InputOpe(value);
 
-                    if (operationInput == null)
+                    if (operationInput is null)
                         continue;
 
-                    Execute.ExecuteOpe(operationInput, value!);
+                    Execute8.ExecuteOpe(operationInput, value);
                 }
                 else if (znak >= 16 && znak <= 17)
                 {
-                    Execute.ExecuteRunApp(value!);
+                    //Execute8.ExecuteRunApp(value);
                 }
                 else if (znak == 18)
                 {
                     Help.ShowHelp();
                 }
                 else if (znak == 19)
+                {
                     Environment.Exit(0);
+                }
                 else
+                {
                     Console.WriteLine(Messages.InvalidOption);
+                }
             }
             catch (OperationCanceledException e)
             {
