@@ -6,12 +6,22 @@ public class DivideTests
     [TestMethod]
     public void OneToMany()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string extension = ".pdf";
-        int count = 3;
-
-        TestInput testInput = TestHelper.PrepareMultipleInputs(inputs, extension);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"])
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -20,46 +30,60 @@ public class DivideTests
                 Divide.OneToMany(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
     
     [TestMethod]
     public void ManyToOne()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string extension = ".pdf";
-        string output = "final.pdf";
-        int count = 1;
-
-        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
-        FileJob fileJob = ExecutionBuilder8.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"]),
+            Output =  "final.pdf"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
             Divide.ManyToOne(fileJob);
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
 }
