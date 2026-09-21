@@ -43,7 +43,7 @@ public class DivideTests
         int count = 1;
 
         TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
-        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
+        FileJob fileJob = ExecutionBuilder8.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
 
         try
         {

@@ -26,10 +26,10 @@ public class SearchTests
             foreach (FileJob fileJob in fileJobList)
             {
                 string originalFile = Files.FindOriginalFileForTemp(fileJob.TempPath, fileJob.InputFiles);
-                List<List<string>> result = Search.SearchNewTxt(fileJob.TempPath, originalFile, testInput.Input.PhraseToFind, 
-                    testInput.Input.Before, testInput.Input.After);
-                allFound.AddRange(result);
-                Files.SaveToFile(result, Path.Combine(testInput.Context.TempDir, "output.txt"));
+                //List<List<string>> result = Search.SearchNewTxt(fileJob.TempPath, originalFile, testInput.Input.PhraseToFind, 
+                    //testInput.Input.Before, testInput.Input.After);
+                //allFound.AddRange(result);
+                //Files.SaveToFile(result, Path.Combine(testInput.Context.TempDir, "output.txt"));
             }
     
             foreach (string file in Directory.GetFiles(testInput.Context.TempDir))

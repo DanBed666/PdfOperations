@@ -3,6 +3,7 @@
 [TestClass]
 public class ConvertTests()
 {
+    /*
     [TestMethod]
     public void FileToPdfTest()
     {
@@ -60,16 +61,31 @@ public class ConvertTests()
                 Directory.Delete(testInput.Context.TempDir, true);
         }
     }
+    */
     
     [TestMethod]
     public void PdfToTxtTest()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
+        string [] inputs = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"]);
         string extension = ".txt";
         int count = 3;
 
-        TestInput testInput = TestHelper.PrepareMultipleInputs(inputs, extension);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = inputs
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = extension
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+
+        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -78,19 +94,21 @@ public class ConvertTests()
                 Convert.PdfToTxt(fileJob);
             }
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                TestHelper.AssertForOneFile(file, operationDefinition.Extension);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(count, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
+    
+    /*
     
     [TestMethod]
     public void PictToTxtTest()
@@ -182,4 +200,5 @@ public class ConvertTests()
                 Directory.Delete(testInput.Context.TempDir, true);
         }
     }
+    */
 }

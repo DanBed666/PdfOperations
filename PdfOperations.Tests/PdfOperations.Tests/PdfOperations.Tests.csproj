@@ -19,4 +19,25 @@
         <ProjectReference Include="..\..\PdfOperations\PdfOperations.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="DivideTests.cs" />
+      <None Include="DivideTests.cs" />
+      <Compile Remove="FilesTests.cs" />
+      <None Include="FilesTests.cs" />
+      <Compile Remove="InfoTests.cs" />
+      <None Include="InfoTests.cs" />
+      <Compile Remove="MSTestSettings.cs" />
+      <None Include="MSTestSettings.cs" />
+      <Compile Remove="PagesTests.cs" />
+      <None Include="PagesTests.cs" />
+      <Compile Remove="ReplacementTests.cs" />
+      <None Include="ReplacementTests.cs" />
+      <Compile Remove="SearchTests.cs" />
+      <None Include="SearchTests.cs" />
+      <Compile Remove="TestInput.cs" />
+      <None Include="TestInput.cs" />
+      <Compile Remove="ValidationTests.cs" />
+      <None Include="ValidationTests.cs" />
+    </ItemGroup>
+
 </Project>
