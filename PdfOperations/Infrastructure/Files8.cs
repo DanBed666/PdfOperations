@@ -12,15 +12,31 @@ public class Files8
     
     public static string PrepareTempPath(string tempDir, string fileOut, string extension)
     {
-        string tempPath = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(fileOut) + extension);
-        
-        return tempPath;
+        return Path.Combine(tempDir, Path.GetFileNameWithoutExtension(fileOut) + extension);
+    }
+    
+    public static string PrepareTempPathWithoutExt(string tempFile)
+    {
+        return Path.Combine(Path.GetDirectoryName(tempFile)!, Path.GetFileNameWithoutExtension(tempFile));
     }
     
     public static string PrepareFinalPath(string finalDir, string fileOut)
     {
-        string finalPath = Path.Combine(finalDir, Path.GetFileName(fileOut));
+        return Path.Combine(finalDir, Path.GetFileName(fileOut));
+    }
+    
+    public static void SaveToFile(List<List<string>> found, string output)
+    {
+        List<string> outputLines = new List<string>();
         
-        return finalPath;
+        foreach (List<String> lista in found)
+        {
+            outputLines.AddRange(lista);
+        }
+        
+        if (!File.Exists(output))
+            File.WriteAllLines(output, outputLines);
+        else
+            File.AppendAllLines(output, outputLines);
     }
 }

@@ -61,9 +61,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
         
-        string fileNotExt = Path.Combine(Path.GetDirectoryName(fileJob.TempPath)!, 
-            Path.GetFileNameWithoutExtension(fileJob.TempPath).TrimEnd('.'));
-
+        string fileNotExt = Files8.PrepareTempPathWithoutExt(fileJob.TempPath);
         arguments.AddRange(["-r", "300", "-jpeg", fileJob.InputFile, fileNotExt]);
         RunClass.Run(tool, arguments);
     }
@@ -82,9 +80,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
-        string fileNotExt = Path.Combine(Path.GetDirectoryName(fileJob.TempPath)!, 
-            Path.GetFileNameWithoutExtension(fileJob.TempPath).TrimEnd('.'));
-        
+        string fileNotExt = Files8.PrepareTempPathWithoutExt(fileJob.TempPath);
         arguments.AddRange([fileJob.InputFile, fileNotExt, "-l", "pol"]);
         RunClass.Run(tool, arguments);
     }

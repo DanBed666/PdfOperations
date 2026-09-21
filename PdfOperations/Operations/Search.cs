@@ -2,35 +2,25 @@
 
 public class Search
 {
-    public static void SearchPicture(OperationInput input, OperationContext context, FileJob file)
+    public static void SearchTempTextFiles(OperationInput input, OperationContext context)
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
             //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
-            //Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
-            File.Delete(f);
-        }
-    }
-
-    public static void SearchPdf(OperationInput input, OperationContext context, FileJob file)
-    {
-        foreach (string f in Directory.GetFiles(context.TempDir))
-        {
-            //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
-            //Files.SaveToFile(SearchNewTxt(f, originalInput, input.PhraseToFind, input.Before, input.After), file.TempPath);
+            List<List<string>> foundLines = GetFoundLines(f, input.PhraseToFind, input.Before, input.After);
+            Files8.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
             File.Delete(f);
         }
     }
     
-    public static List<List<string>> SearchNewTxt(string tempFile, string inputPath, string phrase, int before, int after)
+    public static List<List<string>> GetFoundLines(string inputPath, string phrase, int before, int after)
     {
         List<List<string>> found = new();
-        //string[] test = Files8.ReadFile(tempFile);
-        string[] test = [];
+        string[] inputLines = File.ReadAllLines(inputPath);
 
-        for (int i = 0; i < test.Length; i++)
+        for (int i = 0; i < inputLines.Length; i++)
         {
-            if (test[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (inputLines[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 List<string> lines = new List<string>();
                 
@@ -41,9 +31,9 @@ public class Search
                 {
                     int idx = i + k;
                     
-                    if (idx >= 0 && idx < test.Length)
+                    if (idx >= 0 && idx < inputLines.Length)
                     {
-                        lines.Add(test[idx]);
+                        lines.Add(inputLines[idx]);
                     }
                 }
                 
