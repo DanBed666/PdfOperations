@@ -6,87 +6,123 @@ public class InfoTests
     [TestMethod]
     public void ShowInfoTest()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string extension = ".txt";
-        string output = "final.txt";
-        int count = 1;
-
-        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
-        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"]),
+            Output = "final.txt"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
             Info.ShowInfo(fileJob);
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
     
     [TestMethod]
     public void ShowFontInfoTest()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string extension = ".txt";
-        string output = "final.txt";
-        int count = 1;
-
-        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
-        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"]),
+            Output = "final.txt"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
             Info.ShowFontInfo(fileJob);
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
     
     [TestMethod]
     public void SaveInfoTest()
     {
-        string[] inputs = new[] { "search_1.txt", "search_2.txt", "search_3.txt" };
-        string extension = ".txt";
-        string output = "final.txt";
-        int count = 1;
-
-        TestInput testInput = TestHelper.PrepareInputWithOutputFormat(inputs, extension, output);
-        FileJob fileJob = ExecutionBuilder.SetFileJob(testInput.Input, testInput.Context, testInput.Operation);
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["search_1.txt", "search_2.txt", "search_3.txt"]),
+            Output = "final.txt"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
-            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", testInput.Input.InputFiles);
+            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", operationInput.InputFiles);
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
 
