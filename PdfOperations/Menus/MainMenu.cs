@@ -11,7 +11,7 @@ public class MainMenu
                 Console.WriteLine($"[{i}] {OperationPaths.OperationDefinitions[i].Name}");
             }
 
-            int? znak = UserInput.ReadRequiredInt();
+            int? znak = UserInput.ReadRequiredInt(Messages.ChooseOption);
 
             if (znak is null)
             {
@@ -38,7 +38,7 @@ public class MainMenu
                 }
                 else if (znak >= 16 && znak <= 17)
                 {
-                    //Execute8.ExecuteRunApp(value);
+                    Execute8.ExecuteRunApp(value);
                 }
                 else if (znak == 18)
                 {

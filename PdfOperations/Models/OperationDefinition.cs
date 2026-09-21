@@ -12,7 +12,7 @@ public class OperationDefinition
     public Action<FileJob, OperationInput, OperationContext> FileOperationActionReplace { get; init; }
     public Action<OperationInput, FileJob> FileOperationActionPages { get; init; }
     public Action<OperationInput, OperationContext> FileOperationActionLibre { get; init; }
-    public Action<OperationInput, OperationContext, FileJob> ReportOperationAction { get; init; }
+    public Action<OperationInput, OperationContext> ReportOperationAction { get; init; }
     public Action<OperationDefinition> RunOperationAction { get; init; }
     public string InputPrompt { get; init; } = Messages.ChooseFiles;
     public string AppPrompt { get; init; } = Messages.ChooseFiles;
