@@ -4,7 +4,7 @@ public class InputValidator
 {
     public static string NormalizeExtension(string extension)
     {
-        return extension.Trim().TrimStart('.');
+        return extension.Trim().TrimStart('.').ToLowerInvariant();
     }
     
     public static string NormalizePages(string pages)
@@ -21,16 +21,16 @@ public class InputValidator
     {
         if (!Enum.TryParse(extension, ignoreCase: true, out FileExtension format))
         {
-            Console.WriteLine($"{Messages.InvalidFormat}: {extension}");
+            Console.WriteLine($"{Messages.UnsupportedFormat}: {extension}");
             return false;
         }
         
         return true;
     }
     
-    public static bool IsExtensionValidForOpe(string extension)
+    public static bool IsExtensionValidForOpe(string outputExtension, string opeExtension)
     {
-        return false;
+        return outputExtension == NormalizeExtension(opeExtension);
     }
 
     public static bool IsPagesFormatValid(string pages)
@@ -92,6 +92,6 @@ public class InputValidator
     {
         Console.WriteLine($"{Messages.InvalidFormat} {outputExtension} {Messages.ExpectedFormat} {opeExtension}");
 
-        return UserInput.ReadOption() == "t";
+        return UserInput.ReadOption(Messages.FixFormatQuestion) == "t";
     }
 }

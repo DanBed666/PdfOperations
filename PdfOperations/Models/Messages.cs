@@ -3,7 +3,6 @@
 public class Messages
 {
     public const string ChooseOption = "Wybierz opcję:";
-
     public const string ChooseApp = "Wybierz aplikację do otwarcia pliku:\n" +
                                     "w - Microsoft Word\n" +
                                     "d - LibreOffice Draw\n" +
@@ -33,6 +32,7 @@ public class Messages
     public const string NoOptionProvided = "Nie podano opcji! Wpisz t, n albo :q";
     public const string ChooseOutputDirectoryQuestion = "Czy chcesz wybrać folder zapisu? (T/N)";
     public const string PreviewFileQuestion = "Czy chcesz podejrzeć plik? (T/N)";
+    public const string AddNextFileQuestion = "Czy chcesz dodać kolejny plik? (T/N)";
     public const string PreviewFolderQuestion = "Czy chcesz otworzyć folder wynikowy? (T/N)";
     public const string OverwriteFilesQuestion = "Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N)";
     public const string AddedToDefaultDir = "Dodano plik do folderu domyślnego";

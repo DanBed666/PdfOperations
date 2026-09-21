@@ -73,9 +73,9 @@ public class ExecuteCaseOperations8
         
         if (operation.OperationFlow == OperationFlow.SearchReport)
         {
-            string searchPhrase = UserInput.ReadRequiredText();
-            int? before = UserInput.ReadIntOrDefaultZero();
-            int? after = UserInput.ReadIntOrDefaultZero();
+            string searchPhrase = UserInput.ReadRequiredText(Messages.EnterSearchPhrase);
+            int before = UserInput.ReadIntOrDefaultZero(Messages.EnterBeforeLines);
+            int after = UserInput.ReadIntOrDefaultZero(Messages.EnterAfterLines);
             
             operationInput.PhraseToFind = searchPhrase;
             operationInput.Before = before;

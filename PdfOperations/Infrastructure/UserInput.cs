@@ -12,10 +12,11 @@ public class UserInput
         return input;
     }
     
-    public static string ReadRequiredText()
+    public static string ReadRequiredText(string msg)
     {
         while (true)
         {
+            Console.WriteLine(msg);
             string input = Console.ReadLine()!;
 
             if (input.Equals(":q"))
@@ -28,10 +29,11 @@ public class UserInput
         }
     }
 
-    public static int? ReadIntOrDefaultZero()
+    public static int ReadIntOrDefaultZero(string msg)
     {
         while (true)
         {
+            Console.WriteLine(msg);
             string numbuh = Console.ReadLine()!;
             
             if (numbuh.Equals(":q"))
@@ -47,10 +49,11 @@ public class UserInput
         }
     }
     
-    public static int? ReadRequiredInt()
+    public static int? ReadRequiredInt(string msg)
     {
         while (true)
         {
+            Console.WriteLine(msg);
             string numbuh = Console.ReadLine()!;
             
             if (numbuh.Equals(":q"))
@@ -87,7 +90,7 @@ public class UserInput
     
     public static string ReadDirectoryOrDefault()
     {
-        ReadOption();
+        ReadOption(Messages.ChooseOutputDirectoryQuestion);
         Console.WriteLine(Messages.ChooseDirectory);
         string directory = Dialog.SelectDirectory();
 
@@ -97,11 +100,11 @@ public class UserInput
         return directory;
     }
 
-    public static string ReadOption()
+    public static string ReadOption(string msg)
     {
         while (true)
         {
-            Console.WriteLine(Messages.ChooseOption);
+            Console.WriteLine(msg);
             string opt = Console.ReadLine()!;
             
             if (opt.Equals(":q"))
@@ -175,6 +178,7 @@ public class UserInput
                 return InputValidator.SetDefaultOutputFile();
 
             string outputExtension = Path.GetExtension(outputFile);
+            outputExtension = InputValidator.NormalizeExtension(outputExtension);
 
             if (string.IsNullOrWhiteSpace(outputExtension))
             {
@@ -183,12 +187,9 @@ public class UserInput
             }
 
             if (!InputValidator.IsKnownExtension(outputExtension))
-            {
-                Console.WriteLine(Messages.InvalidFormat);
                 continue;
-            }
 
-            if (!InputValidator.IsExtensionValidForOpe(outputExtension))
+            if (!InputValidator.IsExtensionValidForOpe(outputExtension, opeExtension))
             {
                 Console.WriteLine(Messages.InvalidFormat);
                 
@@ -219,7 +220,7 @@ public class UserInput
 
             fragments.Add(pdfFragment);
             
-            string opt = ReadOption();
+            string opt = ReadOption(Messages.AddNextFileQuestion);
 
             if (opt.Equals("t"))
                 continue;
