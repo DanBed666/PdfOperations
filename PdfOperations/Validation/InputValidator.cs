@@ -12,11 +12,6 @@ public class InputValidator
         return pages.Trim();
     }
     
-    public static bool IsOutputValid(string output)
-    {
-        return false;
-    }
-    
     public static bool IsKnownExtension(string extension)
     {
         if (!Enum.TryParse(extension, ignoreCase: true, out FileExtension format))
@@ -78,14 +73,19 @@ public class InputValidator
         return dir;
     }
     
-    public static string SetDefaultOutputFile()
+    public static string SetDefaultOutputFile(string defaultName, string extension)
     {
-        return "default";
+        return defaultName + extension;
     }
     
     public static string BuildOutputExt(string output, string opeExtension)
     {
         return output.Trim() + opeExtension;
+    }
+    
+    public static string CorrectOutputExt(string output, string opeExtension)
+    {
+        return Path.GetFileNameWithoutExtension(output) + opeExtension;
     }
 
     public static bool AskForFixOutputExt(string outputExtension, string opeExtension)

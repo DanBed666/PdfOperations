@@ -66,9 +66,9 @@ public class UserInput
         }
     }
     
-    public static string []? ReadFilesOrNull(string filter)
+    public static string []? ReadFilesOrNull(string filter, string msg)
     {
-        Console.WriteLine(Messages.ChooseFiles);
+        Console.WriteLine(msg);
         string [] files = Dialog.SelectFiles(filter);
 
         if (files.Length == 0)
@@ -77,9 +77,9 @@ public class UserInput
         return files;
     }
     
-    public static string? ReadFileOrNull(string filter)
+    public static string? ReadFileOrNull(string filter,string msg)
     {
-        Console.WriteLine(Messages.ChooseFiles);
+        Console.WriteLine(msg);
         string file = Dialog.SelectFile(filter);
 
         if (string.IsNullOrWhiteSpace(file))
@@ -142,11 +142,11 @@ public class UserInput
         }
     }
     
-    public static string ReadPagesOrCancel()
+    public static string ReadPagesOrCancel(string msg)
     {
         while (true)
         {
-            Console.WriteLine(Messages.EnterPages);
+            Console.WriteLine(msg);
             string pages = Console.ReadLine()!;
 
             if (pages.Equals(":q"))
@@ -164,7 +164,7 @@ public class UserInput
         }
     }
     
-    public static string ReadOutputOrCancel(string opeExtension)
+    public static string ReadOutputOrCancel(OperationDefinition ope)
     {
         while (true)
         {
@@ -175,7 +175,7 @@ public class UserInput
                 throw new OperationCanceledException(Messages.OperationCancelled);
 
             if (string.IsNullOrWhiteSpace(outputFile))
-                return InputValidator.SetDefaultOutputFile();
+                return InputValidator.SetDefaultOutputFile(ope.DefaultOutputName, ope.Extension);
 
             string outputExtension = Path.GetExtension(outputFile);
             outputExtension = InputValidator.NormalizeExtension(outputExtension);
@@ -183,18 +183,18 @@ public class UserInput
             if (string.IsNullOrWhiteSpace(outputExtension))
             {
                 Console.WriteLine(Messages.NoFormatProvided);
-                return InputValidator.BuildOutputExt(outputFile, opeExtension);
+                return InputValidator.BuildOutputExt(outputFile, ope.Extension);
             }
 
             if (!InputValidator.IsKnownExtension(outputExtension))
                 continue;
 
-            if (!InputValidator.IsExtensionValidForOpe(outputExtension, opeExtension))
+            if (!InputValidator.IsExtensionValidForOpe(outputExtension, ope.Extension))
             {
                 Console.WriteLine(Messages.InvalidFormat);
                 
-                if (InputValidator.AskForFixOutputExt(outputExtension, opeExtension))
-                    return InputValidator.BuildOutputExt(outputFile, opeExtension);
+                if (InputValidator.AskForFixOutputExt(outputExtension, ope.Extension))
+                    return InputValidator.CorrectOutputExt(outputFile, ope.Extension);
 
                 continue;
             }
@@ -209,8 +209,9 @@ public class UserInput
         
         while (true)
         {
-            string? file = ReadFileOrNull(filter);
-            string pages = ReadPagesOrCancel();
+            string? file = ReadFileOrNull(filter, Messages.ChooseFiles);
+            Console.WriteLine($"{Messages.PagesCount} {file}: {Info.GetPdfPagesSingle(file!)}");
+            string pages = ReadPagesOrCancel(Messages.EnterPages);
 
             PdfFragment pdfFragment = new PdfFragment()
             {

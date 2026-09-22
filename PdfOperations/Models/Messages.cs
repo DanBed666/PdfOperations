@@ -33,7 +33,7 @@ public class Messages
     public const string ChooseOutputDirectoryQuestion = "Czy chcesz wybrać folder zapisu? (T/N)";
     public const string PreviewFileQuestion = "Czy chcesz podejrzeć plik? (T/N)";
     public const string AddNextFileQuestion = "Czy chcesz dodać kolejny plik? (T/N)";
-    public const string PreviewFolderQuestion = "Czy chcesz otworzyć folder wynikowy? (T/N)";
+    public const string PreviewFolderQuestion = "Operacja zakończona! Czy chcesz otworzyć folder wynikowy? (T/N)";
     public const string OverwriteFilesQuestion = "Znaleziono istniejące pliki! Czy chcesz nadpisać (T/N)";
     public const string AddedToDefaultDir = "Dodano plik do folderu domyślnego";
     public const string MissingFlow = "Brak obsługi tego typu operacji.";
@@ -46,4 +46,5 @@ public class Messages
     public const string CancelInfo = "Wpisz :q w dowolnym kroku, aby anulować operację.";
     public const string InvalidNumber = "Podaj poprawną liczbę albo :q, aby anulować.";
     public const string NoHelpFile = "Nie znaleziono pliku instrukcji";
+    public const string PagesCount = "Liczba stron pliku";
 }

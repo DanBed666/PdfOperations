@@ -11,7 +11,7 @@ public class ExecuteCaseOperations8
 
         if (operation.OperationFlow != OperationFlow.FilesPagesFragments)
         {
-            string []? files = UserInput.ReadFilesOrNull(operation.Filter);
+            string []? files = UserInput.ReadFilesOrNull(operation.Filter, Messages.ChooseFiles);
 
             if (files is null || files.Length == 0)
             {
@@ -24,6 +24,14 @@ public class ExecuteCaseOperations8
             foreach (string file in operationInput.InputFiles)
             {
                 Console.WriteLine(Messages.ChoosenFile + Path.GetFullPath(file));
+            }
+
+            if (operationInput.InputFiles.Length == 1)
+            {
+                string opt = UserInput.ReadOption(Messages.PreviewFileQuestion);
+                
+                if (opt.Equals("t"))
+                    RunClass.RunFile(operationInput.InputFiles[0]);
             }
         }
 
@@ -39,9 +47,10 @@ public class ExecuteCaseOperations8
 
         if (operationInput.InputFiles.Length == 1 || operation.OperationFlow == OperationFlow.FilesToSingleFile
                               || operation.OperationFlow == OperationFlow.SearchReport
-                              || operation.OperationFlow == OperationFlow.FilesPagesSingle)
+                              || operation.OperationFlow == OperationFlow.FilesPagesSingle
+                              || operation.OperationFlow == OperationFlow.FilesPagesFragments)
         {
-            string output = UserInput.ReadOutputOrCancel(operation.Extension);
+            string output = UserInput.ReadOutputOrCancel(operation);
             operationInput.Output = output;
         }
         
@@ -50,7 +59,7 @@ public class ExecuteCaseOperations8
         if (operation.OperationFlow == OperationFlow.FilesReplacement)
         {
             Console.WriteLine(Messages.ChooseFiles);
-            string? file = UserInput.ReadFileOrNull(operation.Filter);
+            string? file = UserInput.ReadFileOrNull(operation.Filter, Messages.ChooseFiles);
 
             if (string.IsNullOrEmpty(file))
             {
@@ -65,7 +74,13 @@ public class ExecuteCaseOperations8
 
         if (operation.OperationFlow == OperationFlow.FilesPages)
         {
-            string pages = UserInput.ReadPagesOrCancel();
+            foreach (string file in operationInput.InputFiles)
+            {
+                int ile = Info.GetPdfPagesSingle(file);
+                Console.WriteLine($"{Messages.PagesCount} {file}: {ile}");
+            }
+
+            string pages = UserInput.ReadPagesOrCancel(Messages.EnterPages);
             operationInput.Pages = pages;
         }
         
@@ -89,8 +104,6 @@ public class ExecuteCaseOperations8
             string format = UserInput.ReadFormatOrCancel();
             operationInput.Format = InputValidator.NormalizeExtension(format);
         }
-
-        //Files8.OpenPath(operationInput.InputFiles[0], "file");
 
         //Set directory
         
