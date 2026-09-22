@@ -1,4 +1,6 @@
-﻿namespace PdfOperations;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+
+namespace PdfOperations;
 
 public class Execute8
 {
@@ -28,10 +30,19 @@ public class Execute8
                 ExecuteSearch(operation, fileInput, context);
                 break;
             
+            case OperationFlow.FilesPagesFragments:
+                ExecutePagesFragments(operation, fileInput, context);
+                break;
+
             default:
                 Console.WriteLine(Messages.MissingFlow);
                 break;
         }
+
+        string opt = UserInput.ReadOption(Messages.PreviewFolderQuestion);
+        
+        if (opt == "t")
+            RunClass.RunFile(fileInput.Dir);
     }
 
     public static void ExecuteFilesToFiles(OperationDefinition operation, OperationInput fileInput, OperationContext context)
@@ -46,6 +57,20 @@ public class Execute8
         MoveToFinalDir(context.TempDir, fileInput.Dir);
     }
     
+    public static void ExecuteFilesToSingle(OperationDefinition operation, OperationInput fileInput, OperationContext context)
+    {
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operation, fileInput, context);
+
+        operation.FileOperationActionSingle(fileJob);
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
+    }
+    
     public static void ExecutePages(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
         List<FileJob> fileJobs = ExecutionBuilder8.SetFileJobsFilesToFiles(operation, fileInput, context);
@@ -54,6 +79,21 @@ public class Execute8
         {
             operation.FileOperationActionPages(fileInput, fileJob);
         }
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+        
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
+    }
+    
+    public static void ExecutePagesFragments(OperationDefinition operation, OperationInput fileInput, OperationContext context)
+    {
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operation, fileInput, context);
+
+        operation.FileOperationActionPages(fileInput, fileJob);
 
         Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
         
@@ -88,20 +128,6 @@ public class Execute8
 
         operation.ReportOperationAction(fileInput, context);
 
-        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
-
-        if (conflicts.Count > 0)
-        {
-            bool overwrite = AskForOverwrite();
-            MoveConflicts(conflicts, overwrite);
-        }
-    }
-    
-    public static void ExecuteFilesToSingle(OperationDefinition operation, OperationInput fileInput, OperationContext context)
-    {
-        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operation, fileInput, context);
-
-        operation.FileOperationActionSingle(fileJob);
         Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
 
         if (conflicts.Count > 0)

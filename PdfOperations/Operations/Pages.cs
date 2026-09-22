@@ -20,7 +20,7 @@ public class Pages
 
         foreach (PdfFragment fragment in input.PdfFragments)
         {
-            arguments.AddRange([fragment.FileName, fragment.PageNumbers]);
+            arguments.AddRange([fragment.FileName!, fragment.PageNumbers]);
         }
 
         arguments.AddRange(["--", file.TempPath]);

@@ -47,7 +47,6 @@ public static class Convert
                 "--norestore","--convert-to", fileInput.Format, ..fileInput.InputFiles, "--outdir", context.TempDir]);
         }
         
-        
         RunClass.Run(tool, arguments);
         
         if (arguments2.Count > 0)
