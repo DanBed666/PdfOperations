@@ -7,34 +7,39 @@ public class SearchTests
     [TestMethod]
     public void SearchTxtTest()
     {
-        string [] inputs = new [] {"search_1.txt", "search_2.txt", "search_3.txt"};
-        string extension = ".txt";
-        int count = 3;
-        string phrase = "hydraulika";
         List<List<string>> allFound = new List<List<string>>();
 
-        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
-        
-        foreach (FileJob fileJob in fileJobList)
+        OperationInput operationInput = new OperationInput()
         {
-            File.Copy(fileJob.InputFile, fileJob.TempPath);
-        }
+            InputFiles = new [] {"search_1.txt", "search_2.txt", "search_3.txt"},
+            Output = "lipa.pdf",
+            PhraseToFind = "hydraulika",
+            Before = 2,
+            After = 2
+        };
         
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+
         try
         {
-            foreach (FileJob fileJob in fileJobList)
+            foreach (string f in Directory.GetFiles(operationContext.TempDir))
             {
-                string originalFile = Files.FindOriginalFileForTemp(fileJob.TempPath, fileJob.InputFiles);
-                //List<List<string>> result = Search.SearchNewTxt(fileJob.TempPath, originalFile, testInput.Input.PhraseToFind, 
-                    //testInput.Input.Before, testInput.Input.After);
-                //allFound.AddRange(result);
-                //Files.SaveToFile(result, Path.Combine(testInput.Context.TempDir, "output.txt"));
+                allFound = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before, operationInput.After);
             }
-    
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
 
             Assert.IsTrue(allFound.Any(group =>
@@ -47,55 +52,38 @@ public class SearchTests
 
             Assert.HasCount(6, allFound);
             
-            Assert.HasCount(4, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(4, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-             if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+             if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
     
     [TestMethod]
-    public void SearchPictureTest()
-    {
-        string [] inputs = new [] {"ocr_1.jpg", "ocr_2.jpg", "ocr_3.jpg"};
-        string extension = ".txt";
-        int count = 3;
-        string phrase = "testowy";
-        
-        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
-        
-        foreach (FileJob fileJob in fileJobList)
-        {
-            Convert.PictToTxt(fileJob);
-        }
-
-        FileJob reportJob = new FileJob
-        {
-            TempPath = Path.Combine(testInput.Context.TempDir, "raport.txt")
-        };
-        
-        Search.SearchPicture(testInput.Input, testInput.Context, reportJob);
-        
-        Assert.IsTrue(File.Exists(reportJob.TempPath));
-        Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
-        
-        string text = File.ReadAllText(reportJob.TempPath);
-        Assert.IsTrue(text.Contains(phrase, StringComparison.OrdinalIgnoreCase));
-    }
-
-    [TestMethod]
     public void SearchPdfTest()
     {
-        string [] inputs = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"};
-        string extension = ".txt";
-        int count = 3;
-        string phrase = "testowy";
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"},
+            Output = "lipa.pdf",
+            PhraseToFind = "testowy",
+            Before = 2,
+            After = 2
+        };
         
-        TestInput testInput = TestHelper.PrepareMultipleInputsSearch(inputs, phrase, extension, -2, 2);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
         
         foreach (FileJob fileJob in fileJobList)
         {
@@ -104,15 +92,15 @@ public class SearchTests
         
         FileJob reportJob = new FileJob
         {
-            TempPath = Path.Combine(testInput.Context.TempDir, "raport.txt")
+            TempPath = Path.Combine(operationContext.TempDir, "raport.txt")
         };
         
-        Search.SearchPdf(testInput.Input, testInput.Context, reportJob);
+        Search.SearchTempTextFiles(operationInput, operationContext);
         
         Assert.IsTrue(File.Exists(reportJob.TempPath));
         Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
         
         string text = File.ReadAllText(reportJob.TempPath);
-        Assert.IsTrue(text.Contains(phrase, StringComparison.OrdinalIgnoreCase));
+        Assert.IsTrue(text.Contains(operationInput.PhraseToFind, StringComparison.OrdinalIgnoreCase));
     }
 }

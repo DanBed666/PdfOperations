@@ -53,34 +53,53 @@ public class PagesTests
     [TestMethod]
     public void CreateWithPagesCustomTest()
     {
-        /*
-        string [] inputs = new [] {"ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"};
-        string extension = ".pdf";
-        string pages = "2-4";
-        string output = "final.pdf";
-        int count = 1;
         List<PdfFragment> pdfFragments = new List<PdfFragment>();
 
-        TestInput testInput = TestHelper.PrepareInputWithOutputPages(inputs, extension, pages, output, pdfFragments);
-        FileJob fileJob = ExecutionBuilder.SetFileJobFragment(testInput.Input, testInput.Context, testInput.Operation);
+        PdfFragment pdfFragment = new PdfFragment()
+        {
+            FileName = "pliczek.pdf",
+            PageNumbers = "2,3"
+        };
+        
+        pdfFragments.Add(pdfFragment);
+
+        OperationInput operationInput = new OperationInput()
+        {
+            PdfFragments = pdfFragments,
+            Pages = "2-4",
+            Output = "final.pdf"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
-            Pages.CreateWithCustomFiles(testInput.Input, fileJob);
+            Pages.CreateWithCustomFiles(operationInput, fileJob);
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, testInput.Operation.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
                 Assert.AreEqual(9, Info.GetPdfPagesSingle(file));
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
-            //if (Directory.Exists(testInput.Context.TempDir))
-                //Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
-        */
     }
 }

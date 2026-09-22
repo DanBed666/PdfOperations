@@ -9,32 +9,43 @@ public class ReplacementTests
     [TestMethod]
     public void ReplaceTextWithPlaceholdersTest()
     {
-        string [] inputs = new [] {"word_1.docx", "word_8.docx", "word_3.docx"};
-        string plcFile = TestHelper.SetFilePath("plc.txt");
-        int count = 3;
         string text = "";
-
-        TestInput testInput = TestHelper.PrepareMultipleInputsReplacement(inputs, plcFile);
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobList(testInput.Input, testInput.Context, testInput.Operation);
+        
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = new [] {"word_1.docx", "word_8.docx", "word_3.docx"},
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files8.PrepareTempDir()
+        };
+        
+        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
         
         try
         {
             foreach (FileJob fileJob in fileJobList)
             {
-                Replacement.ReplaceTextWithPlaceholders(fileJob, testInput.Input, testInput.Context);
+                Replacement.ReplaceTextWithPlaceholders(fileJob, operationInput, operationContext);
             }
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
                 TestHelper.AssertForOneFile(file, Path.GetExtension(file));
             }
             
-            Assert.HasCount(count, Directory.GetFiles(testInput.Context.TempDir));
-            Assert.HasCount(count, Directory.GetDirectories(testInput.Context.TempDir));
+            Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+            Assert.HasCount(3, Directory.GetDirectories(operationContext.TempDir));
 
-            foreach (string file in Directory.GetFiles(testInput.Context.TempDir))
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                string dir = Path.Combine(testInput.Context.TempDir, $"extract_{Path.GetFileNameWithoutExtension(file)}");
+                string dir = Path.Combine(operationContext.TempDir, $"extract_{Path.GetFileNameWithoutExtension(file)}");
 
                 ZipFile.ExtractToDirectory(file, dir);
                 string path = Path.Combine(dir, "word", "document.xml");
@@ -47,8 +58,8 @@ public class ReplacementTests
         }
         finally
         {
-            if (Directory.Exists(testInput.Context.TempDir))
-                Directory.Delete(testInput.Context.TempDir, true);
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
         }
     }
 }
