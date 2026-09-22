@@ -1,227 +1,203 @@
-﻿namespace PdfOperations;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+
+namespace PdfOperations;
 
 public class Execute
 {
-    public static void SaveToTempDirList(OperationDefinition operation, OperationInput fileInput, 
-        List<FileJob> fileJobList, OperationContext context)
-    {
-        switch (operation.OperationFlow)
-        {
-            case OperationFlow.FilesToFiles:
-                ExecuteOpeFilesToFiles(operation, fileJobList);
-                break;
-            
-            case OperationFlow.FilesReplacement:
-                ExecuteOpeFilesReplace(operation, fileJobList, fileInput, context);
-                break;
-            
-            case OperationFlow.FilesPages:
-                ExecuteOpePages(operation, fileInput, fileJobList);
-                break;
-            
-            case OperationFlow.SearchReport:
-                ExecuteOpeSearch(operation, fileJobList);
-                break;
-            
-            default:
-                Console.WriteLine(Messages.MissingFlow);
-                break;
-        }
-    }
-    
-    public static void SaveToTempDir(OperationDefinition operation, OperationInput fileInput,
-        OperationContext context, FileJob fileJob)
-    {
-        switch (operation.OperationFlow)
-        {
-            case OperationFlow.FilesToSingleFile:
-                ExecuteOpeFilesToSingleFile(operation, fileJob);
-                break;
-
-            case OperationFlow.FilesToFilesWithFormat:
-                ExecuteOpeLibre(operation, fileInput, context);
-                break;
-            
-            case OperationFlow.SearchReport:
-                ExecuteOpeSearch(operation, fileInput, context, fileJob);
-                break;
-            
-            case OperationFlow.FilesPagesSingle:
-                ExecuteOpePagesSingle(operation, fileInput, fileJob);
-                break;
-
-            case OperationFlow.RunApp:
-                ExecuteRunApp(operation);
-                break;
-
-            default:
-                Console.WriteLine(Messages.MissingFlow);
-                break;
-        }
-    }
-    
-    public static void MoveToFinalDir(string finalDir, string tempDir)
-    {
-        Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files.MoveNewFilesAndReturnConflicts(finalDir, tempDir);
-
-        if (existing.Count != 0)
-        {
-            Console.WriteLine(Messages.OverwriteFilesQuestion);
-            string opt = ReadInput.ReadOption();
-
-            if (opt == "t")
-            {
-                Files.OverWriteFile(existing);
-            }
-            else if (opt == "n")
-            {
-                Files.SaveWithUniqueFileName(existing);
-            }
-        }
-    }
-    
-    public static void MoveToFinalDirExcept(string format, string finalDir, string tempDir, OperationInput input)
-    {
-        Dictionary <string, string> existing = new Dictionary<string, string>();
-        existing = Files.MoveNewFilesAndReturnConflictsWithExcept(finalDir, tempDir, input);
-
-        if (existing.Count != 0)
-        {
-            Console.WriteLine(Messages.OverwriteFilesQuestion);
-            string opt = ReadInput.ReadOption();
-
-            if (opt == "t")
-            {
-                Files.OverWriteFile(existing);
-            }
-            else if (opt == "n")
-            {
-                Files.SaveWithUniqueFileName(existing);
-            }
-        }
-    }
-    
     public static void ExecuteOpe(OperationInput fileInput, OperationDefinition operation)
     {
         OperationContext context = ExecutionBuilder.SetOperationContext();
-        List<FileJob> fileJobList = new List<FileJob>();
-        FileJob fileJob = new FileJob();
 
-        try
+        switch (operation.OperationFlow)
         {
-            if (operation.OperationFlow == OperationFlow.FilesToFiles ||
-                operation.OperationFlow == OperationFlow.FilesPages)
-            {
-                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-                SaveToTempDirList(operation, fileInput, fileJobList, context);
-                MoveToFinalDir(fileInput.Dir, context.TempDir);
-            }
-            else if (operation.OperationFlow == OperationFlow.SearchReport)
-            {
-                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-                SaveToTempDirList(operation, fileInput, fileJobList, context);
+            case OperationFlow.FilesToFiles:
+                ExecuteFilesToFiles(operation, fileInput, context);
+                break;    
+            
+            case OperationFlow.FilesToSingleFile:
+                ExecuteFilesToSingle(operation, fileInput, context);
+                break;
+            
+            case OperationFlow.FilesPages:
+                ExecutePages(operation, fileInput, context);
+                break; 
+            
+            case OperationFlow.FilesToFilesWithFormat:
+                ExecuteFormat(operation, fileInput, context);
+                break;
+            
+            case OperationFlow.SearchReport:
+                ExecuteSearch(operation, fileInput, context);
+                break;
+            
+            case OperationFlow.FilesPagesFragments:
+                ExecutePagesFragments(operation, fileInput, context);
+                break;
 
-                fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-                SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(fileInput.Dir, context.TempDir);
-            }
-            else if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
-            {
-                ExecuteOpeLibre(operation, fileInput, context);
-                MoveToFinalDirExcept(fileInput.Format, fileInput.Dir, context.TempDir, fileInput);
-            }
-            else if (operation.OperationFlow == OperationFlow.FilesReplacement)
-            {
-                fileJobList = ExecutionBuilder.SetFileJobList(fileInput, context, operation);
-                SaveToTempDirList(operation, fileInput, fileJobList, context);
-                MoveToFinalDir(fileInput.Dir, context.TempDir);
-            }
-            else if (operation.OperationFlow == OperationFlow.FilesPagesSingle)
-            {
-                fileJob = ExecutionBuilder.SetFileJobFragment(fileInput, context, operation);
-                SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(fileInput.Dir, context.TempDir);
-            }
-            else
-            {
-                fileJob = ExecutionBuilder.SetFileJob(fileInput, context, operation);
-                SaveToTempDir(operation, fileInput, context, fileJob);
-                MoveToFinalDir(fileInput.Dir, context.TempDir);
-            }
+            default:
+                Console.WriteLine(Messages.MissingFlow);
+                break;
+        }
 
-            Console.WriteLine(Messages.OperationSuccess);
-            Files.OpenPath(fileInput.Dir, "dir");
-        }
-        catch (Exception e)
-        {
-            ErrorLogger.Log(e);
-            throw;
-        }
-        finally
-        {
-            if (Directory.Exists(context.TempDir))
-                Directory.Delete(context.TempDir, true);
-        }
+        string opt = UserInput.ReadOption(Messages.PreviewFolderQuestion);
+        
+        if (opt == "t")
+            RunClass.RunFile(fileInput.Dir);
     }
-    
-    public static void ExecuteOpeFilesToFiles(OperationDefinition operation, List<FileJob> fileJobList)
+
+    public static void ExecuteFilesToFiles(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
-        foreach (FileJob fileJob in fileJobList)
+        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operation, fileInput, context);
+
+        foreach (FileJob fileJob in fileJobs)
         {
             operation.FileOperationActionMultiple(fileJob);
         }
+
+        MoveToFinalDir(context.TempDir, fileInput.Dir);
     }
     
-    public static void ExecuteOpeFilesReplace(OperationDefinition operation, List<FileJob> fileJobList, 
-        OperationInput input, OperationContext context)
+    public static void ExecuteFilesToSingle(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
-        foreach (FileJob fileJob in fileJobList)
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operation, fileInput, context);
+
+        operation.FileOperationActionSingle(fileJob);
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+
+        if (conflicts.Count > 0)
         {
-            operation.FileOperationActionReplace(fileJob, input, context);
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
         }
     }
     
-    public static void ExecuteOpeFilesToSingleFile(OperationDefinition operation, FileJob fileJob)
+    public static void ExecutePages(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
-        operation.FileOperationActionSingle(fileJob);
-    }
-    
-    public static void ExecuteOpePages(OperationDefinition operation, OperationInput fileInput, List<FileJob> fileJobList)
-    {
-        foreach (FileJob fileJob in fileJobList)
+        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operation, fileInput, context);
+
+        foreach (FileJob fileJob in fileJobs)
         {
             operation.FileOperationActionPages(fileInput, fileJob);
         }
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+        
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
     }
     
-    public static void ExecuteOpePagesSingle(OperationDefinition operation, OperationInput fileInput, FileJob fileJob)
+    public static void ExecutePagesFragments(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operation, fileInput, context);
+
         operation.FileOperationActionPages(fileInput, fileJob);
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+        
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
     }
     
-    public static void ExecuteOpeLibre(OperationDefinition operation, OperationInput fileInput, OperationContext context)
+    public static void ExecuteFormat(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
         operation.FileOperationActionLibre(fileInput, context);
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
     }
     
-    public static void ExecuteOpeSearch(OperationDefinition operation, List<FileJob> fileJobList)
+    public static void ExecuteSearch(OperationDefinition operation, OperationInput fileInput, OperationContext context)
     {
-        foreach (FileJob fileJob in fileJobList)
+        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operation, fileInput, context);
+
+        foreach (FileJob fileJob in fileJobs)
         {
             operation.FileOperationActionMultiple(fileJob);
         }
 
-        //operation.ReportOperationAction();
-    }
-    
-    public static void ExecuteOpeSearch(OperationDefinition operation, OperationInput fileInput, OperationContext context, FileJob fileJob)
-    {
-        operation.ReportOperationAction(fileInput, context, fileJob);
+        operation.ReportOperationAction(fileInput, context);
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
     }
     
     public static void ExecuteRunApp(OperationDefinition operation)
     {
         operation.RunOperationAction(operation);
+    }
+
+    public static Dictionary<string, string> MoveNewFilesAndCollectConflicts(string tempDir, string finalDir)
+    {
+        Dictionary<string, string> conflicts = new Dictionary<string, string>();
+        
+        foreach (string file in Directory.GetFiles(tempDir))
+        {
+            string finalPath = Files.PrepareFinalPath(finalDir, file);
+            
+            if (Path.Exists(finalPath))
+                conflicts[file] = finalPath;
+            else
+                File.Move(file, finalPath);
+        }
+
+        return conflicts;
+    }
+
+    public static void MoveToFinalDir(string tempDir, string finalDir)
+    {
+        foreach (string file in Directory.GetFiles(tempDir))
+        {
+            string finalPath = Files.PrepareFinalPath(finalDir, file);
+
+            File.Move(file, finalPath, true);
+        }
+    }
+    
+    public static bool AskForOverwrite()
+    {
+        return UserInput.ReadOption(Messages.OverwriteFilesQuestion) == "t";
+    }
+
+    public static void MoveConflicts(Dictionary<string, string> conflicts, bool overwrite)
+    {
+        foreach (KeyValuePair<string, string> files in conflicts)
+        {
+            if (!overwrite)
+            {
+                int i = 1;
+
+                while (true)
+                {
+                    string newFinalPath = Path.Combine(Path.GetDirectoryName(files.Value)!,
+                        Path.GetFileNameWithoutExtension(files.Value) + $"_{i++}" + Path.GetExtension(files.Value));
+
+                    if (!Path.Exists(newFinalPath))
+                    {
+                        File.Move(files.Key, newFinalPath);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                File.Move(files.Key, files.Value, true);
+            }
+        }
     }
 }

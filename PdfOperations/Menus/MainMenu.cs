@@ -34,11 +34,11 @@ public class MainMenu
                     if (operationInput is null)
                         continue;
 
-                    Execute8.ExecuteOpe(operationInput, value);
+                    Execute.ExecuteOpe(operationInput, value);
                 }
                 else if (znak >= 16 && znak <= 17)
                 {
-                    Execute8.ExecuteRunApp(value);
+                    Execute.ExecuteRunApp(value);
                 }
                 else if (znak == 18)
                 {

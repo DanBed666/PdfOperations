@@ -8,7 +8,7 @@ public class Search
         {
             //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
             List<List<string>> foundLines = GetFoundLines(f, input.PhraseToFind, input.Before, input.After);
-            Files8.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
+            Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
             File.Delete(f);
         }
     }

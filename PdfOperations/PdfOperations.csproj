@@ -8,13 +8,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Compile Remove="Infrastructure\ExecutionBuilder.cs" />
-      <None Include="Infrastructure\ExecutionBuilder.cs" />
-      <Compile Remove="Infrastructure\Files.cs" />
-      <None Include="Infrastructure\Files.cs" />
-      <Compile Remove="Infrastructure\Execute.cs" />
-      <None Include="Infrastructure\Execute.cs" />
-    </ItemGroup>
-
 </Project>

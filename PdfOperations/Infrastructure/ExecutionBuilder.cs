@@ -12,69 +12,32 @@ public class ExecutionBuilder
         return operationContext;
     }
     
-    public static List<FileJob> SetFileJobList(OperationInput input, OperationContext operationContext, 
-        OperationDefinition operation)
+    public static List<FileJob> SetFileJobsFilesToFiles(OperationDefinition operation, OperationInput input, OperationContext operationContext)
     {
         List<FileJob> fileJobs = new List<FileJob>();
 
-        foreach (string file in input.InputFiles)
+        foreach (string fileOut in input.InputFiles)
         {
-            FileJob fileJob = new FileJob();
-            fileJob.InputFile = file;
-
-            if (input.InputFiles.Length > 1 || operation.OperationFlow == OperationFlow.SearchReport)
-                fileJob.TempPath = Files.PrepareTempPathMultiple(operationContext.TempDir, fileJob.InputFile, operation.Extension);
-            else
-                fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
-
-            fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+            FileJob fileJob = new FileJob
+            {
+                InputFile = fileOut,
+                TempPath =  Files.PrepareTempPath(operationContext.TempDir, fileOut, operation.Extension)
+            };
+            
             fileJobs.Add(fileJob);
         }
 
         return fileJobs;
     }
     
-    public static FileJob SetFileJobFragment(OperationInput input, OperationContext operationContext, OperationDefinition operation)
+    public static FileJob SetFileJobFilesToSingle(OperationDefinition operation, OperationInput input, OperationContext operationContext)
     {
-        FileJob fileJob = new FileJob();
-
-        if (string.IsNullOrEmpty(input.Output))
-            input.Output = "default" + operation.Extension;
-        
-        fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
-        fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
+        FileJob fileJob = new FileJob
+        {
+            InputFiles = input.InputFiles,
+            TempPath =  Files.PrepareTempPath(operationContext.TempDir, input.Output, operation.Extension)
+        };
 
         return fileJob;
-    }
-    
-    public static FileJob SetFileJob(OperationInput input, OperationContext operationContext, OperationDefinition operation)
-    {
-        FileJob fileJob = new FileJob();
-        
-        fileJob.InputFiles = input.InputFiles;
-
-        if (string.IsNullOrEmpty(input.Output))
-            input.Output = "default" + operation.Extension;
-        
-        fileJob.TempPath = Files.PrepareTempPathSingle(operationContext.TempDir, input.Output);
-        fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
-
-        return fileJob;
-    }
-    
-    public static List<FileJob> SetFileJobLibre(OperationInput input, OperationContext operationContext)
-    {
-        List<FileJob> fileJobs = new List<FileJob>();
-
-            foreach (string file in input.InputFiles)
-            {
-                FileJob fileJob = new FileJob();
-                fileJob.InputFiles = input.InputFiles;
-                fileJob.TempPath = Files.PrepareTempPathMultiple(operationContext.TempDir, file, input.Format);
-                fileJob.FinalPath = Files.PrepareFinalOutputPath(input.Dir, fileJob.TempPath);
-                fileJobs.Add(fileJob);
-            }
-
-        return fileJobs;
     }
 }
