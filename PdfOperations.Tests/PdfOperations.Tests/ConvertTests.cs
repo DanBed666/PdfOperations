@@ -14,7 +14,7 @@ public class ConvertTests()
 
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
         try
@@ -51,10 +51,10 @@ public class ConvertTests()
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
         
         try
         {
@@ -94,10 +94,10 @@ public class ConvertTests()
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
 
-        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -137,10 +137,10 @@ public class ConvertTests()
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -181,10 +181,10 @@ public class ConvertTests()
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -221,10 +221,10 @@ public class ConvertTests()
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
         try
         {

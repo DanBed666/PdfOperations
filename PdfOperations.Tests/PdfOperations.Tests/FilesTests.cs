@@ -6,7 +6,7 @@ public class FilesTests
     [TestMethod]
     public void PrepareTempDirTest()
     {
-        string tempDir = Files8.PrepareTempDir();
+        string tempDir = Files.PrepareTempDir();
     }
     
     [TestMethod]
@@ -24,10 +24,10 @@ public class FilesTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
 
-        Files8.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+        Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
     }
     
     [TestMethod]
@@ -45,11 +45,11 @@ public class FilesTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
 
-        string tempPath = Files8.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
-        string fileNotExt = Files8.PrepareTempPathWithoutExt(tempPath);
+        string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+        string fileNotExt = Files.PrepareTempPathWithoutExt(tempPath);
     }
     
     [TestMethod]
@@ -57,11 +57,11 @@ public class FilesTests
     {
         OperationInput operationInput = new OperationInput()
         {
-            Dir = Files8.PrepareTempDir(),
+            Dir = Files.PrepareTempDir(),
             Output = "lipa.pdf"
         };
         
-        string finalPath = Files8.PrepareFinalPath(operationInput.Dir, operationInput.Output);
+        string finalPath = Files.PrepareFinalPath(operationInput.Dir, operationInput.Output);
     }
     
     [TestMethod]

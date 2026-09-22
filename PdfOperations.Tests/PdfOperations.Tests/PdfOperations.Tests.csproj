@@ -20,8 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="MSTestSettings.cs" />
-      <None Include="MSTestSettings.cs" />
       <Compile Remove="ValidationTests.cs" />
       <Compile Remove="TestInput.cs" />
       <Compile Remove="InputValidatorTests.cs" />

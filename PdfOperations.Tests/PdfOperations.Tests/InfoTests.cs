@@ -19,10 +19,10 @@ public class InfoTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -60,10 +60,10 @@ public class InfoTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {
@@ -101,10 +101,10 @@ public class InfoTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder8.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
 
         try
         {

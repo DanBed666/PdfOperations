@@ -25,7 +25,7 @@ public class SearchTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
 
         try
@@ -80,10 +80,10 @@ public class SearchTests
         
         OperationContext operationContext = new OperationContext()
         {
-            TempDir = Files8.PrepareTempDir()
+            TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder8.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
         
         foreach (FileJob fileJob in fileJobList)
         {
