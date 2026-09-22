@@ -20,15 +20,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="FilesTests.cs" />
-      <None Include="FilesTests.cs" />
       <Compile Remove="MSTestSettings.cs" />
-      <Compile Include="FilesTests8.cs" />
       <None Include="MSTestSettings.cs" />
       <Compile Remove="ValidationTests.cs" />
       <Compile Remove="TestInput.cs" />
       <Compile Remove="InputValidatorTests.cs" />
-      <None Include="InputValidatorTests.cs" />
     </ItemGroup>
 
 </Project>

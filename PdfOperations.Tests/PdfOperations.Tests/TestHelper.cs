@@ -13,11 +13,9 @@ public class TestHelper
 
         return inputs;
     }
-
-    public static void AssertForOneFile(string file, string format)
+    
+    public static string SetInputPath(string input)
     {
-        Assert.IsTrue(File.Exists(file));
-        Assert.AreEqual(format, Path.GetExtension(file));
-        Assert.IsGreaterThan(0, new FileInfo(file).Length);
+        return Path.Combine(TestDir, input);
     }
 }
