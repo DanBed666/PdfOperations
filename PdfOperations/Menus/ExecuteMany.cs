@@ -1,11 +1,11 @@
 ﻿namespace PdfOperations;
 
-public class CaseOptions
+public class ExecuteMany
 {
     public static void ExecuteManyRun(OperationDefinition ope)
     {
         Console.WriteLine(Messages.ChooseFiles);
-        string []? input = UserInput.ReadFilesOrNull(ope.Filter);
+        string []? input = UserInput.ReadFilesOrNull(ope.Filter, Messages.ChooseFiles);
         
         RunClass.RunFiles(input);
     }
@@ -13,7 +13,7 @@ public class CaseOptions
     public static void ExecuteManyRunApp(OperationDefinition ope)
     {
         Console.WriteLine(Messages.ChooseFiles);
-        string []? input = UserInput.ReadFilesOrNull(ope.Filter);
+        string []? input = UserInput.ReadFilesOrNull(ope.Filter, Messages.ChooseFiles);
 
         Console.WriteLine(Messages.ChooseApp);
         string app = Console.ReadLine()!;

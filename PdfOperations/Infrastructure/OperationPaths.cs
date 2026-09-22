@@ -183,14 +183,14 @@ public class OperationPaths
             {
                 Name = "Otwórz wiele plików z użyciem programu domyślnego",
                 OperationFlow = OperationFlow.RunApp,
-                RunOperationAction = CaseOptions.ExecuteManyRun,
+                RunOperationAction = ExecuteMany.ExecuteManyRun,
                 InputPrompt = "Wybierz pliki do otwarcia:"
             },
             [17] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu wybranego",
                 OperationFlow = OperationFlow.RunApp,
-                RunOperationAction = CaseOptions.ExecuteManyRunApp,
+                RunOperationAction = ExecuteMany.ExecuteManyRunApp,
                 InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
                 AppPrompt = "Wybierz program: w - Word, d - LibreOffice Draw, Enter - domyślny:"
             },
