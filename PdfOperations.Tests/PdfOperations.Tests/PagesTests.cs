@@ -35,7 +35,9 @@ public class PagesTests
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, operationDefinition.Extension);
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
                 Assert.AreEqual(2, Info.GetPdfPagesSingle(file));
                 suma += Info.GetPdfPagesSingle(file);
             }
@@ -57,8 +59,8 @@ public class PagesTests
 
         PdfFragment pdfFragment = new PdfFragment()
         {
-            FileName = "pliczek.pdf",
-            PageNumbers = "2,3"
+            FileName = TestHelper.SetInputPath("test_1.pdf"),
+            PageNumbers = "1"
         };
         
         pdfFragments.Add(pdfFragment);

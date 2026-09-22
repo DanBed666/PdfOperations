@@ -37,7 +37,9 @@ public class ReplacementTests
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
-                TestHelper.AssertForOneFile(file, Path.GetExtension(file));
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
