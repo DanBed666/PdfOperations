@@ -7,7 +7,8 @@ public class SearchTests
     [TestMethod]
     public void SearchTxtTest()
     {
-        List<List<string>> allFound = new List<List<string>>();
+        SearchResult searchResult = new SearchResult();
+        List<SearchResult> searchResults = new List<SearchResult>();
 
         OperationInput operationInput = new OperationInput()
         {
@@ -32,7 +33,9 @@ public class SearchTests
         {
             foreach (string f in Directory.GetFiles(operationContext.TempDir))
             {
-                allFound = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before, operationInput.After);
+                searchResult = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before,
+                    operationInput.After);
+                searchResults.Add(searchResult);
             }
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
@@ -42,15 +45,15 @@ public class SearchTests
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
 
-            Assert.IsTrue(allFound.Any(group =>
-                    group.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
+            Assert.IsTrue(searchResults.Any(group =>
+                    group.Lines.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
 
-            Assert.HasCount(6, allFound);
+            Assert.HasCount(6, searchResults);
             
-            Assert.IsFalse(allFound.Any(group =>
-                group.Any(line => line.Contains("hfiewhfuwef", StringComparison.OrdinalIgnoreCase))));
+            Assert.IsFalse(searchResults.Any(group =>
+                group.Lines.Any(line => line.Contains("hfiewhfuwef", StringComparison.OrdinalIgnoreCase))));
 
-            Assert.HasCount(6, allFound);
+            Assert.HasCount(6, searchResults);
             
             Assert.HasCount(4, Directory.GetFiles(operationContext.TempDir));
         }
@@ -67,7 +70,7 @@ public class SearchTests
         OperationInput operationInput = new OperationInput()
         {
             InputFiles = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"},
-            Output = "lipa.pdf",
+            Output = "raport.txt",
             PhraseToFind = "testowy",
             Before = 2,
             After = 2
@@ -92,7 +95,7 @@ public class SearchTests
         
         FileJob reportJob = new FileJob
         {
-            TempPath = Path.Combine(operationContext.TempDir, "raport.txt")
+            TempPath = Path.Combine(operationContext.TempDir, operationInput.Output)
         };
         
         Search.SearchTempTextFiles(operationInput, operationContext);

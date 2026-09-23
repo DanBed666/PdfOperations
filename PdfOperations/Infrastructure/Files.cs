@@ -25,11 +25,11 @@ public class Files
         return Path.Combine(finalDir, Path.GetFileName(fileOut));
     }
     
-    public static void SaveToFile(List<List<string>> found, string output)
+    public static void SaveToFile(SearchResult found, string output)
     {
         List<string> outputLines = new List<string>();
         
-        foreach (List<String> lista in found)
+        foreach (string lista in found.Lines)
         {
             outputLines.AddRange(lista);
         }

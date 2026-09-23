@@ -6,54 +6,69 @@ public class Search
     {
         foreach (string f in Directory.GetFiles(context.TempDir))
         {
-            //string originalInput = Files8.FindOriginalFileForTemp(f, file.InputFiles);
-            List<List<string>> foundLines = GetFoundLines(f, input.PhraseToFind, input.Before, input.After);
+            SearchResult foundLines = GetFoundLines(f, input.PhraseToFind, input.Before, input.After);
             Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
             File.Delete(f);
         }
     }
     
-    public static List<List<string>> GetFoundLines(string inputPath, string phrase, int before, int after)
+    public static SearchResult GetFoundLines(string inputPath, string phrase, int before, int after)
     {
-        List<List<string>> found = new();
-        string[] inputLines = File.ReadAllLines(inputPath);
-
-        for (int i = 0; i < inputLines.Length; i++)
+        SearchResult searchResult = new SearchResult()
         {
-            if (inputLines[i].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
+            FilePath = inputPath
+        };
+        
+        string [] pages = File.ReadAllText(inputPath).Split("\f");
+
+        for (int p = 0; p < pages.Length; p++)
+        {
+            string [] lines = pages[p].Split("\n");
+
+            for (int l = 0; l < lines.Length; l++)
             {
-                List<string> lines = new List<string>();
-                
-                lines.Add(inputPath);
-                lines.Add("\n");
-                
-                for (int k = -before; k <= after; k++)
+                if (lines[l].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    int idx = i + k;
-                    
-                    if (idx >= 0 && idx < inputLines.Length)
-                    {
-                        lines.Add(inputLines[idx]);
-                    }
-                }
+                    List<string> linesFound = new List<string>();
+                    searchResult.PageNumber = p + 1;
+                    searchResult.LineNumber = l + 1;
                 
-                lines.Add("------------------------------------");
-                lines.Add("\n");
-                found.Add(lines);
+                    linesFound.Add(inputPath);
+                    linesFound.Add("Strona: " + searchResult.PageNumber);
+                    linesFound.Add("Linia: " + searchResult.LineNumber);
+                    linesFound.Add("------------------------------------");
+                    linesFound.Add("\n");
+                
+                    for (int k = -before; k <= after; k++)
+                    {
+                        int idx = l + k;
+                    
+                        if (idx >= 0 && idx < lines.Length)
+                        {
+                            linesFound.Add(lines[idx]);
+                        }
+                    }
+                
+                    linesFound.Add("------------------------------------");
+                    linesFound.Add("\n");
+                    
+                    searchResult.Lines = linesFound;
+                }
             }
         }
 
-        if (found.Count == 0)
+        if (searchResult.Lines.Count == 0)
         {
             List<string> lines = new List<string>();
             lines.Add(inputPath);
+            lines.Add("------------------------------------");
             lines.Add("\n");
             lines.Add("Nie znaleziono podanej frazy w pliku!");
             lines.Add("------------------------------------");
             lines.Add("\n");
-            found.Add(lines);
+            searchResult.Lines = lines;
         }
-        
-        return found;
+
+        return searchResult;
     }
 }
