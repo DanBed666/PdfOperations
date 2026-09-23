@@ -11,7 +11,7 @@ public class ExecuteCaseOperations8
 
         if (operation.OperationFlow != OperationFlow.FilesPagesFragments)
         {
-            string []? files = UserInput.ReadFilesOrNull(operation.Filter, Messages.ChooseFiles);
+            string []? files = UserInput.ReadFilesOrNull(operation.Filter, operation.InputPrompt);
 
             if (files is null || files.Length == 0)
             {
@@ -50,7 +50,7 @@ public class ExecuteCaseOperations8
                               || operation.OperationFlow == OperationFlow.FilesPagesSingle
                               || operation.OperationFlow == OperationFlow.FilesPagesFragments)
         {
-            string output = UserInput.ReadOutputOrCancel(operation);
+            string output = UserInput.ReadOutputOrCancel(operation, operation.OutputPrompt);
             operationInput.Output = output;
         }
         
@@ -58,8 +58,7 @@ public class ExecuteCaseOperations8
         
         if (operation.OperationFlow == OperationFlow.FilesReplacement)
         {
-            Console.WriteLine(Messages.ChooseFiles);
-            string? file = UserInput.ReadFileOrNull(operation.Filter, Messages.ChooseFiles);
+            string? file = UserInput.ReadFileOrNull(operation.FilterPlc, operation.PlcPrompt);
 
             if (string.IsNullOrEmpty(file))
             {
@@ -80,7 +79,7 @@ public class ExecuteCaseOperations8
                 Console.WriteLine($"{Messages.PagesCount} {file}: {ile}");
             }
 
-            string pages = UserInput.ReadPagesOrCancel(Messages.EnterPages);
+            string pages = UserInput.ReadPagesOrCancel(operation.PagesPrompt);
             operationInput.Pages = pages;
         }
         
@@ -88,9 +87,9 @@ public class ExecuteCaseOperations8
         
         if (operation.OperationFlow == OperationFlow.SearchReport)
         {
-            string searchPhrase = UserInput.ReadRequiredText(Messages.EnterSearchPhrase);
-            int before = UserInput.ReadIntOrDefaultZero(Messages.EnterBeforeLines);
-            int after = UserInput.ReadIntOrDefaultZero(Messages.EnterAfterLines);
+            string searchPhrase = UserInput.ReadRequiredText(operation.PhrasePrompt);
+            int before = UserInput.ReadIntOrDefaultZero(operation.BeforePrompt);
+            int after = UserInput.ReadIntOrDefaultZero(operation.AfterPrompt);
             
             operationInput.PhraseToFind = searchPhrase;
             operationInput.Before = before;
@@ -101,13 +100,13 @@ public class ExecuteCaseOperations8
         
         if (operation.OperationFlow == OperationFlow.FilesToFilesWithFormat)
         {
-            string format = UserInput.ReadFormatOrCancel();
+            string format = UserInput.ReadFormatOrCancel(operation.FormatPrompt);
             operationInput.Format = InputValidator.NormalizeExtension(format);
         }
 
         //Set directory
         
-        operationInput.Dir = UserInput.ReadDirectoryOrDefault();
+        operationInput.Dir = UserInput.ReadDirectoryOrDefault(Messages.ChooseDirectory);
 
         return operationInput;
     }

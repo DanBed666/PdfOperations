@@ -164,9 +164,10 @@ public class OperationPaths
                 Name = "Wypełnij placeholdery w dokumencie",
                 OperationFlow = OperationFlow.FilesReplacement,
                 Filter = FileFilters.WordFiles,
-                FilterPlc = FileFilters.TxtFiles,
+                FilterPlc = FileFilters.ExcelFiles,
                 FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
                 InputPrompt = "Wybierz pliki (docx / odt) do zamiany na placeholdery:",
+                PlcPrompt = "Wybierz plik (xlsx) jako mapę zastąpień",
                 DefaultOutputName = "document_placeholders"
             },
             [15] = new OperationDefinition

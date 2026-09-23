@@ -88,10 +88,10 @@ public class UserInput
         return file;
     }
     
-    public static string ReadDirectoryOrDefault()
+    public static string ReadDirectoryOrDefault(string msg)
     {
         ReadOption(Messages.ChooseOutputDirectoryQuestion);
-        Console.WriteLine(Messages.ChooseDirectory);
+        Console.WriteLine(msg);
         string directory = Dialog.SelectDirectory();
 
         if (string.IsNullOrWhiteSpace(directory))
@@ -120,11 +120,11 @@ public class UserInput
         }
     }
 
-    public static string ReadFormatOrCancel()
+    public static string ReadFormatOrCancel(string msg)
     {
         while (true)
         {
-            Console.WriteLine(Messages.EnterFormat);
+            Console.WriteLine(msg);
             string format = Console.ReadLine()!;
 
             if (format.Equals(":q"))
@@ -164,11 +164,11 @@ public class UserInput
         }
     }
     
-    public static string ReadOutputOrCancel(OperationDefinition ope)
+    public static string ReadOutputOrCancel(OperationDefinition ope, string msg)
     {
         while (true)
         {
-            Console.WriteLine(Messages.EnterOutputName);
+            Console.WriteLine(msg);
             string outputFile = Console.ReadLine()!;
 
             if (outputFile.Equals(":q"))

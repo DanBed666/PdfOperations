@@ -33,6 +33,10 @@ public class Execute
             case OperationFlow.FilesPagesFragments:
                 ExecutePagesFragments(operation, fileInput, context);
                 break;
+            
+            case OperationFlow.FilesReplacement:
+                ExecuteReplacement(operation, fileInput, context);
+                break;
 
             default:
                 Console.WriteLine(Messages.MissingFlow);
@@ -130,6 +134,24 @@ public class Execute
 
         Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
 
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
+    }
+    
+    public static void ExecuteReplacement(OperationDefinition operation, OperationInput fileInput, OperationContext context)
+    {
+        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operation, fileInput, context);
+
+        foreach (FileJob fileJob in fileJobs)
+        {
+            operation.FileOperationActionReplace(fileJob, fileInput, context);
+        }
+
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+        
         if (conflicts.Count > 0)
         {
             bool overwrite = AskForOverwrite();

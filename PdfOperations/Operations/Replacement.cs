@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text.RegularExpressions;
+using ClosedXML.Excel;
 
 namespace PdfOperations;
 
@@ -7,56 +8,94 @@ public class Replacement
 {
     public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context)
     {
-        string tempDir = Path.Combine(context.TempDir, Path.GetFileNameWithoutExtension(file.InputFile));
-        string extension = Path.GetExtension(file.InputFile);
-        string path = "";
+        string extractedDir = ExtractDocumentToTemp(file.InputFile, context.TempDir);
+        string xmlPath = GetEditableXmlPath(extractedDir, file.InputFile);
+        List<ReplacementPair> replacementPairs = ReadReplacementsFromExcel(input.PlaceholderFile);
+        ReplaceTextInFile(xmlPath, replacementPairs);
+        CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
+    }
+    
+    public static string ExtractDocumentToTemp(string inputFile, string tempDir)
+    {
+        string tempDirExt = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputFile));
+        ZipFile.ExtractToDirectory(inputFile, tempDirExt);
 
-        ZipFile.ExtractToDirectory(file.InputFile, tempDir);
-        string [] plcLines = File.ReadAllLines(input.PlaceholderFile);
-        Dictionary<string, string> placeholders = new Dictionary<string, string>();
+        return tempDirExt;
+    }
+
+    public static string GetEditableXmlPath(string extractedDir, string inputFile)
+    {
+        string extension = Path.GetExtension(inputFile);
         
         if (extension.Equals(".docx"))
-            path = Path.Combine(tempDir, "word", "document.xml");
-        else if (extension.Equals(".odg"))
-            path = Path.Combine(tempDir, "content.xml");
-        else
-            Console.WriteLine("Nieprawidłowe rozszerzenie!");
+            return Path.Combine(extractedDir, "word", "document.xml");
         
-        string text = File.ReadAllText(path);
-        
-        string key = "";
-        string value = "";
+        if (extension.Equals(".odg"))
+            return Path.Combine(extractedDir, "content.xml");
 
-        foreach (string line in plcLines)
+        throw new InvalidOperationException($"Nieprawidłowe rozszerzenie {extension}");
+    }
+
+    public static List<ReplacementPair> ReadReplacementsFromExcel(string placeholderFile)
+    {
+        List<ReplacementPair> replacementPairs = new List<ReplacementPair>();
+        
+        using XLWorkbook workbook = new XLWorkbook(placeholderFile);
+        IXLWorksheet worksheet = workbook.Worksheets.FirstOrDefault() ??
+                                 throw new InvalidOperationException("Plik excel nie zawiera żadnego arkusza!");
+
+        foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
         {
-            if (string.IsNullOrWhiteSpace(line))
+            string find = row.Cell(2).GetString();
+            string replace = row.Cell(3).GetString();
+
+            if (string.IsNullOrWhiteSpace(find))
                 continue;
-            
-            if (line.StartsWith("Find:"))
-                key = line.Substring("Find: ".Length).Trim();
 
-            if (line.StartsWith("Replace:"))
+            int lp = 0;
+            int.TryParse(row.Cell(1).GetString(), out lp);
+
+            bool ignoreCase = false;
+            bool.TryParse(row.Cell(4).GetString(), out ignoreCase);
+
+            ReplacementPair replacementPair = new ReplacementPair()
             {
-                value = line.Substring("Replace: ".Length).Trim();
-                if (!string.IsNullOrEmpty(key))
-                    placeholders[key] = value;
-            } 
+                Lp = lp,
+                Find = find,
+                Replace = replace,
+                IgnoreCase = ignoreCase
+            };
+            
+            replacementPairs.Add(replacementPair);
         }
 
-        foreach (KeyValuePair<string, string> placeholder in placeholders)
+        return replacementPairs;
+    }
+
+    public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> replacementPairs)
+    {
+        string text = File.ReadAllText(xmlPath);
+
+        foreach (ReplacementPair pair in replacementPairs)
         {
-            text = text.Replace(placeholder.Key, placeholder.Value);
+            if (pair.IgnoreCase)
+                text = text.Replace(pair.Find, pair.Replace, StringComparison.OrdinalIgnoreCase);
+            
+            text = text.Replace(pair.Find, pair.Replace);
         }
         
-        File.WriteAllText(path, text);
+        File.WriteAllText(xmlPath, text);
 
-        if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
-            UpdateDocxDates(tempDir);
-        
+        //if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
+            //UpdateDocxDates(tempDir);
+    }
+
+    public static void CreateDocumentFromDirectory(OperationInput input, string extDir, string tempPath, string extension)
+    {
         if (string.IsNullOrWhiteSpace(input.Output) && input.InputFiles.Length > 1)
-            ZipFile.CreateFromDirectory(tempDir, file.TempPath + extension);
+            ZipFile.CreateFromDirectory(extDir, tempPath + extension);
         else
-            ZipFile.CreateFromDirectory(tempDir, file.TempPath);
+            ZipFile.CreateFromDirectory(extDir, tempPath);
     }
 
     public static void UpdateDocxDates(string tempDir)

@@ -32,4 +32,8 @@ public class FileFilters
         "Word files (*.doc;*.docx;*.odt;*.rtf)|*.doc;*.docx;*.odt;*.rtf|" +
         "Draw files (*.odg;*.fodg;*.svg)|*.odg;*.fodg;*.svg|" +
         "All files (*.*)|*.*";
+    
+    public const string ExcelFiles =
+        "Excel files (*.xlsx;*.xls;*.xlsm)|*.xlsx;*.xls;*.xlsm|" +
+        "All files (*.*)|*.*";
 }
