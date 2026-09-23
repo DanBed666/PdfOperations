@@ -20,6 +20,18 @@ public class OperationPaths
             },
             [2] = new OperationDefinition
             {
+                Name = "Konwersja plików pdf na docx",
+                Filter = FileFilters.PdfFiles,
+                Extension = ".docx",
+                OperationFlow = OperationFlow.FilesToFiles,
+                FileOperationActionMultiple = Convert.PdfToDocx,
+                InputPrompt = "Wybierz pliki pdf do konwersji:",
+                FormatPrompt = "Podaj format pliku wynikowego:",
+                OutputPrompt = "Podaj nazwę pliku wynikowego:",
+                DefaultOutputName = "converted_docx"
+            },
+            [3] = new OperationDefinition
+            {
                 Name = "Rozdziel Pdf na obrazy",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".jpg",
@@ -29,7 +41,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę obrazu wynikowego:",
                 DefaultOutputName = "page"
             },
-            [3] = new OperationDefinition
+            [4] = new OperationDefinition
             {
                 Name = "Złącz obrazy do pliku pdf",
                 Filter = FileFilters.PictFiles,
@@ -40,7 +52,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę pliku PDF:",
                 DefaultOutputName = "merged_images"
             },
-            [4] = new OperationDefinition
+            [5] = new OperationDefinition
             {
                 Name = "Odczytaj tekst z pdf",
                 Filter = FileFilters.PdfFiles,
@@ -51,7 +63,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
                 DefaultOutputName = "pdf_text"
             },
-            [5] = new OperationDefinition
+            [6] = new OperationDefinition
             {
                 Name = "Odczytaj tekst z obrazu",
                 Filter = FileFilters.PictFiles,
@@ -62,7 +74,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
                 DefaultOutputName = "image_text"
             },
-            [6] = new OperationDefinition
+            [7] = new OperationDefinition
             {
                 Name = "Wyciągnij obrazy z pdf",
                 Filter = FileFilters.PdfFiles,
@@ -73,7 +85,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę obrazu wynikowego:",
                 DefaultOutputName = "pdf_image"
             },
-            [7] = new OperationDefinition
+            [8] = new OperationDefinition
             {
                 Name = "Utwórz pdf z wyznaczonymi stronami",
                 Filter = FileFilters.PdfFiles,
@@ -85,7 +97,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę pliku PDF:",
                 DefaultOutputName = "selected_pages"
             },
-            [8] = new OperationDefinition
+            [9] = new OperationDefinition
             {
                 Name = "Rozdziel na oddzielne pliki pdf",
                 Filter = FileFilters.PdfFiles,
@@ -96,7 +108,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj wzorzec nazwy plików wynikowych:",
                 DefaultOutputName = "page"
             },
-            [9] = new OperationDefinition
+            [10] = new OperationDefinition
             {
                 Name = "Złącz wiele plików pdf do jednego",
                 Filter = FileFilters.PdfFiles,
@@ -107,7 +119,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę połączonego pliku PDF:",
                 DefaultOutputName = "merged_pdf"
             },
-            [10] = new OperationDefinition
+            [11] = new OperationDefinition
             {
                 Name = "Znajdź szukaną frazę w pliku pdf",
                 Filter = FileFilters.PdfFiles,
@@ -122,7 +134,7 @@ public class OperationPaths
                 PhrasePrompt = "Wpisz tekst, którego chcesz szukać:",
                 DefaultOutputName = "pdf_search_report"
             },
-            [11] = new OperationDefinition
+            [12] = new OperationDefinition
             {
                 Name = "Znajdź szukaną frazę w obrazie",
                 Filter = FileFilters.PictFiles,
@@ -137,7 +149,7 @@ public class OperationPaths
                 PhrasePrompt = "Wpisz tekst, którego chcesz szukać:",
                 DefaultOutputName = "image_search_report"
             },
-            [12] = new OperationDefinition
+            [13] = new OperationDefinition
             {
                 Name = "Wyświetl informacje o pliku pdf",
                 Filter = FileFilters.PdfFiles,
@@ -148,7 +160,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę raportu z informacjami:",
                 DefaultOutputName = "pdf_info_report"
             },
-            [13] = new OperationDefinition
+            [14] = new OperationDefinition
             {
                 Name = "Wyświetl informacje o czcionce w pliku pdf",
                 Filter = FileFilters.PdfFiles,
@@ -159,7 +171,7 @@ public class OperationPaths
                 OutputPrompt = "Podaj nazwę raportu z czcionkami:",
                 DefaultOutputName = "pdf_font_report"
             },
-            [14] = new OperationDefinition
+            [15] = new OperationDefinition
             {
                 Name = "Wypełnij placeholdery w dokumencie",
                 OperationFlow = OperationFlow.FilesReplacement,
@@ -170,7 +182,7 @@ public class OperationPaths
                 PlcPrompt = "Wybierz plik (xlsx) jako mapę zastąpień",
                 DefaultOutputName = "document_placeholders"
             },
-            [15] = new OperationDefinition
+            [16] = new OperationDefinition
             {
                 Name = "Złóż dokument PDF z wybranych stron",
                 OperationFlow = OperationFlow.FilesPagesFragments,
@@ -180,14 +192,14 @@ public class OperationPaths
                 InputPrompt = "Wybierz plik PDF:",
                 DefaultOutputName = "fragmented_pdf"
             },
-            [16] = new OperationDefinition
+            [17] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu domyślnego",
                 OperationFlow = OperationFlow.RunApp,
                 RunOperationAction = ExecuteMany.ExecuteManyRun,
                 InputPrompt = "Wybierz pliki do otwarcia:"
             },
-            [17] = new OperationDefinition
+            [18] = new OperationDefinition
             {
                 Name = "Otwórz wiele plików z użyciem programu wybranego",
                 OperationFlow = OperationFlow.RunApp,
@@ -195,11 +207,11 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki do otwarcia wybranym programem:",
                 AppPrompt = "Wybierz program: w - Word, d - LibreOffice Draw, Enter - domyślny:"
             },
-            [18] = new OperationDefinition
+            [19] = new OperationDefinition
             {
                 Name = "Wyświetl instrukcję obsługi",
             },
-            [19] = new OperationDefinition
+            [20] = new OperationDefinition
             {
                 Name = "Wyjście",
             }

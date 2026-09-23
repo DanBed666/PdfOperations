@@ -12,5 +12,6 @@ public enum Tool
     PdfInfo,
     PdfSeparate,
     PdfFonts,
-    PdfImages
+    PdfImages,
+    Pdf2Docx
 }

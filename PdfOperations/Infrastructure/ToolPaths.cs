@@ -28,6 +28,7 @@ public class ToolPaths
                     "bin", "pdfimages.exe"),
                 [Tool.PdfSeparate] = Path.Combine(ToolsDir, "poppler-26.02.0", "Library",
                     "bin", "pdfseparate.exe"),
+                [Tool.Pdf2Docx] = Path.Combine(ToolsDir, "pdf2docx", "pdf2docx_convert.exe")
             }
         );
 }

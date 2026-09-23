@@ -11,32 +11,17 @@ public static class Convert
         List<string> arguments = new List<string>();
         List<string> arguments2 = new List<string>();
 
-        bool pdfToDocx =
+        bool pdfToOdt =
             fileInput.InputFiles.All(f => Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-             && fileInput.Format.Equals("docx", StringComparison.OrdinalIgnoreCase);
+             && fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase);
             
-        if (pdfToDocx)    
+        if (pdfToOdt)    
         {
             arguments.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
                 "--nologo",
                 "--nodefault",
                 "--nofirststartwizard",
                 "--norestore","--infilter=writer_pdf_import", "--convert-to", "odt", ..fileInput.InputFiles, "--outdir", context.TempDir]);
-            
-            string [] filesOdt = new string[fileInput.InputFiles.Length];
-            
-            for (int k = 0; k < fileInput.InputFiles.Length; k++)
-            {
-                filesOdt[k] = Path.Combine(context.TempDir, Path.GetFileNameWithoutExtension(fileInput.InputFiles[k]) + ".odt");
-            }
-            
-            arguments2.AddRange([$"-env:UserInstallation={profileUri}", "--headless", 
-                "--nologo",
-                "--nodefault",
-                "--nofirststartwizard",
-                "--norestore","--convert-to", fileInput.Format, ..filesOdt, "--outdir", context.TempDir]);
-
-            fileInput.ExceptFormat = ".odt";
         }
         else
         {
@@ -68,6 +53,15 @@ public static class Convert
     public static void PdfToTxt(FileJob fileJob)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
+        List<string> arguments = new List<string>();
+
+        arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
+        RunClass.Run(tool, arguments);
+    }
+    
+    public static void PdfToDocx(FileJob fileJob)
+    {
+        string tool = ToolPaths.ToolPathsDict[Tool.Pdf2Docx];
         List<string> arguments = new List<string>();
 
         arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
