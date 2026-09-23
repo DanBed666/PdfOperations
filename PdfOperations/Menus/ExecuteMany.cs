@@ -7,7 +7,7 @@ public class ExecuteMany
         Console.WriteLine(Messages.ChooseFiles);
         string []? input = UserInput.ReadFilesOrNull(ope.Filter, Messages.ChooseFiles);
         
-        RunClass.RunFiles(input);
+        RunClass.RunFiles(input!);
     }
     
     public static void ExecuteManyRunApp(OperationDefinition ope)
@@ -25,11 +25,11 @@ public class ExecuteMany
         if (app.Equals("w"))
         {
             appConv = "winword.exe";
-            RunClass.RunFiles(input, appConv);
+            RunClass.RunFiles(input!, appConv);
         }
         else if (app.Equals("d"))
         {
-            RunClass.RunFilesDraw(input);
+            RunClass.RunFilesDraw(input!);
         }
     }
 }
