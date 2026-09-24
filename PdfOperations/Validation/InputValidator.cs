@@ -9,7 +9,7 @@ public class InputValidator
     
     public static string NormalizePages(string pages)
     {
-        return pages.Trim();
+        return pages.Trim().Replace(" ", "");
     }
     
     public static bool IsKnownExtension(string extension)
