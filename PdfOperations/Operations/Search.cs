@@ -1,4 +1,6 @@
-﻿namespace PdfOperations;
+﻿using System.Text.RegularExpressions;
+
+namespace PdfOperations;
 
 public class Search
 {
@@ -14,6 +16,8 @@ public class Search
     
     public static SearchResult GetFoundLines(string inputPath, string phrase, int before, int after)
     {
+        int occ = 0;
+        
         SearchResult searchResult = new SearchResult()
         {
             FilePath = inputPath
@@ -32,10 +36,13 @@ public class Search
                     List<string> linesFound = new List<string>();
                     searchResult.PageNumber = p + 1;
                     searchResult.LineNumber = l + 1;
+                    occ += Regex.Matches(lines[l], Regex.Escape(phrase), RegexOptions.IgnoreCase).Count;
+                    searchResult.Occurences = occ;
                 
                     linesFound.Add(inputPath);
                     linesFound.Add("Strona: " + searchResult.PageNumber);
                     linesFound.Add("Linia: " + searchResult.LineNumber);
+                    linesFound.Add("Wystąpienia: " + searchResult.Occurences);
                     linesFound.Add("------------------------------------");
                     linesFound.Add("\n");
                 
@@ -56,6 +63,8 @@ public class Search
                 }
             }
         }
+
+        searchResult.Occurences = occ;
 
         if (searchResult.Lines.Count == 0)
         {

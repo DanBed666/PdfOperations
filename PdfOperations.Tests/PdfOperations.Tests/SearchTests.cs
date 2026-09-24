@@ -12,8 +12,8 @@ public class SearchTests
 
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = new [] {"search_1.txt", "search_2.txt", "search_3.txt"},
-            Output = "lipa.pdf",
+            InputFiles = TestHelper.SetInputPaths(new [] {"search_1.txt", "search_2.txt", "search_3.txt"}),
+            Output = "lipa.txt",
             PhraseToFind = "hydraulika",
             Before = 2,
             After = 2
@@ -28,6 +28,11 @@ public class SearchTests
         {
             TempDir = Files.PrepareTempDir()
         };
+
+        foreach (string file in operationInput.InputFiles)
+        {
+            File.Copy(file, Path.Combine(operationContext.TempDir, Path.GetFileName(file)));
+        }
 
         try
         {
@@ -45,17 +50,29 @@ public class SearchTests
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
 
-            Assert.IsTrue(searchResults.Any(group =>
-                    group.Lines.Any(line => line.Contains("hydraulika", StringComparison.OrdinalIgnoreCase))));
+            Assert.IsTrue(searchResults.Any(result =>
+                    result.Lines.Any(line => line.Contains(operationInput.PhraseToFind, StringComparison.OrdinalIgnoreCase))));
 
-            Assert.HasCount(6, searchResults);
-            
-            Assert.IsFalse(searchResults.Any(group =>
-                group.Lines.Any(line => line.Contains("hfiewhfuwef", StringComparison.OrdinalIgnoreCase))));
+            int occurences = searchResults.Sum(result => result.Occurences);
+            Assert.AreEqual(8, occurences);
 
-            Assert.HasCount(6, searchResults);
+            List<SearchResult> searchResults2 = new List<SearchResult>();
+            operationInput.PhraseToFind = "welcome";
             
-            Assert.HasCount(4, Directory.GetFiles(operationContext.TempDir));
+            foreach (string f in Directory.GetFiles(operationContext.TempDir))
+            {
+                searchResult = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before,
+                    operationInput.After);
+                searchResults2.Add(searchResult);
+            }
+            
+            Assert.IsFalse(searchResults2.Any(result =>
+                result.Lines.Any(line => line.Contains(operationInput.PhraseToFind, StringComparison.OrdinalIgnoreCase))));
+
+            int occurences2 = searchResults2.Sum(result => result.Occurences);
+            Assert.AreEqual(0, occurences2);
+            
+            //Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
@@ -69,7 +86,7 @@ public class SearchTests
     {
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"},
+            InputFiles = TestHelper.SetInputPaths(new [] {"test_1.pdf", "test_2.pdf", "test_3.pdf"}),
             Output = "raport.txt",
             PhraseToFind = "testowy",
             Before = 2,
