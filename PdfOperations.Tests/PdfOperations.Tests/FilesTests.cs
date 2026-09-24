@@ -7,6 +7,7 @@ public class FilesTests
     public void PrepareTempDirTest()
     {
         string tempDir = Files.PrepareTempDir();
+        Assert.IsTrue(Directory.Exists(tempDir));
     }
     
     [TestMethod]
@@ -14,7 +15,7 @@ public class FilesTests
     {
         OperationInput operationInput = new OperationInput()
         {
-            Output = "lipa.pdf"
+            Output = "test_1.pdf"
         };
         
         OperationDefinition operationDefinition = new OperationDefinition()
@@ -27,7 +28,9 @@ public class FilesTests
             TempDir = Files.PrepareTempDir()
         };
 
-        Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+        string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+        
+        Assert.IsNotNull(tempPath);
     }
     
     [TestMethod]
@@ -50,6 +53,9 @@ public class FilesTests
 
         string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
         string fileNotExt = Files.PrepareTempPathWithoutExt(tempPath);
+        
+        Assert.IsNotNull(tempPath);
+        Assert.IsNotNull(fileNotExt);
     }
     
     [TestMethod]
@@ -62,6 +68,8 @@ public class FilesTests
         };
         
         string finalPath = Files.PrepareFinalPath(operationInput.Dir, operationInput.Output);
+        
+        Assert.IsNotNull(finalPath);
     }
     
     [TestMethod]

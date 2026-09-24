@@ -13,12 +13,12 @@ public class ReplacementTests
         
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = new [] {"word_1.docx", "word_8.docx", "word_3.docx"},
+            InputFiles = TestHelper.SetInputPaths(new [] {"word_1.docx", "word_8.docx", "word_3.docx"})
         };
         
         OperationDefinition operationDefinition = new OperationDefinition()
         {
-            Extension = ".txt"
+            Extension = ""
         };
         
         OperationContext operationContext = new OperationContext()
