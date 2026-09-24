@@ -58,7 +58,13 @@ public class Execute
             operation.FileOperationActionMultiple(fileJob);
         }
 
-        MoveToFinalDir(context.TempDir, fileInput.Dir);
+        Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
+
+        if (conflicts.Count > 0)
+        {
+            bool overwrite = AskForOverwrite();
+            MoveConflicts(conflicts, overwrite);
+        }
     }
     
     public static void ExecuteFilesToSingle(OperationDefinition operation, OperationInput fileInput, OperationContext context)
