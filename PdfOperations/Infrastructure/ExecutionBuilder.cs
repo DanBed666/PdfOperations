@@ -21,9 +21,13 @@ public class ExecutionBuilder
             FileJob fileJob = new FileJob
             {
                 InputFile = fileOut,
-                TempPath =  Files.PrepareTempPath(operationContext.TempDir, fileOut, operation.Extension)
             };
-            
+
+            if (input.InputFiles.Length == 1)
+                fileJob.TempPath = Files.PrepareTempPath(operationContext.TempDir, input.Output, operation.Extension);
+            else
+                fileJob.TempPath = Files.PrepareTempPath(operationContext.TempDir, fileOut, operation.Extension);
+
             fileJobs.Add(fileJob);
         }
 

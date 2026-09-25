@@ -50,7 +50,7 @@ public class ExecuteCaseOperations8
                               || operation.OperationFlow == OperationFlow.FilesPagesSingle
                               || operation.OperationFlow == OperationFlow.FilesPagesFragments)
         {
-            string output = UserInput.ReadOutputOrCancel(operation, operation.OutputPrompt);
+            string output = UserInput.ReadOutputOrCancel(operation, operation.OutputPrompt, operationInput);
             operationInput.Output = output;
         }
         

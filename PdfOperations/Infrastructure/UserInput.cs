@@ -164,7 +164,7 @@ public class UserInput
         }
     }
     
-    public static string ReadOutputOrCancel(OperationDefinition ope, string msg)
+    public static string ReadOutputOrCancel(OperationDefinition ope, string msg, OperationInput input)
     {
         while (true)
         {
@@ -175,7 +175,12 @@ public class UserInput
                 throw new OperationCanceledException(Messages.OperationCancelled);
 
             if (string.IsNullOrWhiteSpace(outputFile))
-                return InputValidator.SetDefaultOutputFile(ope.DefaultOutputName, ope.Extension);
+            {
+                if (!string.IsNullOrWhiteSpace(ope.DefaultOutputName))
+                    return InputValidator.SetDefaultOutputFile(ope.DefaultOutputName, ope.Extension);
+                
+                return InputValidator.SetDefaultOutputFile(Path.GetFileNameWithoutExtension(input.InputFiles[0]), ope.Extension);
+            }
 
             string outputExtension = Path.GetExtension(outputFile);
             outputExtension = InputValidator.NormalizeExtension(outputExtension);

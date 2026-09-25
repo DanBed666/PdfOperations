@@ -16,7 +16,6 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki do konwersji przez LibreOffice:",
                 FormatPrompt = "Podaj format pliku wynikowego:",
                 OutputPrompt = "Podaj nazwę pliku wynikowego:",
-                DefaultOutputName = "converted"
             },
             [2] = new OperationDefinition
             {
@@ -28,7 +27,6 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki pdf do konwersji:",
                 FormatPrompt = "Podaj format pliku wynikowego:",
                 OutputPrompt = "Podaj nazwę pliku wynikowego:",
-                DefaultOutputName = "converted_docx"
             },
             [3] = new OperationDefinition
             {
@@ -39,7 +37,6 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do konwersji na obrazy:",
                 OutputPrompt = "Podaj nazwę obrazu wynikowego:",
-                DefaultOutputName = "page"
             },
             [4] = new OperationDefinition
             {
@@ -61,7 +58,6 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do konwersji na tekst:",
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
-                DefaultOutputName = "pdf_text"
             },
             [6] = new OperationDefinition
             {
@@ -72,7 +68,6 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz obrazy do odczytu tekstu OCR:",
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
-                DefaultOutputName = "image_text"
             },
             [7] = new OperationDefinition
             {
@@ -83,7 +78,6 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF, z których chcesz wyciągnąć obrazy:",
                 OutputPrompt = "Podaj nazwę obrazu wynikowego:",
-                DefaultOutputName = "pdf_image"
             },
             [8] = new OperationDefinition
             {
@@ -95,7 +89,6 @@ public class OperationPaths
                 InputPrompt = "Wybierz pliki PDF do utworzenia nowych plików ze wskazanymi stronami:",
                 PagesPrompt = "Podaj strony do zostawienia, np. 1,3-5:",
                 OutputPrompt = "Podaj nazwę pliku PDF:",
-                DefaultOutputName = "selected_pages"
             },
             [9] = new OperationDefinition
             {
@@ -106,7 +99,6 @@ public class OperationPaths
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do rozdzielenia na strony:",
                 OutputPrompt = "Podaj wzorzec nazwy plików wynikowych:",
-                DefaultOutputName = "page"
             },
             [10] = new OperationDefinition
             {
@@ -180,7 +172,6 @@ public class OperationPaths
                 FileOperationActionReplace = Replacement.ReplaceTextWithPlaceholders,
                 InputPrompt = "Wybierz pliki (docx / odt) do zamiany na placeholdery:",
                 PlcPrompt = "Wybierz plik (xlsx) jako mapę zastąpień",
-                DefaultOutputName = "document_placeholders"
             },
             [16] = new OperationDefinition
             {
