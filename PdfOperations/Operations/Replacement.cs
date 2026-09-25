@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using ClosedXML.Excel;
 
 namespace PdfOperations;
@@ -74,20 +75,20 @@ public class Replacement
 
     public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> replacementPairs)
     {
-        string text = File.ReadAllText(xmlPath);
+        XDocument doc = XDocument.Load(xmlPath);
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-        foreach (ReplacementPair pair in replacementPairs)
+        foreach (XElement textNode in doc.Descendants(w + "t"))
         {
-            if (pair.IgnoreCase)
-                text = text.Replace(pair.Find, pair.Replace, StringComparison.OrdinalIgnoreCase);
-            
-            text = text.Replace(pair.Find, pair.Replace);
+            foreach (ReplacementPair pair in replacementPairs)
+            {
+                StringComparison stringComparison = pair.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+                
+                textNode.Value = textNode.Value.Replace(pair.Find, pair.Replace, stringComparison);
+            }
         }
         
-        File.WriteAllText(xmlPath, text);
-
-        //if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
-            //UpdateDocxDates(tempDir);
+        doc.Save(xmlPath);
     }
 
     public static void CreateDocumentFromDirectory(OperationInput input, string extDir, string tempPath, string extension)

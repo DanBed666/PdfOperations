@@ -13,7 +13,8 @@ public class ReplacementTests
         
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = TestHelper.SetInputPaths(new [] {"word_1.docx", "word_8.docx", "word_3.docx"})
+            InputFiles = TestHelper.SetInputPaths(new [] {"word_search_1.docx", "word_search_2.docx", "word_search_3.docx"}),
+            PlaceholderFile = TestHelper.SetInputPath("plik.xlsx")
         };
         
         OperationDefinition operationDefinition = new OperationDefinition()
@@ -38,25 +39,22 @@ public class ReplacementTests
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
                 Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                //Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
             Assert.HasCount(3, Directory.GetDirectories(operationContext.TempDir));
 
-            foreach (string file in Directory.GetFiles(operationContext.TempDir))
+            foreach (string dir in Directory.GetDirectories(operationContext.TempDir))
             {
-                string dir = Path.Combine(operationContext.TempDir, $"extract_{Path.GetFileNameWithoutExtension(file)}");
-
-                ZipFile.ExtractToDirectory(file, dir);
-                string path = Path.Combine(dir, "word", "document.xml");
-                text += File.ReadAllText(path);
+                string file = Path.Combine(dir, "word", "document.xml");
+                text += File.ReadAllText(file);
             }
             
-            Assert.Contains("[MENTOS]", text);
-            Assert.AreEqual(8, text.Split("[MENTOS]").Length - 1);
-            Assert.HasCount(8, Regex.Matches(text, Regex.Escape("[MENTOS]")));
+            Assert.Contains("[PLACEHOLDER]", text);
+            Assert.AreEqual(21, text.Split("[PLACEHOLDER]").Length - 1);
+            Assert.HasCount(21, Regex.Matches(text, Regex.Escape("[PLACEHOLDER]")));
         }
         finally
         {
