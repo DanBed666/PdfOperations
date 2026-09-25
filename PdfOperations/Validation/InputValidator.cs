@@ -42,7 +42,7 @@ public class InputValidator
                 continue;
             }
 
-            string[] range = pages.Split('-', StringSplitOptions.TrimEntries);
+            string[] range = part.Split('-', StringSplitOptions.TrimEntries);
 
             if (range.Length != 2)
                 return false;
