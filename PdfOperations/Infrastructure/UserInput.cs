@@ -77,7 +77,7 @@ public class UserInput
         return files;
     }
     
-    public static string? ReadFileOrNull(string filter,string msg)
+    public static string ReadFileOrNull(string filter,string msg)
     {
         Console.WriteLine(msg);
         string file = Dialog.SelectFile(filter);
@@ -90,9 +90,12 @@ public class UserInput
     
     public static string ReadDirectoryOrDefault(string msg)
     {
-        ReadOption(Messages.ChooseOutputDirectoryQuestion);
+        string opt = ReadOption(Messages.ChooseOutputDirectoryQuestion);
         Console.WriteLine(msg);
-        string directory = Dialog.SelectDirectory();
+        string directory = "";
+        
+        if (opt == "t")
+            directory = Dialog.SelectDirectory();
 
         if (string.IsNullOrWhiteSpace(directory))
             return InputValidator.GetDefaultDir();
@@ -214,8 +217,18 @@ public class UserInput
         
         while (true)
         {
-            string? file = ReadFileOrNull(filter, Messages.ChooseFiles);
-            Console.WriteLine($"{Messages.PagesCount} {file}: {Info.GetPdfPagesSingle(file!)}");
+            string file = ReadFileOrNull(filter, Messages.ChooseFiles);
+            
+            if (file.Equals(":q"))
+                throw new OperationCanceledException(Messages.OperationCancelled);
+
+            if (string.IsNullOrWhiteSpace(file))
+            {
+                Console.WriteLine(Messages.NoFileSelected);
+                throw new  OperationCanceledException(Messages.OperationCancelled);
+            }
+            
+            Console.WriteLine($"{Messages.PagesCount} {file}: {Info.GetPdfPagesSingle(file)}");
             string pages = ReadPagesOrCancel(Messages.EnterPages);
 
             PdfFragment pdfFragment = new PdfFragment()

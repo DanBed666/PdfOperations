@@ -105,7 +105,7 @@ public class ExecuteCaseOperations8
         }
 
         //Set directory
-        
+
         operationInput.Dir = UserInput.ReadDirectoryOrDefault(Messages.ChooseDirectory);
 
         return operationInput;
