@@ -12,9 +12,8 @@ public class Info
         foreach (string f in file.InputFiles)
         {
             output = RunClass.RunWithOutput(tool, f);
+            SaveToFile(file.TempPath, output, f);
         }
-        
-        SaveToFile(file.TempPath, output, file.InputFiles);
     }
 
     public static int GetPdfPagesSingle(string input)
@@ -38,32 +37,27 @@ public class Info
         foreach (string f in file.InputFiles)
         {
             output = RunClass.RunWithOutput(tool, f);
+            SaveToFile(file.TempPath, output, f);
         }
-        
-        SaveToFile(file.TempPath, output, file.InputFiles);
-        
     }
     
-    public static void SaveToFile(string file, string output, string [] inputFiles)
+    public static void SaveToFile(string file, string output, string inputFile)
     {
-        foreach (string f in inputFiles)
+        if (!File.Exists(file))
         {
-            if (!File.Exists(file))
-            {
-                File.WriteAllText(file, f, new UTF8Encoding(true));
-                File.AppendAllText(file, "\n\n");
-                File.AppendAllText(file, output);
-                File.AppendAllText(file, "-------------------------");
-                File.AppendAllText(file, "\n\n");
-            }
-            else
-            {
-                File.AppendAllText(file, f, new UTF8Encoding(true));
-                File.AppendAllText(file, "\n\n");
-                File.AppendAllText(file, output);
-                File.AppendAllText(file, "-------------------------");
-                File.AppendAllText(file, "\n\n");
-            }
+            File.WriteAllText(file, inputFile, new UTF8Encoding(true));
+            File.AppendAllText(file, "\n\n");
+            File.AppendAllText(file, output);
+            File.AppendAllText(file, "-------------------------");
+            File.AppendAllText(file, "\n\n");
+        }
+        else
+        {
+            File.AppendAllText(file, inputFile, new UTF8Encoding(true));
+            File.AppendAllText(file, "\n\n");
+            File.AppendAllText(file, output);
+            File.AppendAllText(file, "-------------------------");
+            File.AppendAllText(file, "\n\n");
         }
 
         Console.WriteLine(File.Exists(file));

@@ -108,7 +108,7 @@ public class InfoTests
 
         try
         {
-            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", operationInput.InputFiles);
+            Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", operationInput.InputFiles[0]);
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {

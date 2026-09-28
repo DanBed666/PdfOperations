@@ -21,10 +21,10 @@ public class RunClass
         
         Console.WriteLine(Messages.RunningCommand);
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
-        using Process process = Process.Start(info)!;
-        process.WaitForExit();
         
+        using Process process = Process.Start(info)!;
         string error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
 
         if (allowedExitCodes.Length == 0)
             allowedExitCodes = [0];
