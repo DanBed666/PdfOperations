@@ -28,12 +28,9 @@ public class Files
     public static void SaveToFile(SearchResult found, string output)
     {
         List<string> outputLines = new List<string>();
-        
-        foreach (string lista in found.Lines)
-        {
-            outputLines.AddRange(lista);
-        }
-        
+
+        outputLines.AddRange(found.Lines);
+
         if (!File.Exists(output))
             File.WriteAllLines(output, outputLines);
         else

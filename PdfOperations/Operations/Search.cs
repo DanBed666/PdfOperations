@@ -24,6 +24,7 @@ public class Search
         };
         
         string [] pages = File.ReadAllText(inputPath).Split("\f");
+        List<string> linesFound = new List<string>();
 
         for (int p = 0; p < pages.Length; p++)
         {
@@ -33,16 +34,13 @@ public class Search
             {
                 if (lines[l].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    List<string> linesFound = new List<string>();
                     searchResult.PageNumber = p + 1;
                     searchResult.LineNumber = l + 1;
                     occ += Regex.Matches(lines[l], Regex.Escape(phrase), RegexOptions.IgnoreCase).Count;
-                    searchResult.Occurences = occ;
                 
                     linesFound.Add(inputPath);
                     linesFound.Add("Strona: " + searchResult.PageNumber);
                     linesFound.Add("Linia: " + searchResult.LineNumber);
-                    linesFound.Add("Wystąpienia: " + searchResult.Occurences);
                     linesFound.Add("------------------------------------");
                     linesFound.Add("\n");
                 
@@ -58,26 +56,29 @@ public class Search
                 
                     linesFound.Add("------------------------------------");
                     linesFound.Add("\n");
-                    
-                    searchResult.Lines = linesFound;
                 }
             }
         }
-
+        
         searchResult.Occurences = occ;
 
-        if (searchResult.Lines.Count == 0)
+        if (occ == 0)
         {
-            List<string> lines = new List<string>();
-            lines.Add(inputPath);
-            lines.Add("------------------------------------");
-            lines.Add("\n");
-            lines.Add("Nie znaleziono podanej frazy w pliku!");
-            lines.Add("------------------------------------");
-            lines.Add("\n");
-            searchResult.Lines = lines;
+            searchResult.Lines = new List<string>
+            {
+                inputPath,
+                "------------------------------------",
+                "",
+                "Nie znaleziono podanej frazy w pliku!",
+                "------------------------------------",
+                ""
+            };
+
+            return searchResult;
         }
 
+        linesFound.Add("Wystąpienia: " + searchResult.Occurences);
+        searchResult.Lines = linesFound;
         return searchResult;
     }
 }
