@@ -29,17 +29,19 @@ public class SearchTests
             TempDir = Files.PrepareTempDir()
         };
 
-        foreach (string file in operationInput.InputFiles)
-        {
-            File.Copy(file, Path.Combine(operationContext.TempDir, Path.GetFileName(file)));
-        }
-
         try
         {
-            foreach (string f in Directory.GetFiles(operationContext.TempDir))
+            List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (string file in operationInput.InputFiles)
             {
-                searchResult = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before,
-                    operationInput.After);
+                File.Copy(file, Path.Combine(operationContext.TempDir, Path.GetFileName(file)));
+            }
+            
+            foreach (FileJob fileJob in fileJobs)
+            {
+                searchResult = Search.GetFoundLines(fileJob.TempPath, operationInput.PhraseToFind, operationInput.Before,
+                    operationInput.After, fileJob.InputFile);
                 searchResults.Add(searchResult);
             }
 
@@ -58,11 +60,11 @@ public class SearchTests
 
             List<SearchResult> searchResults2 = new List<SearchResult>();
             operationInput.PhraseToFind = "welcome";
-            
-            foreach (string f in Directory.GetFiles(operationContext.TempDir))
+
+            foreach (FileJob fileJob in fileJobs)
             {
-                searchResult = Search.GetFoundLines(f, operationInput.PhraseToFind, operationInput.Before,
-                    operationInput.After);
+                searchResult = Search.GetFoundLines(fileJob.TempPath, operationInput.PhraseToFind, operationInput.Before,
+                    operationInput.After, fileJob.InputFile);
                 searchResults2.Add(searchResult);
             }
             
@@ -71,8 +73,6 @@ public class SearchTests
 
             int occurences2 = searchResults2.Sum(result => result.Occurences);
             Assert.AreEqual(0, occurences2);
-            
-            //Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
@@ -103,24 +103,40 @@ public class SearchTests
             TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-        
-        foreach (FileJob fileJob in fileJobList)
+        try
         {
-            Convert.PdfToTxt(fileJob);
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Convert.PdfToTxt(fileJob);
+            }
+
+            FileJob reportJob = new FileJob
+            {
+                TempPath = Path.Combine(operationContext.TempDir, operationInput.Output)
+            };
+
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Search.SearchTempTextFiles(operationInput, operationContext, fileJob);
+            }
+
+            Assert.IsTrue(File.Exists(reportJob.TempPath));
+            Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
+
+            string text = File.ReadAllText(reportJob.TempPath);
+            Assert.IsTrue(text.Contains(operationInput.PhraseToFind, StringComparison.OrdinalIgnoreCase));
+
+            foreach (string file in operationInput.InputFiles)
+            {
+                Assert.Contains(file, text);
+            }
         }
-        
-        FileJob reportJob = new FileJob
+        finally
         {
-            TempPath = Path.Combine(operationContext.TempDir, operationInput.Output)
-        };
-        
-        Search.SearchTempTextFiles(operationInput, operationContext);
-        
-        Assert.IsTrue(File.Exists(reportJob.TempPath));
-        Assert.IsGreaterThan(0, new FileInfo(reportJob.TempPath).Length);
-        
-        string text = File.ReadAllText(reportJob.TempPath);
-        Assert.IsTrue(text.Contains(operationInput.PhraseToFind, StringComparison.OrdinalIgnoreCase));
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
     }
 }

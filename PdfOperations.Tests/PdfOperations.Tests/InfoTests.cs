@@ -22,11 +22,11 @@ public class InfoTests
             TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-
         try
         {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Info.ShowInfo(fileJob);
+            //string text = File.ReadAllText()
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
@@ -36,6 +36,13 @@ public class InfoTests
             }
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            string text = File.ReadAllText(fileJob.TempPath);
+
+            foreach (string file in operationInput.InputFiles)
+            {
+                Assert.Contains(file, text);
+            }
         }
         finally
         {
@@ -63,10 +70,9 @@ public class InfoTests
             TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-
         try
         {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Info.ShowFontInfo(fileJob);
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
@@ -77,6 +83,13 @@ public class InfoTests
             }
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            string text = File.ReadAllText(fileJob.TempPath);
+
+            foreach (string file in operationInput.InputFiles)
+            {
+                Assert.Contains(file, text);
+            }
         }
         finally
         {
@@ -104,11 +117,12 @@ public class InfoTests
             TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-
         try
         {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", operationInput.InputFiles[0]);
+            Info.SaveToFile(fileJob.TempPath, "lancuczeszek\n", operationInput.InputFiles[1]);
+            Info.SaveToFile(fileJob.TempPath, "pomidorek\n", operationInput.InputFiles[2]);
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
@@ -118,6 +132,13 @@ public class InfoTests
             }
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            string text = File.ReadAllText(fileJob.TempPath);
+
+            foreach (string file in operationInput.InputFiles)
+            {
+                Assert.Contains(file, text);
+            }
         }
         finally
         {

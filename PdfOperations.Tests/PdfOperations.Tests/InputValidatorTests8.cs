@@ -38,7 +38,7 @@ public class ValidationTests8
     [TestMethod]
     public void IsExtensionValidForOpeTest()
     {
-        string outputExtension = InputValidator.NormalizeExtension(Path.GetExtension("plik.pdf"));
+        string outputExtension = InputValidator.NormalizeExtension(Path.GetExtension("plik.PDF"));
         string outputExtension2 = InputValidator.NormalizeExtension(Path.GetExtension("plik.docx"));
         string outputExtension3 = InputValidator.NormalizeExtension(Path.GetExtension("plik"));
         string opeExt = ".docx";

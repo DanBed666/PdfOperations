@@ -37,6 +37,36 @@ public class ConvertTests()
     }
     
     [TestMethod]
+    public void FileToPdfTestSingle()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["word_1.docx"]),
+            Format = "pdf",
+            Output = "word_1.pdf"
+        };
+
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        try
+        {
+            Convert.FileToPdf(operationInput, operationContext);
+
+            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
     public void PdfToDocxTest()
     {
         OperationInput operationInput = new OperationInput()
@@ -53,11 +83,11 @@ public class ConvertTests()
         {
             Extension = ".docx"
         };
-        
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-        
+
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Convert.PdfToDocx(fileJob);
@@ -71,6 +101,46 @@ public class ConvertTests()
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void PdfToDocxTestSingle()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf"]),
+            Output = "word.docx"
+        };
+
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".docx"
+        };
+        
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Convert.PdfToDocx(fileJob);
+            }
+
+            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
@@ -97,10 +167,10 @@ public class ConvertTests()
             TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-        
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Convert.PdfToPict(fileJob);
@@ -139,11 +209,11 @@ public class ConvertTests()
         {
             TempDir = Files.PrepareTempDir()
         };
-
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-
+        
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Convert.PdfToTxt(fileJob);
@@ -157,6 +227,46 @@ public class ConvertTests()
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void PdfToTxtTestSingle()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf"]),
+            Output = "text.txt"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Convert.PdfToTxt(fileJob);
+            }
+
+            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
@@ -183,10 +293,10 @@ public class ConvertTests()
             TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Convert.PictToTxt(fileJob);
@@ -200,6 +310,46 @@ public class ConvertTests()
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void PictToTxtTestSingle()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["ocr_1.jpg"]),
+            Output = "test.txt"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Convert.PictToTxt(fileJob);
+            }
+
+            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
         {
@@ -227,19 +377,14 @@ public class ConvertTests()
             TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-
         try
         {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Convert.PictToPdf(fileJob);
 
-            foreach (string file in Directory.GetFiles(operationContext.TempDir))
-            {
-                Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
-                Assert.IsGreaterThan(0, new FileInfo(file).Length);
-            }
-            
+            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
+            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
         }
         finally
@@ -267,10 +412,10 @@ public class ConvertTests()
             TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Convert.ExtractPict(fileJob);

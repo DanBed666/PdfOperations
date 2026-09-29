@@ -21,10 +21,10 @@ public class DivideTests
             TempDir = Files.PrepareTempDir()
         };
         
-        List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-
         try
         {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
             foreach (FileJob fileJob in fileJobList)
             {
                 Divide.OneToMany(fileJob);
@@ -65,10 +65,10 @@ public class DivideTests
             TempDir = Files.PrepareTempDir()
         };
         
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-
         try
         {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+            
             Divide.ManyToOne(fileJob);
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
