@@ -59,7 +59,5 @@ public class Info
             File.AppendAllText(file, "-------------------------");
             File.AppendAllText(file, "\n\n");
         }
-
-        Console.WriteLine(File.Exists(file));
     }
 }
