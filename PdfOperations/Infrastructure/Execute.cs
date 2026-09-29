@@ -136,7 +136,10 @@ public class Execute
             operation.FileOperationActionMultiple(fileJob);
         }
 
-        operation.ReportOperationAction(fileInput, context);
+        foreach (FileJob fileJob in fileJobs)
+        {
+            operation.ReportOperationAction(fileInput, context, fileJob);
+        }
 
         Dictionary<string, string> conflicts = MoveNewFilesAndCollectConflicts(context.TempDir, fileInput.Dir);
 
@@ -185,16 +188,6 @@ public class Execute
         }
 
         return conflicts;
-    }
-
-    public static void MoveToFinalDir(string tempDir, string finalDir)
-    {
-        foreach (string file in Directory.GetFiles(tempDir))
-        {
-            string finalPath = Files.PrepareFinalPath(finalDir, file);
-
-            File.Move(file, finalPath, true);
-        }
     }
     
     public static bool AskForOverwrite()

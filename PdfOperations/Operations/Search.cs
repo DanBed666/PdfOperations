@@ -4,26 +4,23 @@ namespace PdfOperations;
 
 public class Search
 {
-    public static void SearchTempTextFiles(OperationInput input, OperationContext context)
+    public static void SearchTempTextFiles(OperationInput input, OperationContext context, FileJob fileJob)
     {
-        foreach (string f in Directory.GetFiles(context.TempDir))
-        {
-            SearchResult foundLines = GetFoundLines(f, input.PhraseToFind, input.Before, input.After);
-            Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
-            File.Delete(f);
-        }
+        SearchResult foundLines = GetFoundLines(fileJob.TempPath, input.PhraseToFind, input.Before, input.After, fileJob.InputFile);
+        Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
+        File.Delete(fileJob.TempPath);
     }
     
-    public static SearchResult GetFoundLines(string inputPath, string phrase, int before, int after)
+    public static SearchResult GetFoundLines(string inputTempPath, string phrase, int before, int after, string inputFile)
     {
         int occ = 0;
         
         SearchResult searchResult = new SearchResult()
         {
-            FilePath = inputPath
+            FilePath = inputTempPath
         };
         
-        string [] pages = File.ReadAllText(inputPath).Split("\f");
+        string [] pages = File.ReadAllText(inputTempPath).Split("\f");
         List<string> linesFound = new List<string>();
 
         for (int p = 0; p < pages.Length; p++)
@@ -38,7 +35,8 @@ public class Search
                     searchResult.LineNumber = l + 1;
                     occ += Regex.Matches(lines[l], Regex.Escape(phrase), RegexOptions.IgnoreCase).Count;
                 
-                    linesFound.Add(inputPath);
+                    linesFound.Add("\n");
+                    linesFound.Add(inputFile);
                     linesFound.Add("Strona: " + searchResult.PageNumber);
                     linesFound.Add("Linia: " + searchResult.LineNumber);
                     linesFound.Add("------------------------------------");
@@ -66,7 +64,8 @@ public class Search
         {
             searchResult.Lines = new List<string>
             {
-                inputPath,
+                "\n",
+                inputFile,
                 "------------------------------------",
                 "",
                 "Nie znaleziono podanej frazy w pliku!",
@@ -77,7 +76,7 @@ public class Search
             return searchResult;
         }
 
-        linesFound.Add("Wystąpienia: " + searchResult.Occurences);
+        linesFound.Add("Wystąpienia w całym pliku: " + searchResult.Occurences);
         searchResult.Lines = linesFound;
         return searchResult;
     }
