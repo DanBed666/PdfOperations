@@ -12,7 +12,7 @@ public class Replacement
         string extractedDir = ExtractDocumentToTemp(file.InputFile, context.TempDir);
         string xmlPath = GetEditableXmlPath(extractedDir, file.InputFile);
         List<ReplacementPair> replacementPairs = ReadReplacementsFromExcel(input.PlaceholderFile);
-        ReplaceTextInFile(xmlPath, replacementPairs);
+        ReplaceTextInFile(xmlPath, replacementPairs, Path.GetExtension(file.InputFile));
         CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
     }
     
@@ -31,7 +31,7 @@ public class Replacement
         if (extension.Equals(".docx"))
             return Path.Combine(extractedDir, "word", "document.xml");
         
-        if (extension.Equals(".odg"))
+        if (extension.Equals(".odg") || extension.Equals(".odt"))
             return Path.Combine(extractedDir, "content.xml");
 
         throw new InvalidOperationException($"Nieprawidłowe rozszerzenie {extension}");
@@ -72,8 +72,19 @@ public class Replacement
 
         return replacementPairs;
     }
+    
+    public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> pairs, string extension)
+    {
+        if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
+            ReplaceTextInDocxXml(xmlPath, pairs);
+        else if (extension.Equals(".odt", StringComparison.OrdinalIgnoreCase) ||
+                 extension.Equals(".odg", StringComparison.OrdinalIgnoreCase))
+            ReplaceTextInOdfXml(xmlPath, pairs);
+        else
+            throw new InvalidOperationException($"Nieobsługiwany format: {extension}");
+    }
 
-    public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> replacementPairs)
+    public static void ReplaceTextInDocxXml(string xmlPath, List<ReplacementPair> replacementPairs)
     {
         XDocument doc = XDocument.Load(xmlPath);
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
@@ -89,6 +100,21 @@ public class Replacement
         }
         
         doc.Save(xmlPath);
+    }
+    
+    public static void ReplaceTextInOdfXml(string xmlPath, List<ReplacementPair> replacementPairs)
+    {
+        string text = File.ReadAllText(xmlPath);
+
+        foreach (ReplacementPair pair in replacementPairs)
+        {
+            if (pair.IgnoreCase)
+                text = text.Replace(pair.Find, pair.Replace, StringComparison.OrdinalIgnoreCase);
+            
+            text = text.Replace(pair.Find, pair.Replace);
+        }
+        
+        File.WriteAllText(xmlPath, text);
     }
 
     public static void CreateDocumentFromDirectory(OperationInput input, string extDir, string tempPath, string extension)
