@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-namespace PdfOperations.Tests;
+﻿namespace PdfOperations.Tests;
 
 [TestClass]
 public class ExecutionBuilderTests
@@ -23,21 +21,30 @@ public class ExecutionBuilderTests
             TempDir = Files.PrepareTempDir()
         };
 
-        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-
-        foreach (FileJob fileJob in fileJobs)
+        try
         {
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
-        }
+            List<FileJob> fileJobs =
+                ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
 
-        Assert.IsTrue(Directory.Exists(operationContext.TempDir));
-        Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
-        Assert.AreEqual("test_2.pdf", Path.GetFileName(operationInput.InputFiles[1]));
-        Assert.AreEqual("test_3.pdf", Path.GetFileName(operationInput.InputFiles[2]));
-        
-        Assert.AreEqual("test_1.txt", Path.GetFileName(fileJobs[0].TempPath));
-        Assert.AreEqual("test_2.txt", Path.GetFileName(fileJobs[1].TempPath));
-        Assert.AreEqual("test_3.txt", Path.GetFileName(fileJobs[2].TempPath));
+            foreach (FileJob fileJob in fileJobs)
+            {
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
+            }
+
+            Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+            Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
+            Assert.AreEqual("test_2.pdf", Path.GetFileName(operationInput.InputFiles[1]));
+            Assert.AreEqual("test_3.pdf", Path.GetFileName(operationInput.InputFiles[2]));
+
+            Assert.AreEqual("test_1.txt", Path.GetFileName(fileJobs[0].TempPath));
+            Assert.AreEqual("test_2.txt", Path.GetFileName(fileJobs[1].TempPath));
+            Assert.AreEqual("test_3.txt", Path.GetFileName(fileJobs[2].TempPath));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
     }
     
     [TestMethod]

@@ -7,9 +7,17 @@ public class FilesTests
     public void PrepareTempDirTest()
     {
         string tempDir = Files.PrepareTempDir();
-        
-        Assert.IsNotNull(tempDir);
-        Assert.IsTrue(Directory.Exists(tempDir));
+
+        try
+        {
+            Assert.IsNotNull(tempDir);
+            Assert.IsTrue(Directory.Exists(tempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+        }
     }
     
     [TestMethod]
