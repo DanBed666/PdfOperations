@@ -3,4 +3,8 @@
 **/.idea/
 **/tools/
 *.sln.DotSettings.user
-**/publish/
+PdfOperations-release.zip
+PdfOperations/publish/
+publish/
+**/publish/ 
+ 
