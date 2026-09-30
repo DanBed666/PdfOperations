@@ -15,10 +15,28 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid>
-        <TextBlock Text="{Binding Greeting}"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center" />
+    <Grid ColumnDefinitions="220,*" RowDefinitions="*,80">
+        <Border Grid.RowSpan="2"
+                Grid.Column="0"
+                Background="#20242A"
+                Padding="12">
+            <ListBox ItemsSource="{Binding Operations}"
+                     SelectedItem="{Binding SelectedOperation}"/>
+        </Border>
+
+        <Grid Grid.Column="1"
+              Grid.Row="0"
+              Margin="20">
+            <TextBlock Text="Select operation"
+                       FontSize="24" />
+        </Grid>
+
+        <Border Grid.Column="1"
+                Grid.Row="1"
+                Background="#F3F4F6"
+                Padding="12">
+            <TextBlock Text="{Binding StatusMessage}" />
+        </Border>
     </Grid>
 
 </Window>
