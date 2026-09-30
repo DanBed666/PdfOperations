@@ -1,11 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PdfOperations.Gui.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty] public partial string Greeting { get; set; } = "Welcome to Avalonia!";
-    
     public string[] Operations { get; } =
     [
         "PDF to TXT",
@@ -18,24 +17,31 @@ public partial class MainViewModel : ViewModelBase
         "Replacement"
     ];
 
-    private string? _selectedOperation;
+    [ObservableProperty]
+    private string? selectedOperation;
 
-    public string? SelectedOperation
+    [ObservableProperty]
+    private string statusMessage = "Ready";
+    
+    [ObservableProperty]
+    private string inputFile = "";
+
+    [ObservableProperty]
+    private string outputDirectory = "";
+
+    [ObservableProperty]
+    private string outputFileName = "output.txt";
+    
+    [RelayCommand]
+    private void StartPdfToTxt()
     {
-        get => _selectedOperation;
-        set
-        {
-            if (_selectedOperation == value)
-                return;
-
-            _selectedOperation = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(StatusMessage));
-        }
+        StatusMessage = "PDF to TXT is not connected yet.";
     }
 
-    public string StatusMessage =>
-        string.IsNullOrWhiteSpace(SelectedOperation)
+    partial void OnSelectedOperationChanged(string? value)
+    {
+        StatusMessage = string.IsNullOrWhiteSpace(value)
             ? "Ready"
-            : $"Selected operation: {SelectedOperation}";
+            : $"Selected operation: {value}";
+    }
 }

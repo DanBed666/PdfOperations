@@ -24,12 +24,27 @@
                      SelectedItem="{Binding SelectedOperation}"/>
         </Border>
 
-        <Grid Grid.Column="1"
-              Grid.Row="0"
-              Margin="20">
-            <TextBlock Text="Select operation"
-                       FontSize="24" />
-        </Grid>
+        <StackPanel Grid.Column="1"
+                    Grid.Row="0"
+                    Margin="20"
+                    Spacing="12">
+            <TextBlock Text="PDF to TXT"
+                       FontSize="24"
+                       FontWeight="SemiBold" />
+
+            <TextBlock Text="Input file" />
+            <TextBox Text="{Binding InputFile}" />
+
+            <TextBlock Text="Output directory" />
+            <TextBox Text="{Binding OutputDirectory}" />
+
+            <TextBlock Text="Output file name" />
+            <TextBox Text="{Binding OutputFileName}" />
+
+            <Button Content="Start"
+                    Command="{Binding StartPdfToTxtCommand}"
+                    Width="120" />
+        </StackPanel>
 
         <Border Grid.Column="1"
                 Grid.Row="1"
