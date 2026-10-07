@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
@@ -42,13 +43,13 @@ public partial class ManyToManyViewModel : ViewModelBase
     private string lastOutputDirectory = "";
     
     [RelayCommand]
-    private void StartPdfToTxt()
+    private async Task StartPdfToTxt()
     {
         try
         {
             if (string.IsNullOrWhiteSpace(InputFile))
             {
-                StatusMessage = "Select input PDF file.";
+                StatusMessage = "Select input file.";
                 return;
             }
 
@@ -69,56 +70,63 @@ public partial class ManyToManyViewModel : ViewModelBase
                 StatusMessage = "Output directory does not exist.";
                 return;
             }
-            
+
             if (string.IsNullOrWhiteSpace(OutputFileName))
                 OutputFileName = Path.GetFileNameWithoutExtension(InputFile) + operation.OutputExtension;
 
-            if (Path.GetExtension(OutputFileName).Equals("") ||
+            if (string.IsNullOrWhiteSpace(Path.GetExtension(OutputFileName)) ||
                 !Path.GetExtension(OutputFileName).Equals(operation.OutputExtension, StringComparison.OrdinalIgnoreCase))
             {
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + operation.OutputExtension;
             }
 
-            StatusMessage = "Converting PDF to TXT...";
+            StatusMessage = $"Starting {Title}...";
 
-            OperationInput operationInput = new OperationInput
+            string finalPath = "";
+
+            await Task.Run(() =>
             {
-                InputFiles = [InputFile],
-                Output = OutputFileName
-            };
+                OperationInput operationInput = new OperationInput
+                {
+                    InputFiles = [InputFile],
+                    Output = OutputFileName
+                };
 
-            OperationDefinition operationDefinition = new OperationDefinition
-            {
-                Extension = operation.OutputExtension
-            };
+                OperationDefinition operationDefinition = new OperationDefinition
+                {
+                    Extension = operation.OutputExtension
+                };
 
-            OperationContext operationContext = new OperationContext
-            {
-                TempDir = Files.PrepareTempDir()
-            };
+                OperationContext operationContext = new OperationContext
+                {
+                    TempDir = Files.PrepareTempDir()
+                };
 
-            try
-            {
-                List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
-                    operationDefinition,
-                    operationInput,
-                    operationContext);
+                try
+                {
+                    List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
+                        operationDefinition,
+                        operationInput,
+                        operationContext);
 
-                FileJob fileJob = fileJobs[0];
-                operation.Action?.Invoke(operationInput, operationContext, fileJob);
+                    FileJob fileJob = fileJobs[0];
 
-                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                finalPath = GetAvailablePath(finalPath);
+                    operation.Action?.Invoke(operationInput, operationContext, fileJob);
 
-                File.Move(fileJob.TempPath, finalPath);
-                LastOutputDirectory = OutputDirectory;
-                StatusMessage = $"Saved: {finalPath}";
-            }
-            finally
-            {
-                if (Directory.Exists(operationContext.TempDir))
-                    Directory.Delete(operationContext.TempDir, true);
-            }
+                    finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                    finalPath = GetAvailablePath(finalPath);
+
+                    File.Move(fileJob.TempPath, finalPath);
+                }
+                finally
+                {
+                    if (Directory.Exists(operationContext.TempDir))
+                        Directory.Delete(operationContext.TempDir, true);
+                }
+            });
+
+            LastOutputDirectory = OutputDirectory;
+            StatusMessage = $"Done. Saved: {finalPath}";
         }
         catch (Exception e)
         {
