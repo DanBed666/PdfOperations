@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -31,7 +32,10 @@ public partial class ManyToManyViewModel : ViewModelBase
     private string statusMessage = "Ready";
 
     [ObservableProperty]
-    private string inputFile = "";
+    private string [] inputFiles = [];
+    
+    [ObservableProperty]
+    private string inputFilesText = "";
 
     [ObservableProperty]
     private string outputDirectory = "";
@@ -41,21 +45,26 @@ public partial class ManyToManyViewModel : ViewModelBase
     
     [ObservableProperty]
     private string lastOutputDirectory = "";
+    public bool CanEditOutputFileName => InputFiles.Length == 1;
     
     [RelayCommand]
-    private async Task StartPdfToTxt()
+    private async Task Start()
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(InputFile))
+            if (InputFiles.Length == 0)
             {
                 StatusMessage = "Select input file.";
                 return;
             }
 
-            if (!File.Exists(InputFile))
+            string[] missingFiles = InputFiles
+                .Where(file => !File.Exists(file))
+                .ToArray();
+
+            if (missingFiles.Length > 0)
             {
-                StatusMessage = "Input file does not exist.";
+                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
                 return;
             }
 
@@ -72,7 +81,9 @@ public partial class ManyToManyViewModel : ViewModelBase
             }
 
             if (string.IsNullOrWhiteSpace(OutputFileName))
-                OutputFileName = Path.GetFileNameWithoutExtension(InputFile) + operation.OutputExtension;
+                OutputFileName = InputFiles.Length == 1
+                    ? Path.GetFileNameWithoutExtension(InputFiles[0]) + operation.OutputExtension
+                    : operation.DefaultOutputName + operation.OutputExtension;
 
             if (string.IsNullOrWhiteSpace(Path.GetExtension(OutputFileName)) ||
                 !Path.GetExtension(OutputFileName).Equals(operation.OutputExtension, StringComparison.OrdinalIgnoreCase))
@@ -83,12 +94,14 @@ public partial class ManyToManyViewModel : ViewModelBase
             StatusMessage = $"Starting {Title}...";
 
             string finalPath = "";
+            
+            int savedFilesCount = 0;
 
             await Task.Run(() =>
             {
                 OperationInput operationInput = new OperationInput
                 {
-                    InputFiles = [InputFile],
+                    InputFiles = InputFiles,
                     Output = OutputFileName
                 };
 
@@ -109,14 +122,16 @@ public partial class ManyToManyViewModel : ViewModelBase
                         operationInput,
                         operationContext);
 
-                    FileJob fileJob = fileJobs[0];
+                    foreach (FileJob fileJob in fileJobs)
+                    {
+                        operation.Action?.Invoke(operationInput, operationContext, fileJob);
 
-                    operation.Action?.Invoke(operationInput, operationContext, fileJob);
+                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalPath = GetAvailablePath(finalPath);
 
-                    finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                    finalPath = GetAvailablePath(finalPath);
-
-                    File.Move(fileJob.TempPath, finalPath);
+                        File.Move(fileJob.TempPath, finalPath);
+                        savedFilesCount++;
+                    }
                 }
                 finally
                 {
@@ -126,11 +141,32 @@ public partial class ManyToManyViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved: {finalPath}";
+            
+            StatusMessage = savedFilesCount == 1
+                ? $"Done. Saved: {finalPath}"
+                : $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
         }
         catch (Exception e)
         {
             StatusMessage = $"Error: {e.Message}";
+        }
+    }
+    
+    partial void OnInputFilesChanged(string[] value)
+    {
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+
+        if (value.Length == 1)
+        {
+            OutputFileName = Path.GetFileNameWithoutExtension(value[0]) + operation.OutputExtension;
+        }
+        else if (value.Length > 1)
+        {
+            OutputFileName = "Generated from input file names";
+        }
+        else
+        {
+            OutputFileName = "";
         }
     }
     

@@ -25,21 +25,27 @@ public partial class ManyToManyView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select input file",
-            AllowMultiple = false,
+            Title = viewModel.FileDialogTitle,
+            AllowMultiple = true,
             FileTypeFilter =
             [
-                new FilePickerFileType("PDF files")
+                new FilePickerFileType("Input files")
                 {
-                    Patterns = ["*.pdf"]
+                    Patterns = viewModel.FilePatterns
                 }
             ]
         });
 
-        string? path = files.FirstOrDefault()?.Path.LocalPath;
+        string[] paths = files
+            .Select(file => file.Path.LocalPath)
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .ToArray();
 
-        if (!string.IsNullOrWhiteSpace(path))
-            viewModel.InputFile = path;
+        if (paths.Length == 0)
+            return;
+
+        viewModel.InputFiles = paths;
+        viewModel.InputFilesText = string.Join("; ", paths.Select(System.IO.Path.GetFileName));
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
