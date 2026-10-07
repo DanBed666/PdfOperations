@@ -11,6 +11,10 @@ namespace PdfOperations.Gui.ViewModels;
 public partial class ManyToManyViewModel : ViewModelBase
 {
     private readonly GuiOperationDefinition operation;
+    
+    public string InputTitle => operation.InputTitle;
+    public string FileDialogTitle => operation.FileDialogTitle;
+    public string[] FilePatterns => operation.FilePatterns;
 
     public ManyToManyViewModel(GuiOperationDefinition operation)
     {

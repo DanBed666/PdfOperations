@@ -41,6 +41,17 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
             }),
+            "PDF to DOCX" => new ManyToManyViewModel(new GuiOperationDefinition
+            {
+                Name = "PdfToDocx",
+                Title = "PDF to DOCX",
+                InputTitle = "Input PDF file",
+                OutputExtension = ".docx",
+                DefaultOutputName = "output",
+                FileDialogTitle = "Select PDF file",
+                FilePatterns = ["*.pdf"],
+                Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
+            }),
             _ => null
         };
         
