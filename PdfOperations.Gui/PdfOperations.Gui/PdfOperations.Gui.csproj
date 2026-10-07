@@ -26,4 +26,14 @@
     <ItemGroup>
         <ProjectReference Include="..\..\PdfOperations\PdfOperations.csproj" />
     </ItemGroup>
+
+    <Target Name="CopyToolsToOutput" AfterTargets="Build">
+        <ItemGroup>
+            <ToolFiles Include="..\..\PdfOperations\bin\$(Configuration)\net10.0-windows\tools\**\*.*" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(ToolFiles)"
+            DestinationFiles="@(ToolFiles->'$(OutputPath)tools\%(RecursiveDir)%(Filename)%(Extension)')"
+            SkipUnchangedFiles="true" />
+    </Target>
 </Project>
