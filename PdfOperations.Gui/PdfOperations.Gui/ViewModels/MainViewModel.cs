@@ -52,6 +52,16 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
+            "Merge PDF" => new ManyToOneViewModel(new GuiOperationDefinition
+            {
+                Name = "MergePdf",
+                Title = "Merge PDF",
+                OutputExtension = ".pdf",
+                DefaultOutputName = "merged",
+                FileDialogTitle = "Select PDF files",
+                FilePatterns = ["*.pdf"],
+                SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
+            }),
             _ => null
         };
         

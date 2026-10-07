@@ -12,4 +12,5 @@ public class GuiOperationDefinition
     public string FileDialogTitle { get; init; } = "Select input file";
     public string[] FilePatterns { get; init; } = [];
     public Action<OperationInput, OperationContext, FileJob>? Action { get; init; }
+    public Action<FileJob>? SingleOutputAction { get; init; }
 }
