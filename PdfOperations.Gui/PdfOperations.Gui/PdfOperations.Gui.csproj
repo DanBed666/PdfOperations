@@ -26,6 +26,13 @@
         <ProjectReference Include="..\..\PdfOperations\PdfOperations.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Views\ManyToOneView.axaml.cs">
+        <DependentUpon>ManyToOneView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
     <Target Name="CopyToolsToOutput" AfterTargets="Build">
         <ItemGroup>
             <ToolFiles Include="..\..\PdfOperations\bin\$(Configuration)\net10.0-windows\tools\**\*.*" />
