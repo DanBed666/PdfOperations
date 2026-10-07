@@ -24,43 +24,10 @@
                      SelectedItem="{Binding SelectedOperation}"/>
         </Border>
 
-        <StackPanel Grid.Column="1"
-                    Grid.Row="0"
-                    Margin="20"
-                    Spacing="12">
-            <TextBlock Text="PDF to TXT"
-                       FontSize="24"
-                       FontWeight="SemiBold" />
-
-            <TextBlock Text="Input file" />
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                <TextBox Grid.Column="0"
-                         Text="{Binding InputFile}" />
-                <Button Grid.Column="1"
-                        Content="Browse"
-                        Click="BrowseInputFile_Click" />
-            </Grid>
-
-            <TextBlock Text="Output directory" />
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                <TextBox Grid.Column="0"
-                         Text="{Binding OutputDirectory}" />
-                <Button Grid.Column="1"
-                        Content="Browse"
-                        Click="BrowseOutputDirectory_Click" />
-            </Grid>
-
-            <TextBlock Text="Output file name" />
-            <TextBox Text="{Binding OutputFileName}" />
-
-            <Button Content="Start"
-                    Command="{Binding StartPdfToTxtCommand}"
-                    Width="120" />
-            
-            <Button Content="Open output folder"
-                    Command="{Binding OpenOutputFolderCommand}"
-                    Width="170" />
-        </StackPanel>
+        <ContentControl Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="20"
+                        Content="{Binding CurrentOperationViewModel}" />
 
         <Border Grid.Column="1"
                 Grid.Row="1"
