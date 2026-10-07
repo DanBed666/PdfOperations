@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -35,6 +36,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private string outputFileName = "output.txt";
     
+    [ObservableProperty]
+    private string lastOutputDirectory = "";
+    
     [RelayCommand]
     private void StartPdfToTxt()
     {
@@ -46,12 +50,24 @@ public partial class MainViewModel : ViewModelBase
                 return;
             }
 
+            if (!File.Exists(InputFile))
+            {
+                StatusMessage = "Input file does not exist.";
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
                 StatusMessage = "Select output directory.";
                 return;
             }
 
+            if (!Directory.Exists(OutputDirectory))
+            {
+                StatusMessage = "Output directory does not exist.";
+                return;
+            }
+            
             if (string.IsNullOrWhiteSpace(OutputFileName))
                 OutputFileName = Path.GetFileNameWithoutExtension(InputFile) + ".txt";
 
@@ -60,6 +76,8 @@ public partial class MainViewModel : ViewModelBase
             {
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".txt";
             }
+
+            StatusMessage = "Converting PDF to TXT...";
 
             OperationInput operationInput = new OperationInput
             {
@@ -89,12 +107,10 @@ public partial class MainViewModel : ViewModelBase
                 Convert.PdfToTxt(fileJob);
 
                 string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-
-                if (File.Exists(finalPath))
-                    File.Delete(finalPath);
+                finalPath = GetAvailablePath(finalPath);
 
                 File.Move(fileJob.TempPath, finalPath);
-
+                LastOutputDirectory = OutputDirectory;
                 StatusMessage = $"Saved: {finalPath}";
             }
             finally
@@ -108,6 +124,46 @@ public partial class MainViewModel : ViewModelBase
             StatusMessage = $"Error: {e.Message}";
         }
     }
+    
+    [RelayCommand]
+    private void OpenOutputFolder()
+    {
+        if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
+            !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = "No output folder to open.";
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = LastOutputDirectory,
+            UseShellExecute = true
+        });
+    }
+    
+    private static string GetAvailablePath(string path)
+    {
+        if (!File.Exists(path))
+            return path;
+
+        string directory = Path.GetDirectoryName(path)!;
+        string name = Path.GetFileNameWithoutExtension(path);
+        string extension = Path.GetExtension(path);
+
+        int i = 1;
+
+        while (true)
+        {
+            string candidate = Path.Combine(directory, $"{name}_{i}{extension}");
+
+            if (!File.Exists(candidate))
+                return candidate;
+
+            i++;
+        }
+    }
+    
     partial void OnSelectedOperationChanged(string? value)
     {
         StatusMessage = string.IsNullOrWhiteSpace(value)

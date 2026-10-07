@@ -56,6 +56,10 @@
             <Button Content="Start"
                     Command="{Binding StartPdfToTxtCommand}"
                     Width="120" />
+            
+            <Button Content="Open output folder"
+                    Command="{Binding OpenOutputFolderCommand}"
+                    Width="170" />
         </StackPanel>
 
         <Border Grid.Column="1"
