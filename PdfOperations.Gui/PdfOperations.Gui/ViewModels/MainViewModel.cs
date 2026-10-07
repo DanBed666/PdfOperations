@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -29,10 +30,17 @@ public partial class MainViewModel : ViewModelBase
     {
         CurrentOperationViewModel = value switch
         {
-            "PDF to TXT" => new ManyToManyViewModel
+            "PDF to TXT" => new ManyToManyViewModel(new GuiOperationDefinition
             {
-                Title = "PDF to TXT"
-            },
+                Name = "PdfToTxt",
+                Title = "PDF to TXT",
+                InputTitle = "Input PDF file",
+                OutputExtension = ".txt",
+                DefaultOutputName = "output",
+                FileDialogTitle = "Select PDF file",
+                FilePatterns = ["*.pdf"],
+                Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
+            }),
             _ => null
         };
         

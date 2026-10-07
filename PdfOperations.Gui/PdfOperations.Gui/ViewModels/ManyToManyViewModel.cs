@@ -4,11 +4,21 @@ using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
 public partial class ManyToManyViewModel : ViewModelBase
 {
+    private readonly GuiOperationDefinition operation;
+
+    public ManyToManyViewModel(GuiOperationDefinition operation)
+    {
+        this.operation = operation;
+        Title = operation.Title;
+        OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
+    }
+    
     [ObservableProperty]
     private string title = "Many to many operation";
 
@@ -57,12 +67,12 @@ public partial class ManyToManyViewModel : ViewModelBase
             }
             
             if (string.IsNullOrWhiteSpace(OutputFileName))
-                OutputFileName = Path.GetFileNameWithoutExtension(InputFile) + ".txt";
+                OutputFileName = Path.GetFileNameWithoutExtension(InputFile) + operation.OutputExtension;
 
             if (Path.GetExtension(OutputFileName).Equals("") ||
-                !Path.GetExtension(OutputFileName).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                !Path.GetExtension(OutputFileName).Equals(operation.OutputExtension, StringComparison.OrdinalIgnoreCase))
             {
-                OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".txt";
+                OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + operation.OutputExtension;
             }
 
             StatusMessage = "Converting PDF to TXT...";
@@ -75,7 +85,7 @@ public partial class ManyToManyViewModel : ViewModelBase
 
             OperationDefinition operationDefinition = new OperationDefinition
             {
-                Extension = ".txt"
+                Extension = operation.OutputExtension
             };
 
             OperationContext operationContext = new OperationContext
@@ -91,8 +101,7 @@ public partial class ManyToManyViewModel : ViewModelBase
                     operationContext);
 
                 FileJob fileJob = fileJobs[0];
-
-                Convert.PdfToTxt(fileJob);
+                operation.Action?.Invoke(operationInput, operationContext, fileJob);
 
                 string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
                 finalPath = GetAvailablePath(finalPath);
