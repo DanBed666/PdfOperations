@@ -62,6 +62,7 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
             }),
+            "Search" => new SearchViewModel(),
             _ => null
         };
         
