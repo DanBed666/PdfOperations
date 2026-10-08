@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -37,8 +38,46 @@ public partial class PagesViewModel : ViewModelBase
     
     [ObservableProperty]
     private string inputFilesInfo = "";
+    
+    [ObservableProperty]
+    private PageSelectionMode selectedMode = PageSelectionMode.CustomPages;
+    
+    [ObservableProperty]
+    private string selectedPageMode = "Custom pages";
+
+    [ObservableProperty]
+    private string splitAfterPages = "";
+    
+    public List<string> PageModes { get; } =
+    [
+        "Custom pages",
+        "Even pages",
+        "Odd pages",
+        "Split by pages"
+    ];
+    
+    public bool IsCustomPagesMode => SelectedMode == PageSelectionMode.CustomPages;
+
+    public bool IsSplitByPagesMode => SelectedMode == PageSelectionMode.SplitByPages;
 
     public bool CanEditOutputFileName => InputFiles.Length == 1;
+    
+    partial void OnSelectedModeChanged(PageSelectionMode value)
+    {
+        OnPropertyChanged(nameof(IsCustomPagesMode));
+        OnPropertyChanged(nameof(IsSplitByPagesMode));
+    }
+    
+    partial void OnSelectedPageModeChanged(string value)
+    {
+        SelectedMode = value switch
+        {
+            "Even pages" => PageSelectionMode.EvenPages,
+            "Odd pages" => PageSelectionMode.OddPages,
+            "Split by pages" => PageSelectionMode.SplitByPages,
+            _ => PageSelectionMode.CustomPages
+        };
+    }
 
     partial void OnInputFilesChanged(string[] value)
     {
@@ -73,7 +112,7 @@ public partial class PagesViewModel : ViewModelBase
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(Pages))
+            if (SelectedMode == PageSelectionMode.CustomPages && string.IsNullOrWhiteSpace(Pages))
             {
                 StatusMessage = "Enter pages, for example: 1,3-5.";
                 return;
@@ -124,6 +163,17 @@ public partial class PagesViewModel : ViewModelBase
 
                     foreach (FileJob fileJob in fileJobs)
                     {
+                        int pageCount = Info.GetPdfPagesSingle(fileJob.InputFile);
+                        
+                        operationInput.Pages = SelectedMode switch
+                        {
+                            PageSelectionMode.CustomPages => Pages,
+                            PageSelectionMode.EvenPages => PagesRangeBuilder.BuildEvenPages(pageCount),
+                            PageSelectionMode.OddPages => PagesRangeBuilder.BuildOddPages(pageCount),
+                            PageSelectionMode.SplitByPages => "",
+                            _ => Pages
+                        };
+                        
                         PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
 
                         finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
