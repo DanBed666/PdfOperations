@@ -90,6 +90,57 @@ public partial class PagesViewModel : ViewModelBase
         else
             OutputFileName = "";
     }
+    
+    private static bool TryParseSplitAfterPages(string value, int pageCount, out List<int> splitAfterPages, out string errorMessage)
+    {
+        splitAfterPages = new List<int>();
+        errorMessage = "";
+
+        string[] parts = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (parts.Length == 0)
+        {
+            errorMessage = "Enter split pages, for example: 4,10,15.";
+            return false;
+        }
+
+        foreach (string part in parts)
+        {
+            if (!int.TryParse(part, out int page))
+            {
+                errorMessage = $"Invalid split page: {part}.";
+                return false;
+            }
+
+            if (page < 1)
+            {
+                errorMessage = "Split page must be greater than 0.";
+                return false;
+            }
+
+            if (page >= pageCount)
+            {
+                errorMessage = $"Split page must be smaller than page count ({pageCount}).";
+                return false;
+            }
+
+            splitAfterPages.Add(page);
+        }
+
+        if (splitAfterPages.Count != splitAfterPages.Distinct().Count())
+        {
+            errorMessage = "Split pages cannot contain duplicates.";
+            return false;
+        }
+
+        if (!splitAfterPages.SequenceEqual(splitAfterPages.OrderBy(page => page)))
+        {
+            errorMessage = "Split pages must be in ascending order.";
+            return false;
+        }
+
+        return true;
+    }
 
     [RelayCommand]
     private async Task Start()
@@ -115,6 +166,12 @@ public partial class PagesViewModel : ViewModelBase
             if (SelectedMode == PageSelectionMode.CustomPages && string.IsNullOrWhiteSpace(Pages))
             {
                 StatusMessage = "Enter pages, for example: 1,3-5.";
+                return;
+            }
+            
+            if (SelectedMode == PageSelectionMode.SplitByPages && string.IsNullOrWhiteSpace(SplitAfterPages))
+            {
+                StatusMessage = "Enter split pages, for example: 4,10,15.";
                 return;
             }
 
@@ -174,6 +231,28 @@ public partial class PagesViewModel : ViewModelBase
                             _ => Pages
                         };
                         
+                        if (SelectedMode == PageSelectionMode.SplitByPages)
+                        {
+                            if (!TryParseSplitAfterPages(SplitAfterPages, pageCount, out List<int> splitAfterPages, out string errorMessage))
+                            {
+                                StatusMessage = errorMessage;
+                                return;
+                            }
+
+                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount);
+
+                            foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
+                            {
+                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = GetAvailablePath(finalPath);
+
+                                File.Move(tempFile, finalPath);
+                                savedFilesCount++;
+                            }
+
+                            continue;
+                        }
+                        
                         PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
 
                         finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
@@ -182,6 +261,10 @@ public partial class PagesViewModel : ViewModelBase
                         File.Move(fileJob.TempPath, finalPath);
                         savedFilesCount++;
                     }
+                    
+                    StatusMessage = savedFilesCount == 1
+                        ? $"Done. Saved: {finalPath}"
+                        : $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
                 }
                 finally
                 {
@@ -191,10 +274,6 @@ public partial class PagesViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-
-            StatusMessage = savedFilesCount == 1
-                ? $"Done. Saved: {finalPath}"
-                : $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
         }
         catch (Exception e)
         {
