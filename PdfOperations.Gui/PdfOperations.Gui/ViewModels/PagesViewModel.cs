@@ -1,0 +1,193 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+namespace PdfOperations.Gui.ViewModels;
+
+public partial class PagesViewModel : ViewModelBase
+{
+    [ObservableProperty]
+    private string title = "PDF pages";
+
+    [ObservableProperty]
+    private string inputFilesText = "";
+
+    [ObservableProperty]
+    private string[] inputFiles = [];
+
+    [ObservableProperty]
+    private string pages = "";
+
+    [ObservableProperty]
+    private string outputDirectory = "";
+
+    [ObservableProperty]
+    private string outputFileName = "";
+
+    [ObservableProperty]
+    private string statusMessage = "Ready";
+
+    [ObservableProperty]
+    private string lastOutputDirectory = "";
+    
+    [ObservableProperty]
+    private string inputFilesInfo = "";
+
+    public bool CanEditOutputFileName => InputFiles.Length == 1;
+
+    partial void OnInputFilesChanged(string[] value)
+    {
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+
+        if (value.Length == 1)
+            OutputFileName = Path.GetFileNameWithoutExtension(value[0]) + ".pdf";
+        else if (value.Length > 1)
+            OutputFileName = "Generated from input file names";
+        else
+            OutputFileName = "";
+    }
+
+    [RelayCommand]
+    private async Task Start()
+    {
+        try
+        {
+            if (InputFiles.Length == 0)
+            {
+                StatusMessage = "Select input PDF files.";
+                return;
+            }
+
+            string[] missingFiles = InputFiles
+                .Where(file => !File.Exists(file))
+                .ToArray();
+
+            if (missingFiles.Length > 0)
+            {
+                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Pages))
+            {
+                StatusMessage = "Enter pages, for example: 1,3-5.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(OutputDirectory))
+            {
+                StatusMessage = "Select output directory.";
+                return;
+            }
+
+            if (!Directory.Exists(OutputDirectory))
+            {
+                StatusMessage = "Output directory does not exist.";
+                return;
+            }
+
+            StatusMessage = "Creating PDF with selected pages...";
+
+            int savedFilesCount = 0;
+            string finalPath = "";
+
+            await Task.Run(() =>
+            {
+                OperationInput operationInput = new OperationInput
+                {
+                    InputFiles = InputFiles,
+                    Pages = Pages,
+                    Output = OutputFileName
+                };
+
+                OperationDefinition operationDefinition = new OperationDefinition
+                {
+                    Extension = ".pdf"
+                };
+
+                OperationContext operationContext = new OperationContext
+                {
+                    TempDir = Files.PrepareTempDir()
+                };
+
+                try
+                {
+                    List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
+                        operationDefinition,
+                        operationInput,
+                        operationContext);
+
+                    foreach (FileJob fileJob in fileJobs)
+                    {
+                        PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
+
+                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalPath = GetAvailablePath(finalPath);
+
+                        File.Move(fileJob.TempPath, finalPath);
+                        savedFilesCount++;
+                    }
+                }
+                finally
+                {
+                    if (Directory.Exists(operationContext.TempDir))
+                        Directory.Delete(operationContext.TempDir, true);
+                }
+            });
+
+            LastOutputDirectory = OutputDirectory;
+
+            StatusMessage = savedFilesCount == 1
+                ? $"Done. Saved: {finalPath}"
+                : $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
+        }
+        catch (Exception e)
+        {
+            StatusMessage = $"Error: {e.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void OpenOutputFolder()
+    {
+        if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
+            !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = "No output folder to open.";
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = LastOutputDirectory,
+            UseShellExecute = true
+        });
+    }
+
+    private static string GetAvailablePath(string path)
+    {
+        if (!File.Exists(path))
+            return path;
+
+        string directory = Path.GetDirectoryName(path)!;
+        string name = Path.GetFileNameWithoutExtension(path);
+        string extension = Path.GetExtension(path);
+
+        int i = 1;
+
+        while (true)
+        {
+            string candidate = Path.Combine(directory, $"{name}_{i}{extension}");
+
+            if (!File.Exists(candidate))
+                return candidate;
+
+            i++;
+        }
+    }
+}
