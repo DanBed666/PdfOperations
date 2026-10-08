@@ -46,7 +46,7 @@ public partial class PagesView : UserControl
             return;
 
         viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join("; ", paths.Select(System.IO.Path.GetFileName));
+        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
         viewModel.InputFilesInfo = string.Join(Environment.NewLine, paths.Select(path =>
             $"{System.IO.Path.GetFileName(path)} - {Info.GetPdfPagesSingle(path)} pages"));
     }

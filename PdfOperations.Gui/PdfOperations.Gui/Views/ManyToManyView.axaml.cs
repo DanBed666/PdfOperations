@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -45,7 +46,7 @@ public partial class ManyToManyView : UserControl
             return;
 
         viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join("; ", paths.Select(System.IO.Path.GetFileName));
+        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
