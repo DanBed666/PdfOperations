@@ -68,6 +68,48 @@ public partial class PagesViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsSplitByPagesMode));
     }
     
+    private static bool IsCustomPagesInRange(string pages, int pageCount, out string errorMessage)
+    {
+        errorMessage = "";
+
+        string[] parts = pages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (string part in parts)
+        {
+            if (part.Contains('-'))
+            {
+                string[] range = part.Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                if (range.Length != 2)
+                {
+                    errorMessage = $"Invalid page range: {part}.";
+                    return false;
+                }
+
+                int start = int.Parse(range[0]);
+                int end = int.Parse(range[1]);
+
+                if (start < 1 || end < 1 || start > end || end > pageCount)
+                {
+                    errorMessage = $"Page range {part} is outside document page count ({pageCount}).";
+                    return false;
+                }
+            }
+            else
+            {
+                int page = int.Parse(part);
+
+                if (page < 1 || page > pageCount)
+                {
+                    errorMessage = $"Page {page} is outside document page count ({pageCount}).";
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    
     partial void OnSelectedPageModeChanged(string value)
     {
         SelectedMode = value switch
@@ -118,7 +160,7 @@ public partial class PagesViewModel : ViewModelBase
                 return false;
             }
 
-            if (page >= pageCount)
+            if (page > pageCount)
             {
                 errorMessage = $"Split page must be smaller than page count ({pageCount}).";
                 return false;
@@ -166,6 +208,12 @@ public partial class PagesViewModel : ViewModelBase
             if (SelectedMode == PageSelectionMode.CustomPages && string.IsNullOrWhiteSpace(Pages))
             {
                 StatusMessage = "Enter pages, for example: 1,3-5.";
+                return;
+            }
+            
+            if (SelectedMode == PageSelectionMode.CustomPages && !InputValidator.IsPagesFormatValid(Pages))
+            {
+                StatusMessage = "Invalid pages format. Use for example: 1,3-5.";
                 return;
             }
             
@@ -222,6 +270,13 @@ public partial class PagesViewModel : ViewModelBase
                     {
                         int pageCount = Info.GetPdfPagesSingle(fileJob.InputFile);
                         
+                        if (SelectedMode == PageSelectionMode.CustomPages &&
+                            !IsCustomPagesInRange(Pages, pageCount, out string pagesErrorMessage))
+                        {
+                            StatusMessage = $"{Path.GetFileName(fileJob.InputFile)}: {pagesErrorMessage}";
+                            return;
+                        }
+                        
                         operationInput.Pages = SelectedMode switch
                         {
                             PageSelectionMode.CustomPages => Pages,
@@ -231,11 +286,17 @@ public partial class PagesViewModel : ViewModelBase
                             _ => Pages
                         };
                         
+                        if (string.IsNullOrWhiteSpace(operationInput.Pages))
+                        {
+                            StatusMessage = $"No pages selected for {Path.GetFileName(fileJob.InputFile)}.";
+                            return;
+                        }
+                        
                         if (SelectedMode == PageSelectionMode.SplitByPages)
                         {
                             if (!TryParseSplitAfterPages(SplitAfterPages, pageCount, out List<int> splitAfterPages, out string errorMessage))
                             {
-                                StatusMessage = errorMessage;
+                                StatusMessage = $"{Path.GetFileName(fileJob.InputFile)}: {errorMessage}";
                                 return;
                             }
 
