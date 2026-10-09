@@ -85,6 +85,8 @@ public partial class MainViewModel : ViewModelBase
             
             "Info" => new InfoViewModel(),
             
+            "Replacement" => new ReplacementViewModel(),
+            
             _ => null
         };
         

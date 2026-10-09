@@ -44,6 +44,10 @@
         <DependentUpon>InfoView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\ReplacementView.axaml.cs">
+        <DependentUpon>ReplacementView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="CopyToolsToOutput" AfterTargets="Build">
