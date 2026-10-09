@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -27,6 +28,30 @@ public partial class InfoViewModel : ViewModelBase
 
     [ObservableProperty]
     private string lastOutputDirectory = "";
+    
+    [ObservableProperty]
+    private InfoMode mode = InfoMode.PdfInfo;
+
+    [ObservableProperty]
+    private string title = "PDF info";
+
+    [ObservableProperty]
+    private string defaultOutputFileName = "pdf_info.txt";
+    
+    public InfoViewModel()
+    {
+    }
+
+    public InfoViewModel(InfoMode mode)
+    {
+        Mode = mode;
+
+        if (mode == InfoMode.FontInfo)
+        {
+            Title = "PDF font info";
+            OutputFileName = "pdf_font_info.txt";
+        }
+    }
 
     [RelayCommand]
     private async Task Start()
@@ -83,7 +108,10 @@ public partial class InfoViewModel : ViewModelBase
                     TempPath = finalPath
                 };
 
-                Info.ShowInfo(fileJob);
+                if (Mode == InfoMode.FontInfo)
+                    Info.ShowFontInfo(fileJob);
+                else
+                    Info.ShowInfo(fileJob);
             });
 
             LastOutputDirectory = OutputDirectory;

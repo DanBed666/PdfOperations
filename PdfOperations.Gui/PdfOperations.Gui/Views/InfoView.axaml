@@ -6,7 +6,7 @@
 
     <ScrollViewer>
         <StackPanel Spacing="12">
-            <TextBlock Text="PDF info"
+            <TextBlock Text="{Binding Title}"
                        FontSize="24"
                        FontWeight="SemiBold" />
 

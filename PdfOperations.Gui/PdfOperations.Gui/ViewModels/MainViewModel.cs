@@ -14,7 +14,8 @@ public partial class MainViewModel : ViewModelBase
         "Merge PDF",
         "Search",
         "Info",
-        "Replacement"
+        "Replacement",
+        "Font info"
     ];
 
     [ObservableProperty]
@@ -41,7 +42,6 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
             }),
-
             "PDF to DOCX" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "PdfToDocx",
@@ -53,7 +53,6 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
-
             "Images to PDF" => new ManyToOneViewModel(new GuiOperationDefinition
             {
                 Name = "ImagesToPdf",
@@ -64,12 +63,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
             }),
-
             "Split PDF" => new PagesViewModel
             {
                 Title = "PDF pages"
             },
-
             "Merge PDF" => new ManyToOneViewModel(new GuiOperationDefinition
             {
                 Name = "MergePdf",
@@ -80,13 +77,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
             }),
-            
             "Search" => new SearchViewModel(),
-            
             "Info" => new InfoViewModel(),
-            
+            "Font info" => new InfoViewModel(InfoMode.FontInfo),
             "Replacement" => new ReplacementViewModel(),
-            
             _ => null
         };
         
