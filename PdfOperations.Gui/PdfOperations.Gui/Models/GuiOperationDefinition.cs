@@ -13,4 +13,5 @@ public class GuiOperationDefinition
     public string[] FilePatterns { get; init; } = [];
     public Action<OperationInput, OperationContext, FileJob>? Action { get; init; }
     public Action<FileJob>? SingleOutputAction { get; init; }
+    public bool MoveAllTempFiles { get; init; } = false;
 }

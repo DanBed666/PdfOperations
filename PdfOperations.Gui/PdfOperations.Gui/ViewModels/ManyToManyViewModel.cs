@@ -126,10 +126,24 @@ public partial class ManyToManyViewModel : ViewModelBase
                     {
                         operation.Action?.Invoke(operationInput, operationContext, fileJob);
 
-                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalPath = GetAvailablePath(finalPath);
+                        if (operation.MoveAllTempFiles)
+                        {
+                            foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
+                            {
+                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(fileJob.TempPath, finalPath);
+                                File.Move(tempFile, finalPath);
+                                savedFilesCount++;
+                            }
+
+                            continue;
+                        }
+
+                        string finalSinglePath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalSinglePath = GetAvailablePath(finalSinglePath);
+
+                        File.Move(fileJob.TempPath, finalSinglePath);
                         savedFilesCount++;
                     }
                 }

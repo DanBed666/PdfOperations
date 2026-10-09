@@ -9,13 +9,16 @@ public partial class MainViewModel : ViewModelBase
     [
         "PDF to TXT",
         "PDF to DOCX",
+        "PDF to Image",
         "Images to PDF",
+        "Images to TXT",
+        "Extract from PDF",
         "Split PDF",
         "Merge PDF",
         "Search",
         "Info",
-        "Replacement",
-        "Font info"
+        "Font info",
+        "Replacement"
     ];
 
     [ObservableProperty]
@@ -53,6 +56,18 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
+            "PDF to Image" => new ManyToManyViewModel(new GuiOperationDefinition
+            {
+                Name = "PdfToImage",
+                Title = "PDF to Image",
+                InputTitle = "Input PDF files",
+                OutputExtension = ".jpg",
+                DefaultOutputName = "output",
+                FileDialogTitle = "Select PDF files",
+                FilePatterns = ["*.pdf"],
+                MoveAllTempFiles = true,
+                Action = (_, _, fileJob) => Convert.PdfToPict(fileJob)
+            }),
             "Images to PDF" => new ManyToOneViewModel(new GuiOperationDefinition
             {
                 Name = "ImagesToPdf",
@@ -62,6 +77,28 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = "Select image files",
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
+            }),
+            "Images to TXT" => new ManyToManyViewModel(new GuiOperationDefinition
+            {
+                Name = "ImagesToTxt",
+                Title = "Images to TXT",
+                OutputExtension = ".txt",
+                DefaultOutputName = "images",
+                FileDialogTitle = "Select image files",
+                MoveAllTempFiles = true,
+                FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
+                Action = (_, _, fileJob) => Convert.PictToTxt(fileJob)
+            }),
+            "Extract from PDF" => new ManyToManyViewModel(new GuiOperationDefinition
+            {
+                Name = "ExtractFromPdf",
+                Title = "Extract from PDF",
+                OutputExtension = ".jpg",
+                DefaultOutputName = "images",
+                FileDialogTitle = "Select image files",
+                MoveAllTempFiles = true,
+                FilePatterns = ["*.pdf"],
+                Action = (_, _, fileJob) => Convert.ExtractPict(fileJob)
             }),
             "Split PDF" => new PagesViewModel
             {
