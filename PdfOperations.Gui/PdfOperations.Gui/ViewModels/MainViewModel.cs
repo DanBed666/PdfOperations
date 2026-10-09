@@ -20,7 +20,8 @@ public partial class MainViewModel : ViewModelBase
         "Search",
         "Info",
         "Font info",
-        "Replacement"
+        "Replacement",
+        "Build PDF from fragments",
     ];
 
     [ObservableProperty]
@@ -132,6 +133,7 @@ public partial class MainViewModel : ViewModelBase
             "Info" => new InfoViewModel(),
             "Font info" => new InfoViewModel(InfoMode.FontInfo),
             "Replacement" => new ReplacementViewModel(),
+            "Build PDF from fragments" => new FragmentsViewModel(),
             _ => null
         };
         

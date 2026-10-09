@@ -69,6 +69,30 @@ public static class Convert
 
         if (!File.Exists(fileJob.TempPath) || new FileInfo(fileJob.TempPath).Length == 0)
             throw new InvalidOperationException($"Word did not create a valid PDF: {fileJob.TempPath}");
+        
+        ValidatePdfOutput(fileJob.TempPath);
+    }
+
+    public static void ValidatePdfOutput(string path)
+    {
+        if (!File.Exists(path))
+            throw new InvalidOperationException($"PDF file was not created: {path}");
+
+        FileInfo fileInfo = new FileInfo(path);
+
+        if (fileInfo.Length == 0)
+            throw new InvalidOperationException($"PDF file is empty: {path}");
+
+        byte[] header = File.ReadAllBytes(path).Take(4).ToArray();
+
+        if (header.Length < 4 ||
+            header[0] != '%' ||
+            header[1] != 'P' ||
+            header[2] != 'D' ||
+            header[3] != 'F')
+        {
+            throw new InvalidOperationException($"Created file is not a valid PDF: {path}");
+        }
     }
     
     public static void PdfToPict(FileJob fileJob)
