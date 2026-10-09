@@ -40,6 +40,10 @@
         <DependentUpon>PagesView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\InfoView.axaml.cs">
+        <DependentUpon>InfoView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="CopyToolsToOutput" AfterTargets="Build">
