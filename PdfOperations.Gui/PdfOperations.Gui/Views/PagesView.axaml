@@ -17,7 +17,9 @@
                          IsReadOnly="True"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
-                         MinHeight="70" />
+                         MinHeight="70"
+                         MaxHeight="140"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
                 <Button Grid.Column="1"
                         Content="Browse"
                         Click="BrowseInputFiles_Click" />
