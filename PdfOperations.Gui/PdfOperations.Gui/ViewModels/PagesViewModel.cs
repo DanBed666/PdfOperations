@@ -53,7 +53,8 @@ public partial class PagesViewModel : ViewModelBase
         "Custom pages",
         "Even pages",
         "Odd pages",
-        "Split by pages"
+        "Split by pages",
+        "Split every page"
     ];
     
     public bool IsCustomPagesMode => SelectedMode == PageSelectionMode.CustomPages;
@@ -117,6 +118,7 @@ public partial class PagesViewModel : ViewModelBase
             "Even pages" => PageSelectionMode.EvenPages,
             "Odd pages" => PageSelectionMode.OddPages,
             "Split by pages" => PageSelectionMode.SplitByPages,
+            "Split every page" => PageSelectionMode.SplitEveryPage,
             _ => PageSelectionMode.CustomPages
         };
     }
@@ -166,7 +168,7 @@ public partial class PagesViewModel : ViewModelBase
                 return false;
             }
 
-            splitAfterPages.Add(page);
+            splitAfterPages.Add(page - 1);
         }
 
         if (splitAfterPages.Count != splitAfterPages.Distinct().Count())
@@ -269,29 +271,34 @@ public partial class PagesViewModel : ViewModelBase
                     foreach (FileJob fileJob in fileJobs)
                     {
                         int pageCount = Info.GetPdfPagesSingle(fileJob.InputFile);
-                        
+
                         if (SelectedMode == PageSelectionMode.CustomPages &&
                             !IsCustomPagesInRange(Pages, pageCount, out string pagesErrorMessage))
                         {
                             StatusMessage = $"{Path.GetFileName(fileJob.InputFile)}: {pagesErrorMessage}";
                             return;
                         }
-                        
-                        operationInput.Pages = SelectedMode switch
+
+                        if (SelectedMode == PageSelectionMode.SplitEveryPage)
                         {
-                            PageSelectionMode.CustomPages => Pages,
-                            PageSelectionMode.EvenPages => PagesRangeBuilder.BuildEvenPages(pageCount),
-                            PageSelectionMode.OddPages => PagesRangeBuilder.BuildOddPages(pageCount),
-                            PageSelectionMode.SplitByPages => "",
-                            _ => Pages
-                        };
-                        
-                        if (string.IsNullOrWhiteSpace(operationInput.Pages))
-                        {
-                            StatusMessage = $"No pages selected for {Path.GetFileName(fileJob.InputFile)}.";
-                            return;
+                            List<int> splitAfterPages = Enumerable
+                                .Range(1, pageCount - 1)
+                                .ToList();
+
+                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount);
+
+                            foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
+                            {
+                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = GetAvailablePath(finalPath);
+
+                                File.Move(tempFile, finalPath);
+                                savedFilesCount++;
+                            }
+
+                            continue;
                         }
-                        
+
                         if (SelectedMode == PageSelectionMode.SplitByPages)
                         {
                             if (!TryParseSplitAfterPages(SplitAfterPages, pageCount, out List<int> splitAfterPages, out string errorMessage))
@@ -313,13 +320,27 @@ public partial class PagesViewModel : ViewModelBase
 
                             continue;
                         }
-                        
+
+                        operationInput.Pages = SelectedMode switch
+                        {
+                            PageSelectionMode.CustomPages => Pages,
+                            PageSelectionMode.EvenPages => PagesRangeBuilder.BuildEvenPages(pageCount),
+                            PageSelectionMode.OddPages => PagesRangeBuilder.BuildOddPages(pageCount),
+                            _ => Pages
+                        };
+
+                        if (string.IsNullOrWhiteSpace(operationInput.Pages))
+                        {
+                            StatusMessage = $"No pages selected for {Path.GetFileName(fileJob.InputFile)}.";
+                            return;
+                        }
+
                         PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
 
-                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalPath = GetAvailablePath(finalPath);
+                        string finalSinglePath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalSinglePath = GetAvailablePath(finalSinglePath);
 
-                        File.Move(fileJob.TempPath, finalPath);
+                        File.Move(fileJob.TempPath, finalSinglePath);
                         savedFilesCount++;
                     }
                     

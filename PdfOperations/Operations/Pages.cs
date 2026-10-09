@@ -37,16 +37,17 @@ public class Pages
         foreach (int splitAfterPage in splitAfterPages)
         {
             string outputPath = PrepareSplitOutputPath(file.TempPath, partNumber);
-            string pages = $"{startPage}-{splitAfterPage - 1}";
-            
+            string pages = $"{startPage}-{splitAfterPage}";
+
             RunClass.Run(tool, [file.InputFile, "--pages", ".", pages, "--", outputPath], [0, 3]);
 
-            startPage = splitAfterPage;
+            startPage = splitAfterPage + 1;
             partNumber++;
         }
 
         string lastOutputPath = PrepareSplitOutputPath(file.TempPath, partNumber);
         string lastPages = $"{startPage}-{pageCount}";
+
         RunClass.Run(tool, [file.InputFile, "--pages", ".", lastPages, "--", lastOutputPath], [0, 3]);
     }
 

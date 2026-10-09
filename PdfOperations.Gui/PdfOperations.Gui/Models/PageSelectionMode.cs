@@ -5,5 +5,6 @@ public enum PageSelectionMode
     CustomPages,
     EvenPages,
     OddPages,
-    SplitByPages
+    SplitByPages,
+    SplitEveryPage
 }
