@@ -9,10 +9,12 @@ public partial class MainViewModel : ViewModelBase
     [
         "PDF to TXT",
         "PDF to DOCX",
+        "DOCX to PDF word",
         "PDF to Image",
         "Images to PDF",
         "Images to TXT",
         "Extract from PDF",
+        "LibreOffice conversion",
         "Split PDF",
         "Merge PDF",
         "Search",
@@ -34,6 +36,7 @@ public partial class MainViewModel : ViewModelBase
     {
         CurrentOperationViewModel = value switch
         {
+            "LibreOffice conversion" => new LibreOfficeViewModel(),
             "PDF to TXT" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "PdfToTxt",
@@ -55,6 +58,17 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = "Select PDF files",
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
+            }),
+            "DOCX to PDF word" => new ManyToManyViewModel(new GuiOperationDefinition
+            {
+                Name = "DocxToPdfWord",
+                Title = "DOCX to PDF word",
+                InputTitle = "Input DOCX files",
+                OutputExtension = ".pdf",
+                DefaultOutputName = "output",
+                FileDialogTitle = "Select DOCX files",
+                FilePatterns = ["*.docx"],
+                Action = (_, _, fileJob) => Convert.DocxToPdfWord(fileJob)
             }),
             "PDF to Image" => new ManyToManyViewModel(new GuiOperationDefinition
             {

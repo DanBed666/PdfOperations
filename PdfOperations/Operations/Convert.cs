@@ -39,6 +39,37 @@ public static class Convert
             RunClass.Run(tool, arguments2);
         }
     }
+
+    public static void DocxToPdfWord(FileJob fileJob)
+    {
+        Type? wordType = Type.GetTypeFromProgID("Word.Application");
+        
+        if (wordType is null)
+            throw new InvalidOperationException("Microsoft Word is not installed or cannot be started.");
+
+        dynamic? word = null;
+        dynamic? document = null;
+
+        try
+        {
+            word = Activator.CreateInstance(wordType);
+            word.Visible = false;
+            
+            document = word.Documents.Open(fileJob.InputFile, ReadOnly: true);
+            document.ExportAsFixedFormat(fileJob.TempPath, 17);
+        }
+        finally 
+        {
+            if (document is not null)
+                document.Close(false);
+
+            if (word is not null)
+                word.Quit(false);
+        }
+
+        if (!File.Exists(fileJob.TempPath) || new FileInfo(fileJob.TempPath).Length == 0)
+            throw new InvalidOperationException($"Word did not create a valid PDF: {fileJob.TempPath}");
+    }
     
     public static void PdfToPict(FileJob fileJob)
     {
