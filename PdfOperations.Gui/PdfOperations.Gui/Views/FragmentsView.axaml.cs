@@ -7,16 +7,16 @@ using PdfOperations.Gui.ViewModels;
 
 namespace PdfOperations.Gui.Views;
 
-public partial class InfoView : UserControl
+public partial class FragmentsView : UserControl
 {
-    public InfoView()
+    public FragmentsView()
     {
         InitializeComponent();
     }
 
-    private async void BrowseInputFiles_Click(object? sender, RoutedEventArgs e)
+    private async void BrowseFragmentFile_Click(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not InfoViewModel viewModel)
+        if (DataContext is not FragmentsViewModel viewModel)
             return;
 
         var topLevel = TopLevel.GetTopLevel(this);
@@ -26,8 +26,8 @@ public partial class InfoView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select PDF files",
-            AllowMultiple = true,
+            Title = "Select PDF file",
+            AllowMultiple = false,
             FileTypeFilter =
             [
                 new FilePickerFileType("PDF files")
@@ -37,21 +37,28 @@ public partial class InfoView : UserControl
             ]
         });
 
-        string[] paths = files
-            .Select(file => file.Path.LocalPath)
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .ToArray();
+        string? path = files.FirstOrDefault()?.Path.LocalPath;
 
-        if (paths.Length == 0)
-            return;
+        if (!string.IsNullOrWhiteSpace(path))
+        {
+            viewModel.SelectedFragmentFile = path;
 
-        viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
+            try
+            {
+                viewModel.SelectedFragmentFileInfo =
+                    $"{System.IO.Path.GetFileName(path)} - liczba stron: {Info.GetPdfPagesSingle(path)}";
+            }
+            catch (Exception ex)
+            {
+                viewModel.SelectedFragmentFileInfo =
+                    $"Nie udało się odczytać liczby stron: {ex.Message}";
+            }
+        }
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not InfoViewModel viewModel)
+        if (DataContext is not FragmentsViewModel viewModel)
             return;
 
         var topLevel = TopLevel.GetTopLevel(this);

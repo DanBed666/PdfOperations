@@ -52,6 +52,10 @@
         <DependentUpon>LibreOfficeView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\FragmentsView.axaml.cs">
+        <DependentUpon>FragmentsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="CopyToolsToOutput" AfterTargets="Build">
