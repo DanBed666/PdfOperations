@@ -56,6 +56,10 @@
         <DependentUpon>FragmentsView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\HelpView.axaml.cs">
+        <DependentUpon>HelpView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="CopyToolsToOutput" AfterTargets="Build">
