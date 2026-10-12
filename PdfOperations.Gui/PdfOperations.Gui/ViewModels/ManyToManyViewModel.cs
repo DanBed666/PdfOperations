@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,11 @@ public partial class ManyToManyViewModel : ViewModelBase
     
     [ObservableProperty]
     private string inputFilesText = "";
+    
+    public ObservableCollection<SelectedFileItem> InputFilesList { get; } = new();
+
+    [ObservableProperty]
+    private SelectedFileItem? selectedInputFile;
 
     [ObservableProperty]
     private string outputDirectory = "";
@@ -47,18 +53,86 @@ public partial class ManyToManyViewModel : ViewModelBase
     private string lastOutputDirectory = "";
     public bool CanEditOutputFileName => InputFiles.Length == 1;
     
+    public void SetInputFiles(IEnumerable<string> paths)
+    {
+        InputFilesList.Clear();
+
+        foreach (string path in paths)
+        {
+            InputFilesList.Add(new SelectedFileItem { Path = path });
+        }
+
+        SyncInputFiles();
+    }
+
+    public void AddInputFiles(IEnumerable<string> paths)
+    {
+        foreach (string path in paths)
+        {
+            if (InputFilesList.Any(file => file.Path == path))
+                continue;
+
+            InputFilesList.Add(new SelectedFileItem { Path = path });
+        }
+
+        SyncInputFiles();
+    }
+
+    [RelayCommand]
+    private void RemoveInputFile()
+    {
+        if (SelectedInputFile is null)
+            return;
+
+        InputFilesList.Remove(SelectedInputFile);
+        SelectedInputFile = null;
+        SyncInputFiles();
+    }
+
+    [RelayCommand]
+    private void ClearInputFiles()
+    {
+        InputFilesList.Clear();
+        SelectedInputFile = null;
+        SyncInputFiles();
+    }
+
+    private void SyncInputFiles()
+    {
+        for (int i = 0; i < InputFilesList.Count; i++)
+        {
+            InputFilesList[i].Number = i + 1;
+        }
+
+        InputFiles = InputFilesList.Select(file => file.Path).ToArray();
+        InputFilesText = string.Join(Environment.NewLine, InputFiles);
+    }
+    
+    public void RemoveInputFiles(IEnumerable<SelectedFileItem> selectedFiles)
+    {
+        foreach (SelectedFileItem selectedFile in selectedFiles.ToArray())
+        {
+            InputFilesList.Remove(selectedFile);
+        }
+
+        SelectedInputFile = null;
+        SyncInputFiles();
+    }
+    
     [RelayCommand]
     private async Task Start()
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.Count == 0)
             {
                 StatusMessage = "Select input file.";
                 return;
             }
+            
+            string[] currentInputFiles = InputFilesList.Select(file => file.Path).ToArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -101,7 +175,7 @@ public partial class ManyToManyViewModel : ViewModelBase
             {
                 OperationInput operationInput = new OperationInput
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     Output = OutputFileName
                 };
 

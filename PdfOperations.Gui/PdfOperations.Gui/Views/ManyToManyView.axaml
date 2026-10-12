@@ -10,18 +10,34 @@
                    FontWeight="SemiBold" />
 
         <TextBlock Text="{Binding InputTitle}" />
+
         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <TextBox Grid.Column="0"
-                     Text="{Binding InputFilesText}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     MinHeight="70"
-                     MaxHeight="140"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
-            <Button Grid.Column="1"
-                    Content="Browse"
-                    Click="BrowseInputFile_Click" />
+            <ListBox x:Name="InputFilesListBox"
+                     Grid.Column="0"
+                     ItemsSource="{Binding InputFilesList}"
+                     SelectedItem="{Binding SelectedInputFile}"
+                     SelectionMode="Multiple"
+                     MinHeight="120"
+                     MaxHeight="220">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayText}"
+                                   TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Column="1"
+                        Spacing="8">
+                <Button Content="Browse"
+                        Click="BrowseInputFile_Click" />
+                <Button Content="Add"
+                        Click="AddInputFiles_Click" />
+                <Button Content="Remove"
+                        Click="RemoveInputFiles_Click" />
+                <Button Content="Clear"
+                        Command="{Binding ClearInputFilesCommand}" />
+            </StackPanel>
         </Grid>
 
         <TextBlock Text="Output directory" />

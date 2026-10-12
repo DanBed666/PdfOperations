@@ -3,6 +3,7 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using PdfOperations.Gui.Models;
 using PdfOperations.Gui.ViewModels;
 
 namespace PdfOperations.Gui.Views;
@@ -45,8 +46,7 @@ public partial class ManyToManyView : UserControl
         if (paths.Length == 0)
             return;
 
-        viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
+        viewModel.SetInputFiles(paths);
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
@@ -69,5 +69,54 @@ public partial class ManyToManyView : UserControl
 
         if (!string.IsNullOrWhiteSpace(path))
             viewModel.OutputDirectory = path;
+    }
+    
+    private async void AddInputFiles_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not ManyToManyViewModel viewModel)
+            return;
+
+        var topLevel = TopLevel.GetTopLevel(this);
+
+        if (topLevel is null)
+            return;
+
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = viewModel.FileDialogTitle,
+            AllowMultiple = true,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("Input files")
+                {
+                    Patterns = viewModel.FilePatterns
+                }
+            ]
+        });
+
+        string[] paths = files
+            .Select(file => file.Path.LocalPath)
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .ToArray();
+
+        if (paths.Length == 0)
+            return;
+
+        viewModel.AddInputFiles(paths);
+    }
+    
+    private void RemoveInputFiles_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not ManyToManyViewModel viewModel)
+            return;
+
+        var selectedFiles = InputFilesListBox.SelectedItems?
+            .OfType<SelectedFileItem>()
+            .ToArray();
+
+        if (selectedFiles is null || selectedFiles.Length == 0)
+            return;
+
+        viewModel.RemoveInputFiles(selectedFiles);
     }
 }
