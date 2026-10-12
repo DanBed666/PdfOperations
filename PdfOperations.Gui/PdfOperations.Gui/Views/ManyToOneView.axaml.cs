@@ -45,8 +45,7 @@ public partial class ManyToOneView : UserControl
         if (paths.Length == 0)
             return;
 
-        viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
+        viewModel.SetInputFiles(paths);
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
