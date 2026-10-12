@@ -55,7 +55,7 @@ public static class Convert
             word = Activator.CreateInstance(wordType);
             word.Visible = false;
             
-            document = word.Documents.Open(fileJob.InputFile, ReadOnly: true);
+            document = word.Documents.Open(fileJob.InputFile, false, true);
             document.ExportAsFixedFormat(fileJob.TempPath, 17);
         }
         finally 
