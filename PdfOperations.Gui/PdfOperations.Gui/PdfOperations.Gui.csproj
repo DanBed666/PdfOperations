@@ -60,6 +60,10 @@
         <DependentUpon>HelpView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\FileListView.axaml.cs">
+        <DependentUpon>FileListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="CopyToolsToOutput" AfterTargets="Build">

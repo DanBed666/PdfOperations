@@ -1,0 +1,40 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PdfOperations.Gui.ViewModels"
+             x:Class="PdfOperations.Gui.Views.FileListView"
+             x:DataType="vm:FileListViewModel">
+
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <ListBox Grid.Column="0"
+                 ItemsSource="{Binding Files}"
+                 SelectedItem="{Binding SelectedFile}"
+                 MinHeight="80"
+                 MaxHeight="180">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}"
+                               TextWrapping="Wrap" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Column="1"
+                    Spacing="8"
+                    VerticalAlignment="Top">
+            <Button Content="Up"
+                    Width="90"
+                    IsVisible="{Binding ShowMoveButtons}"
+                    Command="{Binding MoveSelectedUpCommand}" />
+            <Button Content="Down"
+                    Width="90"
+                    IsVisible="{Binding ShowMoveButtons}"
+                    Command="{Binding MoveSelectedDownCommand}" />
+            <Button Content="Remove"
+                    Width="90"
+                    Command="{Binding RemoveSelectedFileCommand}" />
+            <Button Content="Clear"
+                    Width="90"
+                    Command="{Binding ClearFilesCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

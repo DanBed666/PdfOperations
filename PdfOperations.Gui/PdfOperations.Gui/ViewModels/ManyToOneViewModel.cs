@@ -20,6 +20,7 @@ public partial class ManyToOneViewModel : ViewModelBase
         this.operation = operation;
         Title = operation.Title;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
+        InputFilesList.ShowMoveButtons = true;
     }
 
     public string FileDialogTitle => operation.FileDialogTitle;
@@ -29,17 +30,8 @@ public partial class ManyToOneViewModel : ViewModelBase
     [ObservableProperty]
     private string title = "Many to one operation";
 
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
+    public FileListViewModel InputFilesList { get; } = new();
     
-    public ObservableCollection<string> InputFilesList { get; } = new();
-
-    [ObservableProperty]
-    private string? selectedInputFile;
-
     [ObservableProperty]
     private string outputDirectory = "";
 
@@ -52,88 +44,20 @@ public partial class ManyToOneViewModel : ViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
     
-    public void SetInputFiles(IEnumerable<string> paths)
-    {
-        InputFilesList.Clear();
-
-        foreach (string path in paths)
-        {
-            InputFilesList.Add(path);
-        }
-
-        InputFiles = InputFilesList.ToArray();
-        InputFilesText = string.Join(Environment.NewLine, InputFilesList);
-    }
-    
-    [RelayCommand]
-    private void MoveInputFileUp()
-    {
-        if (SelectedInputFile is null)
-            return;
-
-        int index = InputFilesList.IndexOf(SelectedInputFile);
-
-        if (index <= 0)
-            return;
-
-        InputFilesList.Move(index, index - 1);
-        SyncInputFiles();
-    }
-
-    [RelayCommand]
-    private void MoveInputFileDown()
-    {
-        if (SelectedInputFile is null)
-            return;
-
-        int index = InputFilesList.IndexOf(SelectedInputFile);
-
-        if (index < 0 || index >= InputFilesList.Count - 1)
-            return;
-
-        InputFilesList.Move(index, index + 1);
-        SyncInputFiles();
-    }
-
-    [RelayCommand]
-    private void RemoveInputFile()
-    {
-        if (SelectedInputFile is null)
-            return;
-
-        InputFilesList.Remove(SelectedInputFile);
-        SelectedInputFile = null;
-        SyncInputFiles();
-    }
-
-    [RelayCommand]
-    private void ClearInputFiles()
-    {
-        InputFilesList.Clear();
-        SelectedInputFile = null;
-        SyncInputFiles();
-    }
-
-    private void SyncInputFiles()
-    {
-        InputFiles = InputFilesList.ToArray();
-        InputFilesText = string.Join(Environment.NewLine, InputFilesList);
-    }
-
     [RelayCommand]
     private async Task Start()
     {
         try
         {
-            if (InputFilesList.Count == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select input files.";
                 return;
             }
             
-            string[] orderedInputFiles = InputFilesList.ToArray();
-            
-            string[] missingFiles = orderedInputFiles
+            string[] currentInputFiles = InputFilesList.ToPathArray();
+
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -172,7 +96,7 @@ public partial class ManyToOneViewModel : ViewModelBase
             {
                 OperationInput operationInput = new OperationInput
                 {
-                    InputFiles = orderedInputFiles,
+                    InputFiles = currentInputFiles,
                     Output = OutputFileName
                 };
 

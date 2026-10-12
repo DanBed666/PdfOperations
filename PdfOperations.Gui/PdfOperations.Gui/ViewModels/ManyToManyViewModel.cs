@@ -24,6 +24,7 @@ public partial class ManyToManyViewModel : ViewModelBase
         this.operation = operation;
         Title = operation.Title;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
+        InputFilesList.FilesChanged += () => RefreshInputFilesState();
     }
     
     [ObservableProperty]
@@ -31,17 +32,8 @@ public partial class ManyToManyViewModel : ViewModelBase
 
     [ObservableProperty]
     private string statusMessage = "Ready";
-
-    [ObservableProperty]
-    private string [] inputFiles = [];
     
-    [ObservableProperty]
-    private string inputFilesText = "";
-    
-    public ObservableCollection<SelectedFileItem> InputFilesList { get; } = new();
-
-    [ObservableProperty]
-    private SelectedFileItem? selectedInputFile;
+    public FileListViewModel InputFilesList { get; } = new();
 
     [ObservableProperty]
     private string outputDirectory = "";
@@ -51,72 +43,36 @@ public partial class ManyToManyViewModel : ViewModelBase
     
     [ObservableProperty]
     private string lastOutputDirectory = "";
-    public bool CanEditOutputFileName => InputFiles.Length == 1;
+    public bool CanEditOutputFileName => InputFilesList.Files.Count <= 1;
     
     public void SetInputFiles(IEnumerable<string> paths)
     {
-        InputFilesList.Clear();
-
-        foreach (string path in paths)
-        {
-            InputFilesList.Add(new SelectedFileItem { Path = path });
-        }
-
-        SyncInputFiles();
+        InputFilesList.SetFiles(paths);
     }
 
     public void AddInputFiles(IEnumerable<string> paths)
     {
-        foreach (string path in paths)
-        {
-            if (InputFilesList.Any(file => file.Path == path))
-                continue;
-
-            InputFilesList.Add(new SelectedFileItem { Path = path });
-        }
-
-        SyncInputFiles();
-    }
-
-    [RelayCommand]
-    private void RemoveInputFile()
-    {
-        if (SelectedInputFile is null)
-            return;
-
-        InputFilesList.Remove(SelectedInputFile);
-        SelectedInputFile = null;
-        SyncInputFiles();
-    }
-
-    [RelayCommand]
-    private void ClearInputFiles()
-    {
-        InputFilesList.Clear();
-        SelectedInputFile = null;
-        SyncInputFiles();
-    }
-
-    private void SyncInputFiles()
-    {
-        for (int i = 0; i < InputFilesList.Count; i++)
-        {
-            InputFilesList[i].Number = i + 1;
-        }
-
-        InputFiles = InputFilesList.Select(file => file.Path).ToArray();
-        InputFilesText = string.Join(Environment.NewLine, InputFiles);
+        InputFilesList.AddFiles(paths);
     }
     
-    public void RemoveInputFiles(IEnumerable<SelectedFileItem> selectedFiles)
+    private void RefreshInputFilesState()
     {
-        foreach (SelectedFileItem selectedFile in selectedFiles.ToArray())
-        {
-            InputFilesList.Remove(selectedFile);
-        }
+        string[] files = InputFilesList.ToPathArray();
 
-        SelectedInputFile = null;
-        SyncInputFiles();
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+
+        if (files.Length == 1)
+        {
+            OutputFileName = Path.GetFileNameWithoutExtension(files[0]) + operation.OutputExtension;
+        }
+        else if (files.Length > 1)
+        {
+            OutputFileName = "Generated from input file names";
+        }
+        else
+        {
+            OutputFileName = "";
+        }
     }
     
     [RelayCommand]
@@ -124,13 +80,13 @@ public partial class ManyToManyViewModel : ViewModelBase
     {
         try
         {
-            if (InputFilesList.Count == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select input file.";
                 return;
             }
             
-            string[] currentInputFiles = InputFilesList.Select(file => file.Path).ToArray();
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
             string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
@@ -155,8 +111,8 @@ public partial class ManyToManyViewModel : ViewModelBase
             }
 
             if (string.IsNullOrWhiteSpace(OutputFileName))
-                OutputFileName = InputFiles.Length == 1
-                    ? Path.GetFileNameWithoutExtension(InputFiles[0]) + operation.OutputExtension
+                OutputFileName = currentInputFiles.Length == 1
+                    ? Path.GetFileNameWithoutExtension(currentInputFiles[0]) + operation.OutputExtension
                     : operation.DefaultOutputName + operation.OutputExtension;
 
             if (string.IsNullOrWhiteSpace(Path.GetExtension(OutputFileName)) ||
@@ -214,10 +170,10 @@ public partial class ManyToManyViewModel : ViewModelBase
                             continue;
                         }
 
-                        string finalSinglePath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalSinglePath = GetAvailablePath(finalSinglePath);
+                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(fileJob.TempPath, finalSinglePath);
+                        File.Move(fileJob.TempPath, finalPath);
                         savedFilesCount++;
                     }
                 }
@@ -239,25 +195,7 @@ public partial class ManyToManyViewModel : ViewModelBase
             StatusMessage = $"Error: {e.Message}";
         }
     }
-    
-    partial void OnInputFilesChanged(string[] value)
-    {
-        OnPropertyChanged(nameof(CanEditOutputFileName));
 
-        if (value.Length == 1)
-        {
-            OutputFileName = Path.GetFileNameWithoutExtension(value[0]) + operation.OutputExtension;
-        }
-        else if (value.Length > 1)
-        {
-            OutputFileName = "Generated from input file names";
-        }
-        else
-        {
-            OutputFileName = "";
-        }
-    }
-    
     [RelayCommand]
     private void OpenOutputFolder()
     {

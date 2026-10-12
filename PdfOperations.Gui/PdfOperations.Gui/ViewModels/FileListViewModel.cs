@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
+
+namespace PdfOperations.Gui.ViewModels;
+
+public partial class FileListViewModel : ViewModelBase
+{
+    public ObservableCollection<SelectedFileItem> Files { get; } = new();
+
+    [ObservableProperty]
+    private SelectedFileItem? selectedFile;
+    
+    public event Action? FilesChanged;
+    
+    [ObservableProperty]
+    private bool showMoveButtons;
+
+    public void SetFiles(IEnumerable<string> paths)
+    {
+        Files.Clear();
+
+        foreach (string path in paths)
+        {
+            Files.Add(new SelectedFileItem { Path = path });
+        }
+
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+
+    public void AddFiles(IEnumerable<string> paths)
+    {
+        foreach (string path in paths)
+        {
+            if (Files.Any(file => file.Path == path))
+                continue;
+
+            Files.Add(new SelectedFileItem { Path = path });
+        }
+
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+
+    public void RemoveFiles(IEnumerable<SelectedFileItem> selectedFiles)
+    {
+        foreach (SelectedFileItem selectedFile in selectedFiles.ToArray())
+        {
+            Files.Remove(selectedFile);
+        }
+
+        SelectedFile = null;
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+
+    public void Clear()
+    {
+        Files.Clear();
+        SelectedFile = null;
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+
+    public string[] ToPathArray()
+    {
+        return Files.Select(file => file.Path).ToArray();
+    }
+
+    public bool IsEmpty()
+    {
+        return Files.Count == 0;
+    }
+
+    private void RefreshNumbers()
+    {
+        for (int i = 0; i < Files.Count; i++)
+        {
+            Files[i].Number = i + 1;
+        }
+    }
+    
+    [RelayCommand]
+    public void MoveSelectedUp()
+    {
+        if (SelectedFile is null)
+            return;
+
+        int index = Files.IndexOf(SelectedFile);
+
+        if (index <= 0)
+            return;
+
+        Files.Move(index, index - 1);
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+
+    [RelayCommand]
+    public void MoveSelectedDown()
+    {
+        if (SelectedFile is null)
+            return;
+
+        int index = Files.IndexOf(SelectedFile);
+
+        if (index < 0 || index >= Files.Count - 1)
+            return;
+
+        Files.Move(index, index + 1);
+        RefreshNumbers();
+        
+        FilesChanged?.Invoke();
+    }
+    
+    [RelayCommand]
+    public void RemoveSelectedFile()
+    {
+        if (SelectedFile is null)
+            return;
+
+        RemoveFiles(new[] { SelectedFile });
+    }
+
+    [RelayCommand]
+    public void ClearFiles()
+    {
+        Clear();
+    }
+}

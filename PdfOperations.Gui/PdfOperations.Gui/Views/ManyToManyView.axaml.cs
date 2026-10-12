@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using PdfOperations.Gui.Models;
 using PdfOperations.Gui.ViewModels;
 
 namespace PdfOperations.Gui.Views;
@@ -103,20 +101,5 @@ public partial class ManyToManyView : UserControl
             return;
 
         viewModel.AddInputFiles(paths);
-    }
-    
-    private void RemoveInputFiles_Click(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not ManyToManyViewModel viewModel)
-            return;
-
-        var selectedFiles = InputFilesListBox.SelectedItems?
-            .OfType<SelectedFileItem>()
-            .ToArray();
-
-        if (selectedFiles is null || selectedFiles.Length == 0)
-            return;
-
-        viewModel.RemoveInputFiles(selectedFiles);
     }
 }
