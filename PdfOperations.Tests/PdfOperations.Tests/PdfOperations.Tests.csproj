@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MSTest" Version="4.0.2"/>
+        <PackageReference Include="MSTest" Version="4.0.2" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+        <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
     </ItemGroup>
 
     <ItemGroup>
@@ -20,9 +20,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="ValidationTests.cs" />
-      <Compile Remove="TestInput.cs" />
-      <Compile Remove="InputValidatorTests.cs" />
+        <Compile Remove="ValidationTests.cs" />
+        <Compile Remove="TestInput.cs" />
+        <Compile Remove="InputValidatorTests.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="TestData\**\*.*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>

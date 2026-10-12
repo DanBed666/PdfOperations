@@ -1,0 +1,5 @@
+Trzeci plik tekstowy.
+hydraulika pojawia sie jako siodme trafienie lacznie.
+Linia kontekstowa.
+Ostatnia hydraulika zamyka licznik osmiu wystapien.
+Koniec testu.

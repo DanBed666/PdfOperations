@@ -1,0 +1,2 @@
+nowy plik testowy 2
+neutralna tresc do testow przenoszenia i konfliktow nazw

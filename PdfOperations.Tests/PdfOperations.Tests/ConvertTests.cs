@@ -436,4 +436,95 @@ public class ConvertTests()
                 Directory.Delete(operationContext.TempDir, true);
         }
     }
+    
+    [TestMethod]
+    public void DocxToPdfTest()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["word_1.docx", "word_2.docx", "word_3.docx"]),
+        };
+
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Assert.IsTrue(File.Exists(fileJob.InputFile));
+                Convert.DocxToPdfWord(fileJob);
+            }
+
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
+            {
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                byte[] header = File.ReadAllBytes(file).Take(4).ToArray();
+                CollectionAssert.AreEqual(new byte[] { 37, 80, 68, 70 }, header);
+            }
+            
+            Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void DocxToPdfTestSingle()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["word_1.docx"]),
+            Output = "newpdf.pdf"
+        };
+
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Assert.IsTrue(File.Exists(fileJob.InputFile));
+                Convert.DocxToPdfWord(fileJob);
+            }
+
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
+            
+            Assert.IsTrue(File.Exists(file));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
+            Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            byte[] header = File.ReadAllBytes(file).Take(4).ToArray();
+            CollectionAssert.AreEqual(new byte[] { 37, 80, 68, 70 }, header);
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
 }
