@@ -14,57 +14,57 @@
                            FontSize="24"
                            FontWeight="SemiBold" />
 
-                <TextBlock Text="Input files" />
+                <TextBlock Text="{Binding Loc.InputFiles}" />
                 <StackPanel Spacing="8">
                     <StackPanel Orientation="Horizontal"
                                 Spacing="8">
-                        <Button Content="Browse"
+                        <Button Content="{Binding Loc.Browse}"
                                 Click="BrowseInputFiles_Click" />
-                        <Button Content="Add"
+                        <Button Content="{Binding Loc.Add}"
                                 Click="AddInputFiles_Click" />
                     </StackPanel>
 
                     <views:FileListView DataContext="{Binding InputFilesList}" />
                 </StackPanel>
 
-                <TextBlock Text="Search phrase" />
+                <TextBlock Text="{Binding Loc.SearchPhrase}" />
                 <TextBox Text="{Binding Phrase}" />
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                     <StackPanel Grid.Column="0" Spacing="6">
-                        <TextBlock Text="Lines before" />
+                        <TextBlock Text="{Binding Loc.LinesBefore}" />
                         <NumericUpDown Value="{Binding Before}"
                                        Minimum="0"
                                        Maximum="20" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Spacing="6">
-                        <TextBlock Text="Lines after" />
+                        <TextBlock Text="{Binding Loc.LinesAfter}" />
                         <NumericUpDown Value="{Binding After}"
                                        Minimum="0"
                                        Maximum="20" />
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="Output directory" />
+                <TextBlock Text="{Binding Loc.OutputDirectory}" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                     <TextBox Grid.Column="0"
                              Text="{Binding OutputDirectory}" />
                     <Button Grid.Column="1"
-                            Content="Browse"
+                            Content="{Binding Loc.Browse}"
                             Click="BrowseOutputDirectory_Click" />
                 </Grid>
 
-                <TextBlock Text="Report file name" />
+                <TextBlock Text="{Binding Loc.ReportFileName}" />
                 <TextBox Text="{Binding OutputFileName}" />
 
                 <StackPanel Orientation="Horizontal"
                             Spacing="8">
-                    <Button Content="Start"
+                    <Button Content="{Binding Loc.Start}"
                             Command="{Binding StartCommand}"
                             Width="120" />
 
-                    <Button Content="Open output folder"
+                    <Button Content="{Binding Loc.OpenOutputFolder}"
                             Command="{Binding OpenOutputFolderCommand}"
                             Width="170" />
                 </StackPanel>

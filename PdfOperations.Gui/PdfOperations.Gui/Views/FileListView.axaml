@@ -21,18 +21,18 @@
         <StackPanel Grid.Column="1"
                     Spacing="8"
                     VerticalAlignment="Top">
-            <Button Content="Up"
+            <Button Content="{Binding Loc.MoveUp}"
                     Width="90"
                     IsVisible="{Binding ShowMoveButtons}"
                     Command="{Binding MoveSelectedUpCommand}" />
-            <Button Content="Down"
+            <Button Content="{Binding Loc.MoveDown}"
                     Width="90"
                     IsVisible="{Binding ShowMoveButtons}"
                     Command="{Binding MoveSelectedDownCommand}" />
-            <Button Content="Remove"
+            <Button Content="{Binding Loc.Remove}"
                     Width="90"
                     Command="{Binding RemoveSelectedFileCommand}" />
-            <Button Content="Clear"
+            <Button Content="{Binding Loc.Clear}"
                     Width="90"
                     Command="{Binding ClearFilesCommand}" />
         </StackPanel>

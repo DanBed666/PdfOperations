@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -135,5 +136,17 @@ public partial class MainViewModel : ViewModelBase
             "Help" => new HelpViewModel(),
             _ => null
         };
+    }
+    
+    public AppLanguage[] Languages { get; } =
+    [
+        AppLanguage.Polish,
+        AppLanguage.English
+    ];
+
+    public AppLanguage SelectedLanguage
+    {
+        get => Loc.Language;
+        set => Loc.Language = value;
     }
 }
