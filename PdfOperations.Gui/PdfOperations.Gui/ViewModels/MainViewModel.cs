@@ -1,5 +1,8 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
 
@@ -31,6 +34,7 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        RefreshThemes(AppTheme.System);
         RefreshOperations();
     }
 
@@ -39,6 +43,40 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private ViewModelBase? currentOperationViewModel;
+
+    public ObservableCollection<ThemeMenuItem> Themes { get; } = new();
+
+    [ObservableProperty]
+    private ThemeMenuItem? selectedTheme;
+
+    private void RefreshThemes(AppTheme selectedTheme)
+    {
+        Themes.Clear();
+
+        foreach (AppTheme theme in Enum.GetValues<AppTheme>())
+        {
+            Themes.Add(new ThemeMenuItem
+            {
+                Theme = theme,
+                DisplayName = Loc.GetThemeName(theme)
+            });
+        }
+
+        SelectedTheme = Themes.FirstOrDefault(theme => theme.Theme == selectedTheme);
+    }
+
+    partial void OnSelectedThemeChanged(ThemeMenuItem? value)
+    {
+        Application.Current!.RequestedThemeVariant = value?.Theme switch
+        {
+            AppTheme.Light => ThemeVariant.Light,
+            AppTheme.Dark => ThemeVariant.Dark,
+            _ => ThemeVariant.Default
+        };
+
+        RefreshStatusColors();
+        CurrentOperationViewModel?.RefreshStatusColors();
+    }
     
     partial void OnSelectedOperationChanged(OperationMenuItem? value)
     {
@@ -161,7 +199,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             string? selectedKey = SelectedOperation?.Key;
+            AppTheme selectedTheme = SelectedTheme?.Theme ?? AppTheme.System;
             Loc.Language = value;
+
+            RefreshThemes(selectedTheme);
             RefreshOperations(selectedKey);
         }
     }

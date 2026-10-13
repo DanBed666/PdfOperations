@@ -263,4 +263,18 @@ public partial class LocalizationService : ObservableObject
     {
         OnPropertyChanged(string.Empty);
     }
+
+    public string LanguageLabel => Language == AppLanguage.Polish ? "Język" : "Language";
+    public string ThemeLabel => Language == AppLanguage.Polish ? "Motyw" : "Theme";
+
+    public string GetThemeName(AppTheme theme)
+    {
+        return theme switch
+        {
+            AppTheme.System => Language == AppLanguage.Polish ? "Systemowy" : "System",
+            AppTheme.Light => Language == AppLanguage.Polish ? "Jasny" : "Light",
+            AppTheme.Dark => Language == AppLanguage.Polish ? "Ciemny" : "Dark",
+            _ => theme.ToString()
+        };
+    }
 }

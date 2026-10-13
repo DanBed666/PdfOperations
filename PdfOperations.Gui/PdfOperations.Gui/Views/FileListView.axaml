@@ -10,11 +10,14 @@
                  SelectedItem="{Binding SelectedFile}"
                  SelectedItems="{Binding SelectedFiles}"
                  SelectionMode="Multiple"
+                 Background="{DynamicResource InputListBackgroundBrush}"
+                 BorderBrush="{DynamicResource ListBorderBrush}"
                  MinHeight="80"
                  MaxHeight="180">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding DisplayText}"
+                               Foreground="{DynamicResource InputListTextBrush}"
                                TextWrapping="Wrap" />
                 </DataTemplate>
             </ListBox.ItemTemplate>

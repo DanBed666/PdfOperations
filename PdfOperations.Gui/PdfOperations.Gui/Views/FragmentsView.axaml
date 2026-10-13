@@ -26,7 +26,7 @@
                 </Grid>
                 
                 <TextBlock Text="{Binding SelectedFragmentFileInfo}"
-                           Foreground="#666666"
+                           Foreground="{DynamicResource MutedTextBrush}"
                            TextWrapping="Wrap" />
 
                 <TextBlock Text="{Binding Loc.Pages}" />
@@ -59,14 +59,17 @@
                 <TextBlock Text="{Binding Loc.Fragments}" />
                 <ListBox ItemsSource="{Binding Fragments}"
                          SelectedItem="{Binding SelectedFragment}"
+                         Background="{DynamicResource InputListBackgroundBrush}"
+                         BorderBrush="{DynamicResource ListBorderBrush}"
                          MinHeight="120"
                          MaxHeight="220">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="{Binding FileName}" />
+                                <TextBlock Text="{Binding FileName}"
+                                           Foreground="{DynamicResource InputListTextBrush}" />
                                 <TextBlock Text="{Binding PageNumbers}"
-                                           Foreground="#666666" />
+                                           Foreground="{DynamicResource MutedTextBrush}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

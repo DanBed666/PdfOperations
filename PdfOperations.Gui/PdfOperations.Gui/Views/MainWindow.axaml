@@ -19,27 +19,44 @@
 
     <Grid ColumnDefinitions="260,*">
         <Border Grid.Column="0"
-                Background="#111827"
+                Background="{DynamicResource SidebarBackgroundBrush}"
                 Padding="14">
             <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
                 <TextBlock Text="PdfOperations"
-                           Foreground="#F9FAFB"
+                           Foreground="{DynamicResource SidebarTitleBrush}"
                            FontSize="18"
                            FontWeight="SemiBold" />
 
-                <ComboBox ItemsSource="{Binding Languages}"
-                          Grid.Row="1"
-                          SelectedItem="{Binding SelectedLanguage}" />
+                <StackPanel Grid.Row="1" Spacing="6">
+                    <TextBlock Text="{Binding Loc.LanguageLabel}"
+                               Foreground="{DynamicResource SidebarMutedTextBrush}" />
+
+                    <ComboBox ItemsSource="{Binding Languages}"
+                              SelectedItem="{Binding SelectedLanguage}" />
+
+                    <TextBlock Text="{Binding Loc.ThemeLabel}"
+                               Foreground="{DynamicResource SidebarMutedTextBrush}"
+                               Margin="0,6,0,0" />
+
+                    <ComboBox ItemsSource="{Binding Themes}"
+                              SelectedItem="{Binding SelectedTheme}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
 
                 <ListBox Grid.Row="2"
-                         Background="#111827"
+                         Background="{DynamicResource SidebarBackgroundBrush}"
                          BorderThickness="0"
                          ItemsSource="{Binding Operations}"
                          SelectedItem="{Binding SelectedOperation}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplayName}"
-                                       Foreground="#E5E7EB"
+                                       Foreground="{DynamicResource SidebarTextBrush}"
                                        TextWrapping="Wrap"
                                        Margin="4,3" />
                         </DataTemplate>

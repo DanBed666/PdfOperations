@@ -9,11 +9,43 @@
         <local:ViewLocator />
     </Application.DataTemplates>
 
+     <Application.Resources>
+         <ResourceDictionary>
+             <ResourceDictionary.ThemeDictionaries>
+                 <ResourceDictionary x:Key="Light">
+                     <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="SidebarTitleBrush" Color="#F9FAFB" />
+                     <SolidColorBrush x:Key="SidebarTextBrush" Color="#E5E7EB" />
+                     <SolidColorBrush x:Key="SidebarMutedTextBrush" Color="#CBD5E1" />
+                     <SolidColorBrush x:Key="ListBackgroundBrush" Color="#FFFFFF" />
+                     <SolidColorBrush x:Key="ListBorderBrush" Color="#D1D5DB" />
+                     <SolidColorBrush x:Key="InputListBackgroundBrush" Color="#F3F4F6" />
+                     <SolidColorBrush x:Key="InputListTextBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="MutedTextBrush" Color="#64748B" />
+                 </ResourceDictionary>
+
+                 <ResourceDictionary x:Key="Dark">
+                     <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#0F172A" />
+                     <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#020617" />
+                     <SolidColorBrush x:Key="SidebarTitleBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="SidebarTextBrush" Color="#E2E8F0" />
+                     <SolidColorBrush x:Key="SidebarMutedTextBrush" Color="#94A3B8" />
+                     <SolidColorBrush x:Key="ListBackgroundBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="ListBorderBrush" Color="#334155" />
+                     <SolidColorBrush x:Key="InputListBackgroundBrush" Color="#1E293B" />
+                     <SolidColorBrush x:Key="InputListTextBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="MutedTextBrush" Color="#CBD5E1" />
+                 </ResourceDictionary>
+             </ResourceDictionary.ThemeDictionaries>
+         </ResourceDictionary>
+     </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
 
         <Style Selector="Window">
-            <Setter Property="Background" Value="#F8FAFC" />
+            <Setter Property="Background" Value="{DynamicResource AppWindowBackgroundBrush}" />
         </Style>
 
         <Style Selector="Button">
@@ -38,8 +70,9 @@
         </Style>
 
         <Style Selector="ListBox">
-            <Setter Property="Background" Value="#FFFFFF" />
-            <Setter Property="BorderBrush" Value="#D1D5DB" />
+            <Setter Property="Background" Value="{DynamicResource ListBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ListBorderBrush}" />
         </Style>
+
     </Application.Styles>
 </Application>
