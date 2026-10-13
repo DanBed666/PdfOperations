@@ -5,49 +5,52 @@
              x:Class="PdfOperations.Gui.Views.ManyToOneView"
              x:DataType="vm:ManyToOneViewModel">
 
-    <StackPanel Spacing="12">
-        <TextBlock Text="{Binding Title}"
-                   FontSize="24"
-                   FontWeight="SemiBold" />
+    <Grid RowDefinitions="Auto,*">
+        <views:StatusBannerView Grid.Row="0" />
 
-        <TextBlock Text="Input files" />
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="12">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="24"
+                           FontWeight="SemiBold" />
 
-        <StackPanel Spacing="8">
-                <StackPanel Orientation="Horizontal"
-                            Spacing="8">
+                <TextBlock Text="Input files" />
+
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
                         <Button Content="Browse"
                                 Click="BrowseInputFile_Click" />
                         <Button Content="Add"
                                 Click="AddInputFiles_Click" />
+                    </StackPanel>
+
+                    <views:FileListView DataContext="{Binding InputFilesList}" />
                 </StackPanel>
 
-                <views:FileListView DataContext="{Binding InputFilesList}" />
-        </StackPanel>
+                <TextBlock Text="Output directory" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <TextBox Grid.Column="0"
+                             Text="{Binding OutputDirectory}" />
+                    <Button Grid.Column="1"
+                            Content="Browse"
+                            Click="BrowseOutputDirectory_Click" />
+                </Grid>
 
-        <TextBlock Text="Output directory" />
-        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <TextBox Grid.Column="0"
-                     Text="{Binding OutputDirectory}" />
-            <Button Grid.Column="1"
-                    Content="Browse"
-                    Click="BrowseOutputDirectory_Click" />
-        </Grid>
+                <TextBlock Text="Output file name" />
+                <TextBox Text="{Binding OutputFileName}" />
 
-        <TextBlock Text="Output file name" />
-        <TextBox Text="{Binding OutputFileName}" />
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <Button Content="Start"
+                            Command="{Binding StartCommand}"
+                            Width="120" />
 
-        <StackPanel Orientation="Horizontal"
-                    Spacing="8">
-            <Button Content="Start"
-                    Command="{Binding StartCommand}"
-                    Width="120" />
-
-            <Button Content="Open output folder"
-                    Command="{Binding OpenOutputFolderCommand}"
-                    Width="170" />
-        </StackPanel>
-
-        <TextBlock Text="{Binding StatusMessage}"
-                   TextWrapping="Wrap" />
-    </StackPanel>
+                    <Button Content="Open output folder"
+                            Command="{Binding OpenOutputFolderCommand}"
+                            Width="170" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

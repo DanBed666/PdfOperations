@@ -5,55 +5,51 @@
              x:Class="PdfOperations.Gui.Views.LibreOfficeView"
              x:DataType="vm:LibreOfficeViewModel">
 
-    <ScrollViewer>
-        <StackPanel Spacing="12">
-            <TextBlock Text="LibreOffice conversion"
-                       FontSize="24"
-                       FontWeight="SemiBold" />
+    <Grid RowDefinitions="Auto,*">
+        <views:StatusBannerView Grid.Row="0" />
 
-            <StackPanel Spacing="8">
-                <StackPanel Orientation="Horizontal"
-                            Spacing="8">
-                    <Button Content="Browse"
-                            Click="BrowseInputFiles_Click" />
-                    <Button Content="Add"
-                            Click="AddInputFiles_Click" />
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="12">
+                <TextBlock Text="LibreOffice conversion"
+                           FontSize="24"
+                           FontWeight="SemiBold" />
+
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
+                        <Button Content="Browse"
+                                Click="BrowseInputFiles_Click" />
+                        <Button Content="Add"
+                                Click="AddInputFiles_Click" />
+                    </StackPanel>
+
+                    <views:FileListView DataContext="{Binding InputFilesList}" />
                 </StackPanel>
 
-                <views:FileListView DataContext="{Binding InputFilesList}" />
+                <TextBlock Text="Output format" />
+                <ComboBox ItemsSource="{Binding Formats}"
+                          SelectedItem="{Binding SelectedFormat}" />
+
+                <TextBlock Text="Output directory" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <TextBox Grid.Column="0"
+                             Text="{Binding OutputDirectory}" />
+                    <Button Grid.Column="1"
+                            Content="Browse"
+                            Click="BrowseOutputDirectory_Click" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <Button Content="Start"
+                            Command="{Binding StartCommand}"
+                            Width="120" />
+
+                    <Button Content="Open output folder"
+                            Command="{Binding OpenOutputFolderCommand}"
+                            Width="170" />
+                </StackPanel>
             </StackPanel>
-            
-
-            <TextBlock Text="Output format" />
-            <ComboBox ItemsSource="{Binding Formats}"
-                      SelectedItem="{Binding SelectedFormat}" />
-
-            <TextBlock Text="Output directory" />
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                <TextBox Grid.Column="0"
-                         Text="{Binding OutputDirectory}" />
-                <Button Grid.Column="1"
-                        Content="Browse"
-                        Click="BrowseOutputDirectory_Click" />
-            </Grid>
-
-            <StackPanel Orientation="Horizontal"
-                        Spacing="8">
-                <Button Content="Start"
-                        Command="{Binding StartCommand}"
-                        Width="120" />
-
-                <Button Content="Open output folder"
-                        Command="{Binding OpenOutputFolderCommand}"
-                        Width="170" />
-            </StackPanel>
-
-            <Border Background="#F3F4F6"
-                    Padding="10"
-                    Margin="0,8,0,0">
-                <TextBlock Text="{Binding StatusMessage}"
-                           TextWrapping="Wrap" />
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

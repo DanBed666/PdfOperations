@@ -29,9 +29,6 @@ public partial class MainViewModel : ViewModelBase
     private string? selectedOperation;
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-    
-    [ObservableProperty]
     private ViewModelBase? currentOperationViewModel;
     
     partial void OnSelectedOperationChanged(string? value)
@@ -138,9 +135,5 @@ public partial class MainViewModel : ViewModelBase
             "Help" => new HelpViewModel(),
             _ => null
         };
-        
-        StatusMessage = string.IsNullOrWhiteSpace(value)
-            ? "Ready"
-            : $"Selected operation: {value}";
     }
 }

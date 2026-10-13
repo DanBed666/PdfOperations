@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PdfOperations.Gui.Views.StatusBannerView"
+             x:CompileBindings="False">
+
+    <Border Background="#F3F4F6"
+            Padding="10"
+            Margin="0,0,0,12">
+        <TextBlock Text="{Binding StatusMessage}"
+                   TextWrapping="Wrap" />
+    </Border>
+</UserControl>

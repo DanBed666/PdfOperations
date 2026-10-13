@@ -15,9 +15,8 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="220,*" RowDefinitions="*,80">
-        <Border Grid.RowSpan="2"
-                Grid.Column="0"
+    <Grid ColumnDefinitions="220,*">
+        <Border Grid.Column="0"
                 Background="#20242A"
                 Padding="12">
             <ListBox ItemsSource="{Binding Operations}"
@@ -25,16 +24,8 @@
         </Border>
 
         <ContentControl Grid.Column="1"
-                        Grid.Row="0"
                         Margin="20"
                         Content="{Binding CurrentOperationViewModel}" />
-
-        <Border Grid.Column="1"
-                Grid.Row="1"
-                Background="#F3F4F6"
-                Padding="12">
-            <TextBlock Text="{Binding StatusMessage}" />
-        </Border>
     </Grid>
 
 </Window>
