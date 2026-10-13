@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -34,7 +35,10 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        RefreshThemes(AppTheme.System);
+        settings = SettingsService.Load();
+        Loc.Language = settings.Language;
+
+        RefreshThemes(settings.Theme);
         RefreshOperations();
     }
 
@@ -43,6 +47,8 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private ViewModelBase? currentOperationViewModel;
+
+    private AppSettings settings = new();
 
     public ObservableCollection<ThemeMenuItem> Themes { get; } = new();
 
@@ -76,6 +82,12 @@ public partial class MainViewModel : ViewModelBase
 
         RefreshStatusColors();
         CurrentOperationViewModel?.RefreshStatusColors();
+
+        if (value is not null)
+        {
+            settings.Theme = value.Theme;
+            SettingsService.Save(settings);
+        }
     }
     
     partial void OnSelectedOperationChanged(OperationMenuItem? value)
@@ -201,6 +213,9 @@ public partial class MainViewModel : ViewModelBase
             string? selectedKey = SelectedOperation?.Key;
             AppTheme selectedTheme = SelectedTheme?.Theme ?? AppTheme.System;
             Loc.Language = value;
+
+            settings.Language = value;
+            SettingsService.Save(settings);
 
             RefreshThemes(selectedTheme);
             RefreshOperations(selectedKey);
