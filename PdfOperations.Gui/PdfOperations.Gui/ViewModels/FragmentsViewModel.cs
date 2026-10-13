@@ -51,16 +51,78 @@ public partial class FragmentsViewModel : ViewModelBase
             StatusMessage = "Enter pages, for example: 1,3-5.";
             return;
         }
+        
+        string normalizedPages = PageNumbers.Trim().Replace(" ", "");
+        
+        if (!InputValidator.IsPagesFormatValid(normalizedPages))
+        {
+            StatusMessage = "Invalid pages format. Use for example: 1,3-5.";
+            return;
+        }
+        
+        int pageCount;
+        
+        try
+        {
+            pageCount = Info.GetPdfPagesSingle(SelectedFragmentFile);
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Cannot read PDF page count: {ex.Message}";
+            return;
+        }
+        
+        if (!ArePagesInRange(normalizedPages, pageCount, out string pagesErrorMessage))
+        {
+            StatusMessage = pagesErrorMessage;
+            return;
+        }
 
         Fragments.Add(new PdfFragment
         {
             FileName = SelectedFragmentFile,
-            PageNumbers = PageNumbers.Trim().Replace(" ", "")
+            PageNumbers = normalizedPages
         });
 
         SelectedFragmentFile = "";
         PageNumbers = "";
         StatusMessage = "Fragment added.";
+    }
+    
+    private static bool ArePagesInRange(string pages, int pageCount, out string errorMessage)
+    {
+        errorMessage = "";
+
+        string[] parts = pages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (string part in parts)
+        {
+            if (part.Contains('-'))
+            {
+                string[] range = part.Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                int start = int.Parse(range[0]);
+                int end = int.Parse(range[1]);
+
+                if (start < 1 || end < 1 || start > pageCount || end > pageCount)
+                {
+                    errorMessage = $"Page range {part} is outside document page count ({pageCount}).";
+                    return false;
+                }
+            }
+            else
+            {
+                int page = int.Parse(part);
+
+                if (page < 1 || page > pageCount)
+                {
+                    errorMessage = $"Page {page} is outside document page count ({pageCount}).";
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     [RelayCommand]
@@ -72,6 +134,44 @@ public partial class FragmentsViewModel : ViewModelBase
         Fragments.Remove(SelectedFragment);
         SelectedFragment = null;
         StatusMessage = "Fragment removed.";
+    }
+    
+    [RelayCommand]
+    private void ClearFragments()
+    {
+        Fragments.Clear();
+        SelectedFragment = null;
+        StatusMessage = "Fragments cleared.";
+    }
+    
+    [RelayCommand]
+    private void MoveFragmentUp()
+    {
+        if (SelectedFragment is null)
+            return;
+    
+        int index = Fragments.IndexOf(SelectedFragment);
+    
+        if (index <= 0)
+            return;
+    
+        Fragments.Move(index, index - 1);
+        StatusMessage = "Fragment moved up.";
+    }
+    
+    [RelayCommand]
+    private void MoveFragmentDown()
+    {
+        if (SelectedFragment is null)
+            return;
+    
+        int index = Fragments.IndexOf(SelectedFragment);
+    
+        if (index < 0 || index >= Fragments.Count - 1)
+            return;
+    
+        Fragments.Move(index, index + 1);
+        StatusMessage = "Fragment moved down.";
     }
 
     [RelayCommand]

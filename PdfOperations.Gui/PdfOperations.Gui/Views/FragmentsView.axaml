@@ -35,9 +35,21 @@
                         Command="{Binding AddFragmentCommand}"
                         Width="130" />
 
+                <Button Content="Move up"
+                        Command="{Binding MoveFragmentUpCommand}"
+                        Width="110" />
+
+                <Button Content="Move down"
+                        Command="{Binding MoveFragmentDownCommand}"
+                        Width="120" />
+
                 <Button Content="Remove selected"
                         Command="{Binding RemoveFragmentCommand}"
                         Width="150" />
+
+                <Button Content="Clear"
+                        Command="{Binding ClearFragmentsCommand}"
+                        Width="90" />
             </StackPanel>
 
             <TextBlock Text="Fragments" />
