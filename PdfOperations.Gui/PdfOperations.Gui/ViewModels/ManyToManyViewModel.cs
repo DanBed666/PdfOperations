@@ -72,11 +72,13 @@ public partial class ManyToManyViewModel : ViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectInputFile;
                 return;
             }
@@ -89,18 +91,21 @@ public partial class ManyToManyViewModel : ViewModelBase
 
             if (missingFiles.Length > 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
@@ -180,13 +185,14 @@ public partial class ManyToManyViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            
+            StatusKind = StatusKind.Success;
             StatusMessage = savedFilesCount == 1
                 ? Loc.DoneSaved(finalPath)
                 : Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
         }
         catch (Exception e)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(e.Message);
         }
         finally
@@ -201,6 +207,7 @@ public partial class ManyToManyViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }

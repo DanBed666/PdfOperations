@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -47,12 +48,14 @@ public partial class FragmentsViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(SelectedFragmentFile) || !File.Exists(SelectedFragmentFile))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.SelectPdfFile;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(PageNumbers))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.EnterPages;
             return;
         }
@@ -61,6 +64,7 @@ public partial class FragmentsViewModel : ViewModelBase
         
         if (!InputValidator.IsPagesFormatValid(normalizedPages))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.InvalidPagesFormat;
             return;
         }
@@ -73,12 +77,14 @@ public partial class FragmentsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.CannotReadPdfPageCount(ex.Message);
             return;
         }
         
         if (!ArePagesInRange(normalizedPages, pageCount, out string pagesErrorMessage))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = pagesErrorMessage;
             return;
         }
@@ -91,6 +97,7 @@ public partial class FragmentsViewModel : ViewModelBase
 
         SelectedFragmentFile = "";
         PageNumbers = "";
+        StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentAdded;
     }
     
@@ -138,6 +145,7 @@ public partial class FragmentsViewModel : ViewModelBase
 
         Fragments.Remove(SelectedFragment);
         SelectedFragment = null;
+        StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentRemoved;
     }
     
@@ -146,6 +154,7 @@ public partial class FragmentsViewModel : ViewModelBase
     {
         Fragments.Clear();
         SelectedFragment = null;
+        StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentsCleared;
     }
     
@@ -161,6 +170,7 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
     
         Fragments.Move(index, index - 1);
+        StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentMovedUp;
     }
     
@@ -176,6 +186,7 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
     
         Fragments.Move(index, index + 1);
+        StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentMovedDown;
     }
 
@@ -186,17 +197,20 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (Fragments.Count == 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.AddAtLeastOneFragment;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
@@ -251,10 +265,12 @@ public partial class FragmentsViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
+            StatusKind = StatusKind.Success;
             StatusMessage = Loc.DoneSaved(finalPath);
         }
         catch (Exception ex)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(ex.Message);
         }
         finally
@@ -268,6 +284,7 @@ public partial class FragmentsViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }

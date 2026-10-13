@@ -229,11 +229,13 @@ public partial class PagesViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectPdfFiles;
                 return;
             }
@@ -246,36 +248,42 @@ public partial class PagesViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (SelectedMode == PageSelectionMode.CustomPages && string.IsNullOrWhiteSpace(Pages))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.EnterPages;
                 return;
             }
             
             if (SelectedMode == PageSelectionMode.CustomPages && !InputValidator.IsPagesFormatValid(Pages))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.InvalidPagesFormat;
                 return;
             }
             
             if (SelectedMode == PageSelectionMode.SplitByPages && string.IsNullOrWhiteSpace(SplitAfterPages))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.EnterSplitPages;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
@@ -318,6 +326,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                         if (SelectedMode == PageSelectionMode.CustomPages &&
                             !IsCustomPagesInRange(Pages, pageCount, out string pagesErrorMessage))
                         {
+                            StatusKind = StatusKind.Error;
                             StatusMessage = $"{Path.GetFileName(fileJob.InputFile)}: {pagesErrorMessage}";
                             return;
                         }
@@ -346,6 +355,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                         {
                             if (!TryParseSplitAfterPages(SplitAfterPages, pageCount, out List<int> splitAfterPages, out string errorMessage))
                             {
+                                StatusKind = StatusKind.Error;
                                 StatusMessage = $"{Path.GetFileName(fileJob.InputFile)}: {errorMessage}";
                                 return;
                             }
@@ -374,6 +384,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                         if (string.IsNullOrWhiteSpace(operationInput.Pages))
                         {
+                            StatusKind = StatusKind.Error;
                             StatusMessage = Loc.NoPagesSelected(Path.GetFileName(fileJob.InputFile));
                             return;
                         }
@@ -387,6 +398,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                         savedFilesCount++;
                     }
                     
+                    StatusKind = StatusKind.Success;
                     StatusMessage = savedFilesCount == 1
                         ? Loc.DoneSaved(finalPath)
                         : Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
@@ -402,6 +414,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         }
         catch (Exception e)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(e.Message);
         }
         finally
@@ -416,6 +429,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }

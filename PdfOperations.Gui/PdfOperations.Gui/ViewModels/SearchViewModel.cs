@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -49,11 +50,13 @@ public partial class SearchViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectInputFiles;
                 return;
             }
@@ -66,24 +69,28 @@ public partial class SearchViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Phrase))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.EnterSearchPhrase;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
@@ -171,10 +178,12 @@ public partial class SearchViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
+            StatusKind = StatusKind.Success;
             StatusMessage = Loc.DoneSavedReport(finalPath);
         }
         catch (Exception e)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(e.Message);
         }
         finally
@@ -199,6 +208,7 @@ public partial class SearchViewModel : FileInputViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }

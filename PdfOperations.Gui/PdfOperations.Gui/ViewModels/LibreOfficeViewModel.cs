@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -46,11 +47,13 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectInputFiles;
                 return;
             }
@@ -63,12 +66,14 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
@@ -78,6 +83,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
             if (string.IsNullOrWhiteSpace(SelectedFormat))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputFormat;
                 return;
             }
@@ -120,10 +126,12 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
+            StatusKind = StatusKind.Success;
             StatusMessage = Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
         }
         catch (Exception ex)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(ex.Message);
         }
         finally
@@ -137,6 +145,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }

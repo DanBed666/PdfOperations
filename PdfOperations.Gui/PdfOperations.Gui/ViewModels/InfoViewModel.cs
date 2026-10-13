@@ -53,11 +53,13 @@ public partial class InfoViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        StatusKind = StatusKind.Info;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectPdfFiles;
                 return;
             }
@@ -70,12 +72,14 @@ public partial class InfoViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
+                StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
@@ -115,10 +119,12 @@ public partial class InfoViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
+            StatusKind = StatusKind.Success;
             StatusMessage = Loc.DoneSaved(finalPath);
         }
         catch (Exception ex)
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.Error(ex.Message);
         }
         finally
@@ -132,6 +138,7 @@ public partial class InfoViewModel : FileInputViewModelBase
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
         {
+            StatusKind = StatusKind.Error;
             StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }
