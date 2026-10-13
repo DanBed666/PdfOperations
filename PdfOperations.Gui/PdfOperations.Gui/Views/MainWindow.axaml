@@ -19,11 +19,12 @@
         <Border Grid.Column="0"
                 Background="#20242A"
                 Padding="12">
-            <StackPanel Spacing="12">
+            <Grid RowDefinitions="Auto,*" RowSpacing="12">
                 <ComboBox ItemsSource="{Binding Languages}"
                           SelectedItem="{Binding SelectedLanguage}" />
 
-                <ListBox ItemsSource="{Binding Operations}"
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Operations}"
                          SelectedItem="{Binding SelectedOperation}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -31,7 +32,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <ContentControl Grid.Column="1"
