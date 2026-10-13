@@ -49,6 +49,11 @@ public partial class InfoViewModel : FileInputViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (InputFilesList.IsEmpty())
@@ -115,6 +120,10 @@ public partial class InfoViewModel : FileInputViewModelBase
         catch (Exception ex)
         {
             StatusMessage = Loc.Error(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

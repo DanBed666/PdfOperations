@@ -48,6 +48,11 @@ public partial class ManyToOneViewModel : ViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (InputFilesList.IsEmpty())
@@ -138,6 +143,10 @@ public partial class ManyToOneViewModel : ViewModelBase
         catch (Exception e)
         {
             StatusMessage = Loc.Error(e.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

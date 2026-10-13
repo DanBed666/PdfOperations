@@ -42,6 +42,11 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (InputFilesList.IsEmpty())
@@ -120,6 +125,10 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         catch (Exception ex)
         {
             StatusMessage = Loc.Error(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

@@ -45,6 +45,11 @@ public partial class SearchViewModel : FileInputViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (InputFilesList.IsEmpty())
@@ -171,6 +176,10 @@ public partial class SearchViewModel : FileInputViewModelBase
         catch (Exception e)
         {
             StatusMessage = Loc.Error(e.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
     

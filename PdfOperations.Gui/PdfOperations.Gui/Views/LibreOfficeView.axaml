@@ -43,6 +43,7 @@
                             Spacing="8">
                     <Button Content="{Binding Loc.Start}"
                             Command="{Binding StartCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
                             Width="120" />
 
                     <Button Content="{Binding Loc.OpenOutputFolder}"

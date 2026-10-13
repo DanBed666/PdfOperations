@@ -225,6 +225,11 @@ public partial class PagesViewModel : FileInputViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (InputFilesList.IsEmpty())
@@ -398,6 +403,10 @@ public partial class PagesViewModel : FileInputViewModelBase
         catch (Exception e)
         {
             StatusMessage = Loc.Error(e.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

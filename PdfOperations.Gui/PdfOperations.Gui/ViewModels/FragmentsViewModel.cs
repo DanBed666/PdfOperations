@@ -182,6 +182,11 @@ public partial class FragmentsViewModel : ViewModelBase
     [RelayCommand]
     private async Task Start()
     {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+
         try
         {
             if (Fragments.Count == 0)
@@ -251,6 +256,10 @@ public partial class FragmentsViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = Loc.Error(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
