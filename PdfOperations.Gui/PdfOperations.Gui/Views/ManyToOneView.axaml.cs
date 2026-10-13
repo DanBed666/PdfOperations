@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
+using PdfOperations.Gui.Helpers;
 using PdfOperations.Gui.ViewModels;
 
 namespace PdfOperations.Gui.Views;
@@ -19,28 +17,10 @@ public partial class ManyToOneView : UserControl
         if (DataContext is not ManyToOneViewModel viewModel)
             return;
 
-        var topLevel = TopLevel.GetTopLevel(this);
-
-        if (topLevel is null)
-            return;
-
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = viewModel.FileDialogTitle,
-            AllowMultiple = true,
-            FileTypeFilter =
-            [
-                new FilePickerFileType("Input files")
-                {
-                    Patterns = viewModel.FilePatterns
-                }
-            ]
-        });
-
-        string[] paths = files
-            .Select(file => file.Path.LocalPath)
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .ToArray();
+        string[] paths = await FilePickerHelper.PickFilesAsync(
+            this,
+            viewModel.FileDialogTitle,
+            viewModel.FilePatterns);
 
         if (paths.Length == 0)
             return;
@@ -53,18 +33,7 @@ public partial class ManyToOneView : UserControl
         if (DataContext is not ManyToOneViewModel viewModel)
             return;
 
-        var topLevel = TopLevel.GetTopLevel(this);
-
-        if (topLevel is null)
-            return;
-
-        var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-        {
-            Title = "Select output folder",
-            AllowMultiple = false
-        });
-
-        string? path = folders.FirstOrDefault()?.Path.LocalPath;
+        string? path = await FilePickerHelper.PickFolderAsync(this);
 
         if (!string.IsNullOrWhiteSpace(path))
             viewModel.OutputDirectory = path;
@@ -74,33 +43,15 @@ public partial class ManyToOneView : UserControl
     {
         if (DataContext is not ManyToOneViewModel viewModel)
             return;
-    
-        var topLevel = TopLevel.GetTopLevel(this);
-    
-        if (topLevel is null)
-            return;
-    
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = viewModel.FileDialogTitle,
-            AllowMultiple = true,
-            FileTypeFilter =
-            [
-                new FilePickerFileType("Input files")
-                {
-                    Patterns = viewModel.FilePatterns
-                }
-            ]
-        });
-    
-        string[] paths = files
-            .Select(file => file.Path.LocalPath)
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .ToArray();
-    
+
+        string[] paths = await FilePickerHelper.PickFilesAsync(
+            this,
+            viewModel.FileDialogTitle,
+            viewModel.FilePatterns);
+
         if (paths.Length == 0)
             return;
-    
+
         viewModel.InputFilesList.AddFiles(paths);
     }
 }

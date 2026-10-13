@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
+using PdfOperations.Gui.Helpers;
 using PdfOperations.Gui.ViewModels;
 
 namespace PdfOperations.Gui.Views;
@@ -19,34 +17,31 @@ public partial class LibreOfficeView : UserControl
         if (DataContext is not LibreOfficeViewModel viewModel)
             return;
 
-        var topLevel = TopLevel.GetTopLevel(this);
-
-        if (topLevel is null)
-            return;
-
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Select input files",
-            AllowMultiple = true,
-            FileTypeFilter =
-            [
-                new FilePickerFileType("Documents")
-                {
-                    Patterns = ["*.pdf", "*.docx", "*.odt", "*.doc", "*.rtf", "*.txt", "*.xlsx", "*.xls", "*.pptx", "*.ppt"]
-                }
-            ]
-        });
-
-        string[] paths = files
-            .Select(file => file.Path.LocalPath)
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .ToArray();
+        string[] paths = await FilePickerHelper.PickFilesAsync(
+            this,
+            viewModel.FileDialogTitle,
+            viewModel.FilePatterns);
 
         if (paths.Length == 0)
             return;
 
-        viewModel.InputFiles = paths;
-        viewModel.InputFilesText = string.Join(Environment.NewLine, paths);
+        viewModel.InputFilesList.SetFiles(paths);
+    }
+
+    private async void AddInputFiles_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not LibreOfficeViewModel viewModel)
+            return;
+
+        string[] paths = await FilePickerHelper.PickFilesAsync(
+            this,
+            viewModel.FileDialogTitle,
+            viewModel.FilePatterns);
+
+        if (paths.Length == 0)
+            return;
+
+        viewModel.InputFilesList.AddFiles(paths);
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)
@@ -54,18 +49,7 @@ public partial class LibreOfficeView : UserControl
         if (DataContext is not LibreOfficeViewModel viewModel)
             return;
 
-        var topLevel = TopLevel.GetTopLevel(this);
-
-        if (topLevel is null)
-            return;
-
-        var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-        {
-            Title = "Select output folder",
-            AllowMultiple = false
-        });
-
-        string? path = folders.FirstOrDefault()?.Path.LocalPath;
+        string? path = await FilePickerHelper.PickFolderAsync(this);
 
         if (!string.IsNullOrWhiteSpace(path))
             viewModel.OutputDirectory = path;

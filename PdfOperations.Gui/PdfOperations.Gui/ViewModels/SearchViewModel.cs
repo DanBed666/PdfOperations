@@ -9,17 +9,11 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace PdfOperations.Gui.ViewModels;
 
-public partial class SearchViewModel : ViewModelBase
+public partial class SearchViewModel : FileInputViewModelBase
 {
     [ObservableProperty]
     private string title = "Search";
-
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
-
+    
     [ObservableProperty]
     private string outputDirectory = "";
 
@@ -41,18 +35,26 @@ public partial class SearchViewModel : ViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
     
+    public SearchViewModel() 
+        : base("Select files", ["*.pdf", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"])
+    {
+        
+    }
+    
     [RelayCommand]
     private async Task Start()
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select input files.";
                 return;
             }
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -97,7 +99,7 @@ public partial class SearchViewModel : ViewModelBase
             {
                 OperationInput operationInput = new OperationInput
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     Output = OutputFileName,
                     PhraseToFind = Phrase,
                     Before = Before,

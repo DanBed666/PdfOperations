@@ -10,16 +10,10 @@ using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
-public partial class PagesViewModel : ViewModelBase
+public partial class PagesViewModel : FileInputViewModelBase
 {
     [ObservableProperty]
     private string title = "PDF pages";
-
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
 
     [ObservableProperty]
     private string pages = "";
@@ -61,12 +55,36 @@ public partial class PagesViewModel : ViewModelBase
 
     public bool IsSplitByPagesMode => SelectedMode == PageSelectionMode.SplitByPages;
 
-    public bool CanEditOutputFileName => InputFiles.Length == 1;
+    public bool CanEditOutputFileName => InputFilesList.Files.Count <= 1;
+    
+    public PagesViewModel() : base("Select PDF files", ["*.pdf"])
+    {
+        InputFilesList.FilesChanged += () => RefreshInputFilesInfo();
+    }
     
     partial void OnSelectedModeChanged(PageSelectionMode value)
     {
         OnPropertyChanged(nameof(IsCustomPagesMode));
         OnPropertyChanged(nameof(IsSplitByPagesMode));
+    }
+    
+    public void RefreshInputFilesInfo()
+    {
+        string[] files = InputFilesList.ToPathArray();
+
+        InputFilesInfo = string.Join(Environment.NewLine, files.Select(path =>
+        {
+            try
+            {
+                return $"{Path.GetFileName(path)} - pages: {Info.GetPdfPagesSingle(path)}";
+            }
+            catch (Exception ex)
+            {
+                return $"{Path.GetFileName(path)} - cannot read pages: {ex.Message}";
+            }
+        }));
+
+        OnPropertyChanged(nameof(CanEditOutputFileName));
     }
     
     private static bool IsCustomPagesInRange(string pages, int pageCount, out string errorMessage)
@@ -121,18 +139,6 @@ public partial class PagesViewModel : ViewModelBase
             "Split every page" => PageSelectionMode.SplitEveryPage,
             _ => PageSelectionMode.CustomPages
         };
-    }
-
-    partial void OnInputFilesChanged(string[] value)
-    {
-        OnPropertyChanged(nameof(CanEditOutputFileName));
-
-        if (value.Length == 1)
-            OutputFileName = Path.GetFileNameWithoutExtension(value[0]) + ".pdf";
-        else if (value.Length > 1)
-            OutputFileName = "Generated from input file names";
-        else
-            OutputFileName = "";
     }
     
     private static bool TryParseSplitAfterPages(string value, int pageCount, out List<int> splitAfterPages, out string errorMessage)
@@ -191,13 +197,15 @@ public partial class PagesViewModel : ViewModelBase
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select input PDF files.";
                 return;
             }
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -246,7 +254,7 @@ public partial class PagesViewModel : ViewModelBase
             {
                 OperationInput operationInput = new OperationInput
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     Pages = Pages,
                     Output = OutputFileName
                 };
@@ -289,7 +297,7 @@ public partial class PagesViewModel : ViewModelBase
 
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
-                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 finalPath = GetAvailablePath(finalPath);
 
                                 File.Move(tempFile, finalPath);
@@ -311,7 +319,7 @@ public partial class PagesViewModel : ViewModelBase
 
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
-                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 finalPath = GetAvailablePath(finalPath);
 
                                 File.Move(tempFile, finalPath);
@@ -337,10 +345,10 @@ public partial class PagesViewModel : ViewModelBase
 
                         PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
 
-                        string finalSinglePath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalSinglePath = GetAvailablePath(finalSinglePath);
+                        finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(fileJob.TempPath, finalSinglePath);
+                        File.Move(fileJob.TempPath, finalPath);
                         savedFilesCount++;
                     }
                     

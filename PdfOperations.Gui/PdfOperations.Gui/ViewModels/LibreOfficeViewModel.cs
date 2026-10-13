@@ -9,14 +9,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace PdfOperations.Gui.ViewModels;
 
-public partial class LibreOfficeViewModel : ViewModelBase
+public partial class LibreOfficeViewModel : FileInputViewModelBase
 {
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
-
     [ObservableProperty]
     private string outputDirectory = "";
 
@@ -38,19 +32,27 @@ public partial class LibreOfficeViewModel : ViewModelBase
         "html",
         "txt"
     ];
+    
+    public LibreOfficeViewModel() 
+        : base("Select files", ["*.docx", "*.odt", "*.doc", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"])
+    {
+        
+    }
 
     [RelayCommand]
     private async Task Start()
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select input files.";
                 return;
             }
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -88,7 +90,7 @@ public partial class LibreOfficeViewModel : ViewModelBase
 
                 OperationInput input = new OperationInput
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     Format = SelectedFormat
                 };
 

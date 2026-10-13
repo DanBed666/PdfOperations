@@ -8,14 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace PdfOperations.Gui.ViewModels;
 
-public partial class ReplacementViewModel : ViewModelBase
+public partial class ReplacementViewModel : FileInputViewModelBase
 {
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
-
     [ObservableProperty]
     private string placeholderFile = "";
 
@@ -28,12 +22,17 @@ public partial class ReplacementViewModel : ViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
 
+    public ReplacementViewModel() : base("Select editable files", ["*.docx", "*.odt", "*.odg"])
+    {
+        
+    }
+    
     [RelayCommand]
     private async Task Start()
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select document files.";
                 return;
@@ -53,8 +52,10 @@ public partial class ReplacementViewModel : ViewModelBase
 
             if (!Directory.Exists(OutputDirectory))
                 Directory.CreateDirectory(OutputDirectory);
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -75,12 +76,12 @@ public partial class ReplacementViewModel : ViewModelBase
 
                 OperationInput input = new OperationInput
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     PlaceholderFile = PlaceholderFile,
                     Output = "gui"
                 };
 
-                foreach (string inputFile in InputFiles)
+                foreach (string inputFile in currentInputFiles)
                 {
                     FileJob fileJob = new FileJob
                     {

@@ -9,14 +9,8 @@ using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.ViewModels;
 
-public partial class InfoViewModel : ViewModelBase
+public partial class InfoViewModel : FileInputViewModelBase
 {
-    [ObservableProperty]
-    private string inputFilesText = "";
-
-    [ObservableProperty]
-    private string[] inputFiles = [];
-
     [ObservableProperty]
     private string outputDirectory = "";
 
@@ -38,19 +32,14 @@ public partial class InfoViewModel : ViewModelBase
     [ObservableProperty]
     private string defaultOutputFileName = "pdf_info.txt";
     
-    public InfoViewModel()
+    public InfoViewModel(InfoMode mode) : base("Select PDF files", ["*.pdf"])
     {
+        this.mode = mode;
     }
-
-    public InfoViewModel(InfoMode mode)
+    
+    public InfoViewModel() : this(InfoMode.PdfInfo)
     {
-        Mode = mode;
-
-        if (mode == InfoMode.FontInfo)
-        {
-            Title = "PDF font info";
-            OutputFileName = "pdf_font_info.txt";
-        }
+        
     }
 
     [RelayCommand]
@@ -58,13 +47,15 @@ public partial class InfoViewModel : ViewModelBase
     {
         try
         {
-            if (InputFiles.Length == 0)
+            if (InputFilesList.IsEmpty())
             {
                 StatusMessage = "Select PDF files.";
                 return;
             }
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
 
-            string[] missingFiles = InputFiles
+            string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
                 .ToArray();
 
@@ -104,7 +95,7 @@ public partial class InfoViewModel : ViewModelBase
             {
                 FileJob fileJob = new FileJob
                 {
-                    InputFiles = InputFiles,
+                    InputFiles = currentInputFiles,
                     TempPath = finalPath
                 };
 

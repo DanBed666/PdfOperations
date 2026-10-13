@@ -14,7 +14,6 @@ namespace PdfOperations.Gui.ViewModels;
 public partial class ManyToManyViewModel : ViewModelBase
 {
     private readonly GuiOperationDefinition operation;
-    
     public string InputTitle => operation.InputTitle;
     public string FileDialogTitle => operation.FileDialogTitle;
     public string[] FilePatterns => operation.FilePatterns;
@@ -44,17 +43,7 @@ public partial class ManyToManyViewModel : ViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
     public bool CanEditOutputFileName => InputFilesList.Files.Count <= 1;
-    
-    public void SetInputFiles(IEnumerable<string> paths)
-    {
-        InputFilesList.SetFiles(paths);
-    }
 
-    public void AddInputFiles(IEnumerable<string> paths)
-    {
-        InputFilesList.AddFiles(paths);
-    }
-    
     private void RefreshInputFilesState()
     {
         string[] files = InputFilesList.ToPathArray();
