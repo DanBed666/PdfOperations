@@ -10,11 +10,10 @@
                        FontSize="28"
                        FontWeight="Bold" />
 
-            <TextBox Text="{Binding HelpText}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     BorderThickness="0" />
+            <TextBlock Text="{Binding HelpText}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       LineHeight="22" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
