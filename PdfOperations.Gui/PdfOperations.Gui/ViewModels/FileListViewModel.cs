@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
@@ -16,6 +17,8 @@ public partial class FileListViewModel : ViewModelBase
     private SelectedFileItem? selectedFile;
     
     public event Action? FilesChanged;
+    
+    public AvaloniaList<SelectedFileItem> SelectedFiles { get; } = new();
     
     [ObservableProperty]
     private bool showMoveButtons;
@@ -57,6 +60,7 @@ public partial class FileListViewModel : ViewModelBase
         }
 
         SelectedFile = null;
+        SelectedFiles.Clear();
         RefreshNumbers();
         
         FilesChanged?.Invoke();
@@ -126,6 +130,13 @@ public partial class FileListViewModel : ViewModelBase
     [RelayCommand]
     public void RemoveSelectedFile()
     {
+        if (SelectedFiles.Count > 0)
+        {
+            RemoveFiles(SelectedFiles.ToArray());
+            SelectedFiles.Clear();
+            return;
+        }
+
         if (SelectedFile is null)
             return;
 

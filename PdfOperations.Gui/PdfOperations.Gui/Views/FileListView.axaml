@@ -8,6 +8,8 @@
         <ListBox Grid.Column="0"
                  ItemsSource="{Binding Files}"
                  SelectedItem="{Binding SelectedFile}"
+                 SelectedItems="{Binding SelectedFiles}"
+                 SelectionMode="Multiple"
                  MinHeight="80"
                  MaxHeight="180">
             <ListBox.ItemTemplate>
