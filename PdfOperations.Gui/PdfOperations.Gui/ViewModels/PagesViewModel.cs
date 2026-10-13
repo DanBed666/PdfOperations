@@ -59,6 +59,7 @@ public partial class PagesViewModel : FileInputViewModelBase
     
     public PagesViewModel() : base("Select PDF files", ["*.pdf"])
     {
+        StatusMessage = Loc.Ready;
         InputFilesList.FilesChanged += () => RefreshInputFilesInfo();
     }
     
@@ -76,18 +77,18 @@ public partial class PagesViewModel : FileInputViewModelBase
         {
             try
             {
-                return $"{Path.GetFileName(path)} - pages: {Info.GetPdfPagesSingle(path)}";
+                return $"{Path.GetFileName(path)} - {Loc.PagesInfo(Info.GetPdfPagesSingle(path))}";
             }
             catch (Exception ex)
             {
-                return $"{Path.GetFileName(path)} - cannot read pages: {ex.Message}";
+                return $"{Path.GetFileName(path)} - {Loc.CannotReadPages(ex.Message)}";
             }
         }));
 
         OnPropertyChanged(nameof(CanEditOutputFileName));
     }
     
-    private static bool IsCustomPagesInRange(string pages, int pageCount, out string errorMessage)
+    private bool IsCustomPagesInRange(string pages, int pageCount, out string errorMessage)
     {
         errorMessage = "";
 
@@ -101,7 +102,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                 if (range.Length != 2)
                 {
-                    errorMessage = $"Invalid page range: {part}.";
+                    errorMessage = Loc.InvalidPageRange(part);
                     return false;
                 }
 
@@ -110,7 +111,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                 if (start < 1 || end < 1 || start > end || end > pageCount)
                 {
-                    errorMessage = $"Page range {part} is outside document page count ({pageCount}).";
+                    errorMessage = Loc.PageRangeOutsideDocument(part, pageCount);
                     return false;
                 }
             }
@@ -120,7 +121,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                 if (page < 1 || page > pageCount)
                 {
-                    errorMessage = $"Page {page} is outside document page count ({pageCount}).";
+                    errorMessage = Loc.PageOutsideDocument(page, pageCount);
                     return false;
                 }
             }
@@ -141,7 +142,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         };
     }
     
-    private static bool TryParseSplitAfterPages(string value, int pageCount, out List<int> splitAfterPages, out string errorMessage)
+    private bool TryParseSplitAfterPages(string value, int pageCount, out List<int> splitAfterPages, out string errorMessage)
     {
         splitAfterPages = new List<int>();
         errorMessage = "";
@@ -150,7 +151,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
         if (parts.Length == 0)
         {
-            errorMessage = "Enter split pages, for example: 4,10,15.";
+            errorMessage = Loc.EnterSplitPages;
             return false;
         }
 
@@ -158,19 +159,19 @@ public partial class PagesViewModel : FileInputViewModelBase
         {
             if (!int.TryParse(part, out int page))
             {
-                errorMessage = $"Invalid split page: {part}.";
+                errorMessage = Loc.InvalidSplitPage(part);
                 return false;
             }
 
             if (page < 1)
             {
-                errorMessage = "Split page must be greater than 0.";
+                errorMessage = Loc.SplitPageMustBeGreaterThanZero;
                 return false;
             }
 
             if (page > pageCount)
             {
-                errorMessage = $"Split page must be smaller than page count ({pageCount}).";
+                errorMessage = Loc.SplitPageMustBeSmallerThanPageCount(pageCount);
                 return false;
             }
 
@@ -179,13 +180,13 @@ public partial class PagesViewModel : FileInputViewModelBase
 
         if (splitAfterPages.Count != splitAfterPages.Distinct().Count())
         {
-            errorMessage = "Split pages cannot contain duplicates.";
+            errorMessage = Loc.SplitPagesCannotContainDuplicates;
             return false;
         }
 
         if (!splitAfterPages.SequenceEqual(splitAfterPages.OrderBy(page => page)))
         {
-            errorMessage = "Split pages must be in ascending order.";
+            errorMessage = Loc.SplitPagesMustBeAscending;
             return false;
         }
 
@@ -199,7 +200,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select input PDF files.";
+                StatusMessage = Loc.SelectPdfFiles;
                 return;
             }
             
@@ -211,41 +212,41 @@ public partial class PagesViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (SelectedMode == PageSelectionMode.CustomPages && string.IsNullOrWhiteSpace(Pages))
             {
-                StatusMessage = "Enter pages, for example: 1,3-5.";
+                StatusMessage = Loc.EnterPages;
                 return;
             }
             
             if (SelectedMode == PageSelectionMode.CustomPages && !InputValidator.IsPagesFormatValid(Pages))
             {
-                StatusMessage = "Invalid pages format. Use for example: 1,3-5.";
+                StatusMessage = Loc.InvalidPagesFormat;
                 return;
             }
             
             if (SelectedMode == PageSelectionMode.SplitByPages && string.IsNullOrWhiteSpace(SplitAfterPages))
             {
-                StatusMessage = "Enter split pages, for example: 4,10,15.";
+                StatusMessage = Loc.EnterSplitPages;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
-                StatusMessage = "Output directory does not exist.";
+                StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
 
-            StatusMessage = "Creating PDF with selected pages...";
+            StatusMessage = Loc.CreatingPdfWithSelectedPages;
 
             int savedFilesCount = 0;
             string finalPath = "";
@@ -339,7 +340,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                         if (string.IsNullOrWhiteSpace(operationInput.Pages))
                         {
-                            StatusMessage = $"No pages selected for {Path.GetFileName(fileJob.InputFile)}.";
+                            StatusMessage = Loc.NoPagesSelected(Path.GetFileName(fileJob.InputFile));
                             return;
                         }
 
@@ -353,8 +354,8 @@ public partial class PagesViewModel : FileInputViewModelBase
                     }
                     
                     StatusMessage = savedFilesCount == 1
-                        ? $"Done. Saved: {finalPath}"
-                        : $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
+                        ? Loc.DoneSaved(finalPath)
+                        : Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
                 }
                 finally
                 {
@@ -367,7 +368,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         }
         catch (Exception e)
         {
-            StatusMessage = $"Error: {e.Message}";
+            StatusMessage = Loc.Error(e.Message);
         }
     }
 
@@ -377,7 +378,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
-            StatusMessage = "No output folder to open.";
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }
 

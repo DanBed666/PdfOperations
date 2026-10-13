@@ -36,7 +36,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     public LibreOfficeViewModel() 
         : base("Select files", ["*.docx", "*.odt", "*.doc", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"])
     {
-        
+        StatusMessage = Loc.Ready;
     }
 
     [RelayCommand]
@@ -46,7 +46,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select input files.";
+                StatusMessage = Loc.SelectInputFiles;
                 return;
             }
             
@@ -58,13 +58,13 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
@@ -73,13 +73,13 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
             if (string.IsNullOrWhiteSpace(SelectedFormat))
             {
-                StatusMessage = "Select output format.";
+                StatusMessage = Loc.SelectOutputFormat;
                 return;
             }
 
             int savedFilesCount = 0;
 
-            StatusMessage = $"Converting to {SelectedFormat}...";
+            StatusMessage = Loc.ConvertingTo(SelectedFormat);
 
             await Task.Run(() =>
             {
@@ -115,11 +115,11 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved {savedFilesCount} files to: {OutputDirectory}";
+            StatusMessage = Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = Loc.Error(ex.Message);
         }
     }
 
@@ -127,7 +127,10 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
+        }
 
         Process.Start(new ProcessStartInfo
         {

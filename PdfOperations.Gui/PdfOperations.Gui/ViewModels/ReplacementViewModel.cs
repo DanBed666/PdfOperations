@@ -24,7 +24,7 @@ public partial class ReplacementViewModel : FileInputViewModelBase
 
     public ReplacementViewModel() : base("Select editable files", ["*.docx", "*.odt", "*.odg"])
     {
-        
+        StatusMessage = Loc.Ready;
     }
     
     [RelayCommand]
@@ -34,19 +34,19 @@ public partial class ReplacementViewModel : FileInputViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select document files.";
+                StatusMessage = Loc.SelectDocumentFiles;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(PlaceholderFile) || !File.Exists(PlaceholderFile))
             {
-                StatusMessage = "Select Excel replacement file.";
+                StatusMessage = Loc.SelectExcelReplacementFile;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
@@ -61,11 +61,11 @@ public partial class ReplacementViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
-            StatusMessage = "Replacing text...";
+            StatusMessage = Loc.ReplacingText;
 
             await Task.Run(() =>
             {
@@ -104,11 +104,11 @@ public partial class ReplacementViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved files to: {OutputDirectory}";
+            StatusMessage = Loc.DoneSavedFilesTo(OutputDirectory);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = Loc.Error(ex.Message);
         }
     }
 
@@ -116,7 +116,10 @@ public partial class ReplacementViewModel : FileInputViewModelBase
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
+        }
 
         Process.Start(new ProcessStartInfo
         {

@@ -37,18 +37,23 @@ public partial class FragmentsViewModel : ViewModelBase
 
     public ObservableCollection<PdfFragment> Fragments { get; } = new();
 
+    public FragmentsViewModel()
+    {
+        StatusMessage = Loc.Ready;
+    }
+
     [RelayCommand]
     private void AddFragment()
     {
         if (string.IsNullOrWhiteSpace(SelectedFragmentFile) || !File.Exists(SelectedFragmentFile))
         {
-            StatusMessage = "Select PDF file.";
+            StatusMessage = Loc.SelectPdfFile;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(PageNumbers))
         {
-            StatusMessage = "Enter pages, for example: 1,3-5.";
+            StatusMessage = Loc.EnterPages;
             return;
         }
         
@@ -56,7 +61,7 @@ public partial class FragmentsViewModel : ViewModelBase
         
         if (!InputValidator.IsPagesFormatValid(normalizedPages))
         {
-            StatusMessage = "Invalid pages format. Use for example: 1,3-5.";
+            StatusMessage = Loc.InvalidPagesFormat;
             return;
         }
         
@@ -68,7 +73,7 @@ public partial class FragmentsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Cannot read PDF page count: {ex.Message}";
+            StatusMessage = Loc.CannotReadPdfPageCount(ex.Message);
             return;
         }
         
@@ -86,10 +91,10 @@ public partial class FragmentsViewModel : ViewModelBase
 
         SelectedFragmentFile = "";
         PageNumbers = "";
-        StatusMessage = "Fragment added.";
+        StatusMessage = Loc.FragmentAdded;
     }
     
-    private static bool ArePagesInRange(string pages, int pageCount, out string errorMessage)
+    private bool ArePagesInRange(string pages, int pageCount, out string errorMessage)
     {
         errorMessage = "";
 
@@ -106,7 +111,7 @@ public partial class FragmentsViewModel : ViewModelBase
 
                 if (start < 1 || end < 1 || start > pageCount || end > pageCount)
                 {
-                    errorMessage = $"Page range {part} is outside document page count ({pageCount}).";
+                    errorMessage = Loc.PageRangeOutsideDocument(part, pageCount);
                     return false;
                 }
             }
@@ -116,7 +121,7 @@ public partial class FragmentsViewModel : ViewModelBase
 
                 if (page < 1 || page > pageCount)
                 {
-                    errorMessage = $"Page {page} is outside document page count ({pageCount}).";
+                    errorMessage = Loc.PageOutsideDocument(page, pageCount);
                     return false;
                 }
             }
@@ -133,7 +138,7 @@ public partial class FragmentsViewModel : ViewModelBase
 
         Fragments.Remove(SelectedFragment);
         SelectedFragment = null;
-        StatusMessage = "Fragment removed.";
+        StatusMessage = Loc.FragmentRemoved;
     }
     
     [RelayCommand]
@@ -141,7 +146,7 @@ public partial class FragmentsViewModel : ViewModelBase
     {
         Fragments.Clear();
         SelectedFragment = null;
-        StatusMessage = "Fragments cleared.";
+        StatusMessage = Loc.FragmentsCleared;
     }
     
     [RelayCommand]
@@ -156,7 +161,7 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
     
         Fragments.Move(index, index - 1);
-        StatusMessage = "Fragment moved up.";
+        StatusMessage = Loc.FragmentMovedUp;
     }
     
     [RelayCommand]
@@ -171,7 +176,7 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
     
         Fragments.Move(index, index + 1);
-        StatusMessage = "Fragment moved down.";
+        StatusMessage = Loc.FragmentMovedDown;
     }
 
     [RelayCommand]
@@ -181,13 +186,13 @@ public partial class FragmentsViewModel : ViewModelBase
         {
             if (Fragments.Count == 0)
             {
-                StatusMessage = "Add at least one fragment.";
+                StatusMessage = Loc.AddAtLeastOneFragment;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
@@ -200,7 +205,7 @@ public partial class FragmentsViewModel : ViewModelBase
             if (!Path.GetExtension(OutputFileName).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".pdf";
 
-            StatusMessage = "Building PDF from fragments...";
+            StatusMessage = Loc.BuildingPdfFromFragments;
 
             string finalPath = "";
 
@@ -241,11 +246,11 @@ public partial class FragmentsViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved: {finalPath}";
+            StatusMessage = Loc.DoneSaved(finalPath);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = Loc.Error(ex.Message);
         }
     }
 
@@ -253,7 +258,10 @@ public partial class FragmentsViewModel : ViewModelBase
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
+        }
 
         Process.Start(new ProcessStartInfo
         {

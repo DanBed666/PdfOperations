@@ -35,6 +35,10 @@ public partial class InfoViewModel : FileInputViewModelBase
     public InfoViewModel(InfoMode mode) : base("Select PDF files", ["*.pdf"])
     {
         this.mode = mode;
+        Title = mode == InfoMode.FontInfo
+            ? Loc.GetOperationName("FontInfo")
+            : Loc.GetOperationName("Info");
+        StatusMessage = Loc.Ready;
     }
     
     public InfoViewModel() : this(InfoMode.PdfInfo)
@@ -49,7 +53,7 @@ public partial class InfoViewModel : FileInputViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select PDF files.";
+                StatusMessage = Loc.SelectPdfFiles;
                 return;
             }
             
@@ -61,13 +65,13 @@ public partial class InfoViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
@@ -86,7 +90,7 @@ public partial class InfoViewModel : FileInputViewModelBase
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".txt";
             }
 
-            StatusMessage = "Reading PDF info...";
+            StatusMessage = Loc.ReadingPdfInfo;
 
             string finalPath = Path.Combine(OutputDirectory, OutputFileName);
             finalPath = GetAvailablePath(finalPath);
@@ -106,11 +110,11 @@ public partial class InfoViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved: {finalPath}";
+            StatusMessage = Loc.DoneSaved(finalPath);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = Loc.Error(ex.Message);
         }
     }
 
@@ -118,7 +122,10 @@ public partial class InfoViewModel : FileInputViewModelBase
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
+        {
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
+        }
 
         Process.Start(new ProcessStartInfo
         {

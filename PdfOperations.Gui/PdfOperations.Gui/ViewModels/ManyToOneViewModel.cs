@@ -19,6 +19,7 @@ public partial class ManyToOneViewModel : ViewModelBase
     {
         this.operation = operation;
         Title = operation.Title;
+        StatusMessage = Loc.Ready;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
         InputFilesList.ShowMoveButtons = true;
     }
@@ -51,7 +52,7 @@ public partial class ManyToOneViewModel : ViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select input files.";
+                StatusMessage = Loc.SelectInputFiles;
                 return;
             }
             
@@ -63,19 +64,19 @@ public partial class ManyToOneViewModel : ViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
-                StatusMessage = "Output directory does not exist.";
+                StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
 
@@ -88,7 +89,7 @@ public partial class ManyToOneViewModel : ViewModelBase
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + operation.OutputExtension;
             }
 
-            StatusMessage = $"Starting {Title}...";
+            StatusMessage = Loc.Starting(Title);
 
             string finalPath = "";
 
@@ -132,11 +133,11 @@ public partial class ManyToOneViewModel : ViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved: {finalPath}";
+            StatusMessage = Loc.DoneSaved(finalPath);
         }
         catch (Exception e)
         {
-            StatusMessage = $"Error: {e.Message}";
+            StatusMessage = Loc.Error(e.Message);
         }
     }
 
@@ -146,7 +147,7 @@ public partial class ManyToOneViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
-            StatusMessage = "No output folder to open.";
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }
 

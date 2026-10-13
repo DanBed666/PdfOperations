@@ -1,46 +1,54 @@
+using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
-using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    public string[] Operations { get; } =
+    private static readonly string[] OperationKeys =
     [
-        "PDF to TXT",
-        "PDF to DOCX",
-        "DOCX to PDF word",
-        "PDF to Image",
-        "Images to PDF",
-        "Images to TXT",
-        "Extract from PDF",
-        "LibreOffice conversion",
-        "Split PDF",
-        "Merge PDF",
+        "PdfToTxt",
+        "PdfToDocx",
+        "DocxToPdfWord",
+        "PdfToImage",
+        "ImagesToPdf",
+        "ImagesToTxt",
+        "ExtractFromPdf",
+        "LibreOffice",
+        "SplitPdf",
+        "MergePdf",
         "Search",
         "Info",
-        "Font info",
+        "FontInfo",
         "Replacement",
-        "Build PDF from fragments",
+        "Fragments",
         "Help"
     ];
 
+    public ObservableCollection<OperationMenuItem> Operations { get; } = new();
+
+    public MainViewModel()
+    {
+        RefreshOperations();
+    }
+
     [ObservableProperty]
-    private string? selectedOperation;
+    private OperationMenuItem? selectedOperation;
 
     [ObservableProperty]
     private ViewModelBase? currentOperationViewModel;
     
-    partial void OnSelectedOperationChanged(string? value)
+    partial void OnSelectedOperationChanged(OperationMenuItem? value)
     {
-        CurrentOperationViewModel = value switch
+        CurrentOperationViewModel = value?.Key switch
         {
-            "LibreOffice conversion" => new LibreOfficeViewModel(),
-            "PDF to TXT" => new ManyToManyViewModel(new GuiOperationDefinition
+            "LibreOffice" => new LibreOfficeViewModel(),
+            "PdfToTxt" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "PdfToTxt",
-                Title = "PDF to TXT",
+                Title = Loc.GetOperationName("PdfToTxt"),
                 InputTitle = "Input PDF files",
                 OutputExtension = ".txt",
                 DefaultOutputName = "output",
@@ -48,10 +56,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
             }),
-            "PDF to DOCX" => new ManyToManyViewModel(new GuiOperationDefinition
+            "PdfToDocx" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "PdfToDocx",
-                Title = "PDF to DOCX",
+                Title = Loc.GetOperationName("PdfToDocx"),
                 InputTitle = "Input PDF files",
                 OutputExtension = ".docx",
                 DefaultOutputName = "output",
@@ -59,10 +67,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
-            "DOCX to PDF word" => new ManyToManyViewModel(new GuiOperationDefinition
+            "DocxToPdfWord" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "DocxToPdfWord",
-                Title = "DOCX to PDF word",
+                Title = Loc.GetOperationName("DocxToPdfWord"),
                 InputTitle = "Input DOCX files",
                 OutputExtension = ".pdf",
                 DefaultOutputName = "output",
@@ -70,10 +78,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.docx"],
                 Action = (_, _, fileJob) => Convert.DocxToPdfWord(fileJob)
             }),
-            "PDF to Image" => new ManyToManyViewModel(new GuiOperationDefinition
+            "PdfToImage" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "PdfToImage",
-                Title = "PDF to Image",
+                Title = Loc.GetOperationName("PdfToImage"),
                 InputTitle = "Input PDF files",
                 OutputExtension = ".jpg",
                 DefaultOutputName = "output",
@@ -82,20 +90,20 @@ public partial class MainViewModel : ViewModelBase
                 MoveAllTempFiles = true,
                 Action = (_, _, fileJob) => Convert.PdfToPict(fileJob)
             }),
-            "Images to PDF" => new ManyToOneViewModel(new GuiOperationDefinition
+            "ImagesToPdf" => new ManyToOneViewModel(new GuiOperationDefinition
             {
                 Name = "ImagesToPdf",
-                Title = "Images to PDF",
+                Title = Loc.GetOperationName("ImagesToPdf"),
                 OutputExtension = ".pdf",
                 DefaultOutputName = "images",
                 FileDialogTitle = "Select image files",
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
             }),
-            "Images to TXT" => new ManyToManyViewModel(new GuiOperationDefinition
+            "ImagesToTxt" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "ImagesToTxt",
-                Title = "Images to TXT",
+                Title = Loc.GetOperationName("ImagesToTxt"),
                 OutputExtension = ".txt",
                 DefaultOutputName = "images",
                 FileDialogTitle = "Select image files",
@@ -103,10 +111,10 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 Action = (_, _, fileJob) => Convert.PictToTxt(fileJob)
             }),
-            "Extract from PDF" => new ManyToManyViewModel(new GuiOperationDefinition
+            "ExtractFromPdf" => new ManyToManyViewModel(new GuiOperationDefinition
             {
                 Name = "ExtractFromPdf",
-                Title = "Extract from PDF",
+                Title = Loc.GetOperationName("ExtractFromPdf"),
                 OutputExtension = ".jpg",
                 DefaultOutputName = "images",
                 FileDialogTitle = "Select image files",
@@ -114,14 +122,14 @@ public partial class MainViewModel : ViewModelBase
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.ExtractPict(fileJob)
             }),
-            "Split PDF" => new PagesViewModel
+            "SplitPdf" => new PagesViewModel
             {
-                Title = "PDF pages"
+                Title = Loc.GetOperationName("SplitPdf")
             },
-            "Merge PDF" => new ManyToOneViewModel(new GuiOperationDefinition
+            "MergePdf" => new ManyToOneViewModel(new GuiOperationDefinition
             {
                 Name = "MergePdf",
-                Title = "Merge PDF",
+                Title = Loc.GetOperationName("MergePdf"),
                 OutputExtension = ".pdf",
                 DefaultOutputName = "merged",
                 FileDialogTitle = "Select PDF files",
@@ -130,9 +138,9 @@ public partial class MainViewModel : ViewModelBase
             }),
             "Search" => new SearchViewModel(),
             "Info" => new InfoViewModel(),
-            "Font info" => new InfoViewModel(InfoMode.FontInfo),
+            "FontInfo" => new InfoViewModel(InfoMode.FontInfo),
             "Replacement" => new ReplacementViewModel(),
-            "Build PDF from fragments" => new FragmentsViewModel(),
+            "Fragments" => new FragmentsViewModel(),
             "Help" => new HelpViewModel(),
             _ => null
         };
@@ -147,6 +155,33 @@ public partial class MainViewModel : ViewModelBase
     public AppLanguage SelectedLanguage
     {
         get => Loc.Language;
-        set => Loc.Language = value;
+        set
+        {
+            if (Loc.Language == value)
+                return;
+
+            string? selectedKey = SelectedOperation?.Key;
+            Loc.Language = value;
+            RefreshOperations(selectedKey);
+        }
+    }
+
+    private void RefreshOperations(string? selectedKey = null)
+    {
+        Operations.Clear();
+
+        foreach (string key in OperationKeys)
+        {
+            Operations.Add(new OperationMenuItem
+            {
+                Key = key,
+                DisplayName = Loc.GetOperationName(key)
+            });
+        }
+
+        if (selectedKey is not null)
+        {
+            SelectedOperation = Operations.FirstOrDefault(operation => operation.Key == selectedKey);
+        }
     }
 }

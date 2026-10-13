@@ -38,7 +38,8 @@ public partial class SearchViewModel : FileInputViewModelBase
     public SearchViewModel() 
         : base("Select files", ["*.pdf", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"])
     {
-        
+        Title = Loc.GetOperationName("Search");
+        StatusMessage = Loc.Ready;
     }
     
     [RelayCommand]
@@ -48,7 +49,7 @@ public partial class SearchViewModel : FileInputViewModelBase
         {
             if (InputFilesList.IsEmpty())
             {
-                StatusMessage = "Select input files.";
+                StatusMessage = Loc.SelectInputFiles;
                 return;
             }
             
@@ -60,25 +61,25 @@ public partial class SearchViewModel : FileInputViewModelBase
 
             if (missingFiles.Length > 0)
             {
-                StatusMessage = "Missing input files: " + string.Join(", ", missingFiles.Select(Path.GetFileName));
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Phrase))
             {
-                StatusMessage = "Enter search phrase.";
+                StatusMessage = Loc.EnterSearchPhrase;
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(OutputDirectory))
             {
-                StatusMessage = "Select output directory.";
+                StatusMessage = Loc.SelectOutputDirectory;
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
-                StatusMessage = "Output directory does not exist.";
+                StatusMessage = Loc.OutputDirectoryDoesNotExist;
                 return;
             }
 
@@ -91,7 +92,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".txt";
             }
 
-            StatusMessage = "Searching...";
+            StatusMessage = Loc.Searching;
 
             string finalPath = "";
 
@@ -165,11 +166,11 @@ public partial class SearchViewModel : FileInputViewModelBase
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusMessage = $"Done. Saved report: {finalPath}";
+            StatusMessage = Loc.DoneSavedReport(finalPath);
         }
         catch (Exception e)
         {
-            StatusMessage = $"Error: {e.Message}";
+            StatusMessage = Loc.Error(e.Message);
         }
     }
     
@@ -189,7 +190,7 @@ public partial class SearchViewModel : FileInputViewModelBase
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
             !Directory.Exists(LastOutputDirectory))
         {
-            StatusMessage = "No output folder to open.";
+            StatusMessage = Loc.NoOutputFolderToOpen;
             return;
         }
 

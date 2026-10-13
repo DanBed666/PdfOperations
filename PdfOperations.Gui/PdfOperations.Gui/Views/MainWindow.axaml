@@ -24,7 +24,13 @@
                           SelectedItem="{Binding SelectedLanguage}" />
 
                 <ListBox ItemsSource="{Binding Operations}"
-                         SelectedItem="{Binding SelectedOperation}" />
+                         SelectedItem="{Binding SelectedOperation}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
         </Border>
 
