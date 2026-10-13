@@ -33,7 +33,13 @@
                 <TextBlock Text="{Binding Loc.PageMode}" />
 
                 <ComboBox ItemsSource="{Binding PageModes}"
-                          SelectedItem="{Binding SelectedPageMode}" />
+                          SelectedItem="{Binding SelectedPageMode}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <StackPanel IsVisible="{Binding IsCustomPagesMode}"
                             Spacing="8">

@@ -15,7 +15,7 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="220,*">
+    <Grid ColumnDefinitions="260,*">
         <Border Grid.Column="0"
                 Background="#20242A"
                 Padding="12">

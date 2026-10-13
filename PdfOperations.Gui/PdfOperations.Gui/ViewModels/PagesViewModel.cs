@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -35,21 +36,14 @@ public partial class PagesViewModel : FileInputViewModelBase
     
     [ObservableProperty]
     private PageSelectionMode selectedMode = PageSelectionMode.CustomPages;
-    
-    [ObservableProperty]
-    private string selectedPageMode = "Custom pages";
 
     [ObservableProperty]
     private string splitAfterPages = "";
     
-    public List<string> PageModes { get; } =
-    [
-        "Custom pages",
-        "Even pages",
-        "Odd pages",
-        "Split by pages",
-        "Split every page"
-    ];
+    public ObservableCollection<PageModeMenuItem> PageModes { get; } = new();
+
+    [ObservableProperty]
+    private PageModeMenuItem? selectedPageMode;
     
     public bool IsCustomPagesMode => SelectedMode == PageSelectionMode.CustomPages;
 
@@ -60,7 +54,49 @@ public partial class PagesViewModel : FileInputViewModelBase
     public PagesViewModel() : base("Select PDF files", ["*.pdf"])
     {
         StatusMessage = Loc.Ready;
+        RefreshPageModes();
+        SelectedPageMode = PageModes.FirstOrDefault(mode => mode.Mode == PageSelectionMode.CustomPages);
         InputFilesList.FilesChanged += () => RefreshInputFilesInfo();
+    }
+    
+    private void RefreshPageModes()
+    {
+        PageSelectionMode? selectedMode = SelectedPageMode?.Mode;
+
+        PageModes.Clear();
+
+        PageModes.Add(new PageModeMenuItem
+        {
+            Mode = PageSelectionMode.CustomPages,
+            DisplayName = Loc.GetPageModeName(PageSelectionMode.CustomPages)
+        });
+
+        PageModes.Add(new PageModeMenuItem
+        {
+            Mode = PageSelectionMode.EvenPages,
+            DisplayName = Loc.GetPageModeName(PageSelectionMode.EvenPages)
+        });
+
+        PageModes.Add(new PageModeMenuItem
+        {
+            Mode = PageSelectionMode.OddPages,
+            DisplayName = Loc.GetPageModeName(PageSelectionMode.OddPages)
+        });
+
+        PageModes.Add(new PageModeMenuItem
+        {
+            Mode = PageSelectionMode.SplitByPages,
+            DisplayName = Loc.GetPageModeName(PageSelectionMode.SplitByPages)
+        });
+
+        PageModes.Add(new PageModeMenuItem
+        {
+            Mode = PageSelectionMode.SplitEveryPage,
+            DisplayName = Loc.GetPageModeName(PageSelectionMode.SplitEveryPage)
+        });
+
+        if (selectedMode is not null)
+            SelectedPageMode = PageModes.FirstOrDefault(mode => mode.Mode == selectedMode);
     }
     
     partial void OnSelectedModeChanged(PageSelectionMode value)
@@ -130,16 +166,9 @@ public partial class PagesViewModel : FileInputViewModelBase
         return true;
     }
     
-    partial void OnSelectedPageModeChanged(string value)
+    partial void OnSelectedPageModeChanged(PageModeMenuItem? value)
     {
-        SelectedMode = value switch
-        {
-            "Even pages" => PageSelectionMode.EvenPages,
-            "Odd pages" => PageSelectionMode.OddPages,
-            "Split by pages" => PageSelectionMode.SplitByPages,
-            "Split every page" => PageSelectionMode.SplitEveryPage,
-            _ => PageSelectionMode.CustomPages
-        };
+        SelectedMode = value?.Mode ?? PageSelectionMode.CustomPages;
     }
     
     private bool TryParseSplitAfterPages(string value, int pageCount, out List<int> splitAfterPages, out string errorMessage)

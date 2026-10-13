@@ -71,6 +71,38 @@ public partial class LocalizationService : ObservableObject
     public string FragmentMovedDown => Language == AppLanguage.Polish ? "Przesunięto fragment w dół." : "Fragment moved down.";
     public string AddAtLeastOneFragment => Language == AppLanguage.Polish ? "Dodaj co najmniej jeden fragment." : "Add at least one fragment.";
     public string NoOutputFolderToOpen => Language == AppLanguage.Polish ? "Nie ma jeszcze folderu z wynikami do otwarcia." : "No output folder to open.";
+    public string CustomPages => Language == AppLanguage.Polish
+        ? "Wybrane strony"
+        : "Custom pages";
+
+    public string EvenPages => Language == AppLanguage.Polish
+        ? "Strony parzyste"
+        : "Even pages";
+
+    public string OddPages => Language == AppLanguage.Polish
+        ? "Strony nieparzyste"
+        : "Odd pages";
+
+    public string SplitByPages => Language == AppLanguage.Polish
+        ? "Podziel po podanych stronach"
+        : "Split by pages";
+
+    public string SplitEveryPage => Language == AppLanguage.Polish
+        ? "Podziel każdą stronę osobno"
+        : "Split every page";
+    
+    public string GetPageModeName(PageSelectionMode mode)
+    {
+        return mode switch
+        {
+            PageSelectionMode.CustomPages => CustomPages,
+            PageSelectionMode.EvenPages => EvenPages,
+            PageSelectionMode.OddPages => OddPages,
+            PageSelectionMode.SplitByPages => SplitByPages,
+            PageSelectionMode.SplitEveryPage => SplitEveryPage,
+            _ => mode.ToString()
+        };
+    }
 
     public string GetOperationName(string key)
     {
