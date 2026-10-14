@@ -46,9 +46,14 @@ public partial class SearchViewModel : FileInputViewModelBase
     {
         Title = Loc.GetOperationName("Search");
         StatusMessage = Loc.Ready;
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -147,7 +152,7 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                         if (extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                         {
-                            Convert.PdfToTxt(fileJob);
+                            Convert.PdfToTxtWithPageBreaks(fileJob);
                         }
                         else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                         {
@@ -207,8 +212,31 @@ public partial class SearchViewModel : FileInputViewModelBase
                extension.Equals(".tif", StringComparison.OrdinalIgnoreCase) ||
                extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
     }
+
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(OutputFileName)
+               && !string.IsNullOrWhiteSpace(Phrase);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnPhraseChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
@@ -224,6 +252,16 @@ public partial class SearchViewModel : FileInputViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
     
     private static string GetAvailablePath(string path)

@@ -62,7 +62,11 @@ public partial class PagesViewModel : FileInputViewModelBase
         StatusMessage = Loc.Ready;
         RefreshPageModes();
         SelectedPageMode = PageModes.FirstOrDefault(mode => mode.Mode == PageSelectionMode.CustomPages);
-        InputFilesList.FilesChanged += () => RefreshInputFilesInfo();
+        InputFilesList.FilesChanged += () =>
+        {
+            RefreshInputFilesInfo();
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
     
     private void RefreshPageModes()
@@ -109,11 +113,13 @@ public partial class PagesViewModel : FileInputViewModelBase
     {
         OnPropertyChanged(nameof(IsCustomPagesMode));
         OnPropertyChanged(nameof(IsSplitByPagesMode));
+        StartCommand.NotifyCanExecuteChanged();
     }
     
     public void RefreshInputFilesInfo()
     {
         string[] files = InputFilesList.ToPathArray();
+        SetDefaultOutputDirectoryFromInputFiles(files, OutputDirectory, value => OutputDirectory = value);
 
         InputFilesInfo = string.Join(Environment.NewLine, files.Select(path =>
         {
@@ -228,7 +234,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         return true;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -432,7 +438,44 @@ public partial class PagesViewModel : FileInputViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        if (InputFilesList.IsEmpty() || string.IsNullOrWhiteSpace(OutputDirectory))
+            return false;
+
+        if (string.IsNullOrWhiteSpace(OutputFileName))
+            return false;
+
+        if (SelectedMode == PageSelectionMode.CustomPages)
+            return !string.IsNullOrWhiteSpace(Pages);
+
+        if (SelectedMode == PageSelectionMode.SplitByPages)
+            return !string.IsNullOrWhiteSpace(SplitAfterPages);
+
+        return true;
+    }
+
+    partial void OnPagesChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSplitAfterPagesChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
@@ -448,6 +491,16 @@ public partial class PagesViewModel : FileInputViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)

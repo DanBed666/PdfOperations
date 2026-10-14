@@ -45,6 +45,11 @@ public partial class InfoViewModel : FileInputViewModelBase
             ? Loc.GetOperationName("FontInfo")
             : Loc.GetOperationName("Info");
         StatusMessage = Loc.Ready;
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
     
     public InfoViewModel() : this(InfoMode.PdfInfo)
@@ -52,7 +57,7 @@ public partial class InfoViewModel : FileInputViewModelBase
         
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -140,7 +145,24 @@ public partial class InfoViewModel : FileInputViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(OutputFileName);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
@@ -155,6 +177,16 @@ public partial class InfoViewModel : FileInputViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)

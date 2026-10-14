@@ -43,9 +43,14 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             inputTitle: LocalizationService.Instance.InputOfficeFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -146,7 +151,24 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(SelectedFormat);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedFormatChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
@@ -161,6 +183,16 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)

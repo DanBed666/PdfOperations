@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.IO;
 using PdfOperations.Gui.Models;
 using PdfOperations.Gui.Services;
 
@@ -77,6 +79,28 @@ public abstract partial class ViewModelBase : ObservableObject
         OnPropertyChanged(nameof(StatusBackground));
         OnPropertyChanged(nameof(StatusBorder));
         OnPropertyChanged(nameof(StatusForeground));
+    }
+
+    protected static void SetDefaultOutputDirectoryFromInputFiles(
+        string[] files,
+        string outputDirectory,
+        Action<string> setOutputDirectory)
+    {
+        if (!string.IsNullOrWhiteSpace(outputDirectory))
+            return;
+
+        if (files.Length == 0)
+            return;
+
+        string? directory = Path.GetDirectoryName(files[0]);
+
+        if (!string.IsNullOrWhiteSpace(directory))
+            setOutputDirectory(directory);
+    }
+
+    protected static bool CanOpenDirectory(string directory)
+    {
+        return !string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory);
     }
 
     partial void OnStatusKindChanged(StatusKind value)

@@ -43,6 +43,14 @@ public partial class FragmentsView : UserControl
         {
             viewModel.SelectedFragmentFile = path;
 
+            if (string.IsNullOrWhiteSpace(viewModel.OutputDirectory))
+            {
+                string? directory = System.IO.Path.GetDirectoryName(path);
+
+                if (!string.IsNullOrWhiteSpace(directory))
+                    viewModel.OutputDirectory = directory;
+            }
+
             try
             {
                 viewModel.SelectedFragmentFileInfo =

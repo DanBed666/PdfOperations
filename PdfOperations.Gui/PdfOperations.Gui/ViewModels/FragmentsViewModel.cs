@@ -41,6 +41,7 @@ public partial class FragmentsViewModel : ViewModelBase
     public FragmentsViewModel()
     {
         StatusMessage = Loc.Ready;
+        Fragments.CollectionChanged += (_, _) => StartCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
@@ -190,7 +191,7 @@ public partial class FragmentsViewModel : ViewModelBase
         StatusMessage = Loc.FragmentMovedDown;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -280,7 +281,24 @@ public partial class FragmentsViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return Fragments.Count > 0
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(OutputFileName);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
@@ -295,6 +313,16 @@ public partial class FragmentsViewModel : ViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)

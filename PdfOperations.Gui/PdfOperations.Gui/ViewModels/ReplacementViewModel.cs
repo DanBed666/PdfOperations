@@ -32,9 +32,14 @@ public partial class ReplacementViewModel : FileInputViewModelBase
             inputTitle: LocalizationService.Instance.InputEditableFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -136,7 +141,24 @@ public partial class ReplacementViewModel : FileInputViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(PlaceholderFile);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnPlaceholderFileChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
@@ -151,6 +173,16 @@ public partial class ReplacementViewModel : FileInputViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)

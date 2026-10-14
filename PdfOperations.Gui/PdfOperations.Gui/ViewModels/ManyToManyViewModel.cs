@@ -25,7 +25,11 @@ public partial class ManyToManyViewModel : ViewModelBase
         Title = operation.Title;
         StatusMessage = Loc.Ready;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
-        InputFilesList.FilesChanged += () => RefreshInputFilesState();
+        InputFilesList.FilesChanged += () =>
+        {
+            RefreshInputFilesState();
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
     
     [ObservableProperty]
@@ -49,6 +53,7 @@ public partial class ManyToManyViewModel : ViewModelBase
     private void RefreshInputFilesState()
     {
         string[] files = InputFilesList.ToPathArray();
+        SetDefaultOutputDirectoryFromInputFiles(files, OutputDirectory, value => OutputDirectory = value);
 
         OnPropertyChanged(nameof(CanEditOutputFileName));
 
@@ -66,7 +71,7 @@ public partial class ManyToManyViewModel : ViewModelBase
         }
     }
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -204,7 +209,24 @@ public partial class ManyToManyViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(OutputFileName);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
@@ -220,6 +242,16 @@ public partial class ManyToManyViewModel : ViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
     
     private static string GetAvailablePath(string path)

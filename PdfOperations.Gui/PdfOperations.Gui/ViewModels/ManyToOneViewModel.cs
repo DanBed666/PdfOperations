@@ -22,6 +22,11 @@ public partial class ManyToOneViewModel : ViewModelBase
         StatusMessage = Loc.Ready;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
         InputFilesList.ShowMoveButtons = true;
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            StartCommand.NotifyCanExecuteChanged();
+        };
     }
 
     public string InputTitle => operation.InputTitle;
@@ -48,7 +53,7 @@ public partial class ManyToOneViewModel : ViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
         if (IsBusy)
@@ -161,7 +166,24 @@ public partial class ManyToOneViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(OutputFileName);
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {
         if (string.IsNullOrWhiteSpace(LastOutputDirectory) ||
@@ -177,6 +199,16 @@ public partial class ManyToOneViewModel : ViewModelBase
             FileName = LastOutputDirectory,
             UseShellExecute = true
         });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetAvailablePath(string path)
