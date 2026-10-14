@@ -13,6 +13,8 @@ public partial class FileListViewModel : ViewModelBase
 {
     public ObservableCollection<SelectedFileItem> Files { get; } = new();
 
+    public bool HasFiles => Files.Count > 0;
+
     [ObservableProperty]
     private SelectedFileItem? selectedFile;
     
@@ -34,7 +36,7 @@ public partial class FileListViewModel : ViewModelBase
 
         RefreshNumbers();
         
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
 
     public void AddFiles(IEnumerable<string> paths)
@@ -49,7 +51,7 @@ public partial class FileListViewModel : ViewModelBase
 
         RefreshNumbers();
         
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
 
     public void RemoveFiles(IEnumerable<SelectedFileItem> selectedFiles)
@@ -63,7 +65,7 @@ public partial class FileListViewModel : ViewModelBase
         SelectedFiles.Clear();
         RefreshNumbers();
         
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
 
     public void Clear()
@@ -72,7 +74,7 @@ public partial class FileListViewModel : ViewModelBase
         SelectedFile = null;
         RefreshNumbers();
         
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
 
     public string[] ToPathArray()
@@ -92,6 +94,12 @@ public partial class FileListViewModel : ViewModelBase
             Files[i].Number = i + 1;
         }
     }
+
+    private void NotifyFilesChanged()
+    {
+        OnPropertyChanged(nameof(HasFiles));
+        FilesChanged?.Invoke();
+    }
     
     [RelayCommand]
     public void MoveSelectedUp()
@@ -99,15 +107,17 @@ public partial class FileListViewModel : ViewModelBase
         if (SelectedFile is null)
             return;
 
-        int index = Files.IndexOf(SelectedFile);
+        SelectedFileItem movedFile = SelectedFile;
+        int index = Files.IndexOf(movedFile);
 
         if (index <= 0)
             return;
 
         Files.Move(index, index - 1);
+        SelectedFile = movedFile;
+
         RefreshNumbers();
-        
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
 
     [RelayCommand]
@@ -116,15 +126,17 @@ public partial class FileListViewModel : ViewModelBase
         if (SelectedFile is null)
             return;
 
-        int index = Files.IndexOf(SelectedFile);
+        SelectedFileItem movedFile = SelectedFile;
+        int index = Files.IndexOf(movedFile);
 
         if (index < 0 || index >= Files.Count - 1)
             return;
 
         Files.Move(index, index + 1);
+        SelectedFile = movedFile;
+
         RefreshNumbers();
-        
-        FilesChanged?.Invoke();
+        NotifyFilesChanged();
     }
     
     [RelayCommand]

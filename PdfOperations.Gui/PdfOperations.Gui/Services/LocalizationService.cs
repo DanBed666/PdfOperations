@@ -12,10 +12,12 @@ public partial class LocalizationService : ObservableObject
 
     public string Browse => Language == AppLanguage.Polish ? "Przeglądaj" : "Browse";
     public string Add => Language == AppLanguage.Polish ? "Dodaj" : "Add";
+    public string SelectFilesButton => Language == AppLanguage.Polish ? "Wybierz pliki" : "Select files";
+    public string AddFilesButton => Language == AppLanguage.Polish ? "Dodaj pliki" : "Add files";
     public string Remove => Language == AppLanguage.Polish ? "Usuń" : "Remove";
     public string Clear => Language == AppLanguage.Polish ? "Wyczyść" : "Clear";
     public string Start => "Start";
-    
+
     public string MoveUp => Language == AppLanguage.Polish ? "W górę" : "Up";
     public string MoveDown => Language == AppLanguage.Polish ? "W dół" : "Down";
 
@@ -26,6 +28,8 @@ public partial class LocalizationService : ObservableObject
     public string InputDocumentFiles => Language == AppLanguage.Polish ? "Dokumenty" : "Input document files";
     public string OutputDirectory => Language == AppLanguage.Polish ? "Folder zapisu" : "Output directory";
     public string OutputFileName => Language == AppLanguage.Polish ? "Nazwa pliku" : "Output file name";
+    public string OverwriteExistingFiles => Language == AppLanguage.Polish ? "Nadpisz istniejące pliki" : "Overwrite existing files";
+    public string GeneratedFromInputFileNames => Language == AppLanguage.Polish ? "Tworzone z nazw plików wejściowych" : "Generated from input file names";
     public string OutputFormat => Language == AppLanguage.Polish ? "Format pliku" : "Output format";
     public string ReportFileName => Language == AppLanguage.Polish ? "Nazwa raportu" : "Report file name";
     public string SearchPhrase => Language == AppLanguage.Polish ? "Szukana fraza" : "Search phrase";
@@ -277,4 +281,28 @@ public partial class LocalizationService : ObservableObject
             _ => theme.ToString()
         };
     }
+
+    public string InputPdfFilesWithFormats => Language == AppLanguage.Polish
+        ? "Pliki PDF (*.pdf)"
+        : "PDF files (*.pdf)";
+
+    public string InputDocxFilesWithFormats => Language == AppLanguage.Polish
+        ? "Dokumenty DOCX (*.docx)"
+        : "DOCX files (*.docx)";
+
+    public string InputImageFilesWithFormats => Language == AppLanguage.Polish
+        ? "Pliki graficzne (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)"
+        : "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)";
+
+    public string InputEditableFilesWithFormats => Language == AppLanguage.Polish
+        ? "Dokumenty edytowalne (*.docx, *.odt, *.odg)"
+        : "Editable documents (*.docx, *.odt, *.odg)";
+
+    public string InputSearchFilesWithFormats => Language == AppLanguage.Polish
+        ? "Pliki do wyszukiwania (*.pdf, *.txt, obrazy)"
+        : "Search files (*.pdf, *.txt, images)";
+
+    public string InputOfficeFilesWithFormats => Language == AppLanguage.Polish
+        ? "Dokumenty Office (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)"
+        : "Office documents (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)";
 }

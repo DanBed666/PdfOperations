@@ -22,8 +22,8 @@ public class HelpViewModel : ViewModelBase
 
         Pliki wejściowe
 
-        - Przeglądaj - wybiera pliki od nowa i zastępuje obecną listę.
-        - Dodaj - dopisuje kolejne pliki do listy.
+        - Wybierz pliki - wybiera pliki od nowa i zastępuje obecną listę.
+        - Dodaj pliki - dopisuje kolejne pliki do listy. Przycisk działa po wybraniu pierwszych plików.
         - Usuń - usuwa zaznaczone pozycje z listy, ale nie usuwa plików z dysku.
         - Wyczyść - czyści całą listę, ale nie usuwa plików z dysku.
         - Przy łączeniu PDF kolejność plików na liście ma znaczenie.
@@ -66,8 +66,8 @@ public class HelpViewModel : ViewModelBase
 
         Input files
 
-        - Browse - selects files again and replaces the current list.
-        - Add - appends more files to the list.
+        - Select files - selects files again and replaces the current list.
+        - Add files - appends more files to the list. The button becomes available after selecting the first files.
         - Remove - removes selected items from the list, but does not delete files from disk.
         - Clear - clears the whole list, but does not delete files from disk.
         - For PDF merge, the order of files in the list matters.

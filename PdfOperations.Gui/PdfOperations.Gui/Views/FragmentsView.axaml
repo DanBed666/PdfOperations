@@ -84,6 +84,9 @@
                             Click="BrowseOutputDirectory_Click" />
                 </Grid>
 
+                <CheckBox Content="{Binding Loc.OverwriteExistingFiles}"
+                          IsChecked="{Binding OverwriteExistingFiles}" />
+
                 <TextBlock Text="{Binding Loc.OutputFileName}" />
                 <TextBox Text="{Binding OutputFileName}" />
 
