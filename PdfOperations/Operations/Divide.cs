@@ -30,7 +30,7 @@ public class Divide
         string tempDir = Path.Combine(Path.GetDirectoryName(file.TempPath)!, "decrypted");
         Directory.CreateDirectory(tempDir);
         
-        foreach (string f in FileSorter.SortFilesByNumberAndName(file.InputFiles))
+        foreach (string f in file.InputFiles)
         {
             List<string> arguments = new List<string>();
             
