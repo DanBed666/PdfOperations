@@ -107,8 +107,21 @@ public static class Convert
     
     public static void PdfToTxt(FileJob fileJob)
     {
+        PdfToTxt(fileJob, keepPageBreaks: false);
+    }
+
+    public static void PdfToTxtWithPageBreaks(FileJob fileJob)
+    {
+        PdfToTxt(fileJob, keepPageBreaks: true);
+    }
+
+    private static void PdfToTxt(FileJob fileJob, bool keepPageBreaks)
+    {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
+
+        if (!keepPageBreaks)
+            arguments.Add("-nopgbrk");
 
         arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
         RunClass.Run(tool, arguments);

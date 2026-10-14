@@ -54,7 +54,7 @@ public class OperationPaths
                 Name = "Odczytaj tekst z pdf",
                 Filter = FileFilters.PdfFiles,
                 Extension = ".txt",
-                FileOperationActionMultiple = Convert.PdfToTxt,
+                FileOperationActionMultiple = Convert.PdfToTxtWithPageBreaks,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz pliki PDF do konwersji na tekst:",
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
