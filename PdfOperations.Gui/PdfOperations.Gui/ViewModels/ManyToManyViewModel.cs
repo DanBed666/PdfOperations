@@ -16,6 +16,7 @@ public partial class ManyToManyViewModel : ViewModelBase
     private readonly GuiOperationDefinition operation;
     public string InputTitle => operation.InputTitle;
     public string FileDialogTitle => operation.FileDialogTitle;
+    public string FileTypeName => operation.FileTypeName;
     public string[] FilePatterns => operation.FilePatterns;
 
     public ManyToManyViewModel(GuiOperationDefinition operation)
@@ -57,7 +58,7 @@ public partial class ManyToManyViewModel : ViewModelBase
         }
         else if (files.Length > 1)
         {
-            OutputFileName = "Generated from input file names";
+            OutputFileName = Loc.GeneratedFromInputFileNames;
         }
         else
         {
@@ -161,9 +162,10 @@ public partial class ManyToManyViewModel : ViewModelBase
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
                                 string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                                finalPath = GetAvailablePath(finalPath);
+                                if (!OverwriteExistingFiles)
+                                    finalPath = GetAvailablePath(finalPath);
 
-                                File.Move(tempFile, finalPath);
+                                File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
                                 savedFilesCount++;
                             }
 
@@ -171,9 +173,10 @@ public partial class ManyToManyViewModel : ViewModelBase
                         }
 
                         finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalPath = GetAvailablePath(finalPath);
+                        if (!OverwriteExistingFiles)
+                            finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(fileJob.TempPath, finalPath);
+                        File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                         savedFilesCount++;
                     }
                 }

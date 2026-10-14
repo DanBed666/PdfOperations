@@ -253,9 +253,10 @@ public partial class FragmentsViewModel : ViewModelBase
                     Pages.CreateWithCustomFiles(input, fileJob);
 
                     finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                    finalPath = GetAvailablePath(finalPath);
+                    if (!OverwriteExistingFiles)
+                        finalPath = GetAvailablePath(finalPath);
 
-                    File.Move(fileJob.TempPath, finalPath);
+                    File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                 }
                 finally
                 {

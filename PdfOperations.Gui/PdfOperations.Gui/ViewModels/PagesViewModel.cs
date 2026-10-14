@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -51,7 +52,12 @@ public partial class PagesViewModel : FileInputViewModelBase
 
     public bool CanEditOutputFileName => InputFilesList.Files.Count <= 1;
     
-    public PagesViewModel() : base("Select PDF files", ["*.pdf"])
+    public PagesViewModel()
+        : base(
+            "Select PDF files",
+            "PDF files (*.pdf)",
+            ["*.pdf"],
+            inputTitle: LocalizationService.Instance.InputPdfFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
         RefreshPageModes();
@@ -342,9 +348,10 @@ public partial class PagesViewModel : FileInputViewModelBase
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
                                 finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                                finalPath = GetAvailablePath(finalPath);
+                                if (!OverwriteExistingFiles)
+                                    finalPath = GetAvailablePath(finalPath);
 
-                                File.Move(tempFile, finalPath);
+                                File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
                                 savedFilesCount++;
                             }
 
@@ -365,9 +372,10 @@ public partial class PagesViewModel : FileInputViewModelBase
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
                                 finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                                finalPath = GetAvailablePath(finalPath);
+                                if (!OverwriteExistingFiles)
+                                    finalPath = GetAvailablePath(finalPath);
 
-                                File.Move(tempFile, finalPath);
+                                File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
                                 savedFilesCount++;
                             }
 
@@ -392,9 +400,10 @@ public partial class PagesViewModel : FileInputViewModelBase
                         PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
 
                         finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                        finalPath = GetAvailablePath(finalPath);
+                        if (!OverwriteExistingFiles)
+                            finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(fileJob.TempPath, finalPath);
+                        File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                         savedFilesCount++;
                     }
                     

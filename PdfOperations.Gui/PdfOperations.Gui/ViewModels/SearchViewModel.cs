@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -37,7 +38,11 @@ public partial class SearchViewModel : FileInputViewModelBase
     private string lastOutputDirectory = "";
     
     public SearchViewModel() 
-        : base("Select files", ["*.pdf", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"])
+        : base(
+            "Select files",
+            "Search files (*.pdf, *.txt, images)",
+            ["*.pdf", "*.txt", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
+            inputTitle: LocalizationService.Instance.InputSearchFilesWithFormats)
     {
         Title = Loc.GetOperationName("Search");
         StatusMessage = Loc.Ready;
@@ -166,9 +171,10 @@ public partial class SearchViewModel : FileInputViewModelBase
                     string tempReportPath = Path.Combine(operationContext.TempDir, OutputFileName);
 
                     finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempReportPath));
-                    finalPath = GetAvailablePath(finalPath);
+                    if (!OverwriteExistingFiles)
+                        finalPath = GetAvailablePath(finalPath);
 
-                    File.Move(tempReportPath, finalPath);
+                    File.Move(tempReportPath, finalPath, overwrite: OverwriteExistingFiles);
                 }
                 finally
                 {

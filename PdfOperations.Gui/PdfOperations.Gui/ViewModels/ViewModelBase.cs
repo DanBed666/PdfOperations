@@ -16,6 +16,9 @@ public abstract partial class ViewModelBase : ObservableObject
     [ObservableProperty]
     private StatusKind statusKind = StatusKind.Info;
 
+    [ObservableProperty]
+    private bool overwriteExistingFiles;
+
     public bool IsNotBusy => !IsBusy;
 
     partial void OnIsBusyChanged(bool value)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -35,7 +36,11 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     ];
     
     public LibreOfficeViewModel() 
-        : base("Select files", ["*.docx", "*.odt", "*.doc", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"])
+        : base(
+            "Select files",
+            "Office documents (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)",
+            ["*.docx", "*.odt", "*.doc", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
+            inputTitle: LocalizationService.Instance.InputOfficeFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
     }
@@ -112,9 +117,10 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                     foreach (string tempFile in Directory.GetFiles(context.TempDir))
                     {
                         string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                        finalPath = GetAvailablePath(finalPath);
+                        if (!OverwriteExistingFiles)
+                            finalPath = GetAvailablePath(finalPath);
 
-                        File.Move(tempFile, finalPath);
+                        File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
                         savedFilesCount++;
                     }
                 }

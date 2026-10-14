@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -23,7 +24,12 @@ public partial class ReplacementViewModel : FileInputViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
 
-    public ReplacementViewModel() : base("Select editable files", ["*.docx", "*.odt", "*.odg"])
+    public ReplacementViewModel()
+        : base(
+            "Select editable files",
+            "Editable documents (*.docx, *.odt, *.odg)",
+            ["*.docx", "*.odt", "*.odg"],
+            inputTitle: LocalizationService.Instance.InputEditableFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
     }
@@ -106,9 +112,10 @@ public partial class ReplacementViewModel : FileInputViewModelBase
                 foreach (string tempFile in Directory.GetFiles(context.TempDir))
                 {
                     string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                    finalPath = GetAvailablePath(finalPath);
+                    if (!OverwriteExistingFiles)
+                        finalPath = GetAvailablePath(finalPath);
 
-                    File.Move(tempFile, finalPath);
+                    File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
                 }
 
                 Directory.Delete(context.TempDir, true);

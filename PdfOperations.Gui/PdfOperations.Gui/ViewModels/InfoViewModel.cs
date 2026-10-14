@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.ViewModels;
 
@@ -32,7 +33,12 @@ public partial class InfoViewModel : FileInputViewModelBase
     [ObservableProperty]
     private string defaultOutputFileName = "pdf_info.txt";
     
-    public InfoViewModel(InfoMode mode) : base("Select PDF files", ["*.pdf"])
+    public InfoViewModel(InfoMode mode)
+        : base(
+            "Select PDF files",
+            "PDF files (*.pdf)",
+            ["*.pdf"],
+            inputTitle: LocalizationService.Instance.InputPdfFilesWithFormats)
     {
         this.mode = mode;
         Title = mode == InfoMode.FontInfo
@@ -102,7 +108,8 @@ public partial class InfoViewModel : FileInputViewModelBase
             StatusMessage = Loc.ReadingPdfInfo;
 
             string finalPath = Path.Combine(OutputDirectory, OutputFileName);
-            finalPath = GetAvailablePath(finalPath);
+            if (!OverwriteExistingFiles)
+                finalPath = GetAvailablePath(finalPath);
 
             await Task.Run(() =>
             {

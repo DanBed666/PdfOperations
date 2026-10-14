@@ -24,7 +24,10 @@ public partial class ManyToOneViewModel : ViewModelBase
         InputFilesList.ShowMoveButtons = true;
     }
 
+    public string InputTitle => operation.InputTitle;
+
     public string FileDialogTitle => operation.FileDialogTitle;
+    public string FileTypeName => operation.FileTypeName;
 
     public string[] FilePatterns => operation.FilePatterns;
 
@@ -131,9 +134,10 @@ public partial class ManyToOneViewModel : ViewModelBase
                     operation.SingleOutputAction?.Invoke(fileJob);
 
                     finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
-                    finalPath = GetAvailablePath(finalPath);
+                    if (!OverwriteExistingFiles)
+                        finalPath = GetAvailablePath(finalPath);
 
-                    File.Move(fileJob.TempPath, finalPath);
+                    File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                 }
                 finally
                 {
