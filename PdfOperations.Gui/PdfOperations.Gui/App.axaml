@@ -44,6 +44,22 @@
     <Application.Styles>
         <FluentTheme />
 
+        <Style Selector="Button">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="ListBoxItem">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
         <Style Selector="Window">
             <Setter Property="Background" Value="{DynamicResource AppWindowBackgroundBrush}" />
         </Style>
