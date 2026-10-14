@@ -99,10 +99,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "PdfToTxt",
                 Title = Loc.GetOperationName("PdfToTxt"),
-                InputTitle = "Input PDF files",
+                InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".txt",
                 DefaultOutputName = "output",
                 FileDialogTitle = "Select PDF files",
+                FileTypeName = "PDF files (*.pdf)",
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
             }),
@@ -110,10 +111,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "PdfToDocx",
                 Title = Loc.GetOperationName("PdfToDocx"),
-                InputTitle = "Input PDF files",
+                InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".docx",
                 DefaultOutputName = "output",
                 FileDialogTitle = "Select PDF files",
+                FileTypeName = "PDF files (*.pdf)",
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
@@ -121,10 +123,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "DocxToPdfWord",
                 Title = Loc.GetOperationName("DocxToPdfWord"),
-                InputTitle = "Input DOCX files",
+                InputTitle = Loc.InputDocxFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "output",
                 FileDialogTitle = "Select DOCX files",
+                FileTypeName = "DOCX files (*.docx)",
                 FilePatterns = ["*.docx"],
                 Action = (_, _, fileJob) => Convert.DocxToPdfWord(fileJob)
             }),
@@ -132,10 +135,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "PdfToImage",
                 Title = Loc.GetOperationName("PdfToImage"),
-                InputTitle = "Input PDF files",
+                InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".jpg",
                 DefaultOutputName = "output",
                 FileDialogTitle = "Select PDF files",
+                FileTypeName = "PDF files (*.pdf)",
                 FilePatterns = ["*.pdf"],
                 MoveAllTempFiles = true,
                 Action = (_, _, fileJob) => Convert.PdfToPict(fileJob)
@@ -144,9 +148,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "ImagesToPdf",
                 Title = Loc.GetOperationName("ImagesToPdf"),
+                InputTitle = Loc.InputImageFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "images",
                 FileDialogTitle = "Select image files",
+                FileTypeName = "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)",
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
             }),
@@ -154,9 +160,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "ImagesToTxt",
                 Title = Loc.GetOperationName("ImagesToTxt"),
+                InputTitle = Loc.InputImageFilesWithFormats,
                 OutputExtension = ".txt",
                 DefaultOutputName = "images",
                 FileDialogTitle = "Select image files",
+                FileTypeName = "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)",
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 Action = (_, _, fileJob) => Convert.PictToTxt(fileJob)
@@ -165,9 +173,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "ExtractFromPdf",
                 Title = Loc.GetOperationName("ExtractFromPdf"),
+                InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".jpg",
                 DefaultOutputName = "images",
-                FileDialogTitle = "Select image files",
+                FileDialogTitle = "Select PDF files",
+                FileTypeName = "PDF files (*.pdf)",
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.ExtractPict(fileJob)
@@ -180,9 +190,11 @@ public partial class MainViewModel : ViewModelBase
             {
                 Name = "MergePdf",
                 Title = Loc.GetOperationName("MergePdf"),
+                InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "merged",
                 FileDialogTitle = "Select PDF files",
+                FileTypeName = "PDF files (*.pdf)",
                 FilePatterns = ["*.pdf"],
                 SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
             }),
@@ -238,6 +250,10 @@ public partial class MainViewModel : ViewModelBase
         if (selectedKey is not null)
         {
             SelectedOperation = Operations.FirstOrDefault(operation => operation.Key == selectedKey);
+        }
+        else
+        {
+            SelectedOperation = Operations.FirstOrDefault();
         }
     }
 }

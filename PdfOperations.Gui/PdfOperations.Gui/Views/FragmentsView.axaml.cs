@@ -30,7 +30,7 @@ public partial class FragmentsView : UserControl
             AllowMultiple = false,
             FileTypeFilter =
             [
-                new FilePickerFileType("PDF files")
+                new FilePickerFileType(viewModel.Loc.InputPdfFilesWithFormats)
                 {
                     Patterns = ["*.pdf"]
                 }

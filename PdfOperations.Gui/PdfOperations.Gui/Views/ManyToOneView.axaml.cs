@@ -20,6 +20,7 @@ public partial class ManyToOneView : UserControl
         string[] paths = await FilePickerHelper.PickFilesAsync(
             this,
             viewModel.FileDialogTitle,
+            viewModel.FileTypeName,
             viewModel.FilePatterns);
 
         if (paths.Length == 0)
@@ -47,6 +48,7 @@ public partial class ManyToOneView : UserControl
         string[] paths = await FilePickerHelper.PickFilesAsync(
             this,
             viewModel.FileDialogTitle,
+            viewModel.FileTypeName,
             viewModel.FilePatterns);
 
         if (paths.Length == 0)

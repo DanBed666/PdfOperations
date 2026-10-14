@@ -10,6 +10,7 @@ public class GuiOperationDefinition
     public string OutputExtension { get; init; } = "";
     public string DefaultOutputName { get; init; } = "output";
     public string FileDialogTitle { get; init; } = "Select input file";
+    public string FileTypeName { get; init; } = "File input";
     public string[] FilePatterns { get; init; } = [];
     public Action<OperationInput, OperationContext, FileJob>? Action { get; init; }
     public Action<FileJob>? SingleOutputAction { get; init; }

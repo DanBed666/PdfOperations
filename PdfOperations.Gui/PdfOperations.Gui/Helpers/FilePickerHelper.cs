@@ -10,6 +10,7 @@ public static class FilePickerHelper
     public static async Task<string[]> PickFilesAsync(
         Control owner,
         string title,
+        string fileTypeName,
         string[] patterns,
         bool allowMultiple = true)
     {
@@ -24,7 +25,7 @@ public static class FilePickerHelper
             AllowMultiple = allowMultiple,
             FileTypeFilter =
             [
-                new FilePickerFileType("Input files")
+                new FilePickerFileType(fileTypeName)
                 {
                     Patterns = patterns
                 }
