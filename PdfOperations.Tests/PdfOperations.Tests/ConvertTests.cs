@@ -527,4 +527,30 @@ public class ConvertTests()
                 Directory.Delete(operationContext.TempDir, true);
         }
     }
+    
+    [TestMethod]
+    public void ValidatePdfOutputTest()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Convert.ValidatePdfOutput(TestHelper.SetInputPaths(["test_1.pdx"])[0]);
+        });
+        
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Convert.ValidatePdfOutput(TestHelper.SetInputPaths(["empty.pdf"])[0]);
+        });
+        
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Convert.ValidatePdfOutput(TestHelper.SetInputPaths(["invalid_header.pdf"])[0]);
+        });
+        
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Convert.ValidatePdfOutput(TestHelper.SetInputPaths(["short_header.pdf"])[0]);
+        });
+        
+        Convert.ValidatePdfOutput(TestHelper.SetInputPaths(["valid.pdf"])[0]);
+    }
 }
