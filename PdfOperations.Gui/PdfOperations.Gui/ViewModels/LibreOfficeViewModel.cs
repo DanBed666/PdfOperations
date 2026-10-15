@@ -128,6 +128,42 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
                         if (SelectedFormat == "pdf")
                             Convert.ValidatePdfOutput(expectedFile);
+                        
+                        if (SelectedFormat.Equals("html", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string folderName = Path.GetFileNameWithoutExtension(inputFile) + "_html";
+                            string targetDirectory = Path.Combine(OutputDirectory, folderName);
+                            int htmlCounter = 1;
+
+                            while (usedOutputPaths.Contains(targetDirectory)
+                                   || File.Exists(targetDirectory)
+                                   || (!OverwriteExistingFiles && Directory.Exists(targetDirectory)))
+                            {
+                                targetDirectory = Path.Combine(
+                                    OutputDirectory, $"{folderName}_{htmlCounter++}");
+                            }
+
+                            usedOutputPaths.Add(targetDirectory);
+
+                            foreach (string generatedFile in Directory.GetFiles(
+                                         context.TempDir, "*", SearchOption.AllDirectories))
+                            {
+                                string relativePath = Path.GetRelativePath(
+                                    context.TempDir, generatedFile);
+
+                                string destination = Path.Combine(targetDirectory, relativePath);
+
+                                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+
+                                File.Move(
+                                    generatedFile,
+                                    destination,
+                                    overwrite: OverwriteExistingFiles);
+                            }
+
+                            savedFilesCount++;
+                            continue;
+                        }
 
                         string name = Path.GetFileNameWithoutExtension(inputFile);
                         string extension = "." + SelectedFormat;
