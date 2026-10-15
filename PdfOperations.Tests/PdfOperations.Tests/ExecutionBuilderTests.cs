@@ -48,6 +48,50 @@ public class ExecutionBuilderTests
     }
     
     [TestMethod]
+    public void SetFilesToFilesJobSameNamesTest()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_1.docx", "test_1.odg"])
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".txt"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+
+        try
+        {
+            List<FileJob> fileJobs =
+                ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+
+            foreach (FileJob fileJob in fileJobs)
+            {
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
+            }
+
+            Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+            Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
+            Assert.AreEqual("test_1.docx", Path.GetFileName(operationInput.InputFiles[1]));
+            Assert.AreEqual("test_1.odg", Path.GetFileName(operationInput.InputFiles[2]));
+
+            Assert.AreEqual("test_1.txt", Path.GetFileName(fileJobs[0].TempPath));
+            Assert.AreEqual("test_1_1.txt", Path.GetFileName(fileJobs[1].TempPath));
+            Assert.AreEqual("test_1_2.txt", Path.GetFileName(fileJobs[2].TempPath));
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
     public void SetFilesToFilesJobTestOne()
     {
         OperationInput operationInput = new OperationInput()
