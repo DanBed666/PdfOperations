@@ -38,8 +38,8 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     public LibreOfficeViewModel() 
         : base(
             "Select files",
-            "Office documents (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)",
-            ["*.docx", "*.odt", "*.doc", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
+            "Office documents (*.docx, *.odt, *.odg, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)",
+            ["*.docx", "*.odt", "*.doc", "*.odg", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
             inputTitle: LocalizationService.Instance.InputOfficeFilesWithFormats)
     {
         StatusMessage = Loc.Ready;
@@ -104,35 +104,55 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
             await Task.Run(() =>
             {
-                OperationContext context = new OperationContext
-                {
-                    TempDir = Files.PrepareTempDir()
-                };
+                HashSet<string> usedOutputPaths = new(StringComparer.OrdinalIgnoreCase);
 
-                OperationInput input = new OperationInput
+                foreach (string inputFile in currentInputFiles)
                 {
-                    InputFiles = currentInputFiles,
-                    Format = SelectedFormat
-                };
-
-                try
-                {
-                    Convert.FileToPdf(input, context);
-
-                    foreach (string tempFile in Directory.GetFiles(context.TempDir))
+                    OperationContext context = new() { TempDir = Files.PrepareTempDir() };
+                    OperationInput input = new()
                     {
-                        string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                        if (!OverwriteExistingFiles)
-                            finalPath = GetAvailablePath(finalPath);
+                        InputFiles = [inputFile],
+                        Format = SelectedFormat
+                    };
 
-                        File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
+                    try
+                    {
+                        Convert.FileToPdf(input, context);
+
+                        string expectedFile = Path.Combine(context.TempDir,
+                            Path.GetFileNameWithoutExtension(inputFile) + "." + SelectedFormat);
+
+                        if (!File.Exists(expectedFile))
+                            throw new InvalidOperationException(
+                                $"LibreOffice didn't create file for: {inputFile}");
+
+                        if (SelectedFormat == "pdf")
+                            Convert.ValidatePdfOutput(expectedFile);
+
+                        string name = Path.GetFileNameWithoutExtension(inputFile);
+                        string extension = "." + SelectedFormat;
+                        string targetPath = Path.Combine(OutputDirectory, name + extension);
+                        int counter = 1;
+
+                        while (usedOutputPaths.Contains(targetPath)
+                               || Directory.Exists(targetPath)
+                               || (!OverwriteExistingFiles && File.Exists(targetPath)))
+                        {
+                            targetPath = Path.Combine(
+                                OutputDirectory, $"{name}_{counter++}{extension}");
+                        }
+
+                        usedOutputPaths.Add(targetPath);
+
+                        File.Move(expectedFile, targetPath, overwrite: OverwriteExistingFiles);
+
                         savedFilesCount++;
                     }
-                }
-                finally
-                {
-                    if (Directory.Exists(context.TempDir))
-                        Directory.Delete(context.TempDir, true);
+                    finally
+                    {
+                        if (Directory.Exists(context.TempDir))
+                            Directory.Delete(context.TempDir, true);
+                    }
                 }
             });
 
