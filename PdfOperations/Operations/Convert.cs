@@ -160,7 +160,8 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
 
-        arguments.AddRange(["-all", fileJob.InputFile, fileJob.TempPath]);
+        string fileNotExt = Files.PrepareTempPathWithoutExt(fileJob.TempPath);
+        arguments.AddRange(["-all", fileJob.InputFile, fileNotExt]);
         RunClass.Run(tool, arguments);
     }
 }
