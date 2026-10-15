@@ -9,16 +9,19 @@ public class Replacement
 {
     public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context)
     {
-        string extractedDir = ExtractDocumentToTemp(file.InputFile, context.TempDir);
+        string extractedDir = ExtractDocumentToTemp(file.InputFile, file.TempPath);
         string xmlPath = GetEditableXmlPath(extractedDir, file.InputFile);
         List<ReplacementPair> replacementPairs = ReadReplacementsFromExcel(input.PlaceholderFile);
         ReplaceTextInFile(xmlPath, replacementPairs, Path.GetExtension(file.InputFile));
         CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
     }
     
-    public static string ExtractDocumentToTemp(string inputFile, string tempDir)
+    public static string ExtractDocumentToTemp(string inputFile, string tempPath)
     {
-        string tempDirExt = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputFile));
+        string tempDir = Path.GetDirectoryName(tempPath)!;
+        string tempName = Path.GetFileNameWithoutExtension(tempPath);
+        string tempDirExt = Path.Combine(tempDir, $"{tempName}_extracted_{Guid.NewGuid():N}");
+        
         ZipFile.ExtractToDirectory(inputFile, tempDirExt);
 
         return tempDirExt;

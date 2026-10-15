@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,12 +18,17 @@ public partial class ReplacementViewModel : FileInputViewModelBase
 
     [ObservableProperty]
     private string outputDirectory = "";
+    
+    [ObservableProperty]
+    private string outputFileName = "";
 
     [ObservableProperty]
     private string statusMessage = "Ready";
 
     [ObservableProperty]
     private string lastOutputDirectory = "";
+    
+    public bool CanEditOutputFileName => InputFilesList.Files.Count == 1;
 
     public ReplacementViewModel()
         : base(
@@ -36,7 +42,21 @@ public partial class ReplacementViewModel : FileInputViewModelBase
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
             StartCommand.NotifyCanExecuteChanged();
+            RefreshInputFilesState();
         };
+    }
+    
+    private void RefreshInputFilesState()
+    {
+        string[] files = InputFilesList.ToPathArray();
+
+        SetDefaultOutputDirectoryFromInputFiles(files, OutputDirectory, value => OutputDirectory = value);
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+
+        if (files.Length == 1)
+            OutputFileName = Path.GetFileName(files[0]);
+        else
+            OutputFileName = "";
     }
     
     [RelayCommand(CanExecute = nameof(CanStart))]
@@ -75,6 +95,11 @@ public partial class ReplacementViewModel : FileInputViewModelBase
                 Directory.CreateDirectory(OutputDirectory);
             
             string[] currentInputFiles = InputFilesList.ToPathArray();
+            
+            if (currentInputFiles.Length == 1 && string.IsNullOrWhiteSpace(OutputFileName))
+            {
+                OutputFileName = Path.GetFileName(currentInputFiles[0]);
+            }
 
             string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
@@ -103,12 +128,22 @@ public partial class ReplacementViewModel : FileInputViewModelBase
                     Output = "gui"
                 };
 
+                HashSet<string> usedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
                 foreach (string inputFile in currentInputFiles)
                 {
+                    string tempOutputName = currentInputFiles.Length == 1
+                        ? OutputFileName
+                        : inputFile;
+
                     FileJob fileJob = new FileJob
                     {
                         InputFile = inputFile,
-                        TempPath = Path.Combine(context.TempDir, Path.GetFileName(inputFile))
+                        TempPath = Files.PrepareUniqueTempPath(
+                            context.TempDir,
+                            tempOutputName,
+                            Path.GetExtension(inputFile),
+                            usedFileNames)
                     };
 
                     Replacement.ReplaceTextWithPlaceholders(fileJob, input, context);
