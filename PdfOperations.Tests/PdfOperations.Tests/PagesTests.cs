@@ -44,6 +44,15 @@ public class PagesTests
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
             Assert.AreEqual(6, suma);
+
+            for (int document = 1; document <= 3; document++)
+            {
+                string file = Path.Combine(operationContext.TempDir, $"ocr_test_{document}.pdf");
+                string[] texts = TestHelper.ReadPdfPageTexts(file);
+                Assert.HasCount(2, texts);
+                Assert.Contains($"OCR TEST PDF {document} - selectable text page 2", texts[0]);
+                Assert.Contains($"OCR TEST PDF {document} - selectable text page 3", texts[1]);
+            }
         }
         finally
         {
@@ -94,6 +103,12 @@ public class PagesTests
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
             Assert.AreEqual(2, suma);
+
+            string[] texts = TestHelper.ReadPdfPageTexts(
+                Path.Combine(operationContext.TempDir, operationInput.Output));
+            Assert.HasCount(2, texts);
+            Assert.Contains("OCR TEST PDF 1 - selectable text page 2", texts[0]);
+            Assert.Contains("OCR TEST PDF 1 - selectable text page 3", texts[1]);
         }
         finally
         {
@@ -149,6 +164,21 @@ public class PagesTests
         {
             FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Pages.CreateWithCustomFiles(operationInput, fileJob);
+
+            string[] texts = TestHelper.ReadPdfPageTexts(fileJob.TempPath);
+            string[] expectedMarkers =
+            [
+                "OCR TEST PDF 1 - selectable text page 2",
+                "OCR TEST PDF 1 - selectable text page 3",
+                "OCR TEST PDF 2 - selectable text page 1",
+                "OCR TEST PDF 2 - selectable text page 4",
+                "OCR TEST PDF 3 - selectable text page 1",
+                "OCR TEST PDF 3 - selectable text page 3",
+                "OCR TEST PDF 3 - selectable text page 4"
+            ];
+            Assert.HasCount(expectedMarkers.Length, texts);
+            for (int i = 0; i < expectedMarkers.Length; i++)
+                Assert.Contains(expectedMarkers[i], texts[i]);
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
@@ -211,6 +241,20 @@ public class PagesTests
             
             Assert.HasCount(6, Directory.GetFiles(operationContext.TempDir));
             Assert.AreEqual(12, suma);
+
+            for (int document = 1; document <= 3; document++)
+            {
+                for (int part = 1; part <= 2; part++)
+                {
+                    string file = Path.Combine(operationContext.TempDir,
+                        $"ocr_test_{document}_part_{part}.pdf");
+                    string[] texts = TestHelper.ReadPdfPageTexts(file);
+                    int firstPage = (part - 1) * 2 + 1;
+                    Assert.HasCount(2, texts);
+                    Assert.Contains($"OCR TEST PDF {document} - selectable text page {firstPage}", texts[0]);
+                    Assert.Contains($"OCR TEST PDF {document} - selectable text page {firstPage + 1}", texts[1]);
+                }
+            }
         }
         finally
         {

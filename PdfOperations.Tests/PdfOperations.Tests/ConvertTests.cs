@@ -16,6 +16,8 @@ public class ConvertTests()
         {
             TempDir = Files.PrepareTempDir()
         };
+
+        Dictionary<string, string> readTxts = new Dictionary<string, string>();
         
         try
         {
@@ -25,9 +27,20 @@ public class ConvertTests()
             {
                 Assert.IsTrue(File.Exists(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                readTxts[Path.GetFileName(file)] = TestHelper.ReadPdfText(file);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+
+            Assert.Contains("WORD_1", readTxts["word_1.pdf"]);
+            Assert.Contains("Page 1", readTxts["word_1.pdf"]);
+            Assert.Contains("dokumentu", readTxts["word_1.pdf"]);
+            Assert.Contains("WORD_2", readTxts["word_2.pdf"]);
+            Assert.Contains("automated", readTxts["word_2.pdf"]);
+            Assert.Contains("zawiera", readTxts["word_2.pdf"]);
+            Assert.Contains("WORD_3", readTxts["word_3.pdf"]);
+            Assert.Contains("tests", readTxts["word_3.pdf"]);
+            Assert.Contains("strukture", readTxts["word_3.pdf"]);
         }
         finally
         {
@@ -50,14 +63,21 @@ public class ConvertTests()
         {
             TempDir = Files.PrepareTempDir()
         };
-        
+
         try
         {
             Convert.FileToPdf(operationInput, operationContext);
-
-            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
+            
+            Assert.IsTrue(File.Exists(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            string text = TestHelper.ReadPdfText(file);
+
+            Assert.Contains("WORD_1", text);
+            Assert.Contains("akapitow", text);
+            Assert.Contains("fixture", text);
         }
         finally
         {
@@ -83,6 +103,8 @@ public class ConvertTests()
         {
             Extension = ".docx"
         };
+        
+        Dictionary<string, string> readTxts = new Dictionary<string, string>();
 
         try
         {
@@ -98,9 +120,20 @@ public class ConvertTests()
                 Assert.IsTrue(File.Exists(file));
                 Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                readTxts[Path.GetFileName(file)] = TestHelper.ReadDocxText(file);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+            
+            Assert.Contains("TEST PDF 1", readTxts["test_1.docx"]);
+            Assert.Contains("testowy", readTxts["test_1.docx"]);
+            Assert.Contains("Linia 3", readTxts["test_1.docx"]);
+            Assert.Contains("PDF 2", readTxts["test_2.docx"]);
+            Assert.Contains("zaznaczalny", readTxts["test_2.docx"]);
+            Assert.Contains("laczenia", readTxts["test_2.docx"]);
+            Assert.Contains("TEST PDF 3", readTxts["test_3.docx"]);
+            Assert.Contains("Linia 2", readTxts["test_3.docx"]);
+            Assert.Contains("tresci", readTxts["test_3.docx"]);
         }
         finally
         {
@@ -137,10 +170,17 @@ public class ConvertTests()
                 Convert.PdfToDocx(fileJob);
             }
 
-            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
+
+            Assert.IsTrue(File.Exists(file));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+
+            string text = TestHelper.ReadDocxText(file);
+            Assert.Contains("TEST PDF 1", text);
+            Assert.Contains("Linia 3", text);
+            Assert.Contains("Koniec neutralnej tresci testowej", text);
         }
         finally
         {
@@ -209,6 +249,8 @@ public class ConvertTests()
         {
             TempDir = Files.PrepareTempDir()
         };
+
+        Dictionary<string, string> readTxts = new Dictionary<string, string>();
         
         try
         {
@@ -224,9 +266,21 @@ public class ConvertTests()
                 Assert.IsTrue(File.Exists(file));
                 Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
+
+                readTxts[Path.GetFileName(file)] = TestHelper.ReadTextText(file);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+            
+            Assert.Contains("PDF 1", readTxts["test_1.txt"]);
+            Assert.Contains("zwyklych", readTxts["test_1.txt"]);
+            Assert.Contains("kontrolny", readTxts["test_1.txt"]);
+            Assert.Contains("PDF 2", readTxts["test_2.txt"]);
+            Assert.Contains("laczenia", readTxts["test_2.txt"]);
+            Assert.Contains("testow", readTxts["test_2.txt"]);
+            Assert.Contains("PDF 3", readTxts["test_3.txt"]);
+            Assert.Contains("Koniec", readTxts["test_3.txt"]);
+            Assert.Contains("testowej", readTxts["test_3.txt"]);
         }
         finally
         {
@@ -263,10 +317,17 @@ public class ConvertTests()
                 Convert.PdfToTxt(fileJob);
             }
 
-            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
+            string text = TestHelper.ReadTextText(file);
+
+            Assert.IsTrue(File.Exists(file));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            Assert.Contains("PDF 1", text);
+            Assert.Contains("neutralnej", text);
+            Assert.Contains("wyszukiwania", text);
         }
         finally
         {
@@ -293,6 +354,8 @@ public class ConvertTests()
             TempDir = Files.PrepareTempDir()
         };
         
+        Dictionary<string, string> readTxts = new Dictionary<string, string>();
+        
         try
         {
             List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
@@ -307,9 +370,21 @@ public class ConvertTests()
                 Assert.IsTrue(File.Exists(file));
                 Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                
+                readTxts[Path.GetFileName(file)] = TestHelper.ReadTextText(file);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+            
+            Assert.Contains("OCR IMAGE 1", readTxts["ocr_1.txt"]);
+            Assert.Contains("wejsciowy", readTxts["ocr_1.txt"]);
+            Assert.Contains("neutralny", readTxts["ocr_1.txt"]);
+            Assert.Contains("OCR IMAGE 2", readTxts["ocr_2.txt"]);
+            Assert.Contains("duzy", readTxts["ocr_2.txt"]);
+            Assert.Contains("czytelny", readTxts["ocr_2.txt"]);
+            Assert.Contains("OCR IMAGE 3", readTxts["ocr_3.txt"]);
+            Assert.Contains("obrazie", readTxts["ocr_3.txt"]);
+            Assert.Contains("clean", readTxts["ocr_3.txt"]);
         }
         finally
         {
@@ -346,10 +421,17 @@ public class ConvertTests()
                 Convert.PictToTxt(fileJob);
             }
 
-            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
+            string text = TestHelper.ReadTextText(file);
+
+            Assert.IsTrue(File.Exists(file));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            
+            Assert.Contains("OCR IMAGE 1", text);
+            Assert.Contains("HYDRAULIKA", text);
+            Assert.Contains("czytelny", text);
         }
         finally
         {
@@ -381,11 +463,38 @@ public class ConvertTests()
         {
             FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Convert.PictToPdf(fileJob);
+            string file = Path.Combine(operationContext.TempDir, operationInput.Output);
 
-            Assert.IsTrue(File.Exists(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(Path.Combine(operationContext.TempDir, operationInput.Output)));
-            Assert.IsGreaterThan(0, new FileInfo(Path.Combine(operationContext.TempDir, operationInput.Output)).Length);
+            Assert.IsTrue(File.Exists(file));
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+            Assert.IsGreaterThan(0, new FileInfo(file).Length);
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+            Assert.AreEqual(3, Info.GetPdfPagesSingle(file));
+
+            // This PDF contains images, so render its pages before running OCR.
+            string imagesDir = Path.Combine(operationContext.TempDir, "rendered");
+            Directory.CreateDirectory(imagesDir);
+            Convert.PdfToPict(new FileJob
+            {
+                InputFile = file,
+                TempPath = Path.Combine(imagesDir, "page.jpg")
+            });
+
+            Assert.HasCount(3, Directory.GetFiles(imagesDir, "*.jpg"));
+
+            for (int page = 1; page <= 3; page++)
+            {
+                FileJob imageJob = new()
+                {
+                    InputFile = Path.Combine(imagesDir, $"page-{page}.jpg"),
+                    TempPath = Path.Combine(imagesDir, $"page-{page}.txt")
+                };
+                Convert.PictToTxt(imageJob);
+
+                string text = TestHelper.ReadTextText(imageJob.TempPath);
+                Assert.Contains($"OCR IMAGE {page}", text);
+                Assert.Contains("HYDRAULIKA", text);
+            }
         }
         finally
         {
@@ -404,13 +513,19 @@ public class ConvertTests()
         
         OperationDefinition operationDefinition = new OperationDefinition()
         {
-            Extension = ".jpg"
+            Extension = ""
         };
         
         OperationContext operationContext = new OperationContext()
         {
             TempDir = Files.PrepareTempDir()
         };
+        
+        string[] allowedExtensions =
+        [
+            ".jpg", ".png", ".tif", ".jp2",
+            ".jb2e", ".jb2g", ".ccitt", ".params"
+        ];
         
         try
         {
@@ -424,7 +539,7 @@ public class ConvertTests()
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
                 Assert.IsTrue(File.Exists(file));
-                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.Contains(Path.GetExtension(file).ToLowerInvariant(), allowedExtensions);
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
@@ -472,6 +587,12 @@ public class ConvertTests()
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
                 byte[] header = File.ReadAllBytes(file).Take(4).ToArray();
                 CollectionAssert.AreEqual(new byte[] { 37, 80, 68, 70 }, header);
+
+                string text = TestHelper.ReadPdfText(file);
+                string marker = Path.GetFileNameWithoutExtension(file).ToUpperInvariant();
+                Assert.Contains(marker, text);
+                Assert.Contains("Page 1", text);
+                Assert.Contains("fixture", text);
             }
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
@@ -520,6 +641,11 @@ public class ConvertTests()
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
             byte[] header = File.ReadAllBytes(file).Take(4).ToArray();
             CollectionAssert.AreEqual(new byte[] { 37, 80, 68, 70 }, header);
+
+            string text = TestHelper.ReadPdfText(file);
+            Assert.Contains("WORD_1", text);
+            Assert.Contains("akapitow", text);
+            Assert.Contains("fixture", text);
         }
         finally
         {

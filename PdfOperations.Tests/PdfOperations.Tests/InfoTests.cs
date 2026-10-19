@@ -1,5 +1,7 @@
 ﻿namespace PdfOperations.Tests;
 
+using System.Text.RegularExpressions;
+
 [TestClass]
 public class InfoTests
 {
@@ -26,7 +28,6 @@ public class InfoTests
         {
             FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Info.ShowInfo(fileJob);
-            //string text = File.ReadAllText()
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
@@ -42,6 +43,18 @@ public class InfoTests
             foreach (string file in operationInput.InputFiles)
             {
                 Assert.Contains(file, text);
+            }
+
+            string[] reports = text.Split("-------------------------",
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            Assert.HasCount(3, reports);
+
+            for (int i = 0; i < reports.Length; i++)
+            {
+                Assert.Contains(operationInput.InputFiles[i], reports[i]);
+                Assert.IsTrue(Regex.IsMatch(reports[i], @"(?m)^Pages:\s+1\s*$"));
+                Assert.IsTrue(Regex.IsMatch(reports[i], @"(?m)^Encrypted:\s+no\s*$"));
+                Assert.Contains("ReportLab", reports[i]);
             }
         }
         finally
@@ -74,6 +87,21 @@ public class InfoTests
         {
             FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Info.ShowFontInfo(fileJob);
+
+            string fontReport = File.ReadAllText(fileJob.TempPath);
+            for (int i = 0; i < operationInput.InputFiles.Length; i++)
+            {
+                int start = fontReport.IndexOf(operationInput.InputFiles[i], StringComparison.Ordinal);
+                Assert.IsGreaterThanOrEqualTo(0, start, $"Missing report for {operationInput.InputFiles[i]}");
+                int end = i + 1 < operationInput.InputFiles.Length
+                    ? fontReport.IndexOf(operationInput.InputFiles[i + 1],
+                        start + operationInput.InputFiles[i].Length, StringComparison.Ordinal)
+                    : fontReport.Length;
+                Assert.IsGreaterThan(start, end);
+                string report = fontReport[start..end];
+                Assert.IsTrue(Regex.IsMatch(report, @"(?m)^Helvetica\s+Type 1\s+WinAnsi\b"));
+                Assert.IsTrue(Regex.IsMatch(report, @"(?m)^Helvetica-Bold\s+Type 1\s+WinAnsi\b"));
+            }
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
@@ -123,6 +151,17 @@ public class InfoTests
             Info.SaveToFile(fileJob.TempPath, "losowy xdd\n", operationInput.InputFiles[0]);
             Info.SaveToFile(fileJob.TempPath, "lancuczeszek\n", operationInput.InputFiles[1]);
             Info.SaveToFile(fileJob.TempPath, "pomidorek\n", operationInput.InputFiles[2]);
+
+            string[] reports = File.ReadAllText(fileJob.TempPath).Split("-------------------------",
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] expectedTexts = ["losowy xdd", "lancuczeszek", "pomidorek"];
+            Assert.HasCount(3, reports);
+
+            for (int i = 0; i < reports.Length; i++)
+            {
+                Assert.Contains(operationInput.InputFiles[i], reports[i]);
+                Assert.Contains(expectedTexts[i], reports[i]);
+            }
 
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
