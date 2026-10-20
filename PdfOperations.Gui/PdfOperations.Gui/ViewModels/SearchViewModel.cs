@@ -141,10 +141,17 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                 try
                 {
+                    OperationContext textContext = new OperationContext
+                    {
+                        TempDir = Path.Combine(operationContext.TempDir, "texts")
+                    };
+
+                    Directory.CreateDirectory(textContext.TempDir);
+
                     List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
                         operationDefinition,
                         operationInput,
-                        operationContext);
+                        textContext);
 
                     foreach (FileJob fileJob in fileJobs)
                     {
