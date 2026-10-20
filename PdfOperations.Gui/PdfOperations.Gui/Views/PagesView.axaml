@@ -83,7 +83,7 @@
 
                     <Button Content="{Binding Loc.OpenOutputFolder}"
                             Command="{Binding OpenOutputFolderCommand}"
-                            Width="170" />
+                            MinWidth="170" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

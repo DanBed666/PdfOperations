@@ -10,6 +10,7 @@
                  SelectedItem="{Binding SelectedFile}"
                  SelectedItems="{Binding SelectedFiles}"
                  SelectionMode="Multiple"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  Background="{DynamicResource InputListBackgroundBrush}"
                  BorderBrush="{DynamicResource ListBorderBrush}"
                  MinHeight="80"
@@ -18,7 +19,8 @@
                 <DataTemplate>
                     <TextBlock Text="{Binding DisplayText}"
                                Foreground="{DynamicResource InputListTextBrush}"
-                               TextWrapping="Wrap" />
+                               TextWrapping="Wrap"
+                               ToolTip.Tip="{Binding DisplayPath}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

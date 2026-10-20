@@ -46,7 +46,7 @@
                             Spacing="8">
                     <Button Content="{Binding Loc.AddFragment}"
                             Command="{Binding AddFragmentCommand}"
-                            Width="130" />
+                            MinWidth="130" />
 
                     <Button Content="{Binding Loc.MoveUp}"
                             Command="{Binding MoveFragmentUpCommand}"
@@ -68,6 +68,7 @@
                 <TextBlock Text="{Binding Loc.Fragments}" />
                 <ListBox ItemsSource="{Binding Fragments}"
                          SelectedItem="{Binding SelectedFragment}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="{DynamicResource InputListBackgroundBrush}"
                          BorderBrush="{DynamicResource ListBorderBrush}"
                          MinHeight="120"
@@ -76,7 +77,9 @@
                         <DataTemplate>
                             <StackPanel>
                                 <TextBlock Text="{Binding DisplayText}"
-                                           Foreground="{DynamicResource InputListTextBrush}" />
+                                           Foreground="{DynamicResource InputListTextBrush}"
+                                           TextWrapping="Wrap"
+                                           ToolTip.Tip="{Binding DisplayPath}" />
                                 <TextBlock Text="{Binding PageNumbers}"
                                            Foreground="{DynamicResource MutedTextBrush}" />
                             </StackPanel>
@@ -109,7 +112,7 @@
 
                     <Button Content="{Binding Loc.OpenOutputFolder}"
                             Command="{Binding OpenOutputFolderCommand}"
-                            Width="170" />
+                            MinWidth="170" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

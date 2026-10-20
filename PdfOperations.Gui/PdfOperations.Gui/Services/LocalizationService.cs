@@ -24,7 +24,7 @@ public partial class LocalizationService : ObservableObject
     public string MoveUp => Language == AppLanguage.Polish ? "W górę" : "Up";
     public string MoveDown => Language == AppLanguage.Polish ? "W dół" : "Down";
 
-    public string OpenOutputFolder => Language == AppLanguage.Polish ? "Otwórz folder z wynikami" : "Open output folder";
+    public string OpenOutputFolder => Language == AppLanguage.Polish ? "Otwórz folder wynikowy" : "Open output folder";
 
     public string InputFiles => Language == AppLanguage.Polish ? "Pliki wejściowe" : "Input files";
     public string InputPdfFiles => Language == AppLanguage.Polish ? "Pliki PDF" : "Input PDF files";

@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using PdfOperations.Gui.Helpers;
+
 namespace PdfOperations.Gui.Models;
 
 public partial class SelectedFileItem : ObservableObject
@@ -10,7 +12,9 @@ public partial class SelectedFileItem : ObservableObject
     [ObservableProperty]
     private string path = "";
 
-    public string DisplayText => $"{Number}. {Path}";
+    public string DisplayPath => PathDisplayHelper.Format(Path);
+
+    public string DisplayText => $"{Number}. {DisplayPath}";
 
     partial void OnNumberChanged(int value)
     {
@@ -19,6 +23,7 @@ public partial class SelectedFileItem : ObservableObject
 
     partial void OnPathChanged(string value)
     {
+        OnPropertyChanged(nameof(DisplayPath));
         OnPropertyChanged(nameof(DisplayText));
     }
 }
