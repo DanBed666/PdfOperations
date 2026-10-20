@@ -6,13 +6,21 @@ public class Search
 {
     public static void SearchTempTextFiles(OperationInput input, OperationContext context, FileJob fileJob)
     {
-        SearchResult foundLines = GetFoundLines(fileJob.TempPath, input.PhraseToFind, input.Before, input.After, fileJob.InputFile);
-        Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
-        File.Delete(fileJob.TempPath);
+        OperationCancellation.Run(OperationTimeouts.SearchText, "Text search", token =>
+        {
+            SearchResult foundLines = GetFoundLines(fileJob.TempPath, input.PhraseToFind,
+                input.Before, input.After, fileJob.InputFile, token);
+            token.ThrowIfCancellationRequested();
+            Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
+            token.ThrowIfCancellationRequested();
+            File.Delete(fileJob.TempPath);
+        });
     }
     
-    public static SearchResult GetFoundLines(string inputTempPath, string phrase, int before, int after, string inputFile)
+    public static SearchResult GetFoundLines(string inputTempPath, string phrase, int before, int after,
+        string inputFile, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         int occ = 0;
         
         SearchResult searchResult = new SearchResult()
@@ -21,14 +29,17 @@ public class Search
         };
         
         string [] pages = File.ReadAllText(inputTempPath).Split("\f");
+        cancellationToken.ThrowIfCancellationRequested();
         List<string> linesFound = new List<string>();
 
         for (int p = 0; p < pages.Length; p++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             string [] lines = pages[p].Split("\n");
 
             for (int l = 0; l < lines.Length; l++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (lines[l].Contains(phrase.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
                     searchResult.PageNumber = p + 1;
@@ -44,6 +55,7 @@ public class Search
                 
                     for (int k = -before; k <= after; k++)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         int idx = l + k;
                     
                         if (idx >= 0 && idx < lines.Length)
@@ -58,6 +70,7 @@ public class Search
             }
         }
         
+        cancellationToken.ThrowIfCancellationRequested();
         searchResult.Occurences = occ;
 
         if (occ == 0)

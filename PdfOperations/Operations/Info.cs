@@ -11,7 +11,7 @@ public class Info
 
         foreach (string f in file.InputFiles)
         {
-            output = RunClass.RunWithOutput(tool, f);
+            output = RunClass.RunWithOutput(tool, OperationTimeouts.PdfInfo, f);
             SaveToFile(file.TempPath, output, f);
         }
     }
@@ -22,7 +22,7 @@ public class Info
         string output = "";
         int number = 0;
 
-        output = RunClass.RunWithOutput(tool, input);
+        output = RunClass.RunWithOutput(tool, OperationTimeouts.PdfPageCount, input);
         string line = output.Split("\n").FirstOrDefault(x => x.StartsWith("Pages: "))!;
         number = int.Parse(line.Split(":")[1].Trim());
 
@@ -36,7 +36,7 @@ public class Info
 
         foreach (string f in file.InputFiles)
         {
-            output = RunClass.RunWithOutput(tool, f);
+            output = RunClass.RunWithOutput(tool, OperationTimeouts.PdfFontInfo, f);
             SaveToFile(file.TempPath, output, f);
         }
     }

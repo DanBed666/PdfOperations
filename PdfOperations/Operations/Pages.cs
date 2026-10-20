@@ -8,7 +8,7 @@ public class Pages
         List<string> arguments = new List<string>();
 
         arguments.AddRange([file.InputFile, "--pages", ".", input.Pages, "--", file.TempPath]);
-        RunClass.Run(tool, arguments, [0, 3]);
+        RunClass.Run(tool, arguments, OperationTimeouts.SelectPages, [0, 3]);
     }
     
     public static void CreateWithCustomFiles(OperationInput input, FileJob file)
@@ -24,7 +24,7 @@ public class Pages
         }
 
         arguments.AddRange(["--", file.TempPath]);
-        RunClass.Run(tool, arguments, [0, 3]);
+        RunClass.Run(tool, arguments, OperationTimeouts.BuildFragments, [0, 3]);
     }
 
     public static void SplitPages(FileJob file, List<int> splitAfterPages, int pageCount)
@@ -39,7 +39,8 @@ public class Pages
             string outputPath = PrepareSplitOutputPath(file.TempPath, partNumber);
             string pages = $"{startPage}-{splitAfterPage}";
 
-            RunClass.Run(tool, [file.InputFile, "--pages", ".", pages, "--", outputPath], [0, 3]);
+            RunClass.Run(tool, [file.InputFile, "--pages", ".", pages, "--", outputPath],
+                OperationTimeouts.SplitPdf, [0, 3]);
 
             startPage = splitAfterPage + 1;
             partNumber++;
@@ -48,7 +49,8 @@ public class Pages
         string lastOutputPath = PrepareSplitOutputPath(file.TempPath, partNumber);
         string lastPages = $"{startPage}-{pageCount}";
 
-        RunClass.Run(tool, [file.InputFile, "--pages", ".", lastPages, "--", lastOutputPath], [0, 3]);
+        RunClass.Run(tool, [file.InputFile, "--pages", ".", lastPages, "--", lastOutputPath],
+            OperationTimeouts.SplitPdf, [0, 3]);
     }
 
     public static string PrepareSplitOutputPath(string tempPath, int partNumber)
