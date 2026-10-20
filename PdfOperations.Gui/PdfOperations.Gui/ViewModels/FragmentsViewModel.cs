@@ -25,9 +25,6 @@ public partial class FragmentsViewModel : ViewModelBase
     private string outputFileName = "fragments.pdf";
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
     
     [ObservableProperty]
@@ -40,7 +37,6 @@ public partial class FragmentsViewModel : ViewModelBase
 
     public FragmentsViewModel()
     {
-        StatusMessage = Loc.Ready;
         Fragments.CollectionChanged += (_, _) => StartCommand.NotifyCanExecuteChanged();
     }
 
@@ -78,8 +74,7 @@ public partial class FragmentsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.CannotReadPdfPageCount(ex.Message);
+            ShowError(ex);
             return;
         }
         
@@ -272,8 +267,7 @@ public partial class FragmentsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(ex.Message);
+            ShowError(ex);
         }
         finally
         {

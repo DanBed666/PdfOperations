@@ -1,26 +1,33 @@
-﻿namespace PdfOperations.Gui.ViewModels;
+﻿using System;
+using PdfOperations.Gui.Services;
+
+namespace PdfOperations.Gui.ViewModels;
 
 public abstract class FileInputViewModelBase : ViewModelBase
 {
+    private readonly Func<LocalizationService, string> fileDialogTitle;
+    private readonly Func<LocalizationService, string> fileTypeName;
+    private readonly Func<LocalizationService, string>? inputTitle;
+
     protected FileInputViewModelBase(
-        string fileDialogTitle,
-        string fileTypeName,
+        Func<LocalizationService, string> fileDialogTitle,
+        Func<LocalizationService, string> fileTypeName,
         string[] filePatterns,
         bool showMoveButtons = false,
-        string? inputTitle = null)
+        Func<LocalizationService, string>? inputTitle = null)
     {
-        InputTitle = inputTitle ?? Loc.InputFiles;
-        FileDialogTitle = fileDialogTitle;
-        FileTypeName = fileTypeName;
+        this.inputTitle = inputTitle;
+        this.fileDialogTitle = fileDialogTitle;
+        this.fileTypeName = fileTypeName;
         FilePatterns = filePatterns;
         InputFilesList.ShowMoveButtons = showMoveButtons;
     }
 
-    public string InputTitle { get; }
+    public string InputTitle => inputTitle?.Invoke(Loc) ?? Loc.InputFiles;
 
-    public string FileDialogTitle { get; }
+    public string FileDialogTitle => fileDialogTitle(Loc);
 
-    public string FileTypeName { get; }
+    public string FileTypeName => fileTypeName(Loc);
 
     public string[] FilePatterns { get; }
 

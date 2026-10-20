@@ -27,13 +27,13 @@ public partial class PagesViewModel : FileInputViewModelBase
     private string outputFileName = "";
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
     
-    [ObservableProperty]
-    private string inputFilesInfo = "";
+    private readonly List<(string Path, int? PageCount, Exception? Error)> inputFileDetails = new();
+
+    public string InputFilesInfo => string.Join(Environment.NewLine, inputFileDetails.Select(file =>
+        $"{Path.GetFileName(file.Path)} - " +
+        (file.Error is not null ? Loc.ErrorSummary(file.Error) : Loc.PagesInfo(file.PageCount!.Value))));
     
     [ObservableProperty]
     private PageSelectionMode selectedMode = PageSelectionMode.CustomPages;
@@ -54,12 +54,11 @@ public partial class PagesViewModel : FileInputViewModelBase
     
     public PagesViewModel()
         : base(
-            "Select PDF files",
-            "PDF files (*.pdf)",
+            loc => loc.SelectPdfFiles,
+            loc => loc.InputPdfFilesWithFormats,
             ["*.pdf"],
-            inputTitle: LocalizationService.Instance.InputPdfFilesWithFormats)
+            inputTitle: loc => loc.InputPdfFilesWithFormats)
     {
-        StatusMessage = Loc.Ready;
         RefreshPageModes();
         SelectedPageMode = PageModes.FirstOrDefault(mode => mode.Mode == PageSelectionMode.CustomPages);
         InputFilesList.FilesChanged += () =>
@@ -69,6 +68,18 @@ public partial class PagesViewModel : FileInputViewModelBase
         };
     }
     
+    public override void RefreshLocalization()
+    {
+        Title = Loc.GetOperationName("SplitPdf");
+        foreach (PageModeMenuItem item in PageModes)
+            item.DisplayName = Loc.GetPageModeName(item.Mode);
+
+        if (InputFilesList.Files.Count > 1)
+            OutputFileName = Loc.GeneratedFromInputFileNames;
+
+        base.RefreshLocalization();
+    }
+
     private void RefreshPageModes()
     {
         PageSelectionMode? selectedMode = SelectedPageMode?.Mode;
@@ -129,18 +140,21 @@ public partial class PagesViewModel : FileInputViewModelBase
         
         SetDefaultOutputDirectoryFromInputFiles(files, OutputDirectory, value => OutputDirectory = value);
 
-        InputFilesInfo = string.Join(Environment.NewLine, files.Select(path =>
+        inputFileDetails.Clear();
+        foreach (string path in files)
         {
             try
             {
-                return $"{Path.GetFileName(path)} - {Loc.PagesInfo(Info.GetPdfPagesSingle(path))}";
+                inputFileDetails.Add((path, Info.GetPdfPagesSingle(path), null));
             }
             catch (Exception ex)
             {
-                return $"{Path.GetFileName(path)} - {Loc.CannotReadPages(ex.Message)}";
+                inputFileDetails.Add((path, null, ex));
+                ShowError(ex);
             }
-        }));
+        }
 
+        OnPropertyChanged(nameof(InputFilesInfo));
         OnPropertyChanged(nameof(CanEditOutputFileName));
     }
     
@@ -437,8 +451,7 @@ public partial class PagesViewModel : FileInputViewModelBase
         }
         catch (Exception e)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(e.Message);
+            ShowError(e);
         }
         finally
         {

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.IO;
 using PdfOperations.Gui.Models;
@@ -11,6 +12,30 @@ namespace PdfOperations.Gui.ViewModels;
 public abstract partial class ViewModelBase : ObservableObject
 {
     public LocalizationService Loc => LocalizationService.Instance;
+
+    private string statusMessage = "";
+
+    public string StatusMessage
+    {
+        get => statusMessage;
+        set
+        {
+            ErrorDetails = "";
+            AreErrorDetailsExpanded = false;
+            SetProperty(ref statusMessage, value);
+            IsStatusVisible = !string.IsNullOrWhiteSpace(value);
+        }
+    }
+
+    [ObservableProperty]
+    private bool isStatusVisible;
+
+    [RelayCommand]
+    private void DismissStatus()
+    {
+        if (!IsBusy)
+            IsStatusVisible = false;
+    }
 
     [ObservableProperty]
     private bool isBusy;
@@ -73,6 +98,27 @@ public abstract partial class ViewModelBase : ObservableObject
     private static bool IsDarkTheme =>
         Application.Current?.ActualThemeVariant == ThemeVariant.Dark ||
         Application.Current?.RequestedThemeVariant == ThemeVariant.Dark;
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasErrorDetails))]
+    private string errorDetails = "";
+
+    [ObservableProperty]
+    private bool areErrorDetailsExpanded;
+
+    public bool HasErrorDetails => !string.IsNullOrWhiteSpace(ErrorDetails);
+    
+    public virtual void RefreshLocalization()
+    {
+        OnPropertyChanged(string.Empty);
+    }
+
+    public void ShowError(Exception error)
+    {
+        StatusKind = StatusKind.Error;
+        StatusMessage = Loc.ErrorSummary(error);
+        ErrorDetails = error.ToString();
+    }
 
     public void RefreshStatusColors()
     {

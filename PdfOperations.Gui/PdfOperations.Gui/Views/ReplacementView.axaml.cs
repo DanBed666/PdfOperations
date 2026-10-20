@@ -60,11 +60,11 @@ public partial class ReplacementView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select Excel replacement file",
+            Title = viewModel.Loc.SelectExcelReplacementFile,
             AllowMultiple = false,
             FileTypeFilter =
             [
-                new FilePickerFileType("Excel files")
+                new FilePickerFileType(viewModel.Loc.InputExcelFilesWithFormats)
                 {
                     Patterns = ["*.xlsx"]
                 }

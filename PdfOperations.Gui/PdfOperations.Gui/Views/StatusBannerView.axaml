@@ -3,15 +3,47 @@
              x:Class="PdfOperations.Gui.Views.StatusBannerView"
              x:CompileBindings="False">
 
-    <Border Background="{Binding StatusBackground}"
+    <Border IsVisible="{Binding IsStatusVisible}"
+            Background="{Binding StatusBackground}"
             BorderBrush="{Binding StatusBorder}"
             BorderThickness="1"
             CornerRadius="6"
             Padding="12"
             Margin="0,0,0,12">
-        <TextBlock Text="{Binding StatusMessage}"
-                   Foreground="{Binding StatusForeground}"
-                   TextWrapping="Wrap" />
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" RowDefinitions="Auto,Auto">
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="{Binding StatusForeground}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center" />
+
+            <Button Grid.Column="1"
+                    Content="&#x00D7;"
+                    FontSize="22"
+                    Width="32" Height="32"
+                    MinWidth="32" MinHeight="32"
+                    Padding="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{Binding StatusForeground}"
+                    IsVisible="{Binding IsNotBusy}"
+                    Command="{Binding DismissStatusCommand}"
+                    ToolTip.Tip="{Binding Loc.CloseMessage}"
+                    AutomationProperties.Name="{Binding Loc.CloseMessage}" />
+            
+            <Expander Grid.Row="1" Grid.ColumnSpan="2"
+                      Header="{Binding Loc.ErrorDetailsLabel}"
+                      Foreground="{Binding StatusForeground}"
+                      IsVisible="{Binding HasErrorDetails}"
+                      IsExpanded="{Binding AreErrorDetailsExpanded, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch">
+                <TextBox Text="{Binding ErrorDetails, Mode=OneWay}"
+                         IsReadOnly="True" AcceptsReturn="True"
+                         TextWrapping="Wrap" MaxHeight="200"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </Expander>
+        </Grid>
     </Border>
 
 </UserControl>

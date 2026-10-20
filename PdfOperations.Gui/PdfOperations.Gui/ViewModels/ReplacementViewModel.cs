@@ -23,21 +23,17 @@ public partial class ReplacementViewModel : FileInputViewModelBase
     private string outputFileName = "";
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
     
     public bool CanEditOutputFileName => InputFilesList.Files.Count == 1;
 
     public ReplacementViewModel()
         : base(
-            "Select editable files",
-            "Editable documents (*.docx, *.odt, *.odg)",
+            loc => loc.SelectEditableFiles,
+            loc => loc.InputEditableFilesWithFormats,
             ["*.docx", "*.odt", "*.odg"],
-            inputTitle: LocalizationService.Instance.InputEditableFilesWithFormats)
+            inputTitle: loc => loc.InputEditableFilesWithFormats)
     {
-        StatusMessage = Loc.Ready;
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
@@ -167,8 +163,7 @@ public partial class ReplacementViewModel : FileInputViewModelBase
         }
         catch (Exception ex)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(ex.Message);
+            ShowError(ex);
         }
         finally
         {

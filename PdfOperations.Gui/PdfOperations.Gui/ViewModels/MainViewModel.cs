@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
@@ -44,6 +45,8 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private OperationMenuItem? selectedOperation;
+    
+    private readonly Dictionary<string, ViewModelBase> operationViewModels = new();
 
     [ObservableProperty]
     private ViewModelBase? currentOperationViewModel;
@@ -90,9 +93,9 @@ public partial class MainViewModel : ViewModelBase
         }
     }
     
-    partial void OnSelectedOperationChanged(OperationMenuItem? value)
+    private ViewModelBase? CreateOperationViewModel(string key)
     {
-        CurrentOperationViewModel = value?.Key switch
+        return key switch
         {
             "LibreOffice" => new LibreOfficeViewModel(),
             "PdfToTxt" => new ManyToManyViewModel(new GuiOperationDefinition
@@ -102,8 +105,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".txt",
                 DefaultOutputName = "output",
-                FileDialogTitle = "Select PDF files",
-                FileTypeName = "PDF files (*.pdf)",
+                FileDialogTitle = Loc.SelectPdfFiles,
+                FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
             }),
@@ -114,8 +117,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".docx",
                 DefaultOutputName = "output",
-                FileDialogTitle = "Select PDF files",
-                FileTypeName = "PDF files (*.pdf)",
+                FileDialogTitle = Loc.SelectPdfFiles,
+                FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
             }),
@@ -126,8 +129,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputDocxFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "output",
-                FileDialogTitle = "Select DOCX files",
-                FileTypeName = "DOCX files (*.docx)",
+                FileDialogTitle = Loc.SelectDocxFiles,
+                FileTypeName = Loc.InputDocxFilesWithFormats,
                 FilePatterns = ["*.docx"],
                 Action = (_, _, fileJob) => Convert.DocxToPdfWord(fileJob)
             }),
@@ -138,8 +141,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".jpg",
                 DefaultOutputName = "output",
-                FileDialogTitle = "Select PDF files",
-                FileTypeName = "PDF files (*.pdf)",
+                FileDialogTitle = Loc.SelectPdfFiles,
+                FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
                 MoveAllTempFiles = true,
                 Action = (_, _, fileJob) => Convert.PdfToPict(fileJob)
@@ -151,8 +154,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputImageFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "images",
-                FileDialogTitle = "Select image files",
-                FileTypeName = "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)",
+                FileDialogTitle = Loc.SelectImageFiles,
+                FileTypeName = Loc.InputImageFilesWithFormats,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
             }),
@@ -163,8 +166,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputImageFilesWithFormats,
                 OutputExtension = ".txt",
                 DefaultOutputName = "images",
-                FileDialogTitle = "Select image files",
-                FileTypeName = "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.tif, *.tiff)",
+                FileDialogTitle = Loc.SelectImageFiles,
+                FileTypeName = Loc.InputImageFilesWithFormats,
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
                 Action = (_, _, fileJob) => Convert.PictToTxt(fileJob)
@@ -176,8 +179,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".jpg",
                 DefaultOutputName = "images",
-                FileDialogTitle = "Select PDF files",
-                FileTypeName = "PDF files (*.pdf)",
+                FileDialogTitle = Loc.SelectPdfFiles,
+                FileTypeName = Loc.InputPdfFilesWithFormats,
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.pdf"],
                 Action = (_, _, fileJob) => Convert.ExtractPict(fileJob)
@@ -193,8 +196,8 @@ public partial class MainViewModel : ViewModelBase
                 InputTitle = Loc.InputPdfFilesWithFormats,
                 OutputExtension = ".pdf",
                 DefaultOutputName = "merged",
-                FileDialogTitle = "Select PDF files",
-                FileTypeName = "PDF files (*.pdf)",
+                FileDialogTitle = Loc.SelectPdfFiles,
+                FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
                 SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
             }),
@@ -206,6 +209,31 @@ public partial class MainViewModel : ViewModelBase
             "Help" => new HelpViewModel(),
             _ => null
         };
+    }
+    
+    partial void OnSelectedOperationChanged(OperationMenuItem? value)
+    {
+        if (value is null)
+        {
+            CurrentOperationViewModel = null;
+            return;
+        }
+    
+        if (!operationViewModels.TryGetValue(value.Key, out var viewModel))
+        {
+            viewModel = CreateOperationViewModel(value.Key);
+    
+            if (viewModel is null)
+            {
+                CurrentOperationViewModel = null;
+                return;
+            }
+    
+            operationViewModels.Add(value.Key, viewModel);
+        }
+    
+        viewModel.RefreshStatusColors();
+        CurrentOperationViewModel = viewModel;
     }
     
     public AppLanguage[] Languages { get; } =
@@ -225,6 +253,11 @@ public partial class MainViewModel : ViewModelBase
             string? selectedKey = SelectedOperation?.Key;
             AppTheme selectedTheme = SelectedTheme?.Theme ?? AppTheme.System;
             Loc.Language = value;
+            
+            foreach (ViewModelBase viewModel in operationViewModels.Values)
+            {
+                viewModel.RefreshLocalization();
+            }
 
             settings.Language = value;
             SettingsService.Save(settings);

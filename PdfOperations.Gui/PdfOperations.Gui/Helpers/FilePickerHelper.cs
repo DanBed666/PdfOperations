@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using PdfOperations.Gui.Services;
 
 namespace PdfOperations.Gui.Helpers;
 
@@ -40,7 +41,7 @@ public static class FilePickerHelper
 
     public static async Task<string?> PickFolderAsync(
         Control owner,
-        string title = "Select output folder")
+        string? title = null)
     {
         TopLevel? topLevel = TopLevel.GetTopLevel(owner);
 
@@ -49,7 +50,7 @@ public static class FilePickerHelper
 
         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = title,
+            Title = title ?? LocalizationService.Instance.SelectOutputDirectory,
             AllowMultiple = false
         });
 

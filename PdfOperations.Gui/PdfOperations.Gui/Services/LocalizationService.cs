@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
 
 namespace PdfOperations.Gui.Services;
@@ -16,6 +18,7 @@ public partial class LocalizationService : ObservableObject
     public string AddFilesButton => Language == AppLanguage.Polish ? "Dodaj pliki" : "Add files";
     public string Remove => Language == AppLanguage.Polish ? "Usuń" : "Remove";
     public string Clear => Language == AppLanguage.Polish ? "Wyczyść" : "Clear";
+    public string CloseMessage => Language == AppLanguage.Polish ? "Zamknij komunikat" : "Dismiss message";
     public string Start => "Start";
 
     public string MoveUp => Language == AppLanguage.Polish ? "W górę" : "Up";
@@ -306,6 +309,49 @@ public partial class LocalizationService : ObservableObject
         : "Search files (*.pdf, *.txt, images)";
 
     public string InputOfficeFilesWithFormats => Language == AppLanguage.Polish
-        ? "Dokumenty Office (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)"
-        : "Office documents (*.docx, *.odt, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)";
+        ? "Dokumenty Office (*.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)"
+        : "Office documents (*.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)";
+
+    public string InputExcelFilesWithFormats => Language == AppLanguage.Polish
+        ? "Arkusze Excel (*.xlsx)"
+        : "Excel files (*.xlsx)";
+
+    public string SelectEditableFiles => Language == AppLanguage.Polish
+        ? "Wybierz dokumenty edytowalne"
+        : "Select editable documents";
+
+    public string SelectDocxFiles => Language == AppLanguage.Polish
+        ? "Wybierz pliki DOCX"
+        : "Select DOCX files";
+
+    public string SelectImageFiles => Language == AppLanguage.Polish
+        ? "Wybierz obrazy"
+        : "Select image files";
+    
+    public string ErrorDetailsLabel => Language == AppLanguage.Polish
+        ? "Szczegóły błędu" : "Error details";
+
+    public string ErrorSummary(Exception error)
+    {
+        (string pl, string en) = error switch
+        {
+            FileNotFoundException or DirectoryNotFoundException =>
+                ("Nie znaleziono pliku lub folderu.", "File or folder not found."),
+            UnauthorizedAccessException =>
+                ("Brak uprawnień do pliku lub folderu.", "Access to the file or folder was denied."),
+            IOException when (error.HResult & 0xFFFF) is 32 or 33 =>
+                ("Plik jest używany przez inny program.", "The file is in use by another program."),
+            _ when error.Message.Contains("Command Line Error: Incorrect password",
+                    StringComparison.OrdinalIgnoreCase) ||
+                   (error.Message.Contains("qpdf:", StringComparison.OrdinalIgnoreCase) &&
+                    error.Message.TrimEnd().EndsWith(": invalid password", StringComparison.OrdinalIgnoreCase)) =>
+                ("PDF wymaga hasła. Ta operacja nie obsługuje podawania hasła.",
+                    "The PDF requires a password. This operation does not support entering one."),
+            _ => ("Nie udało się wykonać operacji. Sprawdź szczegóły błędu.",
+                "The operation failed. Check the error details.")
+        };
+        return Error(Language == AppLanguage.Polish ? pl : en);
+    }
+    
+
 }

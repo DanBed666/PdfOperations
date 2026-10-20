@@ -19,9 +19,6 @@ public partial class InfoViewModel : FileInputViewModelBase
     private string outputFileName = "pdf_info.txt";
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
     
     [ObservableProperty]
@@ -35,16 +32,15 @@ public partial class InfoViewModel : FileInputViewModelBase
     
     public InfoViewModel(InfoMode mode)
         : base(
-            "Select PDF files",
-            "PDF files (*.pdf)",
+            loc => loc.SelectPdfFiles,
+            loc => loc.InputPdfFilesWithFormats,
             ["*.pdf"],
-            inputTitle: LocalizationService.Instance.InputPdfFilesWithFormats)
+            inputTitle: loc => loc.InputPdfFilesWithFormats)
     {
         this.mode = mode;
         Title = mode == InfoMode.FontInfo
             ? Loc.GetOperationName("FontInfo")
             : Loc.GetOperationName("Info");
-        StatusMessage = Loc.Ready;
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
@@ -55,6 +51,12 @@ public partial class InfoViewModel : FileInputViewModelBase
     public InfoViewModel() : this(InfoMode.PdfInfo)
     {
         
+    }
+
+    public override void RefreshLocalization()
+    {
+        Title = Loc.GetOperationName(Mode == InfoMode.FontInfo ? "FontInfo" : "Info");
+        base.RefreshLocalization();
     }
 
     [RelayCommand(CanExecute = nameof(CanStart))]
@@ -136,8 +138,7 @@ public partial class InfoViewModel : FileInputViewModelBase
         }
         catch (Exception ex)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(ex.Message);
+            ShowError(ex);
         }
         finally
         {

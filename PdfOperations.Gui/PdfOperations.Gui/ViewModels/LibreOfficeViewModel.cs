@@ -20,9 +20,6 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     private string selectedFormat = "pdf";
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
 
     public List<string> Formats { get; } =
@@ -61,18 +58,25 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     
     public LibreOfficeViewModel() 
         : base(
-            "Select files",
-            "Office documents (*.docx, *.odt, *.odg, *.doc, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)",
+            loc => loc.SelectDocumentFiles,
+            loc => loc.InputOfficeFilesWithFormats,
             ["*.docx", "*.odt", "*.doc", "*.odg", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
-            inputTitle: LocalizationService.Instance.InputOfficeFilesWithFormats)
+            inputTitle: loc => loc.InputOfficeFilesWithFormats)
     {
-        StatusMessage = Loc.Ready;
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
             RefreshOutputFileName();
             StartCommand.NotifyCanExecuteChanged();
         };
+    }
+
+    public override void RefreshLocalization()
+    {
+        if (InputFilesList.Files.Count > 1)
+            OutputFileName = Loc.GeneratedFromInputFileNames;
+
+        base.RefreshLocalization();
     }
 
     [RelayCommand(CanExecute = nameof(CanStart))]
@@ -245,8 +249,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         }
         catch (Exception ex)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(ex.Message);
+            ShowError(ex);
         }
         finally
         {

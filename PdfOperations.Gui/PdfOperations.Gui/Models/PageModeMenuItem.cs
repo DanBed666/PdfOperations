@@ -1,8 +1,11 @@
-﻿namespace PdfOperations.Gui.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class PageModeMenuItem
+namespace PdfOperations.Gui.Models;
+
+public partial class PageModeMenuItem : ObservableObject
 {
     public PageSelectionMode Mode { get; init; }
 
-    public string DisplayName { get; set; } = "";
+    [ObservableProperty]
+    private string displayName = "";
 }

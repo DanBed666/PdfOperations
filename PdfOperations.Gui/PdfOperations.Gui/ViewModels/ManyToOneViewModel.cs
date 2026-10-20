@@ -19,7 +19,6 @@ public partial class ManyToOneViewModel : ViewModelBase
     {
         this.operation = operation;
         Title = operation.Title;
-        StatusMessage = Loc.Ready;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
         InputFilesList.ShowMoveButtons = true;
         InputFilesList.FilesChanged += () =>
@@ -29,12 +28,22 @@ public partial class ManyToOneViewModel : ViewModelBase
         };
     }
 
-    public string InputTitle => operation.InputTitle;
+    public string InputTitle => operation.Name == "ImagesToPdf"
+        ? Loc.InputImageFilesWithFormats
+        : Loc.InputPdfFilesWithFormats;
 
-    public string FileDialogTitle => operation.FileDialogTitle;
-    public string FileTypeName => operation.FileTypeName;
+    public string FileDialogTitle => operation.Name == "ImagesToPdf"
+        ? Loc.SelectImageFiles
+        : Loc.SelectPdfFiles;
+    public string FileTypeName => InputTitle;
 
     public string[] FilePatterns => operation.FilePatterns;
+
+    public override void RefreshLocalization()
+    {
+        Title = Loc.GetOperationName(operation.Name);
+        base.RefreshLocalization();
+    }
 
     [ObservableProperty]
     private string title = "Many to one operation";
@@ -46,9 +55,6 @@ public partial class ManyToOneViewModel : ViewModelBase
 
     [ObservableProperty]
     private string outputFileName = "output.pdf";
-
-    [ObservableProperty]
-    private string statusMessage = "Ready";
 
     [ObservableProperty]
     private string lastOutputDirectory = "";
@@ -157,8 +163,7 @@ public partial class ManyToOneViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(e.Message);
+            ShowError(e);
         }
         finally
         {

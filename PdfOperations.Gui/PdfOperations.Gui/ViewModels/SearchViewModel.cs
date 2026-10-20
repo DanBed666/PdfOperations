@@ -32,20 +32,16 @@ public partial class SearchViewModel : FileInputViewModelBase
     private int after = 2;
 
     [ObservableProperty]
-    private string statusMessage = "Ready";
-
-    [ObservableProperty]
     private string lastOutputDirectory = "";
     
     public SearchViewModel() 
         : base(
-            "Select files",
-            "Search files (*.pdf, *.txt, images)",
+            loc => loc.SelectFilesButton,
+            loc => loc.InputSearchFilesWithFormats,
             ["*.pdf", "*.txt", "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
-            inputTitle: LocalizationService.Instance.InputSearchFilesWithFormats)
+            inputTitle: loc => loc.InputSearchFilesWithFormats)
     {
         Title = Loc.GetOperationName("Search");
-        StatusMessage = Loc.Ready;
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
@@ -53,6 +49,12 @@ public partial class SearchViewModel : FileInputViewModelBase
         };
     }
     
+    public override void RefreshLocalization()
+    {
+        Title = Loc.GetOperationName("Search");
+        base.RefreshLocalization();
+    }
+
     [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
@@ -201,8 +203,7 @@ public partial class SearchViewModel : FileInputViewModelBase
         }
         catch (Exception e)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(e.Message);
+            ShowError(e);
         }
         finally
         {

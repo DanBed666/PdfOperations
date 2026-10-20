@@ -32,7 +32,9 @@
                                Foreground="{DynamicResource SidebarMutedTextBrush}" />
 
                     <ComboBox ItemsSource="{Binding Languages}"
-                              SelectedItem="{Binding SelectedLanguage}" />
+                              SelectedItem="{Binding SelectedLanguage}"
+                              IsEnabled="{Binding CurrentOperationViewModel.IsNotBusy,
+                              FallbackValue=True}" />
 
                     <TextBlock Text="{Binding Loc.ThemeLabel}"
                                Foreground="{DynamicResource SidebarMutedTextBrush}"
@@ -52,7 +54,9 @@
                          Background="{DynamicResource SidebarBackgroundBrush}"
                          BorderThickness="0"
                          ItemsSource="{Binding Operations}"
-                         SelectedItem="{Binding SelectedOperation}">
+                         SelectedItem="{Binding SelectedOperation}"
+                         IsEnabled="{Binding CurrentOperationViewModel.IsNotBusy,
+                             FallbackValue=True}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplayName}"

@@ -14,16 +14,27 @@ namespace PdfOperations.Gui.ViewModels;
 public partial class ManyToManyViewModel : ViewModelBase
 {
     private readonly GuiOperationDefinition operation;
-    public string InputTitle => operation.InputTitle;
-    public string FileDialogTitle => operation.FileDialogTitle;
-    public string FileTypeName => operation.FileTypeName;
+    public string InputTitle => operation.Name switch
+    {
+        "DocxToPdfWord" => Loc.InputDocxFilesWithFormats,
+        "ImagesToPdf" or "ImagesToTxt" => Loc.InputImageFilesWithFormats,
+        _ => Loc.InputPdfFilesWithFormats
+    };
+
+    public string FileDialogTitle => operation.Name switch
+    {
+        "DocxToPdfWord" => Loc.SelectDocxFiles,
+        "ImagesToPdf" or "ImagesToTxt" => Loc.SelectImageFiles,
+        _ => Loc.SelectPdfFiles
+    };
+
+    public string FileTypeName => InputTitle;
     public string[] FilePatterns => operation.FilePatterns;
 
     public ManyToManyViewModel(GuiOperationDefinition operation)
     {
         this.operation = operation;
         Title = operation.Title;
-        StatusMessage = Loc.Ready;
         OutputFileName = operation.DefaultOutputName + operation.OutputExtension;
         InputFilesList.FilesChanged += () =>
         {
@@ -32,12 +43,18 @@ public partial class ManyToManyViewModel : ViewModelBase
         };
     }
     
+    public override void RefreshLocalization()
+    {
+        Title = Loc.GetOperationName(operation.Name);
+        if (InputFilesList.Files.Count > 1)
+            OutputFileName = Loc.GeneratedFromInputFileNames;
+
+        base.RefreshLocalization();
+    }
+
     [ObservableProperty]
     private string title = "Many to many operation";
 
-    [ObservableProperty]
-    private string statusMessage = "Ready";
-    
     public FileListViewModel InputFilesList { get; } = new();
 
     [ObservableProperty]
@@ -200,8 +217,7 @@ public partial class ManyToManyViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            StatusKind = StatusKind.Error;
-            StatusMessage = Loc.Error(e.Message);
+            ShowError(e);
         }
         finally
         {

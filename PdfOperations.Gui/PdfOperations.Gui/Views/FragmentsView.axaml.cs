@@ -26,7 +26,7 @@ public partial class FragmentsView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select PDF file",
+            Title = viewModel.Loc.SelectPdfFiles,
             AllowMultiple = false,
             FileTypeFilter =
             [
@@ -76,7 +76,7 @@ public partial class FragmentsView : UserControl
 
         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Select output folder",
+            Title = viewModel.Loc.SelectOutputDirectory,
             AllowMultiple = false
         });
 
