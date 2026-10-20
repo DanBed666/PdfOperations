@@ -49,8 +49,13 @@ public partial class LocalizationService : ObservableObject
     public string ExcelReplacementFile => Language == AppLanguage.Polish ? "Arkusz Excel z zamianami" : "Excel replacement file";
     public string Replacement => Language == AppLanguage.Polish ? "Zamiana tekstu" : "Replacement";
     public string LibreOfficeConversion => Language == AppLanguage.Polish ? "Konwersja LibreOffice" : "LibreOffice conversion";
-    public string FragmentPdfFile => Language == AppLanguage.Polish ? "Plik PDF fragmentu" : "Fragment PDF file";
-    public string AddFragment => Language == AppLanguage.Polish ? "Dodaj fragment" : "Add fragment";
+    public string FragmentPdfFile => Language == AppLanguage.Polish
+        ? "Pliki PDF do fragmentów"
+        : "PDF files for fragments";
+
+    public string AddFragment => Language == AppLanguage.Polish
+        ? "Dodaj fragmenty"
+        : "Add fragments";
     public string RemoveSelected => Language == AppLanguage.Polish ? "Usuń wybrany" : "Remove selected";
     public string Fragments => Language == AppLanguage.Polish ? "Fragmenty" : "Fragments";
     public string BuildPdfFromFragments => Language == AppLanguage.Polish ? "Utwórz PDF z fragmentów" : "Build PDF from fragments";
@@ -353,5 +358,8 @@ public partial class LocalizationService : ObservableObject
         return Error(Language == AppLanguage.Polish ? pl : en);
     }
     
-
+    public string FragmentsAdded(int count) =>
+        Language == AppLanguage.Polish
+            ? $"Liczba dodanych fragmentów: {count}."
+            : $"Fragments added: {count}.";
 }

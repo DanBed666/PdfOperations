@@ -27,7 +27,7 @@ public partial class FragmentsView : UserControl
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = viewModel.Loc.SelectPdfFiles,
-            AllowMultiple = false,
+            AllowMultiple = true,
             FileTypeFilter =
             [
                 new FilePickerFileType(viewModel.Loc.InputPdfFilesWithFormats)
@@ -37,31 +37,16 @@ public partial class FragmentsView : UserControl
             ]
         });
 
-        string? path = files.FirstOrDefault()?.Path.LocalPath;
+        string[] paths = files
+            .Select(file => file.TryGetLocalPath())
+            .OfType<string>()
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .ToArray();
 
-        if (!string.IsNullOrWhiteSpace(path))
-        {
-            viewModel.SelectedFragmentFile = path;
+        if (paths.Length == 0)
+            return;
 
-            if (string.IsNullOrWhiteSpace(viewModel.OutputDirectory))
-            {
-                string? directory = System.IO.Path.GetDirectoryName(path);
-
-                if (!string.IsNullOrWhiteSpace(directory))
-                    viewModel.OutputDirectory = directory;
-            }
-
-            try
-            {
-                viewModel.SelectedFragmentFileInfo =
-                    $"{System.IO.Path.GetFileName(path)} - liczba stron: {Info.GetPdfPagesSingle(path)}";
-            }
-            catch (Exception ex)
-            {
-                viewModel.SelectedFragmentFileInfo =
-                    $"Nie udało się odczytać liczby stron: {ex.Message}";
-            }
-        }
+        viewModel.SetSelectedFragmentFiles(paths);
     }
 
     private async void BrowseOutputDirectory_Click(object? sender, RoutedEventArgs e)

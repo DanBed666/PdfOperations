@@ -18,17 +18,25 @@
                 <TextBlock Text="{Binding Loc.FragmentPdfFile}" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                     <TextBox Grid.Column="0"
-                             Text="{Binding SelectedFragmentFile}"
+                             Text="{Binding SelectedFragmentFilesText, Mode=OneWay}"
                              IsReadOnly="True"
-                             TextWrapping="Wrap" />
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="70"
+                             MaxHeight="140"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" />
                     <Button Grid.Column="1"
                             Content="{Binding Loc.Browse}"
                             Click="BrowseFragmentFile_Click" />
                 </Grid>
                 
-                <TextBlock Text="{Binding SelectedFragmentFileInfo}"
-                           Foreground="{DynamicResource MutedTextBrush}"
-                           TextWrapping="Wrap" />
+                <ScrollViewer MaxHeight="120"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <TextBlock Text="{Binding SelectedFragmentFilesInfo}"
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               TextWrapping="Wrap" />
+                </ScrollViewer>
 
                 <TextBlock Text="{Binding Loc.Pages}" />
                 <TextBox Text="{Binding PageNumbers}"
@@ -67,7 +75,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="{Binding FileName}"
+                                <TextBlock Text="{Binding DisplayText}"
                                            Foreground="{DynamicResource InputListTextBrush}" />
                                 <TextBlock Text="{Binding PageNumbers}"
                                            Foreground="{DynamicResource MutedTextBrush}" />
