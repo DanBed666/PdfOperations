@@ -17,10 +17,19 @@
                  MaxHeight="180">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayText}"
-                               Foreground="{DynamicResource InputListTextBrush}"
-                               TextWrapping="Wrap"
-                               ToolTip.Tip="{Binding DisplayPath}" />
+                    <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding DisplayText}"
+                                   Foreground="{DynamicResource InputListTextBrush}"
+                                   TextWrapping="Wrap"
+                                   ToolTip.Tip="{Binding DisplayPath}" />
+
+                        <TextBlock Text="{Binding DirectoryPath}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource MutedTextBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="PathSegmentEllipsis"
+                                   ToolTip.Tip="{Binding DisplayPath}" />
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

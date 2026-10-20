@@ -13,6 +13,7 @@ public partial class SelectedFragmentItem : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DisplayText))]
     [NotifyPropertyChangedFor(nameof(DisplayPath))]
+    [NotifyPropertyChangedFor(nameof(DirectoryPath))]
     private string fileName = "";
 
     [ObservableProperty]
@@ -20,5 +21,6 @@ public partial class SelectedFragmentItem : ObservableObject
 
     public string DisplayPath => PathDisplayHelper.Format(FileName);
 
-    public string DisplayText => $"{Number}. {DisplayPath}";
+    public string DisplayText => $"{Number}. {System.IO.Path.GetFileName(FileName)}";
+    public string DirectoryPath => System.IO.Path.GetDirectoryName(FileName) ?? "";
 }

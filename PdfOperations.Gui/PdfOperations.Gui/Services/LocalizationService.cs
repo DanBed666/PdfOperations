@@ -2,6 +2,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Helpers;
 
 namespace PdfOperations.Gui.Services;
 
@@ -241,30 +242,34 @@ public partial class LocalizationService : ObservableObject
 
     public string DoneSaved(string path)
     {
+        string displayPath = PathDisplayHelper.Format(path);
         return Language == AppLanguage.Polish
-            ? $"Gotowe. Zapisano plik: {path}"
-            : $"Done. Saved: {path}";
+            ? $"Gotowe. Zapisano plik: {displayPath}"
+            : $"Done. Saved: {displayPath}";
     }
 
     public string DoneSavedFiles(int count, string directory)
     {
+        string displayPath = PathDisplayHelper.Format(directory);
         return Language == AppLanguage.Polish
-            ? $"Gotowe. Zapisano {count} plików w folderze: {directory}"
-            : $"Done. Saved {count} files to: {directory}";
+            ? $"Gotowe. Zapisano {count} plików w folderze: {displayPath}"
+            : $"Done. Saved {count} files to: {displayPath}";
     }
 
     public string DoneSavedFilesTo(string directory)
     {
+        string displayPath = PathDisplayHelper.Format(directory);
         return Language == AppLanguage.Polish
-            ? $"Gotowe. Zapisano pliki w folderze: {directory}"
-            : $"Done. Saved files to: {directory}";
+            ? $"Gotowe. Zapisano pliki w folderze: {displayPath}"
+            : $"Done. Saved files to: {displayPath}";
     }
 
     public string DoneSavedReport(string path)
     {
+        string displayPath = PathDisplayHelper.Format(path);
         return Language == AppLanguage.Polish
-            ? $"Gotowe. Zapisano raport: {path}"
-            : $"Done. Saved report: {path}";
+            ? $"Gotowe. Zapisano raport: {displayPath}"
+            : $"Done. Saved report: {displayPath}";
     }
 
     public string Error(string message)

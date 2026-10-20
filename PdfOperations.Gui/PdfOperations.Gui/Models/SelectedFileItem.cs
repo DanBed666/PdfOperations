@@ -14,7 +14,8 @@ public partial class SelectedFileItem : ObservableObject
 
     public string DisplayPath => PathDisplayHelper.Format(Path);
 
-    public string DisplayText => $"{Number}. {DisplayPath}";
+    public string DisplayText => $"{Number}. {System.IO.Path.GetFileName(Path)}";
+    public string DirectoryPath => System.IO.Path.GetDirectoryName(Path) ?? "";
 
     partial void OnNumberChanged(int value)
     {
@@ -25,5 +26,6 @@ public partial class SelectedFileItem : ObservableObject
     {
         OnPropertyChanged(nameof(DisplayPath));
         OnPropertyChanged(nameof(DisplayText));
+        OnPropertyChanged(nameof(DirectoryPath));
     }
 }
