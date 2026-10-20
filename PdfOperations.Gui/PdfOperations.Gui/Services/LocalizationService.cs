@@ -28,6 +28,9 @@ public partial class LocalizationService : ObservableObject
     public string InputDocumentFiles => Language == AppLanguage.Polish ? "Dokumenty" : "Input document files";
     public string OutputDirectory => Language == AppLanguage.Polish ? "Folder zapisu" : "Output directory";
     public string OutputFileName => Language == AppLanguage.Polish ? "Nazwa pliku" : "Output file name";
+    public string InvalidOutputFileName => Language == AppLanguage.Polish
+        ? "Podaj poprawną nazwę pliku, bez ścieżki."
+        : "Enter a valid file name without a path.";
     public string OverwriteExistingFiles => Language == AppLanguage.Polish ? "Nadpisz istniejące pliki" : "Overwrite existing files";
     public string GeneratedFromInputFileNames => Language == AppLanguage.Polish ? "Tworzone z nazw plików wejściowych" : "Generated from input file names";
     public string OutputFormat => Language == AppLanguage.Polish ? "Format pliku" : "Output format";

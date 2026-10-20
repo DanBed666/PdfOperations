@@ -50,7 +50,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
     public bool IsSplitByPagesMode => SelectedMode == PageSelectionMode.SplitByPages;
 
-    public bool CanEditOutputFileName => InputFilesList.Files.Count <= 1;
+    public bool CanEditOutputFileName => InputFilesList.Files.Count == 1;
     
     public PagesViewModel()
         : base(
@@ -119,6 +119,14 @@ public partial class PagesViewModel : FileInputViewModelBase
     public void RefreshInputFilesInfo()
     {
         string[] files = InputFilesList.ToPathArray();
+        
+        OutputFileName = files.Length switch
+        {
+            1 => Path.GetFileNameWithoutExtension(files[0]) + "_pages.pdf",
+            > 1 => Loc.GeneratedFromInputFileNames,
+            _ => ""
+        };
+        
         SetDefaultOutputDirectoryFromInputFiles(files, OutputDirectory, value => OutputDirectory = value);
 
         InputFilesInfo = string.Join(Environment.NewLine, files.Select(path =>

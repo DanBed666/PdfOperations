@@ -35,6 +35,30 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         "txt"
     ];
     
+    [ObservableProperty]
+    private string outputFileName = "";
+
+    public bool CanEditOutputFileName => InputFilesList.Files.Count == 1;
+
+    private void RefreshOutputFileName()
+    {
+        string[] files = InputFilesList.ToPathArray();
+
+        OutputFileName = files.Length switch
+        {
+            1 => Path.GetFileNameWithoutExtension(files[0]) + "." + SelectedFormat,
+            > 1 => Loc.GeneratedFromInputFileNames,
+            _ => ""
+        };
+
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+    
     public LibreOfficeViewModel() 
         : base(
             "Select files",
@@ -46,6 +70,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            RefreshOutputFileName();
             StartCommand.NotifyCanExecuteChanged();
         };
     }
@@ -98,6 +123,23 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                 return;
             }
 
+            string customName = "";
+
+            if (currentInputFiles.Length == 1)
+            {
+                string enteredName = OutputFileName.Trim();
+                customName = Path.GetFileNameWithoutExtension(enteredName);
+
+                if (enteredName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+                    || string.IsNullOrWhiteSpace(customName)
+                    || customName is "." or "..")
+                {
+                    StatusKind = StatusKind.Error;
+                    StatusMessage = Loc.InvalidOutputFileName;
+                    return;
+                }
+            }
+
             int savedFilesCount = 0;
 
             StatusMessage = Loc.ConvertingTo(SelectedFormat);
@@ -128,10 +170,14 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
                         if (SelectedFormat == "pdf")
                             Convert.ValidatePdfOutput(expectedFile);
+
+                        string name = currentInputFiles.Length == 1
+                            ? customName
+                            : Path.GetFileNameWithoutExtension(inputFile);
                         
                         if (SelectedFormat.Equals("html", StringComparison.OrdinalIgnoreCase))
                         {
-                            string folderName = Path.GetFileNameWithoutExtension(inputFile) + "_html";
+                            string folderName = name + "_html";
                             string targetDirectory = Path.Combine(OutputDirectory, folderName);
                             int htmlCounter = 1;
 
@@ -148,8 +194,10 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                             foreach (string generatedFile in Directory.GetFiles(
                                          context.TempDir, "*", SearchOption.AllDirectories))
                             {
-                                string relativePath = Path.GetRelativePath(
-                                    context.TempDir, generatedFile);
+                                string relativePath = string.Equals(
+                                    generatedFile, expectedFile, StringComparison.OrdinalIgnoreCase)
+                                    ? name + ".html"
+                                    : Path.GetRelativePath(context.TempDir, generatedFile);
 
                                 string destination = Path.Combine(targetDirectory, relativePath);
 
@@ -165,7 +213,6 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                             continue;
                         }
 
-                        string name = Path.GetFileNameWithoutExtension(inputFile);
                         string extension = "." + SelectedFormat;
                         string targetPath = Path.Combine(OutputDirectory, name + extension);
                         int counter = 1;
@@ -211,7 +258,9 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     {
         return !InputFilesList.IsEmpty()
                && !string.IsNullOrWhiteSpace(OutputDirectory)
-               && !string.IsNullOrWhiteSpace(SelectedFormat);
+               && !string.IsNullOrWhiteSpace(SelectedFormat)
+               && (!CanEditOutputFileName
+                || !string.IsNullOrWhiteSpace(OutputFileName));
     }
 
     partial void OnOutputDirectoryChanged(string value)
@@ -221,6 +270,12 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
     partial void OnSelectedFormatChanged(string value)
     {
+        if (CanEditOutputFileName)
+        {
+            OutputFileName =
+                Path.GetFileNameWithoutExtension(OutputFileName) + "." + value;
+        }
+
         StartCommand.NotifyCanExecuteChanged();
     }
 

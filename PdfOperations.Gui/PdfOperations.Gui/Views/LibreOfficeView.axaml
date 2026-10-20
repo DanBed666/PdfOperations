@@ -45,6 +45,10 @@
 
                 <CheckBox Content="{Binding Loc.OverwriteExistingFiles}"
                           IsChecked="{Binding OverwriteExistingFiles}" />
+                
+                <TextBlock Text="{Binding Loc.OutputFileName}" />
+                <TextBox Text="{Binding OutputFileName}"
+                         IsEnabled="{Binding CanEditOutputFileName}" />
 
                 <StackPanel Orientation="Horizontal"
                             Spacing="8">
