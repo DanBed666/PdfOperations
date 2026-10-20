@@ -50,7 +50,14 @@ public abstract partial class ViewModelBase : ObservableObject
 
     partial void OnIsBusyChanged(bool value)
     {
+        if (value)
+        {
+            CompletedFiles = 0;
+            TotalFiles = 0;
+        }
+
         OnPropertyChanged(nameof(IsNotBusy));
+        OnPropertyChanged(nameof(HasFileProgress));
     }
 
     public string StatusBackground => IsDarkTheme
@@ -125,6 +132,27 @@ public abstract partial class ViewModelBase : ObservableObject
         OnPropertyChanged(nameof(StatusBackground));
         OnPropertyChanged(nameof(StatusBorder));
         OnPropertyChanged(nameof(StatusForeground));
+    }
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ProgressText))]
+    private int completedFiles;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ProgressText))]
+    [NotifyPropertyChangedFor(nameof(HasFileProgress))]
+    private int totalFiles;
+
+    public string ProgressText => Loc.FilesProgress(CompletedFiles, TotalFiles);
+
+    public bool HasFileProgress => IsBusy && TotalFiles > 0;
+
+    protected IProgress<int> BeginFileProgress(int total)
+    {
+        CompletedFiles = 0;
+        TotalFiles = total;
+
+        return new Progress<int>(completed => CompletedFiles = completed);
     }
 
     protected static void SetDefaultOutputDirectoryFromInputFiles(

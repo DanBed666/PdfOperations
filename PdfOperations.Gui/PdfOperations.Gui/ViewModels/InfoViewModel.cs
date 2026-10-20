@@ -118,18 +118,26 @@ public partial class InfoViewModel : FileInputViewModelBase
             if (!OverwriteExistingFiles)
                 finalPath = GetAvailablePath(finalPath);
 
+            int processedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
+
             await Task.Run(() =>
             {
-                FileJob fileJob = new FileJob
+                foreach (string inputFile in currentInputFiles)
                 {
-                    InputFiles = currentInputFiles,
-                    TempPath = finalPath
-                };
+                    FileJob fileJob = new FileJob
+                    {
+                        InputFiles = [inputFile],
+                        TempPath = finalPath
+                    };
 
-                if (Mode == InfoMode.FontInfo)
-                    Info.ShowFontInfo(fileJob);
-                else
-                    Info.ShowInfo(fileJob);
+                    if (Mode == InfoMode.FontInfo)
+                        Info.ShowFontInfo(fileJob);
+                    else
+                        Info.ShowInfo(fileJob);
+
+                    progress.Report(++processedFilesCount);
+                }
             });
 
             LastOutputDirectory = OutputDirectory;

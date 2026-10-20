@@ -149,6 +149,8 @@ public partial class ManyToManyViewModel : ViewModelBase
             string finalPath = "";
             
             int savedFilesCount = 0;
+            int processedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
             await Task.Run(() =>
             {
@@ -191,6 +193,7 @@ public partial class ManyToManyViewModel : ViewModelBase
                                 savedFilesCount++;
                             }
 
+                            progress.Report(++processedFilesCount);
                             continue;
                         }
 
@@ -200,6 +203,7 @@ public partial class ManyToManyViewModel : ViewModelBase
 
                         File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                         savedFilesCount++;
+                        progress.Report(++processedFilesCount);
                     }
                 }
                 finally

@@ -145,7 +145,8 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             }
 
             int savedFilesCount = 0;
-
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
+            
             StatusMessage = Loc.ConvertingTo(SelectedFormat);
 
             await Task.Run(() =>
@@ -160,6 +161,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                         InputFiles = [inputFile],
                         Format = SelectedFormat
                     };
+                    Exception? operationError = null;
 
                     try
                     {
@@ -214,6 +216,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                             }
 
                             savedFilesCount++;
+                            progress.Report(savedFilesCount);
                             continue;
                         }
 
@@ -234,11 +237,16 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                         File.Move(expectedFile, targetPath, overwrite: OverwriteExistingFiles);
 
                         savedFilesCount++;
+                        progress.Report(savedFilesCount);
+                    }
+                    catch (Exception ex)
+                    {
+                        operationError = ex;
+                        throw;
                     }
                     finally
                     {
-                        if (Directory.Exists(context.TempDir))
-                            Directory.Delete(context.TempDir, true);
+                        TemporaryDirectoryCleanup.Delete(context.TempDir, operationError);
                     }
                 }
             });
@@ -250,6 +258,8 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         catch (Exception ex)
         {
             ShowError(ex);
+            if (ex.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string cleanupDetails)
+                ErrorDetails += Environment.NewLine + Environment.NewLine + cleanupDetails;
         }
         finally
         {

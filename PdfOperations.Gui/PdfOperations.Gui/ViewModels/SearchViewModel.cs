@@ -119,6 +119,8 @@ public partial class SearchViewModel : FileInputViewModelBase
             StatusMessage = Loc.Searching;
 
             string finalPath = "";
+            int processedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
             await Task.Run(() =>
             {
@@ -180,6 +182,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                     foreach (FileJob fileJob in fileJobs)
                     {
                         Search.SearchTempTextFiles(operationInput, operationContext, fileJob);
+                        progress.Report(++processedFilesCount);
                     }
 
                     string tempReportPath = Path.Combine(operationContext.TempDir, OutputFileName);

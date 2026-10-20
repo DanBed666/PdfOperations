@@ -345,6 +345,9 @@ public partial class LocalizationService : ObservableObject
     {
         (string pl, string en) = error switch
         {
+            TimeoutException =>
+                ("Przekroczono limit czasu operacji. Sprawdź szczegóły błędu.",
+                    "The operation exceeded its time limit. Check the error details."),
             FileNotFoundException or DirectoryNotFoundException =>
                 ("Nie znaleziono pliku lub folderu.", "File or folder not found."),
             UnauthorizedAccessException =>
@@ -367,4 +370,9 @@ public partial class LocalizationService : ObservableObject
         Language == AppLanguage.Polish
             ? $"Liczba dodanych fragmentów: {count}."
             : $"Fragments added: {count}.";
+    
+    public string FilesProgress(int completed, int total) =>
+        Language == AppLanguage.Polish
+            ? $"Przetworzono plików: {completed}/{total}"
+            : $"Files processed: {completed}/{total}";
 }

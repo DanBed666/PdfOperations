@@ -326,6 +326,8 @@ public partial class PagesViewModel : FileInputViewModelBase
 
             int savedFilesCount = 0;
             string finalPath = "";
+            int processedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
             await Task.Run(() =>
             {
@@ -383,6 +385,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                                 savedFilesCount++;
                             }
 
+                            progress.Report(++processedFilesCount);
                             continue;
                         }
 
@@ -407,6 +410,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                                 savedFilesCount++;
                             }
 
+                            progress.Report(++processedFilesCount);
                             continue;
                         }
 
@@ -433,6 +437,7 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                         File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
                         savedFilesCount++;
+                        progress.Report(++processedFilesCount);
                     }
                     
                     StatusKind = StatusKind.Success;

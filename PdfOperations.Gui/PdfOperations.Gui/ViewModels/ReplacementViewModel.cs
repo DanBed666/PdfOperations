@@ -109,6 +109,8 @@ public partial class ReplacementViewModel : FileInputViewModelBase
             }
 
             StatusMessage = Loc.ReplacingText;
+            int processedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
             await Task.Run(() =>
             {
@@ -143,6 +145,7 @@ public partial class ReplacementViewModel : FileInputViewModelBase
                     };
 
                     Replacement.ReplaceTextWithPlaceholders(fileJob, input, context);
+                    progress.Report(++processedFilesCount);
                 }
 
                 foreach (string tempFile in Directory.GetFiles(context.TempDir))
