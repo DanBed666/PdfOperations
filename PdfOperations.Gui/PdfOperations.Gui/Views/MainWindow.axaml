@@ -6,6 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PdfOperations.Gui.Views.MainWindow"
         x:DataType="vm:MainViewModel"
+        Width="1180"
+        Height="760"
         MinWidth="980"
         MinHeight="620"
         Icon="/Assets/avalonia-logo.ico"
