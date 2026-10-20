@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="PdfOperations.Gui.App"
              xmlns:local="using:PdfOperations.Gui"
+             xmlns:helpers="using:PdfOperations.Gui.Helpers"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -78,6 +79,11 @@
         <Style Selector="TextBox">
             <Setter Property="MinHeight" Value="34" />
             <Setter Property="Padding" Value="10,6" />
+        </Style>
+
+        <Style Selector="TextBox.pathTooltip">
+            <Setter Property="ToolTip.Tip"
+                    Value="{ReflectionBinding Text, RelativeSource={RelativeSource Self}, Converter={x:Static helpers:PathDisplayHelper.TooltipConverter}}" />
         </Style>
 
         <Style Selector="ComboBox">

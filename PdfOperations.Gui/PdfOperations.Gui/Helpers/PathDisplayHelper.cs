@@ -1,9 +1,14 @@
 using System.Text;
+using Avalonia.Data.Converters;
 
 namespace PdfOperations.Gui.Helpers;
 
 public static class PathDisplayHelper
 {
+    public static IValueConverter TooltipConverter { get; } =
+        new FuncValueConverter<string?, string?>(path =>
+            string.IsNullOrWhiteSpace(path) ? null : Format(path));
+
     public static string Format(string path)
     {
         bool hasDriveRoot = path.Length >= 3
