@@ -110,18 +110,25 @@ public class ExecutionBuilderTests
             TempDir = Files.PrepareTempDir()
         };
 
-        List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
-        
-        foreach (FileJob fileJob in fileJobs)
+        try
         {
-            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
+            List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+
+            foreach (FileJob fileJob in fileJobs)
+            {
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
+            }
+
+            Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+
+            Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
+            Assert.AreEqual("lemonade.txt", operationInput.Output);
+            Assert.AreEqual("lemonade.txt", Path.GetFileName(fileJobs[0].TempPath));
         }
-        
-        Assert.IsTrue(Directory.Exists(operationContext.TempDir));
-        
-        Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
-        Assert.AreEqual("lemonade.txt", operationInput.Output);
-        Assert.AreEqual("lemonade.txt", Path.GetFileName(fileJobs[0].TempPath));
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(operationContext.TempDir);
+        }
     }
     
     [TestMethod]
@@ -143,21 +150,35 @@ public class ExecutionBuilderTests
             TempDir = Files.PrepareTempDir()
         };
 
-        FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
-        Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
-        
-        Assert.IsTrue(Directory.Exists(operationContext.TempDir));
-        Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
-        Assert.AreEqual("test_2.pdf", Path.GetFileName(operationInput.InputFiles[1]));
-        Assert.AreEqual("test_3.pdf", Path.GetFileName(operationInput.InputFiles[2]));
-        
-        Assert.AreEqual(operationInput.Output, Path.GetFileName(fileJob.TempPath));
+        try
+        {
+            FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
+            Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(fileJob.TempPath));
+
+            Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+            Assert.AreEqual("test_1.pdf", Path.GetFileName(operationInput.InputFiles[0]));
+            Assert.AreEqual("test_2.pdf", Path.GetFileName(operationInput.InputFiles[1]));
+            Assert.AreEqual("test_3.pdf", Path.GetFileName(operationInput.InputFiles[2]));
+
+            Assert.AreEqual(operationInput.Output, Path.GetFileName(fileJob.TempPath));
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(operationContext.TempDir);
+        }
     }
     
     [TestMethod]
     public void SetOperationContextTest()
     {
         OperationContext operationContext = ExecutionBuilder.SetOperationContext();
-        Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+        try
+        {
+            Assert.IsTrue(Directory.Exists(operationContext.TempDir));
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(operationContext.TempDir);
+        }
     }
 }

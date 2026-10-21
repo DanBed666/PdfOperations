@@ -281,13 +281,20 @@ public class PagesTests
             TempDir = Files.PrepareTempDir()
         };
 
-        string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
-        string newPath = Pages.PrepareSplitOutputPath(tempPath, 1);
-        string newPath2 = Pages.PrepareSplitOutputPath(tempPath, 2);
-        string newPath3 = Pages.PrepareSplitOutputPath(tempPath, 3);
-        
-        Assert.AreEqual("test_1_part_1.pdf", Path.GetFileName(newPath));
-        Assert.AreEqual("test_1_part_2.pdf", Path.GetFileName(newPath2));
-        Assert.AreEqual("test_1_part_3.pdf", Path.GetFileName(newPath3));
+        try
+        {
+            string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+            string newPath = Pages.PrepareSplitOutputPath(tempPath, 1);
+            string newPath2 = Pages.PrepareSplitOutputPath(tempPath, 2);
+            string newPath3 = Pages.PrepareSplitOutputPath(tempPath, 3);
+
+            Assert.AreEqual("test_1_part_1.pdf", Path.GetFileName(newPath));
+            Assert.AreEqual("test_1_part_2.pdf", Path.GetFileName(newPath2));
+            Assert.AreEqual("test_1_part_3.pdf", Path.GetFileName(newPath3));
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(operationContext.TempDir);
+        }
     }
 }
