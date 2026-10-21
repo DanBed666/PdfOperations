@@ -6,6 +6,12 @@ public class Search
 {
     public static void SearchTempTextFiles(OperationInput input, OperationContext context, FileJob fileJob)
     {
+        SearchTempTextFiles(input, context, fileJob, CancellationToken.None);
+    }
+
+    public static void SearchTempTextFiles(OperationInput input, OperationContext context, FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         OperationCancellation.Run(OperationTimeouts.SearchText, "Text search", token =>
         {
             SearchResult foundLines = GetFoundLines(fileJob.TempPath, input.PhraseToFind,
@@ -14,7 +20,7 @@ public class Search
             Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
             token.ThrowIfCancellationRequested();
             File.Delete(fileJob.TempPath);
-        });
+        }, cancellationToken);
     }
     
     public static SearchResult GetFoundLines(string inputTempPath, string phrase, int before, int after,

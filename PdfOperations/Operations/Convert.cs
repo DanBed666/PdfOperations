@@ -7,6 +7,13 @@ public static class Convert
 {
     public static void FileToPdf(OperationInput fileInput, OperationContext context)
     {
+        FileToPdf(fileInput, context, CancellationToken.None);
+    }
+
+    public static void FileToPdf(OperationInput fileInput, OperationContext context, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
         string workDirectory = Directory.CreateTempSubdirectory("PdfOperationsLibre-").FullName;
         Exception? operationError = null;
         try
@@ -26,7 +33,7 @@ public static class Convert
                 arguments.Add("--infilter=writer_pdf_import");
 
             arguments.AddRange(["--convert-to", fileInput.Format, ..inputs, "--outdir", context.TempDir]);
-            RunClass.Run(ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments, OperationTimeouts.LibreOffice);
+            RunClass.Run(ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments, OperationTimeouts.LibreOffice, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -75,7 +82,13 @@ public static class Convert
 
     public static void DocxToPdfWord(FileJob fileJob)
     {
-        WordConversionWorker.ConvertFile(fileJob);
+        DocxToPdfWord(fileJob, CancellationToken.None);
+    }
+
+    public static void DocxToPdfWord(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        WordConversionWorker.ConvertFile(fileJob, cancellationToken);
     }
 
     public static void ValidatePdfOutput(string path)
@@ -102,25 +115,43 @@ public static class Convert
     
     public static void PdfToPict(FileJob fileJob)
     {
+        PdfToPict(fileJob, CancellationToken.None);
+    }
+
+    public static void PdfToPict(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToPpm];
         List<string> arguments = new List<string>();
         
         string fileNotExt = Files.PrepareTempPathWithoutExt(fileJob.TempPath);
         arguments.AddRange(["-r", "300", "-jpeg", fileJob.InputFile, fileNotExt]);
-        RunClass.Run(tool, arguments, OperationTimeouts.PdfToImages);
+        RunClass.Run(tool, arguments, OperationTimeouts.PdfToImages, cancellationToken);
     }
     
     public static void PdfToTxt(FileJob fileJob)
     {
-        PdfToTxt(fileJob, keepPageBreaks: false);
+        PdfToTxt(fileJob, CancellationToken.None);
+    }
+
+    public static void PdfToTxt(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        PdfToTxt(fileJob, keepPageBreaks: false, cancellationToken);
     }
 
     public static void PdfToTxtWithPageBreaks(FileJob fileJob)
     {
-        PdfToTxt(fileJob, keepPageBreaks: true);
+        PdfToTxtWithPageBreaks(fileJob, CancellationToken.None);
     }
 
-    private static void PdfToTxt(FileJob fileJob, bool keepPageBreaks)
+    public static void PdfToTxtWithPageBreaks(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        PdfToTxt(fileJob, keepPageBreaks: true, cancellationToken);
+    }
+
+    private static void PdfToTxt(FileJob fileJob, bool keepPageBreaks, CancellationToken cancellationToken)
     {
         string tool = ToolPaths.ToolPathsDict[Tool.PdfToText];
         List<string> arguments = new List<string>();
@@ -129,44 +160,68 @@ public static class Convert
             arguments.Add("-nopgbrk");
 
         arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
-        RunClass.Run(tool, arguments, OperationTimeouts.PdfToTxt);
+        RunClass.Run(tool, arguments, OperationTimeouts.PdfToTxt, cancellationToken);
     }
     
     public static void PdfToDocx(FileJob fileJob)
     {
+        PdfToDocx(fileJob, CancellationToken.None);
+    }
+
+    public static void PdfToDocx(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string tool = ToolPaths.ToolPathsDict[Tool.Pdf2Docx];
         List<string> arguments = new List<string>();
 
         arguments.AddRange([fileJob.InputFile, fileJob.TempPath]);
-        RunClass.Run(tool, arguments, OperationTimeouts.PdfToDocx);
+        RunClass.Run(tool, arguments, OperationTimeouts.PdfToDocx, cancellationToken);
     }
     
     public static void PictToTxt(FileJob fileJob)
     {
+        PictToTxt(fileJob, CancellationToken.None);
+    }
+
+    public static void PictToTxt(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string tool = ToolPaths.ToolPathsDict[Tool.Tesseract];
         List<string> arguments = new List<string>();
         
         string fileNotExt = Files.PrepareTempPathWithoutExt(fileJob.TempPath);
         arguments.AddRange([fileJob.InputFile, fileNotExt, "-l", "pol"]);
-        RunClass.Run(tool, arguments, OperationTimeouts.ImageToTxt);
+        RunClass.Run(tool, arguments, OperationTimeouts.ImageToTxt, cancellationToken);
     }
     
     public static void PictToPdf(FileJob fileJob)
     {
+        PictToPdf(fileJob, CancellationToken.None);
+    }
+
+    public static void PictToPdf(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
         arguments.AddRange([..fileJob.InputFiles, fileJob.TempPath]);
-        RunClass.Run(tool, arguments, OperationTimeouts.ImageToPdf);
+        RunClass.Run(tool, arguments, OperationTimeouts.ImageToPdf, cancellationToken);
     }
     
     public static void ExtractPict(FileJob fileJob)
     {
+        ExtractPict(fileJob, CancellationToken.None);
+    }
+
+    public static void ExtractPict(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string tool = ToolPaths.ToolPathsDict[Tool.PdfImages];
         List<string> arguments = new List<string>();
 
         string fileNotExt = Files.PrepareTempPathWithoutExt(fileJob.TempPath);
         arguments.AddRange(["-all", fileJob.InputFile, fileNotExt]);
-        RunClass.Run(tool, arguments, OperationTimeouts.ExtractImages);
+        RunClass.Run(tool, arguments, OperationTimeouts.ExtractImages, cancellationToken);
     }
 }

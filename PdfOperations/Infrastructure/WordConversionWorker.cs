@@ -11,6 +11,12 @@ public static class WordConversionWorker
 
     public static void ConvertFile(FileJob file)
     {
+        ConvertFile(file, CancellationToken.None);
+    }
+
+    public static void ConvertFile(FileJob file, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         string input = Path.GetFullPath(file.InputFile);
         string output = Path.GetFullPath(file.TempPath);
         if (!File.Exists(input))
@@ -19,13 +25,22 @@ public static class WordConversionWorker
             throw new InvalidOperationException("The PDF output must not replace the input document.");
 
         string stateDirectory = Directory.CreateTempSubdirectory("PdfOperationsWord-").FullName;
-        try
+        TemporaryDirectoryCleanup.Run(stateDirectory, () =>
         {
             (string executable, List<string> arguments) = GetWorkerCommand();
             arguments.AddRange([Command, input, output, stateDirectory]);
             try
             {
-                RunClass.Run(executable, arguments, OperationTimeouts.WordToPdf);
+                RunClass.Run(executable, arguments, OperationTimeouts.WordToPdf, cancellationToken);
+            }
+            catch (OperationCanceledException ex) when (cancellationToken.IsCancellationRequested
+                && File.Exists(Path.Combine(stateDirectory, "word-starting"))
+                && !File.Exists(Path.Combine(stateDirectory, "word-process.json")))
+            {
+                ex.Data[TemporaryDirectoryCleanup.ErrorDataKey] =
+                    "Word startup was cancelled before its process could be identified. " +
+                    "The worker was stopped, but an unidentified Word process may still be running.";
+                throw;
             }
             catch (TimeoutException ex) when (!File.Exists(Path.Combine(stateDirectory, "word-process.json")))
             {
@@ -39,13 +54,7 @@ public static class WordConversionWorker
                     File.ReadAllText(Path.Combine(stateDirectory, "error.txt")), ex);
             }
             Convert.ValidatePdfOutput(output);
-        }
-        finally
-        {
-            // Word is a COM server and is not necessarily a child of the worker.
-            StopRegisteredWord(stateDirectory);
-            Directory.Delete(stateDirectory, true);
-        }
+        }, () => StopRegisteredWord(stateDirectory));
     }
 
     public static bool TryRun(string[] args, out int exitCode)
@@ -115,6 +124,7 @@ public static class WordConversionWorker
         bool ownsWord = false;
         try
         {
+            File.WriteAllText(Path.Combine(stateDirectory, "word-starting"), "Starting Word");
             word = Activator.CreateInstance(wordType)!;
             ownsWord = true;
             documents = word.Documents;

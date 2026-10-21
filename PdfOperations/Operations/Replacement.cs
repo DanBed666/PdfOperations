@@ -9,6 +9,12 @@ public class Replacement
 {
     public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context)
     {
+        ReplaceTextWithPlaceholders(file, input, context, CancellationToken.None);
+    }
+
+    public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         OperationCancellation.Run(OperationTimeouts.Replacement, "Text replacement", token =>
         {
             token.ThrowIfCancellationRequested();
@@ -20,7 +26,7 @@ public class Replacement
             token.ThrowIfCancellationRequested();
             CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
             token.ThrowIfCancellationRequested();
-        });
+        }, cancellationToken);
     }
     
     public static string ExtractDocumentToTemp(string inputFile, string tempPath)

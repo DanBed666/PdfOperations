@@ -9,8 +9,12 @@ public class RunClass
         Run(exe, arguments, Timeout.InfiniteTimeSpan, allowedExitCodes);
     }
 
-    public static void Run(string exe, List<string> arguments, TimeSpan timeout,
-        params int[] allowedExitCodes)
+    public static void Run(string exe, List<string> arguments, TimeSpan timeout, params int[] allowedExitCodes)
+    {
+        Run(exe, arguments, timeout, CancellationToken.None, allowedExitCodes);
+    }
+
+    public static void Run(string exe, List<string> arguments, TimeSpan timeout, CancellationToken cancellationToken, params int[] allowedExitCodes)
     {
         ValidateTimeout(timeout);
         var info = new ProcessStartInfo
@@ -29,9 +33,11 @@ public class RunClass
         Console.WriteLine(Messages.RunningCommand);
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         
+        cancellationToken.ThrowIfCancellationRequested();
+        
         using Process process = Process.Start(info)!;
         Task<string> errorTask = process.StandardError.ReadToEndAsync();
-        CompleteProcess(process, timeout, errorTask);
+        CompleteProcess(process, timeout, cancellationToken, errorTask);
         string error = errorTask.GetAwaiter().GetResult();
 
         if (allowedExitCodes.Length == 0)
@@ -124,6 +130,11 @@ public class RunClass
 
     public static string RunWithOutput(string exe, TimeSpan timeout, params string[] arguments)
     {
+        return RunWithOutput(exe, timeout, CancellationToken.None, arguments);
+    }
+
+    public static string RunWithOutput(string exe, TimeSpan timeout, CancellationToken cancellationToken, params string[] arguments)
+    {
         ValidateTimeout(timeout);
         var info = new ProcessStartInfo
         {
@@ -139,11 +150,13 @@ public class RunClass
             info.ArgumentList.Add(argument);
         }
         
+        cancellationToken.ThrowIfCancellationRequested();
+        
         using Process process = Process.Start(info)!;
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
         Task<string> errorTask = process.StandardError.ReadToEndAsync();
-        CompleteProcess(process, timeout, outputTask, errorTask);
+        CompleteProcess(process, timeout, cancellationToken, outputTask, errorTask);
         string output = outputTask.GetAwaiter().GetResult();
         string error = errorTask.GetAwaiter().GetResult();
 
@@ -164,13 +177,19 @@ public class RunClass
 
     private static void CompleteProcess(Process process, TimeSpan timeout, params Task[] readTasks)
     {
+        CompleteProcess(process, timeout, CancellationToken.None, readTasks);
+    }
+
+    private static void CompleteProcess(Process process, TimeSpan timeout, CancellationToken cancellationToken, params Task[] readTasks)
+    {
         // Drain redirected streams concurrently and include them in the same deadline.
         Task completion = Task.WhenAll([process.WaitForExitAsync(), ..readTasks]);
         try
         {
-            completion.WaitAsync(timeout).GetAwaiter().GetResult();
+            completion.WaitAsync(timeout, cancellationToken).GetAwaiter().GetResult();
         }
-        catch (TimeoutException)
+        catch (Exception failure) when (failure is TimeoutException ||
+            (failure is OperationCanceledException && cancellationToken.IsCancellationRequested))
         {
             List<Exception> cleanupErrors = [];
             // Observe stream failures even if process termination completes after this method.
@@ -198,10 +217,21 @@ public class RunClass
             {
                 cleanupErrors.Add(ex);
             }
+            Exception? cleanupError = cleanupErrors.Count == 0
+                ? null
+                : new AggregateException(
+                    "Process cleanup did not finish cleanly.", cleanupErrors);
+
+            if (failure is OperationCanceledException)
+            {
+                throw new OperationCanceledException(
+                    "The operation was cancelled.", cleanupError, cancellationToken);
+            }
+
             throw new TimeoutException(
-                $"Process '{Path.GetFileName(process.StartInfo.FileName)}' exceeded the time limit of {timeout.TotalSeconds:0.###} seconds.",
-                cleanupErrors.Count == 0 ? null
-                    : new AggregateException("Process cleanup did not finish cleanly.", cleanupErrors));
+                $"Process '{Path.GetFileName(process.StartInfo.FileName)}' exceeded " +
+                $"the time limit of {timeout.TotalSeconds:0.###} seconds.",
+                cleanupError);
         }
     }
 }
