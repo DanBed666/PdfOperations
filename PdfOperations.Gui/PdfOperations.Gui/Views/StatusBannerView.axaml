@@ -51,8 +51,28 @@
                                Foreground="{Binding StatusForeground}"
                                IsVisible="{Binding HasFileProgress}"
                                TextWrapping="Wrap" />
+
+                    <ProgressBar Minimum="0"
+                                 Maximum="{Binding TotalFiles}"
+                                 Value="{Binding CompletedFiles}"
+                                 IsVisible="{Binding HasFileProgress}"
+                                 IsIndeterminate="False"
+                                 ShowProgressText="False"
+                                 Height="6" MinHeight="6"
+                                 Margin="0,4,0,0"
+                                 HorizontalAlignment="Stretch"
+                                 Foreground="{Binding StatusBorder}"
+                                 AutomationProperties.Name="{Binding ProgressText}" />
                 </StackPanel>
             </Grid>
+
+            <Button Grid.Column="1"
+                    Content="{Binding Loc.CancelOperation}"
+                    Command="{Binding CancelOperationCommand}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalAlignment="Top"
+                    MinWidth="96"
+                    AutomationProperties.Name="{Binding Loc.CancelOperation}" />
 
             <Button Grid.Column="1"
                     Content="&#x00D7;"

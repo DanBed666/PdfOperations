@@ -95,6 +95,7 @@ public partial class ManyToManyViewModel : ViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -170,7 +171,7 @@ public partial class ManyToManyViewModel : ViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                try
+                TemporaryDirectoryCleanup.Run(operationContext.TempDir, () =>
                 {
                     List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
                         operationDefinition,
@@ -179,12 +180,15 @@ public partial class ManyToManyViewModel : ViewModelBase
 
                     foreach (FileJob fileJob in fileJobs)
                     {
-                        operation.Action?.Invoke(operationInput, operationContext, fileJob);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        operation.Action?.Invoke(operationInput, operationContext, fileJob, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         if (operation.MoveAllTempFiles)
                         {
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
                                 string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 if (!OverwriteExistingFiles)
                                     finalPath = GetAvailablePath(finalPath);
@@ -205,12 +209,7 @@ public partial class ManyToManyViewModel : ViewModelBase
                         savedFilesCount++;
                         progress.Report(++processedFilesCount);
                     }
-                }
-                finally
-                {
-                    if (Directory.Exists(operationContext.TempDir))
-                        Directory.Delete(operationContext.TempDir, true);
-                }
+                });
             });
 
             LastOutputDirectory = OutputDirectory;

@@ -66,6 +66,7 @@ public partial class ManyToOneViewModel : ViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -135,26 +136,23 @@ public partial class ManyToOneViewModel : ViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                try
+                TemporaryDirectoryCleanup.Run(operationContext.TempDir, () =>
                 {
                     FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(
                         operationDefinition,
                         operationInput,
                         operationContext);
 
-                    operation.SingleOutputAction?.Invoke(fileJob);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    operation.SingleOutputAction?.Invoke(fileJob, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
                     if (!OverwriteExistingFiles)
                         finalPath = GetAvailablePath(finalPath);
 
                     File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
-                }
-                finally
-                {
-                    if (Directory.Exists(operationContext.TempDir))
-                        Directory.Delete(operationContext.TempDir, true);
-                }
+                });
             });
 
             LastOutputDirectory = OutputDirectory;

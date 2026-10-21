@@ -263,6 +263,7 @@ public partial class PagesViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -348,7 +349,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                try
+                TemporaryDirectoryCleanup.Run(operationContext.TempDir, () =>
                 {
                     List<FileJob> fileJobs = ExecutionBuilder.SetFileJobsFilesToFiles(
                         operationDefinition,
@@ -357,7 +358,8 @@ public partial class PagesViewModel : FileInputViewModelBase
 
                     foreach (FileJob fileJob in fileJobs)
                     {
-                        int pageCount = Info.GetPdfPagesSingle(fileJob.InputFile);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        int pageCount = Info.GetPdfPagesSingle(fileJob.InputFile, cancellationToken);
 
                         if (SelectedMode == PageSelectionMode.CustomPages &&
                             !IsCustomPagesInRange(Pages, pageCount, out string pagesErrorMessage))
@@ -373,10 +375,11 @@ public partial class PagesViewModel : FileInputViewModelBase
                                 .Range(1, pageCount - 1)
                                 .ToList();
 
-                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount);
+                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount, cancellationToken);
 
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
                                 finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 if (!OverwriteExistingFiles)
                                     finalPath = GetAvailablePath(finalPath);
@@ -398,10 +401,11 @@ public partial class PagesViewModel : FileInputViewModelBase
                                 return;
                             }
 
-                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount);
+                            PdfOperations.Pages.SplitPages(fileJob, splitAfterPages, pageCount, cancellationToken);
 
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
                                 finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 if (!OverwriteExistingFiles)
                                     finalPath = GetAvailablePath(finalPath);
@@ -429,7 +433,8 @@ public partial class PagesViewModel : FileInputViewModelBase
                             return;
                         }
 
-                        PdfOperations.Pages.CreateWithPages(operationInput, fileJob);
+                        PdfOperations.Pages.CreateWithPages(operationInput, fileJob, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
                         if (!OverwriteExistingFiles)
@@ -444,12 +449,7 @@ public partial class PagesViewModel : FileInputViewModelBase
                     StatusMessage = savedFilesCount == 1
                         ? Loc.DoneSaved(finalPath)
                         : Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
-                }
-                finally
-                {
-                    if (Directory.Exists(operationContext.TempDir))
-                        Directory.Delete(operationContext.TempDir, true);
-                }
+                });
             });
 
             LastOutputDirectory = OutputDirectory;

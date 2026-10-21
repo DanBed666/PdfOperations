@@ -148,6 +148,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
             
             StatusMessage = Loc.ConvertingTo(SelectedFormat);
+            var cancellationToken = OperationToken;
 
             await Task.Run(() =>
             {
@@ -155,6 +156,8 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
                 foreach (string inputFile in currentInputFiles)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    
                     OperationContext context = new() { TempDir = Files.PrepareTempDir() };
                     OperationInput input = new()
                     {
@@ -165,7 +168,8 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
                     try
                     {
-                        Convert.FileToPdf(input, context);
+                        Convert.FileToPdf(input, context, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         string expectedFile = Path.Combine(context.TempDir,
                             Path.GetFileNameWithoutExtension(inputFile) + "." + SelectedFormat);
@@ -258,8 +262,6 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         catch (Exception ex)
         {
             ShowError(ex);
-            if (ex.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string cleanupDetails)
-                ErrorDetails += Environment.NewLine + Environment.NewLine + cleanupDetails;
         }
         finally
         {

@@ -62,6 +62,7 @@ public partial class SearchViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -143,7 +144,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                try
+                TemporaryDirectoryCleanup.Run(operationContext.TempDir, () =>
                 {
                     OperationContext textContext = new OperationContext
                     {
@@ -159,11 +160,12 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                     foreach (FileJob fileJob in fileJobs)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         string extension = Path.GetExtension(fileJob.InputFile);
 
                         if (extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                         {
-                            Convert.PdfToTxtWithPageBreaks(fileJob);
+                            Convert.PdfToTxtWithPageBreaks(fileJob, cancellationToken);
                         }
                         else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                         {
@@ -171,7 +173,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                         }
                         else if (IsImageFile(Path.GetExtension(fileJob.InputFile)))
                         {
-                            Convert.PictToTxt(fileJob);
+                            Convert.PictToTxt(fileJob, cancellationToken);
                         }
                         else
                         {
@@ -181,7 +183,8 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                     foreach (FileJob fileJob in fileJobs)
                     {
-                        Search.SearchTempTextFiles(operationInput, operationContext, fileJob);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        Search.SearchTempTextFiles(operationInput, operationContext, fileJob, cancellationToken);
                         progress.Report(++processedFilesCount);
                     }
 
@@ -191,13 +194,9 @@ public partial class SearchViewModel : FileInputViewModelBase
                     if (!OverwriteExistingFiles)
                         finalPath = GetAvailablePath(finalPath);
 
+                    cancellationToken.ThrowIfCancellationRequested();
                     File.Move(tempReportPath, finalPath, overwrite: OverwriteExistingFiles);
-                }
-                finally
-                {
-                    if (Directory.Exists(operationContext.TempDir))
-                        Directory.Delete(operationContext.TempDir, true);
-                }
+                });
             });
 
             LastOutputDirectory = OutputDirectory;

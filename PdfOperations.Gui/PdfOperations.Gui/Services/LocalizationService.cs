@@ -375,4 +375,19 @@ public partial class LocalizationService : ObservableObject
         Language == AppLanguage.Polish
             ? $"Przetworzono plików: {completed}/{total}"
             : $"Files processed: {completed}/{total}";
+
+    public string CancelOperation => Language == AppLanguage.Polish ? "Anuluj" : "Cancel";
+
+    public string Cancelling => Language == AppLanguage.Polish
+        ? "Anulowanie operacji..."
+        : "Cancelling the operation...";
+
+    public string CancellationCleanupFailed => Language == AppLanguage.Polish
+        ? "Nie udało się w pełni zakończyć sprzątania. Sprawdź szczegóły błędu."
+        : "Cleanup could not be fully completed. Check the error details.";
+
+    public string OperationCancelled(int completed, int total) =>
+        Language == AppLanguage.Polish
+            ? total > 0 ? $"Anulowano. Przetworzono plików: {completed}/{total}." : "Anulowano operację."
+            : total > 0 ? $"Cancelled. Files processed: {completed}/{total}." : "The operation was cancelled.";
 }

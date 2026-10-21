@@ -265,6 +265,7 @@ public partial class FragmentsViewModel : ViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -303,38 +304,35 @@ public partial class FragmentsViewModel : ViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                OperationInput input = new OperationInput
+                TemporaryDirectoryCleanup.Run(context.TempDir, () =>
                 {
-                    PdfFragments = Fragments.Select(fragment => new PdfFragment
+                    OperationInput input = new OperationInput
                     {
-                        FileName = fragment.FileName,
-                        PageNumbers = fragment.PageNumbers
-                    }).ToList(),
-                    Output = OutputFileName
-                };
+                        PdfFragments = Fragments.Select(fragment => new PdfFragment
+                        {
+                            FileName = fragment.FileName,
+                            PageNumbers = fragment.PageNumbers
+                        }).ToList(),
+                        Output = OutputFileName
+                    };
 
-                OperationDefinition operation = new OperationDefinition
-                {
-                    Extension = ".pdf"
-                };
+                    OperationDefinition operation = new OperationDefinition
+                    {
+                        Extension = ".pdf"
+                    };
 
-                try
-                {
                     FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operation, input, context);
 
-                    Pages.CreateWithCustomFiles(input, fileJob);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    Pages.CreateWithCustomFiles(input, fileJob, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
                     if (!OverwriteExistingFiles)
                         finalPath = GetAvailablePath(finalPath);
 
                     File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
-                }
-                finally
-                {
-                    if (Directory.Exists(context.TempDir))
-                        Directory.Delete(context.TempDir, true);
-                }
+                });
             });
 
             LastOutputDirectory = OutputDirectory;

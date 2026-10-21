@@ -66,6 +66,7 @@ public partial class InfoViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -125,6 +126,7 @@ public partial class InfoViewModel : FileInputViewModelBase
             {
                 foreach (string inputFile in currentInputFiles)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     FileJob fileJob = new FileJob
                     {
                         InputFiles = [inputFile],
@@ -132,9 +134,9 @@ public partial class InfoViewModel : FileInputViewModelBase
                     };
 
                     if (Mode == InfoMode.FontInfo)
-                        Info.ShowFontInfo(fileJob);
+                        Info.ShowFontInfo(fileJob, cancellationToken);
                     else
-                        Info.ShowInfo(fileJob);
+                        Info.ShowInfo(fileJob, cancellationToken);
 
                     progress.Report(++processedFilesCount);
                 }

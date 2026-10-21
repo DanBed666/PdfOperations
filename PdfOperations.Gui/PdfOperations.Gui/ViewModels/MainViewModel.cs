@@ -108,7 +108,7 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = Loc.SelectPdfFiles,
                 FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
-                Action = (_, _, fileJob) => Convert.PdfToTxt(fileJob)
+                Action = (_, _, fileJob, token) => Convert.PdfToTxt(fileJob, token)
             }),
             "PdfToDocx" => new ManyToManyViewModel(new GuiOperationDefinition
             {
@@ -120,7 +120,7 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = Loc.SelectPdfFiles,
                 FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
-                Action = (_, _, fileJob) => Convert.PdfToDocx(fileJob)
+                Action = (_, _, fileJob, token) => Convert.PdfToDocx(fileJob, token)
             }),
             "DocxToPdfWord" => new ManyToManyViewModel(new GuiOperationDefinition
             {
@@ -132,7 +132,7 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = Loc.SelectDocxFiles,
                 FileTypeName = Loc.InputDocxFilesWithFormats,
                 FilePatterns = ["*.docx"],
-                Action = (_, _, fileJob) => Convert.DocxToPdfWord(fileJob)
+                Action = (_, _, fileJob, token) => Convert.DocxToPdfWord(fileJob, token)
             }),
             "PdfToImage" => new ManyToManyViewModel(new GuiOperationDefinition
             {
@@ -145,7 +145,7 @@ public partial class MainViewModel : ViewModelBase
                 FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
                 MoveAllTempFiles = true,
-                Action = (_, _, fileJob) => Convert.PdfToPict(fileJob)
+                Action = (_, _, fileJob, token) => Convert.PdfToPict(fileJob, token)
             }),
             "ImagesToPdf" => new ManyToOneViewModel(new GuiOperationDefinition
             {
@@ -157,7 +157,7 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = Loc.SelectImageFiles,
                 FileTypeName = Loc.InputImageFilesWithFormats,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
-                SingleOutputAction = fileJob => Convert.PictToPdf(fileJob)
+                SingleOutputAction = (fileJob, token) => Convert.PictToPdf(fileJob, token)
             }),
             "ImagesToTxt" => new ManyToManyViewModel(new GuiOperationDefinition
             {
@@ -170,7 +170,7 @@ public partial class MainViewModel : ViewModelBase
                 FileTypeName = Loc.InputImageFilesWithFormats,
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
-                Action = (_, _, fileJob) => Convert.PictToTxt(fileJob)
+                Action = (_, _, fileJob, token) => Convert.PictToTxt(fileJob, token)
             }),
             "ExtractFromPdf" => new ManyToManyViewModel(new GuiOperationDefinition
             {
@@ -183,7 +183,7 @@ public partial class MainViewModel : ViewModelBase
                 FileTypeName = Loc.InputPdfFilesWithFormats,
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.pdf"],
-                Action = (_, _, fileJob) => Convert.ExtractPict(fileJob)
+                Action = (_, _, fileJob, token) => Convert.ExtractPict(fileJob, token)
             }),
             "SplitPdf" => new PagesViewModel
             {
@@ -199,7 +199,7 @@ public partial class MainViewModel : ViewModelBase
                 FileDialogTitle = Loc.SelectPdfFiles,
                 FileTypeName = Loc.InputPdfFilesWithFormats,
                 FilePatterns = ["*.pdf"],
-                SingleOutputAction = fileJob => Divide.ManyToOne(fileJob)
+                SingleOutputAction = (fileJob, token) => Divide.ManyToOne(fileJob, token)
             }),
             "Search" => new SearchViewModel(),
             "Info" => new InfoViewModel(),

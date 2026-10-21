@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.IO;
+using System.Threading;
 using PdfOperations.Gui.Models;
 using PdfOperations.Gui.Services;
 
@@ -52,12 +53,23 @@ public abstract partial class ViewModelBase : ObservableObject
     {
         if (value)
         {
+            operationCancellation = new CancellationTokenSource();
+            IsCancellationRequested = false;
+            Interlocked.Increment(ref progressVersion);
+            Volatile.Write(ref reportedCompletedFiles, 0);
+
             CompletedFiles = 0;
             TotalFiles = 0;
+        }
+        else
+        {
+            operationCancellation?.Dispose();
+            operationCancellation = null;
         }
 
         OnPropertyChanged(nameof(IsNotBusy));
         OnPropertyChanged(nameof(HasFileProgress));
+        CancelOperationCommand.NotifyCanExecuteChanged();
     }
 
     public string StatusBackground => IsDarkTheme
@@ -112,6 +124,32 @@ public abstract partial class ViewModelBase : ObservableObject
 
     [ObservableProperty]
     private bool areErrorDetailsExpanded;
+    
+    private CancellationTokenSource? operationCancellation;
+    private int progressVersion;
+    private int reportedCompletedFiles;
+
+    protected CancellationToken OperationToken =>
+        operationCancellation?.Token ?? CancellationToken.None;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelOperationCommand))]
+    private bool isCancellationRequested;
+
+    private bool CanCancelOperation() =>
+        IsBusy && !IsCancellationRequested && operationCancellation is not null;
+
+    [RelayCommand(CanExecute = nameof(CanCancelOperation))]
+    private void CancelOperation()
+    {
+        if (!CanCancelOperation())
+            return;
+
+        IsCancellationRequested = true;
+        StatusKind = StatusKind.Info;
+        StatusMessage = Loc.Cancelling;
+        operationCancellation!.Cancel();
+    }
 
     public bool HasErrorDetails => !string.IsNullOrWhiteSpace(ErrorDetails);
     
@@ -122,9 +160,29 @@ public abstract partial class ViewModelBase : ObservableObject
 
     public void ShowError(Exception error)
     {
+        if (error is OperationCanceledException cancelled
+            && IsCancellationRequested && cancelled.CancellationToken == OperationToken)
+        {
+            CompletedFiles = Volatile.Read(ref reportedCompletedFiles);
+            bool cleanupFailed = error.InnerException is AggregateException
+                || error.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string;
+            StatusKind = cleanupFailed ? StatusKind.Error : StatusKind.Info;
+            StatusMessage = Loc.OperationCancelled(CompletedFiles, TotalFiles);
+            if (cleanupFailed)
+            {
+                StatusMessage += " " + Loc.CancellationCleanupFailed;
+                ErrorDetails = error.ToString();
+                if (error.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string details)
+                    ErrorDetails += Environment.NewLine + Environment.NewLine + details;
+            }
+            return;
+        }
+
         StatusKind = StatusKind.Error;
         StatusMessage = Loc.ErrorSummary(error);
         ErrorDetails = error.ToString();
+        if (error.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string cleanupDetails)
+            ErrorDetails += Environment.NewLine + Environment.NewLine + cleanupDetails;
     }
 
     public void RefreshStatusColors()
@@ -151,8 +209,26 @@ public abstract partial class ViewModelBase : ObservableObject
     {
         CompletedFiles = 0;
         TotalFiles = total;
+        int version = Volatile.Read(ref progressVersion);
+        Volatile.Write(ref reportedCompletedFiles, 0);
+        IProgress<int> updates = new Progress<int>(completed =>
+        {
+            if (version == Volatile.Read(ref progressVersion) && IsBusy)
+                CompletedFiles = completed;
+        });
+        return new CallbackProgress(completed =>
+        {
+            if (version != Volatile.Read(ref progressVersion))
+                return;
+            // Keep an exact count even if cancellation reaches the UI before a queued update.
+            Volatile.Write(ref reportedCompletedFiles, completed);
+            updates.Report(completed);
+        });
+    }
 
-        return new Progress<int>(completed => CompletedFiles = completed);
+    private sealed class CallbackProgress(Action<int> report) : IProgress<int>
+    {
+        public void Report(int value) => report(value);
     }
 
     protected static void SetDefaultOutputDirectoryFromInputFiles(

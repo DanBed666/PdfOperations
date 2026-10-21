@@ -62,6 +62,7 @@ public partial class ReplacementViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
 
         try
@@ -119,45 +120,45 @@ public partial class ReplacementViewModel : FileInputViewModelBase
                     TempDir = Files.PrepareTempDir()
                 };
 
-                OperationInput input = new OperationInput
+                TemporaryDirectoryCleanup.Run(context.TempDir, () =>
                 {
-                    InputFiles = currentInputFiles,
-                    PlaceholderFile = PlaceholderFile,
-                    Output = "gui"
-                };
-
-                HashSet<string> usedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (string inputFile in currentInputFiles)
-                {
-                    string tempOutputName = currentInputFiles.Length == 1
-                        ? OutputFileName
-                        : inputFile;
-
-                    FileJob fileJob = new FileJob
+                    OperationInput input = new OperationInput
                     {
-                        InputFile = inputFile,
-                        TempPath = Files.PrepareUniqueTempPath(
-                            context.TempDir,
-                            tempOutputName,
-                            Path.GetExtension(inputFile),
-                            usedFileNames)
+                        InputFiles = currentInputFiles,
+                        PlaceholderFile = PlaceholderFile,
+                        Output = "gui"
                     };
 
-                    Replacement.ReplaceTextWithPlaceholders(fileJob, input, context);
-                    progress.Report(++processedFilesCount);
-                }
+                    HashSet<string> usedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-                foreach (string tempFile in Directory.GetFiles(context.TempDir))
-                {
-                    string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
-                    if (!OverwriteExistingFiles)
-                        finalPath = GetAvailablePath(finalPath);
+                    foreach (string inputFile in currentInputFiles)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        string tempOutputName = currentInputFiles.Length == 1
+                            ? OutputFileName
+                            : inputFile;
 
-                    File.Move(tempFile, finalPath, overwrite: OverwriteExistingFiles);
-                }
+                        FileJob fileJob = new FileJob
+                        {
+                            InputFile = inputFile,
+                            TempPath = Files.PrepareUniqueTempPath(
+                                context.TempDir,
+                                tempOutputName,
+                                Path.GetExtension(inputFile),
+                                usedFileNames)
+                        };
 
-                Directory.Delete(context.TempDir, true);
+                        Replacement.ReplaceTextWithPlaceholders(fileJob, input, context, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(fileJob.TempPath));
+                        if (!OverwriteExistingFiles)
+                            finalPath = GetAvailablePath(finalPath);
+
+                        File.Move(fileJob.TempPath, finalPath, overwrite: OverwriteExistingFiles);
+                        progress.Report(++processedFilesCount);
+                    }
+
+                });
             });
 
             LastOutputDirectory = OutputDirectory;
