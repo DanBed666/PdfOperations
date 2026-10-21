@@ -155,24 +155,38 @@ public class FilesTests
             }
         };
 
-        string tempPath = Path.Combine(Files.PrepareTempDir(), "raport.txt");
-
-        foreach (SearchResult searchResult in searchResults)
+        string tempDir = "";
+        
+        try
         {
-            Files.SaveToFile(searchResult, tempPath);
+            tempDir = Files.PrepareTempDir();
+            string tempPath = Path.Combine(tempDir, "raport.txt");
+
+            foreach (SearchResult searchResult in searchResults)
+            {
+                Files.SaveToFile(searchResult, tempPath);
+            }
+            
+            Assert.IsTrue(File.Exists(tempPath));
+            Assert.AreEqual("raport.txt", Path.GetFileName(tempPath));
+            Assert.AreEqual("raport", Path.GetFileNameWithoutExtension(tempPath));
+            Assert.AreEqual(".txt", Path.GetExtension(tempPath));
+            Assert.IsTrue(Directory.Exists(Path.GetDirectoryName(tempPath)));
+            Assert.IsGreaterThan(0, new FileInfo(tempPath).Length);
+            
+            string text = File.ReadAllText(tempPath);
+            Assert.Contains("test_1.txt", text);
+            Assert.Contains("hydraulika", text);
+            Assert.Contains("Linia", text);
+            
+            Assert.Contains("test_2.txt", text);
+            Assert.Contains("Linia: 5", text);
         }
-        
-        Assert.IsTrue(File.Exists(tempPath));
-        Assert.AreEqual("raport.txt", Path.GetFileName(tempPath));
-        Assert.AreEqual("raport", Path.GetFileNameWithoutExtension(tempPath));
-        Assert.AreEqual(".txt", Path.GetExtension(tempPath));
-        Assert.IsTrue(Directory.Exists(Path.GetDirectoryName(tempPath)));
-        Assert.IsGreaterThan(0, new FileInfo(tempPath).Length);
-        
-        string text = File.ReadAllText(tempPath);
-        Assert.Contains("test_1.txt", text);
-        Assert.Contains("hydraulika", text);
-        Assert.Contains("Linia", text);
+        finally
+        {
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+        }
     }
 
     [TestMethod]
