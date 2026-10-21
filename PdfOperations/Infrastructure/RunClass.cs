@@ -13,8 +13,16 @@ public class RunClass
     {
         Run(exe, arguments, timeout, CancellationToken.None, allowedExitCodes);
     }
+    
+    public static void Run(string exe, List<string> arguments, TimeSpan timeout,
+        CancellationToken cancellationToken, params int[] allowedExitCodes)
+    {
+        RunGuarded(exe, arguments, timeout, cancellationToken, null, null, allowedExitCodes);
+    }
 
-    public static void Run(string exe, List<string> arguments, TimeSpan timeout, CancellationToken cancellationToken, params int[] allowedExitCodes)
+    public static void RunGuarded(string exe, List<string> arguments, TimeSpan timeout,
+        CancellationToken cancellationToken, string? temporaryDirectory,
+        Action? checkResources, params int[] allowedExitCodes)
     {
         ValidateTimeout(timeout);
         var info = new ProcessStartInfo
@@ -24,6 +32,13 @@ public class RunClass
             CreateNoWindow = true,
             RedirectStandardError = true
         };
+        
+        if (temporaryDirectory is not null)
+        {
+            info.Environment["TEMP"] = temporaryDirectory;
+            info.Environment["TMP"] = temporaryDirectory;
+        }
+        checkResources?.Invoke();
 
         foreach (string argument in arguments)
         {
@@ -37,7 +52,7 @@ public class RunClass
         
         using Process process = Process.Start(info)!;
         Task<string> errorTask = process.StandardError.ReadToEndAsync();
-        CompleteProcess(process, timeout, cancellationToken, errorTask);
+        CompleteProcess(process, timeout, cancellationToken, checkResources, errorTask);
         string error = errorTask.GetAwaiter().GetResult();
 
         if (allowedExitCodes.Length == 0)
@@ -156,7 +171,7 @@ public class RunClass
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
         Task<string> errorTask = process.StandardError.ReadToEndAsync();
-        CompleteProcess(process, timeout, cancellationToken, outputTask, errorTask);
+        CompleteProcess(process, timeout, cancellationToken, null, outputTask, errorTask);
         string output = outputTask.GetAwaiter().GetResult();
         string error = errorTask.GetAwaiter().GetResult();
 
@@ -177,19 +192,30 @@ public class RunClass
 
     private static void CompleteProcess(Process process, TimeSpan timeout, params Task[] readTasks)
     {
-        CompleteProcess(process, timeout, CancellationToken.None, readTasks);
+        CompleteProcess(process, timeout, CancellationToken.None, null, readTasks);
     }
 
-    private static void CompleteProcess(Process process, TimeSpan timeout, CancellationToken cancellationToken, params Task[] readTasks)
+    private static void CompleteProcess(Process process, TimeSpan timeout, CancellationToken cancellationToken, 
+        Action? checkResources, params Task[] readTasks)
     {
         // Drain redirected streams concurrently and include them in the same deadline.
         Task completion = Task.WhenAll([process.WaitForExitAsync(), ..readTasks]);
         try
         {
-            completion.WaitAsync(timeout, cancellationToken).GetAwaiter().GetResult();
+            Task wait = completion.WaitAsync(timeout, cancellationToken);
+            _ = wait.ContinueWith(t => { _ = t.Exception; }, CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            while (checkResources is not null && !wait.IsCompleted)
+            {
+                checkResources();
+                Thread.Sleep(250);
+            }
+            wait.GetAwaiter().GetResult();
+            checkResources?.Invoke();
         }
         catch (Exception failure) when (failure is TimeoutException ||
-            (failure is OperationCanceledException && cancellationToken.IsCancellationRequested))
+            (failure is OperationCanceledException && cancellationToken.IsCancellationRequested) 
+            || failure is IOException or UnauthorizedAccessException)
         {
             List<Exception> cleanupErrors = [];
             // Observe stream failures even if process termination completes after this method.
@@ -221,6 +247,13 @@ public class RunClass
                 ? null
                 : new AggregateException(
                     "Process cleanup did not finish cleanly.", cleanupErrors);
+
+            if (failure is IOException or UnauthorizedAccessException)
+            {
+                if (cleanupError is not null)
+                    failure.Data[TemporaryDirectoryCleanup.ErrorDataKey] = cleanupError.ToString();
+                throw;
+            }
 
             if (failure is OperationCanceledException)
             {

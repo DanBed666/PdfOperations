@@ -18,6 +18,8 @@ public static class Convert
         Exception? operationError = null;
         try
         {
+            LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]);
+            
             string[] inputs = fileInput.InputFiles.Select(path =>
                 fileInput.Format.Equals("txt", StringComparison.OrdinalIgnoreCase)
                 && Path.GetExtension(path).Equals(".docx", StringComparison.OrdinalIgnoreCase)
@@ -33,7 +35,13 @@ public static class Convert
                 arguments.Add("--infilter=writer_pdf_import");
 
             arguments.AddRange(["--convert-to", fileInput.Format, ..inputs, "--outdir", context.TempDir]);
-            RunClass.Run(ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments, OperationTimeouts.LibreOffice, cancellationToken);
+            
+            string libreTemp = Path.Combine(workDirectory, "temp");
+            Directory.CreateDirectory(libreTemp);
+            RunClass.RunGuarded(
+                ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments,
+                OperationTimeouts.LibreOffice, cancellationToken, libreTemp,
+                () => LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]));
         }
         catch (Exception ex)
         {
