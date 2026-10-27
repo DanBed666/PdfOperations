@@ -99,4 +99,59 @@ public class Search
         searchResult.Lines = linesFound;
         return searchResult;
     }
+    
+    public static ExtractedValue[] GetExtractedValues(OperationInput input, string reportPath)
+    {
+        string phrase = input.PhraseToFind.Trim().TrimEnd(':').TrimEnd();
+        if (string.IsNullOrWhiteSpace(phrase))
+            throw new ArgumentException("Search phrase cannot be empty.", nameof(input));
+
+        string[] lines = File.ReadAllLines(reportPath);
+        var results = new List<ExtractedValue>();
+        const string separator = "------------------------------------";
+
+        for (int i = 0; i + 3 < lines.Length; i++)
+        {
+            string filePath = lines[i].Trim();
+
+            // Only read document content inside a complete report result block.
+            if (!Path.IsPathFullyQualified(filePath) ||
+                !lines[i + 1].StartsWith("Strona: ", StringComparison.Ordinal) ||
+                !lines[i + 2].StartsWith("Linia: ", StringComparison.Ordinal) ||
+                lines[i + 3].Trim() != separator)
+                continue;
+
+            int start = i + 4;
+            int end = start;
+            while (end < lines.Length && lines[end].Trim() != separator)
+                end++;
+
+            for (int j = start; j < end; j++)
+            {
+                string line = lines[j].Trim();
+                int colon = line.IndexOf(':');
+                string label = colon >= 0 ? line[..colon].Trim() : line;
+                if (!label.Equals(phrase, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string value = colon >= 0 ? line[(colon + 1)..].Trim() : "";
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    value = lines.Skip(j + 1).Take(end - j - 1)
+                        .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text))
+                        ?.Trim() ?? "";
+                }
+
+                results.Add(new ExtractedValue
+                {
+                    FileName = Path.GetFileName(filePath),
+                    DesiredValue = value
+                });
+            }
+
+            i = end;
+        }
+
+        return results.ToArray();
+    }
 }
