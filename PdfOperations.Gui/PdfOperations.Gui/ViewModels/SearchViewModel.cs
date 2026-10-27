@@ -26,6 +26,9 @@ public partial class SearchViewModel : FileInputViewModelBase
     private string phrase = "";
 
     [ObservableProperty]
+    private bool exportToExcel;
+
+    [ObservableProperty]
     private int before = 2;
 
     [ObservableProperty]
@@ -120,6 +123,7 @@ public partial class SearchViewModel : FileInputViewModelBase
             StatusMessage = Loc.Searching;
 
             string finalPath = "";
+            string finalExcelPath = "";
             int processedFilesCount = 0;
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
@@ -195,13 +199,35 @@ public partial class SearchViewModel : FileInputViewModelBase
                         finalPath = GetAvailablePath(finalPath);
 
                     cancellationToken.ThrowIfCancellationRequested();
+                    
+                    string tempExcelPath = Path.ChangeExtension(tempReportPath, ".xlsx");
+
+                    if (ExportToExcel)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        ExtractedValue[] results =
+                            Search.GetExtractedValues(operationInput, tempReportPath);
+
+                        ExcelExporter.SaveToExcel(results, tempExcelPath);
+
+                        finalExcelPath = Path.ChangeExtension(finalPath, ".xlsx");
+                        if (!OverwriteExistingFiles)
+                            finalExcelPath = GetAvailablePath(finalExcelPath);
+                    }
+                    
+                    cancellationToken.ThrowIfCancellationRequested();
                     File.Move(tempReportPath, finalPath, overwrite: OverwriteExistingFiles);
+                    
+                    if (ExportToExcel)
+                        File.Move(tempExcelPath, finalExcelPath, overwrite: OverwriteExistingFiles);
                 });
             });
 
             LastOutputDirectory = OutputDirectory;
             StatusKind = StatusKind.Success;
-            StatusMessage = Loc.DoneSavedReport(finalPath);
+            StatusMessage = Loc.DoneSavedReport(
+                ExportToExcel ? $"{finalPath}\n{finalExcelPath}" : finalPath);
         }
         catch (Exception e)
         {

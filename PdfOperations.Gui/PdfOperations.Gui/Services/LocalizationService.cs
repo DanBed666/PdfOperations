@@ -39,6 +39,9 @@ public partial class LocalizationService : ObservableObject
     public string GeneratedFromInputFileNames => Language == AppLanguage.Polish ? "Tworzone z nazw plików wejściowych" : "Generated from input file names";
     public string OutputFormat => Language == AppLanguage.Polish ? "Format pliku" : "Output format";
     public string ReportFileName => Language == AppLanguage.Polish ? "Nazwa raportu" : "Report file name";
+    public string AlsoExportToExcel => Language == AppLanguage.Polish
+        ? "Zapisz również do Excela"
+        : "Also export to Excel";
     public string SearchPhrase => Language == AppLanguage.Polish ? "Szukana fraza" : "Search phrase";
     public string LinesBefore => Language == AppLanguage.Polish ? "Liczba linii przed" : "Lines before";
     public string LinesAfter => Language == AppLanguage.Polish ? "Liczba linii po" : "Lines after";
