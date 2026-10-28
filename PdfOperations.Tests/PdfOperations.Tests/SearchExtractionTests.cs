@@ -133,4 +133,74 @@ public class SearchExtractionTests
             TemporaryDirectoryCleanup.Delete(directory);
         }
     }
+    
+    [TestMethod]
+    public void SearchesAllFieldsAndKeepsFilesSeparate()
+    {
+        string directory = Directory.CreateTempSubdirectory("MultiSearchTest-").FullName;
+        try
+        {
+            string firstFolder = Directory.CreateDirectory(
+                Path.Combine(directory, "first")).FullName;
+            string secondFolder = Directory.CreateDirectory(
+                Path.Combine(directory, "second")).FullName;
+
+            string first = Path.Combine(firstFolder, "document.txt");
+            string second = Path.Combine(secondFolder, "document.txt");
+
+            File.WriteAllText(first,
+                "NIP:\nNazwisko: Kowalski\n" +
+                "Telefon: 123456789\nTelefon: 123456789\nTelefon: 123456789\n" +
+                "Telefon: 987654321\nTelefon: 555666777");
+
+            File.WriteAllText(second,
+                "NIP: 0012345678\nNazwisko: Nowak\nTelefon:\n\n000111222");
+
+            var input = new OperationInput
+            {
+                InputFiles = [first, second],
+                PhrasesToFind = ["NIP", "Nazwisko", "Telefon", "Adres"],
+                Output = "report.txt",
+                Before = 0,
+                After = 20
+            };
+            var context = new OperationContext { TempDir = directory };
+
+            for (int i = 0; i < input.InputFiles.Length; i++)
+            {
+                string workingPath = Path.Combine(directory, $"working_{i}.txt");
+                File.Copy(input.InputFiles[i], workingPath);
+
+                Search.SearchTempTextFiles(input, context, new FileJob
+                {
+                    InputFile = input.InputFiles[i],
+                    TempPath = workingPath
+                });
+
+                Assert.IsFalse(File.Exists(workingPath));
+                Assert.IsTrue(File.Exists(input.InputFiles[i]));
+            }
+
+            var results = Search.GetFileExtractionResults(
+                input, Path.Combine(directory, input.Output));
+
+            Assert.HasCount(2, results);
+            var firstResult = results.Single(result => result.FilePath == first);
+            var secondResult = results.Single(result => result.FilePath == second);
+
+            Assert.HasCount(0, firstResult.Fields["NIP"]);
+            CollectionAssert.AreEqual(new[] { "Kowalski" }, firstResult.Fields["Nazwisko"]);
+            CollectionAssert.AreEqual(
+                new[] { "123456789", "987654321", "555666777" },
+                firstResult.Fields["Telefon"]);
+            CollectionAssert.AreEqual(new[] { "0012345678" }, secondResult.Fields["NIP"]);
+            CollectionAssert.AreEqual(new[] { "Nowak" }, secondResult.Fields["Nazwisko"]);
+            CollectionAssert.AreEqual(new[] { "000111222" }, secondResult.Fields["Telefon"]);
+            Assert.IsTrue(results.All(result => result.Fields["Adres"].Length == 0));
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(directory);
+        }
+    }
 }

@@ -9,18 +9,51 @@ public class Search
         SearchTempTextFiles(input, context, fileJob, CancellationToken.None);
     }
 
-    public static void SearchTempTextFiles(OperationInput input, OperationContext context, FileJob fileJob, CancellationToken cancellationToken)
+    public static void SearchTempTextFiles(
+        OperationInput input,
+        OperationContext context,
+        FileJob fileJob,
+        CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        OperationCancellation.Run(OperationTimeouts.SearchText, "Text search", token =>
-        {
-            SearchResult foundLines = GetFoundLines(fileJob.TempPath, input.PhraseToFind,
-                input.Before, input.After, fileJob.InputFile, token);
-            token.ThrowIfCancellationRequested();
-            Files.SaveToFile(foundLines, Path.Combine(context.TempDir, input.Output));
-            token.ThrowIfCancellationRequested();
-            File.Delete(fileJob.TempPath);
-        }, cancellationToken);
+
+        string[] phrases = input.PhrasesToFind.Length > 0
+            ? input.PhrasesToFind
+            : [input.PhraseToFind];
+
+        if (phrases.Any(string.IsNullOrWhiteSpace))
+            throw new ArgumentException("Search phrases cannot be empty.", nameof(input));
+
+        OperationCancellation.Run(
+            OperationTimeouts.SearchText,
+            "Text search",
+            token =>
+            {
+                string reportPath = Path.Combine(context.TempDir, input.Output);
+
+                foreach (string phrase in phrases.Select(value => value.Trim()))
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    SearchResult foundLines = GetFoundLines(
+                        fileJob.TempPath,
+                        phrase,
+                        input.Before,
+                        input.After,
+                        fileJob.InputFile,
+                        token);
+
+                    if (phrases.Length > 1)
+                        foundLines.Lines.Insert(0, $"Fraza: {phrase}");
+
+                    token.ThrowIfCancellationRequested();
+                    Files.SaveToFile(foundLines, reportPath);
+                }
+
+                token.ThrowIfCancellationRequested();
+                File.Delete(fileJob.TempPath);
+            },
+            cancellationToken);
     }
     
     public static SearchResult GetFoundLines(string inputTempPath, string phrase, int before, int after,
@@ -135,16 +168,25 @@ public class Search
                     continue;
 
                 string value = colon >= 0 ? line[(colon + 1)..].Trim() : "";
+                
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     value = lines.Skip(j + 1).Take(end - j - 1)
                         .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text))
                         ?.Trim() ?? "";
+                    
+                    string nextLabel = value.Split(':', 2)[0].Trim();
+                    if (input.PhrasesToFind.Any(field =>
+                            field.Equals(nextLabel, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        value = "";
+                    }
                 }
 
                 results.Add(new ExtractedValue
                 {
                     FileName = Path.GetFileName(filePath),
+                    FilePath = filePath,
                     DesiredValue = value
                 });
             }
@@ -153,5 +195,45 @@ public class Search
         }
 
         return results.ToArray();
+    }
+    
+    public static FileExtractionResult[] GetFileExtractionResults(
+        OperationInput input, string reportPath,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var results = input.InputFiles
+            .Select(path => Path.GetFullPath(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(path => new FileExtractionResult { FilePath = path })
+            .ToArray();
+
+        foreach (string phrase in input.PhrasesToFind)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var phraseInput = new OperationInput
+            {
+                PhraseToFind = phrase,
+                PhrasesToFind = input.PhrasesToFind
+            };
+
+            var valuesByFile = GetExtractedValues(phraseInput, reportPath)
+                .ToLookup(value => Path.GetFullPath(value.FilePath),
+                    StringComparer.OrdinalIgnoreCase);
+
+            foreach (FileExtractionResult result in results)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                result.Fields[phrase] = valuesByFile[result.FilePath]
+                    .Select(value => value.DesiredValue.Trim())
+                    .Where(value => !string.IsNullOrWhiteSpace(value))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray();
+            }
+        }
+
+        return results;
     }
 }

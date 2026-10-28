@@ -7,6 +7,7 @@ public class OperationInput
     public List<PdfFragment> PdfFragments { get; set; } = new List<PdfFragment>();
     public string Dir { get; set; } = "";
     public string PhraseToFind { get; set; } = "";
+    public string[] PhrasesToFind { get; set; } = [];
     public string Pages { get; set; } = "";
     public string Format { get; set; } = "";
     public string Output { get; set; } = "";
