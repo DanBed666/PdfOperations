@@ -31,6 +31,16 @@
                             Click="BrowseFragmentFile_Click" />
                 </Grid>
                 
+                <TextBlock TextWrapping="Wrap"
+                           Foreground="{DynamicResource MutedTextBrush}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}: {1}">
+                            <Binding Path="Loc.SelectedFilesLabel" />
+                            <Binding Path="SelectedFilesCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
                 <ScrollViewer MaxHeight="120"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled">
@@ -66,7 +76,14 @@
                             Width="90" />
                 </StackPanel>
 
-                <TextBlock Text="{Binding Loc.Fragments}" />
+                <TextBlock TextWrapping="Wrap">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}: {1}">
+                            <Binding Path="Loc.Fragments" />
+                            <Binding Path="Fragments.Count" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
                 <ListBox ItemsSource="{Binding Fragments}"
                          SelectedItem="{Binding SelectedFragment}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"

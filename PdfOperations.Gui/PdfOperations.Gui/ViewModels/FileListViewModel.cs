@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,6 +15,13 @@ public partial class FileListViewModel : ViewModelBase
     public ObservableCollection<SelectedFileItem> Files { get; } = new();
 
     public bool HasFiles => Files.Count > 0;
+
+    public string FilesSummary =>
+        Files.Count + (Files.Count == 0 ? "" : " | " +
+            string.Join(" | ", Files
+                .GroupBy(file => Path.GetExtension(file.Path).TrimStart('.').ToUpperInvariant())
+                .OrderBy(group => group.Key)
+                .Select(group => $"{group.Key}: {group.Count()}")));
 
     [ObservableProperty]
     private SelectedFileItem? selectedFile;
@@ -98,6 +106,7 @@ public partial class FileListViewModel : ViewModelBase
     private void NotifyFilesChanged()
     {
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(FilesSummary));
         FilesChanged?.Invoke();
     }
     

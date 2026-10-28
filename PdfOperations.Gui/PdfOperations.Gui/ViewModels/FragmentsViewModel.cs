@@ -14,6 +14,8 @@ namespace PdfOperations.Gui.ViewModels;
 public partial class FragmentsViewModel : ViewModelBase
 {
     private string[] selectedFragmentFiles = [];
+
+    public int SelectedFilesCount => selectedFragmentFiles.Length;
     
     private readonly List<(string Path, int? PageCount, Exception? Error)>
         selectedFileDetails = new();
@@ -75,6 +77,7 @@ public partial class FragmentsViewModel : ViewModelBase
             directory => OutputDirectory = directory);
 
         OnPropertyChanged(nameof(SelectedFragmentFilesText));
+        OnPropertyChanged(nameof(SelectedFilesCount));
         OnPropertyChanged(nameof(SelectedFragmentFilesInfo));
     }
     

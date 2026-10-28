@@ -4,8 +4,20 @@
              x:Class="PdfOperations.Gui.Views.FileListView"
              x:DataType="vm:FileListViewModel">
 
-    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-        <ListBox Grid.Column="0"
+    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto"
+          RowSpacing="6" ColumnSpacing="8">
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource MutedTextBrush}">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0}: {1}">
+                    <Binding Path="Loc.SelectedFilesLabel" />
+                    <Binding Path="FilesSummary" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+
+        <ListBox Grid.Row="1" Grid.Column="0"
                  ItemsSource="{Binding Files}"
                  SelectedItem="{Binding SelectedFile}"
                  SelectedItems="{Binding SelectedFiles}"
@@ -34,7 +46,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Column="1"
+        <StackPanel Grid.Row="1" Grid.Column="1"
                     Spacing="8"
                     VerticalAlignment="Top">
             <Button Content="{Binding Loc.MoveUp}"
