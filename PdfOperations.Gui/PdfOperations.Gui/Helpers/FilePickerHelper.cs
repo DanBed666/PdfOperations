@@ -24,19 +24,32 @@ public static class FilePickerHelper
         {
             Title = title,
             AllowMultiple = allowMultiple,
-            FileTypeFilter =
-            [
-                new FilePickerFileType(fileTypeName)
-                {
-                    Patterns = patterns
-                }
-            ]
+            FileTypeFilter = BuildFilters(fileTypeName, patterns)
         });
 
         return files
             .Select(file => file.Path.LocalPath)
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .ToArray();
+    }
+
+    private static FilePickerFileType[] BuildFilters(string name, string[] patterns)
+    {
+        var loc = LocalizationService.Instance;
+        string[] images = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"];
+        var groups = patterns.Select(pattern => pattern.ToLowerInvariant()).Distinct()
+            .GroupBy(pattern => images.Contains(pattern) ? "images" : pattern[2..].ToUpperInvariant())
+            .ToArray();
+
+        if (groups.Length <= 1)
+            return [new FilePickerFileType(name) { Patterns = patterns }];
+
+        var filters = groups.Select(group => new FilePickerFileType(
+            $"{(group.Key == "images" ? loc.ImageFilesLabel : group.Key)} ({string.Join(", ", group)})")
+            { Patterns = group.ToArray() });
+
+        return filters.Prepend(new FilePickerFileType(loc.AllSupportedFiles)
+            { Patterns = patterns }).ToArray();
     }
 
     public static async Task<string?> PickFolderAsync(

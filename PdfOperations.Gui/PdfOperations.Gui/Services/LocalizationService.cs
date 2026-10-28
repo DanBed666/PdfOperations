@@ -17,6 +17,9 @@ public partial class LocalizationService : ObservableObject
     public string Add => Language == AppLanguage.Polish ? "Dodaj" : "Add";
     public string SelectFilesButton => Language == AppLanguage.Polish ? "Wybierz pliki" : "Select files";
     public string AddFilesButton => Language == AppLanguage.Polish ? "Dodaj pliki" : "Add files";
+    public string SelectedFilesLabel => Language == AppLanguage.Polish ? "Wybrane pliki" : "Selected files";
+    public string AllSupportedFiles => Language == AppLanguage.Polish ? "Wszystkie obsługiwane pliki" : "All supported files";
+    public string ImageFilesLabel => Language == AppLanguage.Polish ? "Pliki obrazowe" : "Image files";
     public string Remove => Language == AppLanguage.Polish ? "Usuń" : "Remove";
     public string Clear => Language == AppLanguage.Polish ? "Wyczyść" : "Clear";
     public string CloseMessage => Language == AppLanguage.Polish ? "Zamknij komunikat" : "Dismiss message";
