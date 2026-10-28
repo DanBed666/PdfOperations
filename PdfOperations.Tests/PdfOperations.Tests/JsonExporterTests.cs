@@ -6,6 +6,81 @@ namespace PdfOperations.Tests;
 public class JsonExporterTests
 {
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void SavesLocalizedKeysWithoutTranslatingFieldsOrValues(bool empty)
+    {
+        string directory = Directory.CreateTempSubdirectory("JsonLocalizedTest-").FullName;
+        try
+        {
+            string path = Path.Combine(directory, "results.json");
+            var result = new FileExtractionResult
+            {
+                FilePath = Path.Combine(directory, "document.pdf"),
+                Fields = new()
+                {
+                    ["Company name"] = ["Żółta Łódź", "Studio ABC"],
+                    ["FileName"] = ["00123"],
+                    ["Pola"] = []
+                }
+            };
+            JsonExporter.SaveFieldsToJson(empty ? [] : [result], path,
+                new ExportLabels
+                {
+                    FileNameProperty = "NazwaPliku",
+                    FilePathProperty = "SciezkaPliku",
+                    FieldsProperty = "Pola"
+                });
+
+            using var document = JsonDocument.Parse(File.ReadAllText(path));
+            Assert.AreEqual(JsonValueKind.Array, document.RootElement.ValueKind);
+            Assert.AreEqual(empty ? 0 : 1, document.RootElement.GetArrayLength());
+            if (!empty)
+            {
+                var record = document.RootElement[0];
+                Assert.AreEqual(3, record.EnumerateObject().Count());
+                Assert.AreEqual("document.pdf", record.GetProperty("NazwaPliku").GetString());
+                Assert.AreEqual(result.FilePath, record.GetProperty("SciezkaPliku").GetString());
+                Assert.IsFalse(record.TryGetProperty("Fields", out _));
+                var fields = record.GetProperty("Pola");
+                Assert.AreEqual(3, fields.EnumerateObject().Count());
+                CollectionAssert.AreEqual(new[] { "Żółta Łódź", "Studio ABC" },
+                    fields.GetProperty("Company name").EnumerateArray().Select(v => v.GetString()).ToArray());
+                Assert.AreEqual("00123", fields.GetProperty("FileName")[0].GetString());
+                Assert.AreEqual(0, fields.GetProperty("Pola").GetArrayLength());
+            }
+        }
+        finally { TemporaryDirectoryCleanup.Delete(directory); }
+    }
+
+    [TestMethod]
+    public void SavesLocalizedSingleValueKeys()
+    {
+        string directory = Directory.CreateTempSubdirectory("JsonLocalizedTest-").FullName;
+        try
+        {
+            string path = Path.Combine(directory, "results.json");
+            string sourcePath = Path.Combine(directory, "document.pdf");
+            JsonExporter.SaveToJson(
+                [new() { FileName = "document.pdf", FilePath = sourcePath, DesiredValue = "00123" }],
+                path, new ExportLabels
+                {
+                    FileNameProperty = "NazwaPliku",
+                    FilePathProperty = "SciezkaPliku",
+                    ValueProperty = "Wartosc"
+                });
+
+            using var document = JsonDocument.Parse(File.ReadAllText(path));
+            var record = document.RootElement[0];
+            Assert.AreEqual(3, record.EnumerateObject().Count());
+            Assert.AreEqual("document.pdf", record.GetProperty("NazwaPliku").GetString());
+            Assert.AreEqual(sourcePath, record.GetProperty("SciezkaPliku").GetString());
+            Assert.AreEqual("00123", record.GetProperty("Wartosc").GetString());
+        }
+        finally { TemporaryDirectoryCleanup.Delete(directory); }
+    }
+
+    [TestMethod]
     public void SavesValuesWithoutChangingText()
     {
         string directory = Directory.CreateTempSubdirectory("JsonTest-").FullName;
@@ -60,5 +135,39 @@ public class JsonExporterTests
         {
             TemporaryDirectoryCleanup.Delete(directory);
         }
+    }
+    
+    [TestMethod]
+    public void SavesMultipleFieldsAsArrays()
+    {
+        string directory = Directory.CreateTempSubdirectory("JsonFieldsTest-").FullName;
+        try
+        {
+            string path = Path.Combine(directory, "results.json");
+            var result = new FileExtractionResult
+            {
+                FilePath = Path.Combine(directory, "document.pdf"),
+                Fields = new()
+                {
+                    ["NIP"] = ["0012345678"],
+                    ["Telefon"] = ["000111222", "333444555"],
+                    ["Adres"] = []
+                }
+            };
+            JsonExporter.SaveFieldsToJson([result], path);
+
+            using var document = JsonDocument.Parse(File.ReadAllText(path));
+            Assert.AreEqual(1, document.RootElement.GetArrayLength());
+            var record = document.RootElement[0];
+            Assert.AreEqual(result.FilePath, record.GetProperty("FilePath").GetString());
+            Assert.AreEqual("document.pdf", record.GetProperty("FileName").GetString());
+            var fields = record.GetProperty("Fields");
+            CollectionAssert.AreEqual(new[] { "000111222", "333444555" },
+                fields.GetProperty("Telefon").EnumerateArray().Select(v => v.GetString()).ToArray());
+            Assert.AreEqual(1, fields.GetProperty("NIP").GetArrayLength());
+            Assert.AreEqual("0012345678", fields.GetProperty("NIP")[0].GetString());
+            Assert.AreEqual(0, fields.GetProperty("Adres").GetArrayLength());
+        }
+        finally { TemporaryDirectoryCleanup.Delete(directory); }
     }
 }
