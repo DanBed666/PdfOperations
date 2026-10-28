@@ -73,6 +73,9 @@
 
                 <CheckBox Content="{Binding Loc.AlsoExportToExcel}"
                           IsChecked="{Binding ExportToExcel}" />
+                
+                <CheckBox Content="{Binding Loc.AlsoExportToJson}"
+                          IsChecked="{Binding ExportToJson}" />
 
                 <StackPanel Orientation="Horizontal"
                             Spacing="8">

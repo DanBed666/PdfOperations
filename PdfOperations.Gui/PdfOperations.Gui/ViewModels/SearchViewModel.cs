@@ -37,6 +37,9 @@ public partial class SearchViewModel : FileInputViewModelBase
     [ObservableProperty]
     private string lastOutputDirectory = "";
     
+    [ObservableProperty]
+    private bool exportToJson;
+    
     public SearchViewModel() 
         : base(
             loc => loc.SelectFilesButton,
@@ -124,6 +127,7 @@ public partial class SearchViewModel : FileInputViewModelBase
 
             string finalPath = "";
             string finalExcelPath = "";
+            string finalJsonPath = "";
             int processedFilesCount = 0;
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
 
@@ -200,14 +204,16 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                     cancellationToken.ThrowIfCancellationRequested();
                     
+                    ExtractedValue[] results = ExportToExcel || ExportToJson
+                        ? Search.GetExtractedValues(operationInput, tempReportPath)
+                        : [];
+                    
+                    string tempJsonPath = Path.ChangeExtension(tempReportPath, ".json");
                     string tempExcelPath = Path.ChangeExtension(tempReportPath, ".xlsx");
 
                     if (ExportToExcel)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-
-                        ExtractedValue[] results =
-                            Search.GetExtractedValues(operationInput, tempReportPath);
 
                         ExcelExporter.SaveToExcel(results, tempExcelPath);
 
@@ -216,18 +222,35 @@ public partial class SearchViewModel : FileInputViewModelBase
                             finalExcelPath = GetAvailablePath(finalExcelPath);
                     }
                     
+                    if (ExportToJson)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        JsonExporter.SaveToJson(results, tempJsonPath);
+                        finalJsonPath = Path.ChangeExtension(finalPath, ".json");
+                        if (!OverwriteExistingFiles)
+                            finalJsonPath = GetAvailablePath(finalJsonPath);
+                    }
+                    
                     cancellationToken.ThrowIfCancellationRequested();
                     File.Move(tempReportPath, finalPath, overwrite: OverwriteExistingFiles);
                     
                     if (ExportToExcel)
                         File.Move(tempExcelPath, finalExcelPath, overwrite: OverwriteExistingFiles);
+                    
+                    if (ExportToJson)
+                        File.Move(tempJsonPath, finalJsonPath, overwrite: OverwriteExistingFiles);
                 });
             });
 
             LastOutputDirectory = OutputDirectory;
             StatusKind = StatusKind.Success;
-            StatusMessage = Loc.DoneSavedReport(
-                ExportToExcel ? $"{finalPath}\n{finalExcelPath}" : finalPath);
+            
+            var savedPaths = new List<string> { finalPath };
+            if (ExportToExcel) savedPaths.Add(finalExcelPath);
+            if (ExportToJson) savedPaths.Add(finalJsonPath);
+            
+            StatusMessage = string.Join(Environment.NewLine,
+                savedPaths.Select(path => Loc.DoneSavedReport(path)));
         }
         catch (Exception e)
         {
