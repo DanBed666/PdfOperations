@@ -13,6 +13,20 @@ public partial class LocalizationService : ObservableObject
     [ObservableProperty]
     private AppLanguage language = AppLanguage.Polish;
 
+    public ExportLabels SearchExportLabels => Language == AppLanguage.Polish
+        ? new ExportLabels
+        {
+            WorksheetName = "Wyniki",
+            FileNameHeader = "Nazwa pliku",
+            FilePathHeader = "Ścieżka pliku",
+            ValueHeader = "Wartość",
+            FileNameProperty = "NazwaPliku",
+            FilePathProperty = "SciezkaPliku",
+            ValueProperty = "Wartosc",
+            FieldsProperty = "Pola"
+        }
+        : new ExportLabels();
+
     public string Browse => Language == AppLanguage.Polish ? "Przeglądaj" : "Browse";
     public string Add => Language == AppLanguage.Polish ? "Dodaj" : "Add";
     public string SelectFilesButton => Language == AppLanguage.Polish ? "Wybierz pliki" : "Select files";
@@ -399,4 +413,14 @@ public partial class LocalizationService : ObservableObject
     
     public string AlsoExportToJson => Language == AppLanguage.Polish
         ? "Zapisz również do JSON" : "Also export to JSON";
+    
+    public string SearchFields => Language == AppLanguage.Polish
+        ? "Szukane pola" : "Search fields";
+
+    public string AddSearchField => Language == AppLanguage.Polish
+        ? "Dodaj pole" : "Add field";
+    
+    public string DuplicateSearchFields => Language == AppLanguage.Polish
+        ? "Nazwy szukanych pól nie mogą się powtarzać."
+        : "Search field names must be unique.";
 }

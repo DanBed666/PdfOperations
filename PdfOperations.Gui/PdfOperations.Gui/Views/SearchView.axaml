@@ -30,8 +30,29 @@
                     <views:FileListView DataContext="{Binding InputFilesList}" />
                 </StackPanel>
 
-                <TextBlock Text="{Binding Loc.SearchPhrase}" />
-                <TextBox Text="{Binding Phrase}" />
+                <TextBlock Text="{Binding Loc.SearchFields}" />
+
+                <ItemsControl ItemsSource="{Binding SearchFields}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SearchFieldViewModel">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="8"
+                                  Margin="0,0,0,8">
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding Phrase, Mode=TwoWay}" />
+
+                                <Button Grid.Column="1"
+                                        Content="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).Loc.Remove}"
+                                        Command="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).RemoveSearchFieldCommand}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Button Content="{Binding Loc.AddSearchField}"
+                        Command="{Binding AddSearchFieldCommand}"
+                        HorizontalAlignment="Left" />
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                     <StackPanel Grid.Column="0" Spacing="6">

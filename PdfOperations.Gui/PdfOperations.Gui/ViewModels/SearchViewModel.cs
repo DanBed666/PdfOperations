@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,9 +22,6 @@ public partial class SearchViewModel : FileInputViewModelBase
 
     [ObservableProperty]
     private string outputFileName = "search_report.txt";
-
-    [ObservableProperty]
-    private string phrase = "";
 
     [ObservableProperty]
     private bool exportToExcel;
@@ -48,11 +46,56 @@ public partial class SearchViewModel : FileInputViewModelBase
             inputTitle: loc => loc.InputSearchFilesWithFormats)
     {
         Title = Loc.GetOperationName("Search");
+        AddSearchField();
+        
         InputFilesList.FilesChanged += () =>
         {
             SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
             StartCommand.NotifyCanExecuteChanged();
         };
+    }
+    
+    public ObservableCollection<SearchFieldViewModel> SearchFields { get; } = [];
+    
+    [RelayCommand]
+    private void AddSearchField()
+    {
+        if (IsBusy)
+            return;
+    
+        var field = new SearchFieldViewModel();
+        field.PropertyChanged += SearchField_PropertyChanged;
+        SearchFields.Add(field);
+        StartCommand.NotifyCanExecuteChanged();
+    }
+    
+    [RelayCommand]
+    private void RemoveSearchField(SearchFieldViewModel? field)
+    {
+        if (IsBusy || field is null || !SearchFields.Remove(field))
+            return;
+    
+        field.PropertyChanged -= SearchField_PropertyChanged;
+    
+        if (SearchFields.Count == 0)
+            AddSearchField();
+    
+        StartCommand.NotifyCanExecuteChanged();
+    }
+    
+    private void SearchField_PropertyChanged(
+        object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SearchFieldViewModel.Phrase))
+            StartCommand.NotifyCanExecuteChanged();
+    }
+    
+    private string[] GetSearchPhrases()
+    {
+        return SearchFields
+            .Select(field => field.Phrase.Trim().TrimEnd(':').TrimEnd())
+            .Where(phrase => !string.IsNullOrWhiteSpace(phrase))
+            .ToArray();
     }
     
     public override void RefreshLocalization()
@@ -93,10 +136,20 @@ public partial class SearchViewModel : FileInputViewModelBase
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(Phrase))
+            string[] currentSearchPhrases = GetSearchPhrases();
+
+            if (currentSearchPhrases.Length == 0)
             {
                 StatusKind = StatusKind.Error;
                 StatusMessage = Loc.EnterSearchPhrase;
+                return;
+            }
+
+            if (currentSearchPhrases.Distinct(StringComparer.OrdinalIgnoreCase).Count()
+                != currentSearchPhrases.Length)
+            {
+                StatusKind = StatusKind.Error;
+                StatusMessage = Loc.DuplicateSearchFields;
                 return;
             }
 
@@ -130,6 +183,7 @@ public partial class SearchViewModel : FileInputViewModelBase
             string finalJsonPath = "";
             int processedFilesCount = 0;
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
+            ExportLabels exportLabels = Loc.SearchExportLabels;
 
             await Task.Run(() =>
             {
@@ -137,7 +191,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                 {
                     InputFiles = currentInputFiles,
                     Output = OutputFileName,
-                    PhraseToFind = Phrase,
+                    PhrasesToFind = currentSearchPhrases,
                     Before = Before,
                     After = After
                 };
@@ -204,8 +258,8 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                     cancellationToken.ThrowIfCancellationRequested();
                     
-                    ExtractedValue[] results = ExportToExcel || ExportToJson
-                        ? Search.GetExtractedValues(operationInput, tempReportPath)
+                    FileExtractionResult [] results = ExportToExcel || ExportToJson
+                        ? Search.GetFileExtractionResults(operationInput, tempReportPath, cancellationToken)
                         : [];
                     
                     string tempJsonPath = Path.ChangeExtension(tempReportPath, ".json");
@@ -215,7 +269,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        ExcelExporter.SaveToExcel(results, tempExcelPath);
+                        ExcelExporter.SaveFieldsToExcel(results, operationInput.PhrasesToFind, tempExcelPath, exportLabels);
 
                         finalExcelPath = Path.ChangeExtension(finalPath, ".xlsx");
                         if (!OverwriteExistingFiles)
@@ -225,7 +279,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                     if (ExportToJson)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        JsonExporter.SaveToJson(results, tempJsonPath);
+                        JsonExporter.SaveFieldsToJson(results, tempJsonPath, exportLabels);
                         finalJsonPath = Path.ChangeExtension(finalPath, ".json");
                         if (!OverwriteExistingFiles)
                             finalJsonPath = GetAvailablePath(finalJsonPath);
@@ -274,10 +328,11 @@ public partial class SearchViewModel : FileInputViewModelBase
 
     private bool CanStart()
     {
-        return !InputFilesList.IsEmpty()
+        return !IsBusy
+               && !InputFilesList.IsEmpty()
                && !string.IsNullOrWhiteSpace(OutputDirectory)
                && !string.IsNullOrWhiteSpace(OutputFileName)
-               && !string.IsNullOrWhiteSpace(Phrase);
+               && GetSearchPhrases().Length > 0;
     }
 
     partial void OnOutputDirectoryChanged(string value)
@@ -290,11 +345,6 @@ public partial class SearchViewModel : FileInputViewModelBase
         StartCommand.NotifyCanExecuteChanged();
     }
 
-    partial void OnPhraseChanged(string value)
-    {
-        StartCommand.NotifyCanExecuteChanged();
-    }
-    
     [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
     private void OpenOutputFolder()
     {

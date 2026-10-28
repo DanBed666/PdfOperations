@@ -1,6 +1,9 @@
-﻿namespace PdfOperations.Gui.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class SearchFieldViewModel
+namespace PdfOperations.Gui.ViewModels;
+
+public partial class SearchFieldViewModel : ObservableObject
 {
-    
+    [ObservableProperty]
+    private string phrase = "";
 }
