@@ -29,7 +29,8 @@ public partial class MainViewModel : ViewModelBase
         "FontInfo",
         "Replacement",
         "Fragments",
-        "Help"
+        "Help",
+        "About"
     ];
 
     public ObservableCollection<OperationMenuItem> Operations { get; } = new();
@@ -207,6 +208,7 @@ public partial class MainViewModel : ViewModelBase
             "Replacement" => new ReplacementViewModel(),
             "Fragments" => new FragmentsViewModel(),
             "Help" => new HelpViewModel(),
+            "About" => new AboutViewModel(),
             _ => null
         };
     }

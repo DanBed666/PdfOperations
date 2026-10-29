@@ -180,3 +180,29 @@ Aby zamiast GUI uruchomić pierwotną aplikację konsolową:
 ```powershell
 dotnet run --project PdfOperations/PdfOperations.csproj -c Release
 ```
+
+## Autor i wykorzystane narzędzia
+
+Autor: [DanBed666](https://github.com/DanBed666). Repozytorium projektu: [PdfOperations](https://github.com/DanBed666/PdfOperations).
+
+Widok **O programie** w aplikacji zawiera jej wersję, autora i linki do poniższych projektów.
+
+### Biblioteki i czcionka
+
+- [Avalonia](https://github.com/AvaloniaUI/Avalonia) - interfejs graficzny aplikacji.
+- [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) - modele widoków, polecenia i powiadomienia o zmianach właściwości.
+- [ClosedXML](https://github.com/ClosedXML/ClosedXML) - odczyt i zapis plików Excel.
+- [Inter](https://rsms.me/inter/) - czcionka interfejsu.
+
+### Narzędzia zewnętrzne
+
+- [LibreOffice](https://www.libreoffice.org/) - konwersja dokumentów biurowych.
+- [Poppler](https://poppler.freedesktop.org/) - odczyt tekstu i obrazów z PDF, łączenie plików oraz odczyt informacji.
+- [qpdf](https://qpdf.sourceforge.io/) - operacje na stronach PDF.
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) - rozpoznawanie tekstu na obrazach.
+- [ImageMagick](https://imagemagick.org/) - konwersja obrazów do PDF.
+- [pdf2docx](https://github.com/ArtifexSoftware/pdf2docx) - konwersja PDF do DOCX.
+
+### Wsparcie AI podczas tworzenia
+
+Aplikacja powstała przy częściowym wsparciu OpenAI Codex.

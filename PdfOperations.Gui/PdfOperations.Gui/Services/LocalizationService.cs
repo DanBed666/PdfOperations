@@ -27,6 +27,12 @@ public partial class LocalizationService : ObservableObject
         }
         : new ExportLabels();
 
+    public string AboutVersionLabel => Language == AppLanguage.Polish ? "Wersja" : "Version";
+    public string AboutAuthorLabel => Language == AppLanguage.Polish ? "Autor" : "Author";
+    public string AboutRepositoryLabel => Language == AppLanguage.Polish ? "Projekt na GitHubie" : "Project on GitHub";
+    public string AboutLibrariesLabel => Language == AppLanguage.Polish ? "Biblioteki i czcionka" : "Libraries and font";
+    public string AboutToolsLabel => Language == AppLanguage.Polish ? "Narzędzia zewnętrzne" : "External tools";
+
     public string Browse => Language == AppLanguage.Polish ? "Przeglądaj" : "Browse";
     public string Add => Language == AppLanguage.Polish ? "Dodaj" : "Add";
     public string SelectFilesButton => Language == AppLanguage.Polish ? "Wybierz pliki" : "Select files";
@@ -160,6 +166,7 @@ public partial class LocalizationService : ObservableObject
             "Replacement" => Language == AppLanguage.Polish ? "Zamiana tekstu" : "Replacement",
             "Fragments" => Language == AppLanguage.Polish ? "Utwórz PDF z fragmentów" : "Build PDF from fragments",
             "Help" => Language == AppLanguage.Polish ? "Pomoc" : "Help",
+            "About" => Language == AppLanguage.Polish ? "O programie" : "About",
             _ => key
         };
     }
