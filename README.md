@@ -1,5 +1,7 @@
 # PdfOperations
 
+**English** | [Polski](README.pl.md)
+
 PdfOperations is a Windows desktop application for working with PDF files, images, text and office documents. It provides an Avalonia GUI in Polish and English, with light, dark and system themes.
 
 The repository also contains the original console application. This guide describes the GUI workflow.
