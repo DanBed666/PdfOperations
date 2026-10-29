@@ -9,6 +9,7 @@ public class AboutViewModel : ViewModelBase
     public string Title => Loc.GetOperationName("About");
     public string Author => "DanBed666";
     public Uri RepositoryUrl { get; } = new("https://github.com/DanBed666/PdfOperations");
+    public Uri CodexUrl { get; } = new("https://openai.com/codex/");
 
     public string AppVersion { get; } = typeof(AboutViewModel).Assembly
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?

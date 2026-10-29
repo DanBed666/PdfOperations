@@ -32,6 +32,10 @@ public partial class LocalizationService : ObservableObject
     public string AboutRepositoryLabel => Language == AppLanguage.Polish ? "Projekt na GitHubie" : "Project on GitHub";
     public string AboutLibrariesLabel => Language == AppLanguage.Polish ? "Biblioteki i czcionka" : "Libraries and font";
     public string AboutToolsLabel => Language == AppLanguage.Polish ? "Narzędzia zewnętrzne" : "External tools";
+    public string AboutAiAssistanceLabel => Language == AppLanguage.Polish ? "Wsparcie AI" : "AI assistance";
+    public string AboutCodexCredit => Language == AppLanguage.Polish
+        ? "Aplikacja powstała przy częściowym wsparciu OpenAI Codex."
+        : "The application was developed with partial assistance from OpenAI Codex.";
 
     public string Browse => Language == AppLanguage.Polish ? "Przeglądaj" : "Browse";
     public string Add => Language == AppLanguage.Polish ? "Dodaj" : "Add";

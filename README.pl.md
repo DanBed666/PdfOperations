@@ -205,4 +205,4 @@ Widok **O programie** w aplikacji zawiera jej wersję, autora i linki do poniżs
 
 ### Wsparcie AI podczas tworzenia
 
-Aplikacja powstała przy częściowym wsparciu OpenAI Codex.
+Aplikacja powstała przy częściowym wsparciu [OpenAI Codex](https://openai.com/codex/).

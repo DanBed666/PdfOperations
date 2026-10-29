@@ -205,4 +205,4 @@ The **About** view in the app shows its version, author and links to the project
 
 ### AI assistance during development
 
-The application was developed with partial assistance from OpenAI Codex.
+The application was developed with partial assistance from [OpenAI Codex](https://openai.com/codex/).

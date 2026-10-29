@@ -54,6 +54,16 @@
                     <ItemsControl ItemsSource="{Binding Tools}" />
                 </StackPanel>
             </Grid>
+
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding Loc.AboutAiAssistanceLabel}" FontSize="18"
+                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                <HyperlinkButton Classes="projectLink"
+                                 NavigateUri="{Binding CodexUrl}"
+                                 ToolTip.Tip="{Binding CodexUrl}">
+                    <TextBlock Text="{Binding Loc.AboutCodexCredit}" TextWrapping="Wrap" />
+                </HyperlinkButton>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
