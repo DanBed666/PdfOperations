@@ -16,7 +16,7 @@ import zipfile
 
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
-from source_inputs import digest, download, extract, inventory
+from source_inputs import digest, download, extract, inventory, normalize_patch_line_endings
 from compare_converter import contents
 
 
@@ -122,6 +122,21 @@ class ComparisonTests(unittest.TestCase):
 
 
 class MuPdfPatchTests(unittest.TestCase):
+    def test_normalizes_windows_patch(self):
+        with temporary_directory() as folder:
+            path = Path(folder) / 'fix.patch'
+            path.write_bytes(b'--- original\r\n+++ changed\r\n')
+            normalize_patch_line_endings(path)
+            self.assertEqual(path.read_bytes(), b'--- original\n+++ changed\n')
+
+    def test_keeps_unix_patch(self):
+        with temporary_directory() as folder:
+            path = Path(folder) / 'fix.patch'
+            data = b'--- original\n+++ changed\n'
+            path.write_bytes(data)
+            normalize_patch_line_endings(path)
+            self.assertEqual(path.read_bytes(), data)
+
     def test_linker_uses_selected_vs_directory(self):
         import ast
         from types import SimpleNamespace
@@ -140,9 +155,12 @@ class MuPdfPatchTests(unittest.TestCase):
             root = Path(folder)
             target = root / 'scripts/wrap/__main__.py'
             target.parent.mkdir(parents=True)
-            target.write_text(original, encoding='utf-8')
+            target.write_bytes(original.encode('utf-8'))
             subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
-            patch_file = HERE / 'patches/mupdf-vs-upgrade-libdir.patch'
+            patch_file = root / 'windows-checkout.patch'
+            patch_data = (HERE / 'patches/mupdf-vs-upgrade-libdir.patch').read_bytes().replace(b'\r\n', b'\n')
+            patch_file.write_bytes(patch_data.replace(b'\n', b'\r\n'))
+            normalize_patch_line_endings(patch_file)
             for check in (True, False):
                 subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
                                cwd=root, check=True, capture_output=True)

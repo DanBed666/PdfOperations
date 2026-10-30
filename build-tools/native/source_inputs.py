@@ -9,6 +9,13 @@ import urllib.request
 HERE = Path(__file__).resolve().parent
 
 
+def normalize_patch_line_endings(path):
+    data = path.read_bytes()
+    normalized = data.replace(b'\r\n', b'\n')
+    if data != normalized:
+        path.write_bytes(normalized)
+
+
 def digest(path):
     with Path(path).open('rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()

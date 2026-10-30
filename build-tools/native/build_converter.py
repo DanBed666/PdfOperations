@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import sys
 
-from source_inputs import HERE, digest, download, extract, inventory
+from source_inputs import HERE, digest, download, extract, inventory, normalize_patch_line_endings
 
 
 def build(root):
@@ -50,6 +50,7 @@ def build(root):
             run('git', 'apply', '--check', patch, cwd=mupdf)
             run('git', 'apply', patch, cwd=mupdf)
     local_patch = inputs / 'build-tools/patches/mupdf-vs-upgrade-libdir.patch'
+    normalize_patch_line_endings(local_patch)
     run('git', 'apply', '--check', local_patch, cwd=mupdf)
     run('git', 'apply', local_patch, cwd=mupdf)
     run(sys.executable, '-m', 'venv', root / 'builder')
