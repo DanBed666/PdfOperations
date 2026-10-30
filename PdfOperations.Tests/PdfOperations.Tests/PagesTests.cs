@@ -44,6 +44,15 @@ public class PagesTests
             
             Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
             Assert.AreEqual(6, suma);
+
+            for (int document = 1; document <= 3; document++)
+            {
+                string file = Path.Combine(operationContext.TempDir, $"ocr_test_{document}.pdf");
+                string[] texts = TestHelper.ReadPdfPageTexts(file);
+                Assert.HasCount(2, texts);
+                Assert.Contains($"OCR TEST PDF {document} - selectable text page 2", texts[0]);
+                Assert.Contains($"OCR TEST PDF {document} - selectable text page 3", texts[1]);
+            }
         }
         finally
         {
@@ -94,6 +103,12 @@ public class PagesTests
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
             Assert.AreEqual(2, suma);
+
+            string[] texts = TestHelper.ReadPdfPageTexts(
+                Path.Combine(operationContext.TempDir, operationInput.Output));
+            Assert.HasCount(2, texts);
+            Assert.Contains("OCR TEST PDF 1 - selectable text page 2", texts[0]);
+            Assert.Contains("OCR TEST PDF 1 - selectable text page 3", texts[1]);
         }
         finally
         {
@@ -150,6 +165,21 @@ public class PagesTests
             FileJob fileJob = ExecutionBuilder.SetFileJobFilesToSingle(operationDefinition, operationInput, operationContext);
             Pages.CreateWithCustomFiles(operationInput, fileJob);
 
+            string[] texts = TestHelper.ReadPdfPageTexts(fileJob.TempPath);
+            string[] expectedMarkers =
+            [
+                "OCR TEST PDF 1 - selectable text page 2",
+                "OCR TEST PDF 1 - selectable text page 3",
+                "OCR TEST PDF 2 - selectable text page 1",
+                "OCR TEST PDF 2 - selectable text page 4",
+                "OCR TEST PDF 3 - selectable text page 1",
+                "OCR TEST PDF 3 - selectable text page 3",
+                "OCR TEST PDF 3 - selectable text page 4"
+            ];
+            Assert.HasCount(expectedMarkers.Length, texts);
+            for (int i = 0; i < expectedMarkers.Length; i++)
+                Assert.Contains(expectedMarkers[i], texts[i]);
+
             foreach (string file in Directory.GetFiles(operationContext.TempDir))
             {
                 Assert.IsTrue(File.Exists(file));
@@ -164,6 +194,107 @@ public class PagesTests
         {
             if (Directory.Exists(operationContext.TempDir))
                 Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void SplitPagesTest()
+    {
+        int suma = 0;
+        List<int> splitAfterPages = new List<int>();
+        splitAfterPages.Add(2);
+        //splitAfterPages.Add(4);
+
+        OperationInput operationInput = new OperationInput()
+        {
+            InputFiles = TestHelper.SetInputPaths(["ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"]),
+            //Pages = "2,4"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+        
+        try
+        {
+            List<FileJob> fileJobList = ExecutionBuilder.SetFileJobsFilesToFiles(operationDefinition, operationInput, operationContext);
+            
+            foreach (FileJob fileJob in fileJobList)
+            {
+                Pages.SplitPages(fileJob, splitAfterPages, Info.GetPdfPagesSingle(fileJob.InputFile));
+            }
+
+            foreach (string file in Directory.GetFiles(operationContext.TempDir))
+            {
+                Assert.IsTrue(File.Exists(file));
+                Assert.AreEqual(operationDefinition.Extension, Path.GetExtension(file));
+                Assert.IsGreaterThan(0, new FileInfo(file).Length);
+                Assert.AreEqual(2, Info.GetPdfPagesSingle(file));
+                suma += Info.GetPdfPagesSingle(file);
+            }
+            
+            Assert.HasCount(6, Directory.GetFiles(operationContext.TempDir));
+            Assert.AreEqual(12, suma);
+
+            for (int document = 1; document <= 3; document++)
+            {
+                for (int part = 1; part <= 2; part++)
+                {
+                    string file = Path.Combine(operationContext.TempDir,
+                        $"ocr_test_{document}_part_{part}.pdf");
+                    string[] texts = TestHelper.ReadPdfPageTexts(file);
+                    int firstPage = (part - 1) * 2 + 1;
+                    Assert.HasCount(2, texts);
+                    Assert.Contains($"OCR TEST PDF {document} - selectable text page {firstPage}", texts[0]);
+                    Assert.Contains($"OCR TEST PDF {document} - selectable text page {firstPage + 1}", texts[1]);
+                }
+            }
+        }
+        finally
+        {
+            if (Directory.Exists(operationContext.TempDir))
+                Directory.Delete(operationContext.TempDir, true);
+        }
+    }
+    
+    [TestMethod]
+    public void PrepareSplitOutputPathTest()
+    {
+        OperationInput operationInput = new OperationInput()
+        {
+            Output = "test_1.docx"
+        };
+        
+        OperationDefinition operationDefinition = new OperationDefinition()
+        {
+            Extension = ".pdf"
+        };
+        
+        OperationContext operationContext = new OperationContext()
+        {
+            TempDir = Files.PrepareTempDir()
+        };
+
+        try
+        {
+            string tempPath = Files.PrepareTempPath(operationContext.TempDir, operationInput.Output, operationDefinition.Extension);
+            string newPath = Pages.PrepareSplitOutputPath(tempPath, 1);
+            string newPath2 = Pages.PrepareSplitOutputPath(tempPath, 2);
+            string newPath3 = Pages.PrepareSplitOutputPath(tempPath, 3);
+
+            Assert.AreEqual("test_1_part_1.pdf", Path.GetFileName(newPath));
+            Assert.AreEqual("test_1_part_2.pdf", Path.GetFileName(newPath2));
+            Assert.AreEqual("test_1_part_3.pdf", Path.GetFileName(newPath3));
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(operationContext.TempDir);
         }
     }
 }

@@ -1,0 +1,5 @@
+Drugi plik tekstowy.
+hydraulika w pierwszym trafieniu.
+Linia kontekstowa bez szukanej frazy.
+hydraulika w drugim trafieniu.
+HYDRAULIKA w trzecim trafieniu.

@@ -6,6 +6,25 @@ public class RunClass
 {
     public static void Run(string exe, List<string> arguments, params int [] allowedExitCodes)
     {
+        Run(exe, arguments, Timeout.InfiniteTimeSpan, allowedExitCodes);
+    }
+
+    public static void Run(string exe, List<string> arguments, TimeSpan timeout, params int[] allowedExitCodes)
+    {
+        Run(exe, arguments, timeout, CancellationToken.None, allowedExitCodes);
+    }
+    
+    public static void Run(string exe, List<string> arguments, TimeSpan timeout,
+        CancellationToken cancellationToken, params int[] allowedExitCodes)
+    {
+        RunGuarded(exe, arguments, timeout, cancellationToken, null, null, allowedExitCodes);
+    }
+
+    public static void RunGuarded(string exe, List<string> arguments, TimeSpan timeout,
+        CancellationToken cancellationToken, string? temporaryDirectory,
+        Action? checkResources, params int[] allowedExitCodes)
+    {
+        ValidateTimeout(timeout);
         var info = new ProcessStartInfo
         {
             FileName = exe,
@@ -13,6 +32,13 @@ public class RunClass
             CreateNoWindow = true,
             RedirectStandardError = true
         };
+        
+        if (temporaryDirectory is not null)
+        {
+            info.Environment["TEMP"] = temporaryDirectory;
+            info.Environment["TMP"] = temporaryDirectory;
+        }
+        checkResources?.Invoke();
 
         foreach (string argument in arguments)
         {
@@ -22,9 +48,12 @@ public class RunClass
         Console.WriteLine(Messages.RunningCommand);
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
         
+        cancellationToken.ThrowIfCancellationRequested();
+        
         using Process process = Process.Start(info)!;
-        string error = process.StandardError.ReadToEnd();
-        process.WaitForExit();
+        Task<string> errorTask = process.StandardError.ReadToEndAsync();
+        CompleteProcess(process, timeout, cancellationToken, checkResources, errorTask);
+        string error = errorTask.GetAwaiter().GetResult();
 
         if (allowedExitCodes.Length == 0)
             allowedExitCodes = [0];
@@ -111,6 +140,17 @@ public class RunClass
     
     public static string RunWithOutput(string exe, params string[] arguments)
     {
+        return RunWithOutput(exe, Timeout.InfiniteTimeSpan, arguments);
+    }
+
+    public static string RunWithOutput(string exe, TimeSpan timeout, params string[] arguments)
+    {
+        return RunWithOutput(exe, timeout, CancellationToken.None, arguments);
+    }
+
+    public static string RunWithOutput(string exe, TimeSpan timeout, CancellationToken cancellationToken, params string[] arguments)
+    {
+        ValidateTimeout(timeout);
         var info = new ProcessStartInfo
         {
             FileName = exe,
@@ -125,11 +165,15 @@ public class RunClass
             info.ArgumentList.Add(argument);
         }
         
+        cancellationToken.ThrowIfCancellationRequested();
+        
         using Process process = Process.Start(info)!;
         Console.WriteLine($"{info.FileName} {string.Join(" ",  info.ArgumentList)}");
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
-        process.WaitForExit();
+        Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+        Task<string> errorTask = process.StandardError.ReadToEndAsync();
+        CompleteProcess(process, timeout, cancellationToken, null, outputTask, errorTask);
+        string output = outputTask.GetAwaiter().GetResult();
+        string error = errorTask.GetAwaiter().GetResult();
 
         if (process.ExitCode != 0)
         {
@@ -137,5 +181,90 @@ public class RunClass
         }
         
         return output;
+    }
+
+    private static void ValidateTimeout(TimeSpan timeout)
+    {
+        if (timeout != Timeout.InfiniteTimeSpan
+            && (timeout <= TimeSpan.Zero || timeout.TotalMilliseconds > int.MaxValue))
+            throw new ArgumentOutOfRangeException(nameof(timeout));
+    }
+
+    private static void CompleteProcess(Process process, TimeSpan timeout, params Task[] readTasks)
+    {
+        CompleteProcess(process, timeout, CancellationToken.None, null, readTasks);
+    }
+
+    private static void CompleteProcess(Process process, TimeSpan timeout, CancellationToken cancellationToken, 
+        Action? checkResources, params Task[] readTasks)
+    {
+        // Drain redirected streams concurrently and include them in the same deadline.
+        Task completion = Task.WhenAll([process.WaitForExitAsync(), ..readTasks]);
+        try
+        {
+            Task wait = completion.WaitAsync(timeout, cancellationToken);
+            _ = wait.ContinueWith(t => { _ = t.Exception; }, CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            while (checkResources is not null && !wait.IsCompleted)
+            {
+                checkResources();
+                Thread.Sleep(250);
+            }
+            wait.GetAwaiter().GetResult();
+            checkResources?.Invoke();
+        }
+        catch (Exception failure) when (failure is TimeoutException ||
+            (failure is OperationCanceledException && cancellationToken.IsCancellationRequested) 
+            || failure is IOException or UnauthorizedAccessException)
+        {
+            List<Exception> cleanupErrors = [];
+            // Observe stream failures even if process termination completes after this method.
+            _ = completion.ContinueWith(task => { _ = task.Exception; },
+                CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            try
+            {
+                process.Kill(entireProcessTree: true);
+            }
+            catch (InvalidOperationException) when (process.HasExited)
+            {
+                // The process exited between the timeout and Kill.
+            }
+            catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or AggregateException)
+            {
+                cleanupErrors.Add(ex);
+            }
+
+            // Waiting only for the launcher does not wait for its descendants' output pipes.
+            try
+            {
+                completion.WaitAsync(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+            }
+            catch (Exception ex) when (ex is TimeoutException or IOException or InvalidOperationException)
+            {
+                cleanupErrors.Add(ex);
+            }
+            Exception? cleanupError = cleanupErrors.Count == 0
+                ? null
+                : new AggregateException(
+                    "Process cleanup did not finish cleanly.", cleanupErrors);
+
+            if (failure is IOException or UnauthorizedAccessException)
+            {
+                if (cleanupError is not null)
+                    failure.Data[TemporaryDirectoryCleanup.ErrorDataKey] = cleanupError.ToString();
+                throw;
+            }
+
+            if (failure is OperationCanceledException)
+            {
+                throw new OperationCanceledException(
+                    "The operation was cancelled.", cleanupError, cancellationToken);
+            }
+
+            throw new TimeoutException(
+                $"Process '{Path.GetFileName(process.StartInfo.FileName)}' exceeded " +
+                $"the time limit of {timeout.TotalSeconds:0.###} seconds.",
+                cleanupError);
+        }
     }
 }

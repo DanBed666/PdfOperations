@@ -1,0 +1,5 @@
+Pierwszy plik tekstowy do testu wyszukiwania.
+hydraulika pojawia sie tutaj raz.
+Drugi wiersz zawiera slowo hydraulika.
+Trzeci wiersz ma HYDRAULIKA zapisane wielkimi literami.
+Koniec pierwszego pliku.

@@ -8,40 +8,43 @@ public class Execute
     {
         OperationContext context = ExecutionBuilder.SetOperationContext();
 
-        switch (operation.OperationFlow)
+        TemporaryDirectoryCleanup.Run(context.TempDir, () =>
         {
-            case OperationFlow.FilesToFiles:
-                ExecuteFilesToFiles(operation, fileInput, context);
-                break;    
-            
-            case OperationFlow.FilesToSingleFile:
-                ExecuteFilesToSingle(operation, fileInput, context);
-                break;
-            
-            case OperationFlow.FilesPages:
-                ExecutePages(operation, fileInput, context);
-                break; 
-            
-            case OperationFlow.FilesToFilesWithFormat:
-                ExecuteFormat(operation, fileInput, context);
-                break;
-            
-            case OperationFlow.SearchReport:
-                ExecuteSearch(operation, fileInput, context);
-                break;
-            
-            case OperationFlow.FilesPagesFragments:
-                ExecutePagesFragments(operation, fileInput, context);
-                break;
-            
-            case OperationFlow.FilesReplacement:
-                ExecuteReplacement(operation, fileInput, context);
-                break;
+            switch (operation.OperationFlow)
+            {
+                case OperationFlow.FilesToFiles:
+                    ExecuteFilesToFiles(operation, fileInput, context);
+                    break;
 
-            default:
-                Console.WriteLine(Messages.MissingFlow);
-                break;
-        }
+                case OperationFlow.FilesToSingleFile:
+                    ExecuteFilesToSingle(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.FilesPages:
+                    ExecutePages(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.FilesToFilesWithFormat:
+                    ExecuteFormat(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.SearchReport:
+                    ExecuteSearch(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.FilesPagesFragments:
+                    ExecutePagesFragments(operation, fileInput, context);
+                    break;
+
+                case OperationFlow.FilesReplacement:
+                    ExecuteReplacement(operation, fileInput, context);
+                    break;
+
+                default:
+                    Console.WriteLine(Messages.MissingFlow);
+                    break;
+            }
+        });
 
         string opt = UserInput.ReadOption(Messages.PreviewFolderQuestion);
         

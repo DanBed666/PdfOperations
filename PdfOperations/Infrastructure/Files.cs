@@ -15,6 +15,23 @@ public class Files
         return Path.Combine(tempDir, Path.GetFileNameWithoutExtension(fileOut) + extension);
     }
     
+    public static string PrepareUniqueTempPath(string tempDir, string fileOut, string extension, ISet<string> usedFileNames)
+    {
+        string name = Path.GetFileNameWithoutExtension(fileOut);
+        string fileName = name + extension;
+        int counter = 1;
+
+        while (usedFileNames.Contains(fileName))
+        {
+            fileName = $"{name}_{counter}{extension}";
+            counter++;
+        }
+        
+        usedFileNames.Add(fileName);
+        
+        return Path.Combine(tempDir, fileName);
+    }
+    
     public static string PrepareTempPathWithoutExt(string tempFile)
     {
         return Path.Combine(Path.GetDirectoryName(tempFile)!, Path.GetFileNameWithoutExtension(tempFile));

@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PdfOperations.Gui.Views.StatusBannerView"
+             x:CompileBindings="False">
+    
+    <UserControl.Styles>
+        <Style Selector="Arc.busy">
+            <Style.Animations>
+                <Animation Duration="0:0:1" IterationCount="Infinite">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="RotateTransform.Angle" Value="0" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="RotateTransform.Angle" Value="360" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </UserControl.Styles>
+
+    <Border IsVisible="{Binding IsStatusVisible}"
+            Background="{Binding StatusBackground}"
+            BorderBrush="{Binding StatusBorder}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12"
+            Margin="0,0,0,12">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+                <Arc Grid.Column="0"
+                     Width="24" Height="24"
+                     Margin="0,0,12,0"
+                     StartAngle="0" SweepAngle="270"
+                     Stroke="{Binding StatusForeground}"
+                     StrokeThickness="3"
+                     VerticalAlignment="Center"
+                     IsVisible="{Binding IsBusy}"
+                     Classes.busy="{Binding IsBusy}"
+                     RenderTransformOrigin="50%,50%">
+                    <Arc.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Arc.RenderTransform>
+                </Arc>
+
+                <StackPanel Grid.Column="1" Spacing="4">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Foreground="{Binding StatusForeground}"
+                               TextWrapping="Wrap" />
+
+                    <TextBlock Text="{Binding ProgressText}"
+                               Foreground="{Binding StatusForeground}"
+                               IsVisible="{Binding HasFileProgress}"
+                               TextWrapping="Wrap" />
+
+                    <ProgressBar Minimum="0"
+                                 Maximum="{Binding TotalFiles}"
+                                 Value="{Binding CompletedFiles}"
+                                 IsVisible="{Binding HasFileProgress}"
+                                 IsIndeterminate="False"
+                                 ShowProgressText="False"
+                                 Height="6" MinHeight="6"
+                                 Margin="0,4,0,0"
+                                 HorizontalAlignment="Stretch"
+                                 Foreground="{Binding StatusBorder}"
+                                 AutomationProperties.Name="{Binding ProgressText}" />
+                </StackPanel>
+            </Grid>
+
+            <Button Grid.Column="1"
+                    Content="{Binding Loc.CancelOperation}"
+                    Command="{Binding CancelOperationCommand}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalAlignment="Top"
+                    MinWidth="96"
+                    AutomationProperties.Name="{Binding Loc.CancelOperation}" />
+
+            <Button Grid.Column="1"
+                    Content="&#x00D7;"
+                    FontSize="22"
+                    Width="32" Height="32"
+                    MinWidth="32" MinHeight="32"
+                    Padding="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{Binding StatusForeground}"
+                    IsVisible="{Binding IsNotBusy}"
+                    Command="{Binding DismissStatusCommand}"
+                    ToolTip.Tip="{Binding Loc.CloseMessage}"
+                    AutomationProperties.Name="{Binding Loc.CloseMessage}" />
+            
+            <Expander Grid.Row="1" Grid.ColumnSpan="2"
+                      Header="{Binding Loc.ErrorDetailsLabel}"
+                      Foreground="{Binding StatusForeground}"
+                      IsVisible="{Binding HasErrorDetails}"
+                      IsExpanded="{Binding AreErrorDetailsExpanded, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch">
+                <TextBox Text="{Binding ErrorDetails, Mode=OneWay}"
+                         IsReadOnly="True" AcceptsReturn="True"
+                         TextWrapping="Wrap" MaxHeight="200"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </Expander>
+        </Grid>
+    </Border>
+
+</UserControl>

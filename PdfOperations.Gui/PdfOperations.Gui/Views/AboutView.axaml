@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PdfOperations.Gui.ViewModels"
+             xmlns:models="using:PdfOperations.Gui.Models"
+             x:Class="PdfOperations.Gui.Views.AboutView"
+             x:DataType="vm:AboutViewModel">
+    <UserControl.Styles>
+        <Style Selector="HyperlinkButton.projectLink">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="models:ProjectCredit" x:DataType="models:ProjectCredit">
+            <HyperlinkButton Classes="projectLink"
+                             NavigateUri="{Binding Website}"
+                             ToolTip.Tip="{Binding Website}">
+                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
+            </HyperlinkButton>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="16">
+            <TextBlock Text="{Binding Title}" FontSize="28" FontWeight="Bold"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="PdfOperations" FontSize="20" FontWeight="SemiBold" />
+
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto"
+                  ColumnSpacing="16" RowSpacing="8">
+                <TextBlock Text="{Binding Loc.AboutVersionLabel}" />
+                <TextBlock Grid.Column="1" Text="{Binding AppVersion}" TextWrapping="Wrap" />
+                <TextBlock Grid.Row="1" Text="{Binding Loc.AboutAuthorLabel}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
+            </Grid>
+
+            <HyperlinkButton Classes="projectLink"
+                             NavigateUri="{Binding RepositoryUrl}"
+                             ToolTip.Tip="{Binding RepositoryUrl}">
+                <TextBlock Text="{Binding Loc.AboutRepositoryLabel}" TextWrapping="Wrap" />
+            </HyperlinkButton>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="24" Margin="0,8,0,0">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{Binding Loc.AboutLibrariesLabel}" FontSize="18"
+                               FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <ItemsControl ItemsSource="{Binding Libraries}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <TextBlock Text="{Binding Loc.AboutToolsLabel}" FontSize="18"
+                               FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <ItemsControl ItemsSource="{Binding Tools}" />
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding Loc.AboutAiAssistanceLabel}" FontSize="18"
+                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                <HyperlinkButton Classes="projectLink"
+                                 NavigateUri="{Binding CodexUrl}"
+                                 ToolTip.Tip="{Binding CodexUrl}">
+                    <TextBlock Text="{Binding Loc.AboutCodexCredit}" TextWrapping="Wrap" />
+                </HyperlinkButton>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

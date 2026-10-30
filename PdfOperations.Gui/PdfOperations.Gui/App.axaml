@@ -1,0 +1,100 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PdfOperations.Gui.App"
+             xmlns:local="using:PdfOperations.Gui"
+             xmlns:helpers="using:PdfOperations.Gui.Helpers"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+     <Application.Resources>
+         <ResourceDictionary>
+             <ResourceDictionary.ThemeDictionaries>
+                 <ResourceDictionary x:Key="Light">
+                     <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="SidebarTitleBrush" Color="#F9FAFB" />
+                     <SolidColorBrush x:Key="SidebarTextBrush" Color="#E5E7EB" />
+                     <SolidColorBrush x:Key="SidebarMutedTextBrush" Color="#CBD5E1" />
+                     <SolidColorBrush x:Key="ListBackgroundBrush" Color="#FFFFFF" />
+                     <SolidColorBrush x:Key="ListBorderBrush" Color="#D1D5DB" />
+                     <SolidColorBrush x:Key="InputListBackgroundBrush" Color="#F3F4F6" />
+                     <SolidColorBrush x:Key="InputListTextBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="MutedTextBrush" Color="#64748B" />
+                 </ResourceDictionary>
+
+                 <ResourceDictionary x:Key="Dark">
+                     <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#0F172A" />
+                     <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#020617" />
+                     <SolidColorBrush x:Key="SidebarTitleBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="SidebarTextBrush" Color="#E2E8F0" />
+                     <SolidColorBrush x:Key="SidebarMutedTextBrush" Color="#94A3B8" />
+                     <SolidColorBrush x:Key="ListBackgroundBrush" Color="#111827" />
+                     <SolidColorBrush x:Key="ListBorderBrush" Color="#334155" />
+                     <SolidColorBrush x:Key="InputListBackgroundBrush" Color="#1E293B" />
+                     <SolidColorBrush x:Key="InputListTextBrush" Color="#F8FAFC" />
+                     <SolidColorBrush x:Key="MutedTextBrush" Color="#CBD5E1" />
+                 </ResourceDictionary>
+             </ResourceDictionary.ThemeDictionaries>
+         </ResourceDictionary>
+     </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <Style Selector="Button">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="ListBoxItem">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource AppWindowBackgroundBrush}" />
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#2563EB" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+
+        <Style Selector="TextBox.pathTooltip">
+            <Setter Property="ToolTip.Tip"
+                    Value="{ReflectionBinding Text, RelativeSource={RelativeSource Self}, Converter={x:Static helpers:PathDisplayHelper.TooltipConverter}}" />
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="{DynamicResource ListBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ListBorderBrush}" />
+        </Style>
+
+    </Application.Styles>
+</Application>

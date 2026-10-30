@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfOperations", "PdfOperati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfOperations.Tests", "PdfOperations.Tests\PdfOperations.Tests\PdfOperations.Tests.csproj", "{5BE85E7A-6783-456E-86D4-E4A9B3D6FFBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfOperations.Gui", "PdfOperations.Gui\PdfOperations.Gui\PdfOperations.Gui.csproj", "{4B11E5D2-B98A-418F-A5AB-AC5027831052}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{5BE85E7A-6783-456E-86D4-E4A9B3D6FFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BE85E7A-6783-456E-86D4-E4A9B3D6FFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BE85E7A-6783-456E-86D4-E4A9B3D6FFBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B11E5D2-B98A-418F-A5AB-AC5027831052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B11E5D2-B98A-418F-A5AB-AC5027831052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B11E5D2-B98A-418F-A5AB-AC5027831052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B11E5D2-B98A-418F-A5AB-AC5027831052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

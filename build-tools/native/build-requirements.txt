@@ -1,0 +1,12 @@
+pip==26.1.1
+setuptools==81.0.0
+wheel==0.47.0
+packaging==26.2
+pipcl==9
+PyInstaller==6.22.3
+pyinstaller-hooks-contrib==2026.7
+altgraph==0.17.5
+pefile==2024.8.26
+pywin32-ctypes==0.2.3
+swig==4.4.1
+libclang==18.1.1

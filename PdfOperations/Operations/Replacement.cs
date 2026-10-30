@@ -9,16 +9,32 @@ public class Replacement
 {
     public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context)
     {
-        string extractedDir = ExtractDocumentToTemp(file.InputFile, context.TempDir);
-        string xmlPath = GetEditableXmlPath(extractedDir, file.InputFile);
-        List<ReplacementPair> replacementPairs = ReadReplacementsFromExcel(input.PlaceholderFile);
-        ReplaceTextInFile(xmlPath, replacementPairs, Path.GetExtension(file.InputFile));
-        CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
+        ReplaceTextWithPlaceholders(file, input, context, CancellationToken.None);
+    }
+
+    public static void ReplaceTextWithPlaceholders(FileJob file, OperationInput input, OperationContext context, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        OperationCancellation.Run(OperationTimeouts.Replacement, "Text replacement", token =>
+        {
+            token.ThrowIfCancellationRequested();
+            string extractedDir = ExtractDocumentToTemp(file.InputFile, file.TempPath);
+            token.ThrowIfCancellationRequested();
+            string xmlPath = GetEditableXmlPath(extractedDir, file.InputFile);
+            List<ReplacementPair> replacementPairs = ReadReplacementsFromExcel(input.PlaceholderFile, token);
+            ReplaceTextInFile(xmlPath, replacementPairs, Path.GetExtension(file.InputFile), token);
+            token.ThrowIfCancellationRequested();
+            CreateDocumentFromDirectory(input, extractedDir, file.TempPath, Path.GetExtension(file.InputFile));
+            token.ThrowIfCancellationRequested();
+        }, cancellationToken);
     }
     
-    public static string ExtractDocumentToTemp(string inputFile, string tempDir)
+    public static string ExtractDocumentToTemp(string inputFile, string tempPath)
     {
-        string tempDirExt = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(inputFile));
+        string tempDir = Path.GetDirectoryName(tempPath)!;
+        string tempName = Path.GetFileNameWithoutExtension(tempPath);
+        string tempDirExt = Path.Combine(tempDir, $"{tempName}_extracted_{Guid.NewGuid():N}");
+        
         ZipFile.ExtractToDirectory(inputFile, tempDirExt);
 
         return tempDirExt;
@@ -37,16 +53,20 @@ public class Replacement
         throw new InvalidOperationException($"Nieprawidłowe rozszerzenie {extension}");
     }
 
-    public static List<ReplacementPair> ReadReplacementsFromExcel(string placeholderFile)
+    public static List<ReplacementPair> ReadReplacementsFromExcel(string placeholderFile,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         List<ReplacementPair> replacementPairs = new List<ReplacementPair>();
         
         using XLWorkbook workbook = new XLWorkbook(placeholderFile);
+        cancellationToken.ThrowIfCancellationRequested();
         IXLWorksheet worksheet = workbook.Worksheets.FirstOrDefault() ??
                                  throw new InvalidOperationException("Plik excel nie zawiera żadnego arkusza!");
 
         foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             string find = row.Cell(2).GetString();
             string replace = row.Cell(3).GetString();
 
@@ -70,51 +90,67 @@ public class Replacement
             replacementPairs.Add(replacementPair);
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         return replacementPairs;
     }
     
-    public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> pairs, string extension)
+    public static void ReplaceTextInFile(string xmlPath, List<ReplacementPair> pairs, string extension,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (extension.Equals(".docx", StringComparison.OrdinalIgnoreCase))
-            ReplaceTextInDocxXml(xmlPath, pairs);
+            ReplaceTextInDocxXml(xmlPath, pairs, cancellationToken);
         else if (extension.Equals(".odt", StringComparison.OrdinalIgnoreCase) ||
                  extension.Equals(".odg", StringComparison.OrdinalIgnoreCase))
-            ReplaceTextInOdfXml(xmlPath, pairs);
+            ReplaceTextInOdfXml(xmlPath, pairs, cancellationToken);
         else
             throw new InvalidOperationException($"Nieobsługiwany format: {extension}");
     }
 
-    public static void ReplaceTextInDocxXml(string xmlPath, List<ReplacementPair> replacementPairs)
+    public static void ReplaceTextInDocxXml(string xmlPath, List<ReplacementPair> replacementPairs,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         XDocument doc = XDocument.Load(xmlPath);
+        cancellationToken.ThrowIfCancellationRequested();
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
         foreach (XElement textNode in doc.Descendants(w + "t"))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             foreach (ReplacementPair pair in replacementPairs)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 StringComparison stringComparison = pair.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
                 
                 textNode.Value = textNode.Value.Replace(pair.Find, pair.Replace, stringComparison);
             }
         }
         
+        cancellationToken.ThrowIfCancellationRequested();
         doc.Save(xmlPath);
+        cancellationToken.ThrowIfCancellationRequested();
     }
     
-    public static void ReplaceTextInOdfXml(string xmlPath, List<ReplacementPair> replacementPairs)
+    public static void ReplaceTextInOdfXml(string xmlPath, List<ReplacementPair> replacementPairs,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         string text = File.ReadAllText(xmlPath);
+        cancellationToken.ThrowIfCancellationRequested();
 
         foreach (ReplacementPair pair in replacementPairs)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (pair.IgnoreCase)
                 text = text.Replace(pair.Find, pair.Replace, StringComparison.OrdinalIgnoreCase);
             
             text = text.Replace(pair.Find, pair.Replace);
         }
         
+        cancellationToken.ThrowIfCancellationRequested();
         File.WriteAllText(xmlPath, text);
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     public static void CreateDocumentFromDirectory(OperationInput input, string extDir, string tempPath, string extension)

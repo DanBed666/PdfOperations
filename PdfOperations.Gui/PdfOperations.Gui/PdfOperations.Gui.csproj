@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="12.1.3"/>
+        <PackageReference Include="Avalonia.Desktop" Version="12.1.3"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3"/>
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
+            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\PdfOperations\PdfOperations.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\ManyToOneView.axaml.cs">
+        <DependentUpon>ManyToOneView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SearchView.axaml.cs">
+        <DependentUpon>SearchView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\PagesView.axaml.cs">
+        <DependentUpon>PagesView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\InfoView.axaml.cs">
+        <DependentUpon>InfoView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\ReplacementView.axaml.cs">
+        <DependentUpon>ReplacementView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\LibreOfficeView.axaml.cs">
+        <DependentUpon>LibreOfficeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\FragmentsView.axaml.cs">
+        <DependentUpon>FragmentsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\HelpView.axaml.cs">
+        <DependentUpon>HelpView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\FileListView.axaml.cs">
+        <DependentUpon>FileListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <Target Name="CopyToolsToOutput" AfterTargets="Build">
+        <ItemGroup>
+            <ToolFiles Include="..\..\PdfOperations\bin\$(Configuration)\net10.0-windows\tools\**\*.*" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(ToolFiles)"
+            DestinationFiles="@(ToolFiles->'$(OutputPath)tools\%(RecursiveDir)%(Filename)%(Extension)')"
+            SkipUnchangedFiles="true" />
+    </Target>
+</Project>

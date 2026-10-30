@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PdfOperations.Gui.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PdfOperations.Gui.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="1180"
+        Height="760"
+        MinWidth="980"
+        MinHeight="620"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="PdfOperations.Gui">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="260,*">
+        <Border Grid.Column="0"
+                Background="{DynamicResource SidebarBackgroundBrush}"
+                Padding="14">
+            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+                <TextBlock Text="PdfOperations"
+                           Foreground="{DynamicResource SidebarTitleBrush}"
+                           FontSize="18"
+                           FontWeight="SemiBold" />
+
+                <StackPanel Grid.Row="1" Spacing="6">
+                    <TextBlock Text="{Binding Loc.LanguageLabel}"
+                               Foreground="{DynamicResource SidebarMutedTextBrush}" />
+
+                    <ComboBox ItemsSource="{Binding Languages}"
+                              SelectedItem="{Binding SelectedLanguage}"
+                              IsEnabled="{Binding CurrentOperationViewModel.IsNotBusy,
+                              FallbackValue=True}" />
+
+                    <TextBlock Text="{Binding Loc.ThemeLabel}"
+                               Foreground="{DynamicResource SidebarMutedTextBrush}"
+                               Margin="0,6,0,0" />
+
+                    <ComboBox ItemsSource="{Binding Themes}"
+                              SelectedItem="{Binding SelectedTheme}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <ListBox Grid.Row="2"
+                         Background="{DynamicResource SidebarBackgroundBrush}"
+                         BorderThickness="0"
+                         ItemsSource="{Binding Operations}"
+                         SelectedItem="{Binding SelectedOperation}"
+                         IsEnabled="{Binding CurrentOperationViewModel.IsNotBusy,
+                             FallbackValue=True}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"
+                                       Foreground="{DynamicResource SidebarTextBrush}"
+                                       TextWrapping="Wrap"
+                                       Margin="4,3" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <ContentControl Grid.Column="1"
+                        Margin="24"
+                        Content="{Binding CurrentOperationViewModel}" />
+    </Grid>
+
+</Window>

@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PdfOperations.Gui.ViewModels"
+             x:Class="PdfOperations.Gui.Views.HelpView"
+             x:DataType="vm:HelpViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="24" Spacing="16">
+            <TextBlock Text="{Binding Title}"
+                       FontSize="28"
+                       FontWeight="Bold" />
+
+            <TextBlock Text="{Binding HelpText}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       LineHeight="22" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

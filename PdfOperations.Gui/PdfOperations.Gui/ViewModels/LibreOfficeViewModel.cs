@@ -1,0 +1,345 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PdfOperations.Gui.Models;
+using PdfOperations.Gui.Services;
+
+namespace PdfOperations.Gui.ViewModels;
+
+public partial class LibreOfficeViewModel : FileInputViewModelBase
+{
+    [ObservableProperty]
+    private string outputDirectory = "";
+
+    [ObservableProperty]
+    private string selectedFormat = "pdf";
+
+    [ObservableProperty]
+    private string lastOutputDirectory = "";
+
+    public List<string> Formats { get; } =
+    [
+        "pdf",
+        "docx",
+        "odt",
+        "xlsx",
+        "html",
+        "txt"
+    ];
+    
+    [ObservableProperty]
+    private string outputFileName = "";
+
+    public bool CanEditOutputFileName => InputFilesList.Files.Count == 1;
+
+    private void RefreshOutputFileName()
+    {
+        string[] files = InputFilesList.ToPathArray();
+
+        OutputFileName = files.Length switch
+        {
+            1 => Path.GetFileNameWithoutExtension(files[0]) + "." + SelectedFormat,
+            > 1 => Loc.GeneratedFromInputFileNames,
+            _ => ""
+        };
+
+        OnPropertyChanged(nameof(CanEditOutputFileName));
+    }
+
+    partial void OnOutputFileNameChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+    
+    public LibreOfficeViewModel() 
+        : base(
+            loc => loc.SelectDocumentFiles,
+            loc => loc.InputOfficeFilesWithFormats,
+            ["*.docx", "*.odt", "*.doc", "*.odg", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
+            inputTitle: loc => loc.InputOfficeFilesWithFormats)
+    {
+        InputFilesList.FilesChanged += () =>
+        {
+            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            RefreshOutputFileName();
+            StartCommand.NotifyCanExecuteChanged();
+        };
+    }
+
+    public override void RefreshLocalization()
+    {
+        if (InputFilesList.Files.Count > 1)
+            OutputFileName = Loc.GeneratedFromInputFileNames;
+
+        base.RefreshLocalization();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanStart))]
+    private async Task Start()
+    {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+        StatusKind = StatusKind.Info;
+
+        try
+        {
+            if (InputFilesList.IsEmpty())
+            {
+                StatusKind = StatusKind.Error;
+                StatusMessage = Loc.SelectInputFiles;
+                return;
+            }
+            
+            string[] currentInputFiles = InputFilesList.ToPathArray();
+
+            string[] missingFiles = currentInputFiles
+                .Where(file => !File.Exists(file))
+                .ToArray();
+
+            if (missingFiles.Length > 0)
+            {
+                StatusKind = StatusKind.Error;
+                StatusMessage = Loc.MissingInputFiles(string.Join(", ", missingFiles.Select(Path.GetFileName)));
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(OutputDirectory))
+            {
+                StatusKind = StatusKind.Error;
+                StatusMessage = Loc.SelectOutputDirectory;
+                return;
+            }
+
+            if (!Directory.Exists(OutputDirectory))
+                Directory.CreateDirectory(OutputDirectory);
+
+            if (string.IsNullOrWhiteSpace(SelectedFormat))
+            {
+                StatusKind = StatusKind.Error;
+                StatusMessage = Loc.SelectOutputFormat;
+                return;
+            }
+
+            string customName = "";
+
+            if (currentInputFiles.Length == 1)
+            {
+                string enteredName = OutputFileName.Trim();
+                customName = Path.GetFileNameWithoutExtension(enteredName);
+
+                if (enteredName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+                    || string.IsNullOrWhiteSpace(customName)
+                    || customName is "." or "..")
+                {
+                    StatusKind = StatusKind.Error;
+                    StatusMessage = Loc.InvalidOutputFileName;
+                    return;
+                }
+            }
+
+            int savedFilesCount = 0;
+            IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
+            
+            StatusMessage = Loc.ConvertingTo(SelectedFormat);
+            var cancellationToken = OperationToken;
+
+            await Task.Run(() =>
+            {
+                HashSet<string> usedOutputPaths = new(StringComparer.OrdinalIgnoreCase);
+
+                foreach (string inputFile in currentInputFiles)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    
+                    OperationContext context = new() { TempDir = Files.PrepareTempDir() };
+                    OperationInput input = new()
+                    {
+                        InputFiles = [inputFile],
+                        Format = SelectedFormat
+                    };
+                    Exception? operationError = null;
+
+                    try
+                    {
+                        Convert.FileToPdf(input, context, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        string expectedFile = Path.Combine(context.TempDir,
+                            Path.GetFileNameWithoutExtension(inputFile) + "." + SelectedFormat);
+
+                        if (!File.Exists(expectedFile))
+                            throw new InvalidOperationException(
+                                $"LibreOffice didn't create file for: {inputFile}");
+
+                        if (SelectedFormat == "pdf")
+                            Convert.ValidatePdfOutput(expectedFile);
+
+                        string name = currentInputFiles.Length == 1
+                            ? customName
+                            : Path.GetFileNameWithoutExtension(inputFile);
+                        
+                        if (SelectedFormat.Equals("html", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string folderName = name + "_html";
+                            string targetDirectory = Path.Combine(OutputDirectory, folderName);
+                            int htmlCounter = 1;
+
+                            while (usedOutputPaths.Contains(targetDirectory)
+                                   || File.Exists(targetDirectory)
+                                   || (!OverwriteExistingFiles && Directory.Exists(targetDirectory)))
+                            {
+                                targetDirectory = Path.Combine(
+                                    OutputDirectory, $"{folderName}_{htmlCounter++}");
+                            }
+
+                            usedOutputPaths.Add(targetDirectory);
+
+                            foreach (string generatedFile in Directory.GetFiles(
+                                         context.TempDir, "*", SearchOption.AllDirectories))
+                            {
+                                string relativePath = string.Equals(
+                                    generatedFile, expectedFile, StringComparison.OrdinalIgnoreCase)
+                                    ? name + ".html"
+                                    : Path.GetRelativePath(context.TempDir, generatedFile);
+
+                                string destination = Path.Combine(targetDirectory, relativePath);
+
+                                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+
+                                File.Move(
+                                    generatedFile,
+                                    destination,
+                                    overwrite: OverwriteExistingFiles);
+                            }
+
+                            savedFilesCount++;
+                            progress.Report(savedFilesCount);
+                            continue;
+                        }
+
+                        string extension = "." + SelectedFormat;
+                        string targetPath = Path.Combine(OutputDirectory, name + extension);
+                        int counter = 1;
+
+                        while (usedOutputPaths.Contains(targetPath)
+                               || Directory.Exists(targetPath)
+                               || (!OverwriteExistingFiles && File.Exists(targetPath)))
+                        {
+                            targetPath = Path.Combine(
+                                OutputDirectory, $"{name}_{counter++}{extension}");
+                        }
+
+                        usedOutputPaths.Add(targetPath);
+
+                        File.Move(expectedFile, targetPath, overwrite: OverwriteExistingFiles);
+
+                        savedFilesCount++;
+                        progress.Report(savedFilesCount);
+                    }
+                    catch (Exception ex)
+                    {
+                        operationError = ex;
+                        throw;
+                    }
+                    finally
+                    {
+                        TemporaryDirectoryCleanup.Delete(context.TempDir, operationError);
+                    }
+                }
+            });
+
+            LastOutputDirectory = OutputDirectory;
+            StatusKind = StatusKind.Success;
+            StatusMessage = Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private bool CanStart()
+    {
+        return !InputFilesList.IsEmpty()
+               && !string.IsNullOrWhiteSpace(OutputDirectory)
+               && !string.IsNullOrWhiteSpace(SelectedFormat)
+               && (!CanEditOutputFileName
+                || !string.IsNullOrWhiteSpace(OutputFileName));
+    }
+
+    partial void OnOutputDirectoryChanged(string value)
+    {
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedFormatChanged(string value)
+    {
+        if (CanEditOutputFileName)
+        {
+            OutputFileName =
+                Path.GetFileNameWithoutExtension(OutputFileName) + "." + value;
+        }
+
+        StartCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOutputFolder))]
+    private void OpenOutputFolder()
+    {
+        if (string.IsNullOrWhiteSpace(LastOutputDirectory) || !Directory.Exists(LastOutputDirectory))
+        {
+            StatusKind = StatusKind.Error;
+            StatusMessage = Loc.NoOutputFolderToOpen;
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = LastOutputDirectory,
+            UseShellExecute = true
+        });
+    }
+
+    private bool CanOpenOutputFolder()
+    {
+        return CanOpenDirectory(LastOutputDirectory);
+    }
+
+    partial void OnLastOutputDirectoryChanged(string value)
+    {
+        OpenOutputFolderCommand.NotifyCanExecuteChanged();
+    }
+
+    private static string GetAvailablePath(string path)
+    {
+        if (!File.Exists(path))
+            return path;
+
+        string dir = Path.GetDirectoryName(path)!;
+        string name = Path.GetFileNameWithoutExtension(path);
+        string extension = Path.GetExtension(path);
+
+        int counter = 1;
+
+        while (true)
+        {
+            string candidate = Path.Combine(dir, $"{name}_{counter}{extension}");
+
+            if (!File.Exists(candidate))
+                return candidate;
+
+            counter++;
+        }
+    }
+}

@@ -56,10 +56,14 @@ public class MainMenu
             catch (OperationCanceledException e)
             {
                 Console.WriteLine(e.Message);
+                if (e.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string cleanupDetails)
+                    Console.WriteLine(cleanupDetails);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Wystąpił błąd: {e.Message}");
+                if (e.Data[TemporaryDirectoryCleanup.ErrorDataKey] is string cleanupDetails)
+                    Console.WriteLine(cleanupDetails);
             }
         }
     }

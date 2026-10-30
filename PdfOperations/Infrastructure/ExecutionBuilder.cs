@@ -15,6 +15,7 @@ public class ExecutionBuilder
     public static List<FileJob> SetFileJobsFilesToFiles(OperationDefinition operation, OperationInput input, OperationContext operationContext)
     {
         List<FileJob> fileJobs = new List<FileJob>();
+        HashSet<string> usedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (string fileOut in input.InputFiles)
         {
@@ -24,9 +25,13 @@ public class ExecutionBuilder
             };
 
             if (input.InputFiles.Length == 1)
+            {
                 fileJob.TempPath = Files.PrepareTempPath(operationContext.TempDir, input.Output, operation.Extension);
+            }
             else
-                fileJob.TempPath = Files.PrepareTempPath(operationContext.TempDir, fileOut, operation.Extension);
+            {
+                fileJob.TempPath = Files.PrepareUniqueTempPath(operationContext.TempDir, fileOut, operation.Extension, usedFileNames);
+            }
 
             fileJobs.Add(fileJob);
         }

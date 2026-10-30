@@ -8,7 +8,7 @@ public class DivideTests
     {
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"])
+            InputFiles = TestHelper.SetInputPaths(["ocr_test_1.pdf", "ocr_test_2.pdf", "ocr_test_3.pdf"])
         };
         
         OperationDefinition operationDefinition = new OperationDefinition()
@@ -37,7 +37,21 @@ public class DivideTests
                 Assert.IsGreaterThan(0, new FileInfo(file).Length);
             }
             
-            Assert.HasCount(3, Directory.GetFiles(operationContext.TempDir));
+            Assert.HasCount(12, Directory.GetFiles(operationContext.TempDir));
+
+            for (int document = 1; document <= 3; document++)
+            {
+                for (int page = 1; page <= 4; page++)
+                {
+                    string outputFile = Path.Combine(operationContext.TempDir,
+                        $"ocr_test_{document}_{page}.pdf");
+                    Assert.IsTrue(File.Exists(outputFile));
+                    Assert.AreEqual(1, Info.GetPdfPagesSingle(outputFile));
+                    string[] texts = TestHelper.ReadPdfPageTexts(outputFile);
+                    Assert.HasCount(1, texts);
+                    Assert.Contains($"OCR TEST PDF {document} - selectable text page {page}", texts[0]);
+                }
+            }
         }
         finally
         {
@@ -51,7 +65,7 @@ public class DivideTests
     {
         OperationInput operationInput = new OperationInput()
         {
-            InputFiles = TestHelper.SetInputPaths(["test_1.pdf", "test_2.pdf", "test_3.pdf"]),
+            InputFiles = TestHelper.SetInputPaths(["test_3.pdf", "test_1.pdf", "test_2.pdf"]),
             Output =  "final.pdf"
         };
         
@@ -79,6 +93,13 @@ public class DivideTests
             }
             
             Assert.HasCount(1, Directory.GetFiles(operationContext.TempDir));
+
+            Assert.AreEqual(3, Info.GetPdfPagesSingle(fileJob.TempPath));
+            string[] pages = TestHelper.ReadPdfPageTexts(fileJob.TempPath);
+            Assert.HasCount(3, pages);
+            Assert.Contains("TEST PDF 3", pages[0]);
+            Assert.Contains("TEST PDF 1", pages[1]);
+            Assert.Contains("TEST PDF 2", pages[2]);
         }
         finally
         {
