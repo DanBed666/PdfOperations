@@ -1,0 +1,265 @@
+{
+  "converter": [
+    {
+      "name": "pymupdf-1.28.0.tar.gz",
+      "url": "https://files.pythonhosted.org/packages/8e/e9/6d6c5d6c0a3551bffd47681a6240caf941727f195b45593cf20ab36f018f/pymupdf-1.28.0.tar.gz",
+      "sha256": "e53f3567403a92da15caa9e7ae0164327fff48817e9f40175367fb9de524258d"
+    },
+    {
+      "name": "pdf2docx-0.5.13.tar.gz",
+      "url": "https://files.pythonhosted.org/packages/96/02/0b97863cc45761f6d076d2973038c79460b4364b49ea4cc2f015a2e8c1d5/pdf2docx-0.5.13.tar.gz",
+      "sha256": "75eff485d4fdcd28237783a65c1bc5e9eaf9fbc747fcacee6c5c16c8ffa7a6a9"
+    },
+    {
+      "name": "mupdf-1.28.0-source.tar.gz",
+      "url": "https://mupdf.com/downloads/archive/mupdf-1.28.0-source.tar.gz",
+      "sha256": "21c7f064903154f1c3a7458bee81f130fc36f9b5147ea13328f9980e02d2dea2"
+    },
+    {
+      "name": "version-bump-baaa3b237ad85c6afcb23dc3e4b827a3bfb0a0cb.patch",
+      "url": "https://github.com/ArtifexSoftware/mupdf/commit/baaa3b237ad85c6afcb23dc3e4b827a3bfb0a0cb.patch",
+      "sha256": "be7314fbbcaef6fcfb970138cb40654575bc3d01f7744fdab1f055b4a2c61203"
+    },
+    {
+      "name": "release-test-21327b31ed109b868a14b99cbf42f6d0bf7acdbf.patch",
+      "url": "https://github.com/ArtifexSoftware/mupdf/commit/21327b31ed109b868a14b99cbf42f6d0bf7acdbf.patch",
+      "sha256": "f19b8a907a8f8c15127ffab87c8abfc0525801be99d460ff9d982758dcd42616"
+    }
+  ],
+  "ocr": {
+    "glib2": {
+      "version": "2.82.2",
+      "release": "1",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch",
+          "sha256": "51d02360a1ee978fd45e77b84bca9cfbcf080d91986b5c0efe0732779c6a54ec"
+        },
+        {
+          "name": "0002-disable_glib_compile_schemas_warning.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/0002-disable_glib_compile_schemas_warning.patch",
+          "sha256": "396c25cfd740ffbb72209133c7b9453173167577265a4bb14502678de8d5a8f9"
+        },
+        {
+          "name": "0004-disable-explicit-ms-bitfields.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/0004-disable-explicit-ms-bitfields.patch",
+          "sha256": "48e94a9e61f8db9a2dc66556f12c725efe5e247a9ddc5b491f8cb8310a387293"
+        },
+        {
+          "name": "0005-gstrfuncs-Improve-inline-version-of-g_strdup-to-avoi.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/0005-gstrfuncs-Improve-inline-version-of-g_strdup-to-avoi.patch",
+          "sha256": "f15f6e4df5e0925cbdaf3a7e045f2516b3a20d1f4606b6d3f91e17f8b35b5dc6"
+        },
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/PKGBUILD",
+          "sha256": "74065a6487b469c2b7896bfe8e97bd12f136dc8274747a3ebf80549b43480776"
+        },
+        {
+          "name": "gio-querymodules.hook.in",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/gio-querymodules.hook.in",
+          "sha256": "f18d27d98709dba8c5f9756672baaf0158fb4353c9edbdc2e80021f88ff34ced"
+        },
+        {
+          "name": "glib-compile-schemas.hook.in",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/glib-compile-schemas.hook.in",
+          "sha256": "0c3d54636407e0e13429b73959cace626253cd772e1d4870de0fb92b0b99545a"
+        },
+        {
+          "name": "pyscript2exe.py",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-glib2/pyscript2exe.py",
+          "sha256": "e57174517b08cf8f9fb4f43a381d342d23d2db3cad661107f35ca21c39b5734d"
+        },
+        {
+          "name": "glib-2.82.2.tar.xz",
+          "url": "https://download.gnome.org/sources/glib/2.82/glib-2.82.2.tar.xz",
+          "sha256": "ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63"
+        },
+        {
+          "name": "7e69f88480a4bf8d9653efd0310c4c25390a0c8b.patch",
+          "url": "https://gitlab.gnome.org/GNOME/glib/-/commit/7e69f88480a4bf8d9653efd0310c4c25390a0c8b.patch",
+          "sha256": "4902e5748c6954ed38f690f27954db96709e705ff83bbdb4ebf7392a21f65824"
+        }
+      ]
+    },
+    "pango": {
+      "version": "1.54.0",
+      "release": "1",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "0001-disable-dwrite.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-pango/0001-disable-dwrite.patch",
+          "sha256": "18f14c39d441ec8d015209a6d1daf15fd17e7504b958f808b33477e1d54d5c97"
+        },
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-pango/PKGBUILD",
+          "sha256": "7522e3025b426f33c2cab8b8344cf7c4e1083036879d389bc5c00cb91b933123"
+        },
+        {
+          "name": "pango-1.54.0.tar.xz",
+          "url": "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz",
+          "sha256": "8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8"
+        }
+      ]
+    },
+    "cairo": {
+      "version": "1.18.2",
+      "release": "1",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "0026-create-argb-fonts.all.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-cairo/0026-create-argb-fonts.all.patch",
+          "sha256": "6db6c44fbdb4926d09afa978fe80430186c4b7b7d255059602b1f94c6a079975"
+        },
+        {
+          "name": "0030-ucrt-clang-fixes.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-cairo/0030-ucrt-clang-fixes.patch",
+          "sha256": "86c1af2878a20bd3608fc476e4ba1f2451458a5f6f12e457e37b61082c38db82"
+        },
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-cairo/PKGBUILD",
+          "sha256": "31afaed84fd353998f430bce3eabbb4e9679eb8472a54aea0879dac300398d95"
+        },
+        {
+          "name": "cairo-1.18.2.tar.xz",
+          "url": "https://cairographics.org/releases/cairo-1.18.2.tar.xz",
+          "sha256": "a62b9bb42425e844cc3d6ddde043ff39dbabedd1542eba57a2eb79f85889d45a"
+        }
+      ]
+    },
+    "libiconv": {
+      "version": "1.17",
+      "release": "4",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "0002-fix-cr-for-awk-in-configure.all.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch",
+          "sha256": "89d5c0f666e50a0186cfb142ba7b77e8fe1ac4d65bdfd9ae14ae8d2f0045a87c"
+        },
+        {
+          "name": "0003-add-cp65001-as-utf8-alias.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch",
+          "sha256": "cb2b1cca44c9b9bd11c3bd33997c10d22dff263542275324c88f34b59910ef87"
+        },
+        {
+          "name": "0004-fix-makefile-devel-assuming-gcc.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch",
+          "sha256": "2f08ca8681e4c85cdb2e6835921a502fd623dee4bf8ca10aa3c66747ede58a47"
+        },
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/PKGBUILD",
+          "sha256": "5a6abee1e5a1fbf1f80bca19625bac990c94e0aee92cf03a856e86e1b486facf"
+        },
+        {
+          "name": "fix-pointer-buf.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/fix-pointer-buf.patch",
+          "sha256": "6b6e2393840f4dc6067587165777b1a07978f4c05247d7c1010a45ad251bbeeb"
+        },
+        {
+          "name": "iconv.pc",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libiconv/iconv.pc",
+          "sha256": "56e7ec406bf42eb66b1d972f20d229f7a76ba00c38c7b4403bf348875704baae"
+        },
+        {
+          "name": "libiconv-1.17.tar.gz",
+          "url": "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz",
+          "sha256": "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313"
+        }
+      ]
+    },
+    "libunistring": {
+      "version": "1.2",
+      "release": "1",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libunistring/PKGBUILD",
+          "sha256": "b231307d342e59122de2c8c331c6564b544a52ae39738d4d292ceabf0b3ff401"
+        },
+        {
+          "name": "libunistring-1.2.tar.gz",
+          "url": "https://ftp.gnu.org/gnu/libunistring/libunistring-1.2.tar.gz",
+          "sha256": "fd6d5662fa706487c48349a758b57bc149ce94ec6c30624ec9fdc473ceabbc8e"
+        }
+      ]
+    },
+    "libidn2": {
+      "version": "2.3.7",
+      "release": "1",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-libidn2/PKGBUILD",
+          "sha256": "137bf9152b6a1fa6c75677b3835c8d8e7d515bdf4d9727f88a1f47ada11188b4"
+        },
+        {
+          "name": "libidn2-2.3.7.tar.gz",
+          "url": "https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz",
+          "sha256": "4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64"
+        }
+      ]
+    },
+    "gettext": {
+      "version": "0.22.5",
+      "release": "2",
+      "recipeCommit": "dda6ad369e9f663920436ece2c03e0bfbcddbd25",
+      "files": [
+        {
+          "name": "0005-Fix-compilation-of-pthread_sigmask.c.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/0005-Fix-compilation-of-pthread_sigmask.c.patch",
+          "sha256": "cbc2f533012d646521afa20f8b256917fce040741ff42cf53fb6dd7123a6670a"
+        },
+        {
+          "name": "0021-replace-fsync.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/0021-replace-fsync.patch",
+          "sha256": "380dbddee2f9e2feee4c1435e8a942b5d11d0125e60c3350ebb10c19b19011aa"
+        },
+        {
+          "name": "0022-libasprintf.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/0022-libasprintf.patch",
+          "sha256": "c354f6a7021069c99b90f1c6d6f6a4ccf40a01e9f6742b866df2b5a7286cb868"
+        },
+        {
+          "name": "0023-gnulib.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/0023-gnulib.patch",
+          "sha256": "4f34906eeb535c74fa3f2936729b59c36d05d503a274e2b850fc770263c60b46"
+        },
+        {
+          "name": "0024-disable-gnu-format.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/0024-disable-gnu-format.patch",
+          "sha256": "ce7ccf6dd3a492cab322253cd67310899b546eccc25821c25cbc047a1a984633"
+        },
+        {
+          "name": "122-Use-LF-as-newline-in-envsubst.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/122-Use-LF-as-newline-in-envsubst.patch",
+          "sha256": "ef9f11a1cd10539d4323c6fcba3013cc503d47366004fe8a99c642dc3ddf2fd0"
+        },
+        {
+          "name": "PKGBUILD",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/PKGBUILD",
+          "sha256": "a2dd98c2ef3bd5eb728562c64577fbfdbcc6f6d647ec23e2c432f67da16e7af3"
+        },
+        {
+          "name": "gettext-0.22-disable-libtextstyle.patch",
+          "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/dda6ad369e9f663920436ece2c03e0bfbcddbd25/mingw-w64-gettext/gettext-0.22-disable-libtextstyle.patch",
+          "sha256": "a28a27192f336f0b0908bdbf840d3b19d7b587c4ac52cad635cb43e95eb3c78d"
+        },
+        {
+          "name": "gettext-0.22.5.tar.gz",
+          "url": "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.22.5.tar.gz",
+          "sha256": "ec1705b1e969b83a9f073144ec806151db88127f5e40fe5a94cb6c8fa48996a0"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+name: Build native candidates
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: Candidate to build (does not publish or replace application files)
+        type: choice
+        default: pdf2docx
+        options:
+          - pdf2docx
+          - ocr-dependencies
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-candidates-${{ github.ref }}-${{ inputs.component }}
+  cancel-in-progress: false
+
+jobs:
+  pdf2docx:
+    if: inputs.component == 'pdf2docx'
+    runs-on: windows-2022
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14.4'
+          architecture: x64
+      - name: Test build helpers
+        run: python -m unittest discover -s build-tools/native/tests -v
+      - name: Build and compare converter
+        run: python build-tools/native/build_converter.py --output "$env:RUNNER_TEMP/native-converter"
+      - name: Upload tested candidate and source inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pdf2docx-candidate-${{ github.run_id }}
+          path: ${{ runner.temp }}/native-converter/artifacts/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload diagnostics even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pdf2docx-logs-${{ github.run_id }}
+          path: ${{ runner.temp }}/native-converter/logs/
+          if-no-files-found: warn
+          retention-days: 14
+
+  ocr-dependencies:
+    if: inputs.component == 'ocr-dependencies'
+    runs-on: windows-2022
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        package: [libiconv, libunistring, libidn2, gettext, glib2, cairo, pango]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14.4'
+      - name: Fetch checksum-pinned recipe and source inputs
+        shell: pwsh
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: python build-tools/native/source_inputs.py --package "$env:PACKAGE" --output "$env:RUNNER_TEMP/native-ocr"
+      # Keep MINGW64 for compatibility with the existing OCR DLLs. Do not
+      # silently migrate individual dependencies to a different C runtime.
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2
+        with:
+          msystem: MINGW64
+          update: true
+          cache: false
+          install: base-devel git mingw-w64-x86_64-toolchain
+      - name: Build candidate package and source archive
+        shell: msys2 {0}
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: bash build-tools/native/build_ocr.sh "$PACKAGE" "$(cygpath -u "$RUNNER_TEMP")/native-ocr"
+      - name: Upload package candidates (not a tested OCR bundle)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ocr-${{ matrix.package }}-candidate-${{ github.run_id }}
+          path: ${{ runner.temp }}/native-ocr/artifacts/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload diagnostics even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ocr-${{ matrix.package }}-logs-${{ github.run_id }}
+          path: ${{ runner.temp }}/native-ocr/logs/
+          if-no-files-found: warn
+          retention-days: 14
