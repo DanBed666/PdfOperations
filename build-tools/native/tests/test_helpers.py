@@ -19,7 +19,7 @@ sys.path.insert(0, str(HERE))
 from source_inputs import digest, download, extract, inventory, normalize_patch_line_endings
 from compare_converter import contents
 from check_build_backend import check_source_metadata, check_windows_library_paths
-from build_converter import command_environment
+from build_converter import command_environment, restore_pdf2docx_version, validate_pdf2docx_wheel
 
 
 @contextmanager
@@ -69,6 +69,45 @@ class CommandEncodingTests(unittest.TestCase):
                 subprocess.run(command, env=command_environment(legacy), stdout=output,
                                stderr=subprocess.PIPE, timeout=30, check=True)
             self.assertEqual(logfile.read_text(encoding='utf-8').strip(), chr(0x1f44b) + ' ' + chr(0x142))
+
+
+class Pdf2DocxVersionTests(unittest.TestCase):
+    def test_restores_version_from_pinned_source_metadata(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'PKG-INFO').write_bytes(b'Name: pdf2docx\nVersion: 0.5.13\n')
+            restore_pdf2docx_version(root)
+            restore_pdf2docx_version(root)
+            self.assertEqual((root / 'version.txt').read_text().strip(), '0.5.13')
+
+    def test_rejects_other_source_version(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'PKG-INFO').write_bytes(b'Name: pdf2docx\nVersion: 0.5.6a1\n')
+            with self.assertRaisesRegex(ValueError, 'source metadata'):
+                restore_pdf2docx_version(root)
+            self.assertFalse((root / 'version.txt').exists())
+
+    def test_keeps_conflicting_version_file(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'PKG-INFO').write_bytes(b'Name: pdf2docx\nVersion: 0.5.13\n')
+            (root / 'version.txt').write_bytes(b'0.5.6a1\n')
+            with self.assertRaisesRegex(ValueError, 'Conflicting'):
+                restore_pdf2docx_version(root)
+            self.assertEqual((root / 'version.txt').read_bytes(), b'0.5.6a1\n')
+
+    def test_checks_built_wheel_metadata_not_just_filename(self):
+        with temporary_directory() as folder:
+            wheel = Path(folder) / 'pdf2docx-0.5.13-py3-none-any.whl'
+            for version in ('0.5.13', '0.5.6a1'):
+                with zipfile.ZipFile(wheel, 'w') as archive:
+                    archive.writestr('pdf2docx.dist-info/METADATA', f'Name: pdf2docx\nVersion: {version}\n')
+                if version == '0.5.13':
+                    validate_pdf2docx_wheel(wheel)
+                else:
+                    with self.assertRaisesRegex(ValueError, 'rebuilt pdf2docx version'):
+                        validate_pdf2docx_wheel(wheel)
 
 
 class SourceTests(unittest.TestCase):

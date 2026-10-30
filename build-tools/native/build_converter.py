@@ -1,10 +1,12 @@
 import argparse
+from email.parser import BytesParser
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+import zipfile
 
 from source_inputs import HERE, digest, download, extract, inventory, normalize_patch_line_endings
 
@@ -14,6 +16,27 @@ def command_environment(env=None):
     # A UTF-8 log file alone does not set the encoding used by child processes.
     environment.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8')
     return environment
+
+
+def restore_pdf2docx_version(source):
+    metadata = BytesParser().parsebytes((source / 'PKG-INFO').read_bytes(), headersonly=True)
+    if metadata.get('Name') != 'pdf2docx' or metadata.get('Version') != '0.5.13':
+        raise ValueError('Unexpected pdf2docx source metadata')
+    version_file = source / 'version.txt'
+    if version_file.exists() and version_file.read_text(encoding='utf-8').strip() != '0.5.13':
+        raise ValueError('Conflicting pdf2docx version.txt')
+    # The published sdist omits this generated file; setup.py otherwise uses 0.5.6a1.
+    version_file.write_text('0.5.13\n', encoding='utf-8')
+
+
+def validate_pdf2docx_wheel(wheel):
+    with zipfile.ZipFile(wheel) as archive:
+        names = [name for name in archive.namelist() if name.endswith('.dist-info/METADATA')]
+        if len(names) != 1:
+            raise ValueError('Expected one pdf2docx wheel metadata file')
+        metadata = BytesParser().parsebytes(archive.read(names[0]), headersonly=True)
+    if metadata.get('Name') != 'pdf2docx' or metadata.get('Version') != '0.5.13':
+        raise ValueError('Unexpected rebuilt pdf2docx version')
 
 
 def build(root):
@@ -51,6 +74,7 @@ def build(root):
     mupdf = extract(inputs / 'mupdf-1.28.0-source.tar.gz', root / 'mupdf')
     pymupdf = extract(inputs / 'pymupdf-1.28.0.tar.gz', root / 'pymupdf')
     pdf2docx = extract(inputs / 'pdf2docx-0.5.13.tar.gz', root / 'pdf2docx')
+    restore_pdf2docx_version(pdf2docx)
     for item in spec['converter']:
         if item['name'].endswith('.patch'):
             patch = inputs / item['name']
@@ -92,6 +116,7 @@ def build(root):
     new_wheels = root / 'rebuilt-wheels'
     run(python, '-m', 'pip', 'wheel', '--no-deps', '--no-build-isolation', pymupdf, '-w', new_wheels, env=env)
     run(python, '-m', 'pip', 'wheel', '--no-deps', '--no-build-isolation', pdf2docx, '-w', new_wheels)
+    validate_pdf2docx_wheel(new_wheels / 'pdf2docx-0.5.13-py3-none-any.whl')
     rebuilt = list(new_wheels.glob('*.whl'))
     if len(rebuilt) != 2:
         raise RuntimeError('Expected rebuilt PyMuPDF and pdf2docx wheels')

@@ -87,6 +87,12 @@ jobs:
           update: true
           cache: false
           install: base-devel git mingw-w64-x86_64-toolchain
+      - name: Check OCR orchestration before compiling
+        shell: msys2 {0}
+        run: |
+          bash -n build-tools/native/build_ocr.sh
+          bash -n build-tools/native/tests/test_ocr.sh
+          bash build-tools/native/tests/test_ocr.sh "$(cygpath -u "$RUNNER_TEMP")/ocr-script-tests"
       - name: Build candidate package and source archive
         shell: msys2 {0}
         env:
@@ -105,6 +111,20 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ocr-${{ matrix.package }}-logs-${{ github.run_id }}
-          path: ${{ runner.temp }}/native-ocr/logs/
+          path: |
+            ${{ runner.temp }}/native-ocr/logs/
+            ${{ runner.temp }}/ocr-script-tests/
           if-no-files-found: warn
           retention-days: 14
+      - name: Preserve partial packages and inputs on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ocr-${{ matrix.package }}-partial-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/native-ocr/packages/
+            ${{ runner.temp }}/native-ocr/inputs/
+            ${{ runner.temp }}/native-ocr/logs/
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 0

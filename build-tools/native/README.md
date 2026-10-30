@@ -24,6 +24,9 @@ Nothing runs on push or pull request. Nothing is automatically published.
 ## PDF-to-DOCX
 
 - Uses Python 3.14.4, pdf2docx 0.5.13 and PyMuPDF 1.28.0.
+- Restores pdf2docx's missing `version.txt` from the verified 0.5.13 source
+  metadata and checks the rebuilt wheel's version. Without it the upstream
+  setup script incorrectly labels this source as 0.5.6a1.
 - Builds MuPDF from the hash-pinned official 1.28.0 source archive plus the two
   recorded public patches (version header and release-test script).
 - Applies the included `patches/mupdf-vs-upgrade-libdir.patch` so linking uses
@@ -62,7 +65,7 @@ Builds the recorded recipes from MSYS2 commit
 | --- | --- |
 | libiconv | 1.17-4 |
 | libunistring | 1.2-1 |
-| libidn2 | 2.3.7-1 |
+| libidn2 | 2.3.7-2 |
 | gettext | 0.22.5-2 |
 | GLib | 2.82.2-1 |
 | cairo | 1.18.2-1 |
@@ -78,6 +81,14 @@ distribution. They must not be blindly extracted over the existing OCR folder.
 Check DLL imports and runtime compatibility together, then compare OCR results,
 Polish characters, PDF/image search, cancellation and timeout behavior. New
 runtime dependencies would require their own notices/source review.
+
+The temporary public-key keyring uses inherited Windows permissions; the script
+does not request POSIX chmod on the runner's NTFS temporary directory. Signature
+checks are unchanged. Before compilation, orchestration tests use mock package
+builders to check success and failure paths. They are not native build tests.
+Source archives are prepared first. On failure, a separate `ocr-*-partial-*`
+artifact preserves any packages already created, inputs and diagnostics. Partial
+artifacts are not approved binaries; logs and exit status must be reviewed first.
 
 MINGW64 is deprecated upstream but is intentionally kept to match the existing
 bundle's C runtime. If a build dependency disappears or an old recipe does not
