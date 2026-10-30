@@ -10,12 +10,25 @@ on:
         options:
           - pdf2docx
           - ocr-dependencies
+      ocr_package:
+        description: OCR package to build (ignored for pdf2docx)
+        type: choice
+        default: all
+        options:
+          - all
+          - libiconv
+          - libunistring
+          - libidn2
+          - gettext
+          - glib2
+          - cairo
+          - pango
 
 permissions:
   contents: read
 
 concurrency:
-  group: native-candidates-${{ github.ref }}-${{ inputs.component }}
+  group: native-candidates-${{ github.ref }}-${{ inputs.component }}-${{ inputs.ocr_package }}
   cancel-in-progress: false
 
 jobs:
@@ -66,7 +79,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        package: [libiconv, libunistring, libidn2, gettext, glib2, cairo, pango]
+        package: ${{ fromJSON(inputs.ocr_package == 'all' && '["libiconv","libunistring","libidn2","gettext","glib2","cairo","pango"]' || format('["{0}"]', inputs.ocr_package)) }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -74,6 +87,9 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.14.4'
+      - name: Test build helpers
+        shell: pwsh
+        run: python -X utf8 -m unittest discover -s build-tools/native/tests -v
       - name: Fetch checksum-pinned recipe and source inputs
         shell: pwsh
         env:

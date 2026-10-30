@@ -1,0 +1,32 @@
+Include the launcher API fix without changing the original helper input.
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -54,6 +54,9 @@
+             'f18d27d98709dba8c5f9756672baaf0158fb4353c9edbdc2e80021f88ff34ced'
+             'e57174517b08cf8f9fb4f43a381d342d23d2db3cad661107f35ca21c39b5734d')
+ 
++source+=(glib2-setuptools-launcher.patch)
++sha256sums+=('ace4e7bd99e3c3f63711348c2ad6241e3b3ee696a6ca34a912caeb574aa5e4a9')
++
+ apply_patch_with_msg() {
+   for _patch in "$@"
+   do
+@@ -67,6 +70,9 @@
+ 
+ 
+ prepare() {
++  mkdir -p "${srcdir}/launcher-helper"
++  cp "${srcdir}/pyscript2exe.py" "${srcdir}/launcher-helper/"
++  (cd "${srcdir}/launcher-helper" && patch -Np1 -i "${srcdir}/glib2-setuptools-launcher.patch")
+   tar -xf "glib-${pkgver}.tar.xz" || true
+   cd "${srcdir}/glib-${pkgver}"
+ 
+@@ -145,7 +151,7 @@
+ 
+   for name in glib-mkenums glib-genmarshal gdbus-codegen gtester-report; do
+     ${MINGW_PREFIX}/bin/python3 \
+-      "${srcdir}/pyscript2exe.py" "${pkgdir}${MINGW_PREFIX}/bin/${name}"
++      "${srcdir}/launcher-helper/pyscript2exe.py" "${pkgdir}${MINGW_PREFIX}/bin/${name}"
+ 
+         # https://github.com/mesonbuild/meson/issues/12271#issuecomment-1741381750
+         for pcfile in  "${pkgdir}${MINGW_PREFIX}"/lib/pkgconfig/*.pc; do

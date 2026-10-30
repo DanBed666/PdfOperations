@@ -110,6 +110,149 @@ class Pdf2DocxVersionTests(unittest.TestCase):
                         validate_pdf2docx_wheel(wheel)
 
 
+class OcrRecipePatchTests(unittest.TestCase):
+    def apply_source_patch(self, root, relative_path, original, patch_name):
+        target = root / relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(original.encode('utf-8'))
+        subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+        patch_file = root / patch_name
+        shutil.copy2(HERE / 'patches' / patch_name, patch_file)
+        normalize_patch_line_endings(patch_file)
+        for check in (True, False):
+            subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
+                           cwd=root, check=True, capture_output=True)
+        return target.read_text()
+
+    def test_cairo_patch_guards_operators_without_removing_fallback(self):
+        original = (
+            'typedef DWRITE_COLOR_GLYPH_RUN1 DWRITE_COLOR_GLYPH_RUN1_WORKAROUND;\n'
+            '#endif\n\n'
+            'DEFINE_ENUM_FLAG_OPERATORS(DWRITE_GLYPH_IMAGE_FORMATS);\n\n'
+            '#endif /* DWRITE_EXTRA_H */\n'
+        )
+        with temporary_directory() as folder:
+            patched = self.apply_source_patch(Path(folder), 'src/win32/dw-extra.h',
+                                              original, 'cairo-mingw-enum.patch')
+            self.assertIn(
+                '#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 11\n'
+                'DEFINE_ENUM_FLAG_OPERATORS(DWRITE_GLYPH_IMAGE_FORMATS);\n#endif', patched)
+            self.assertEqual(patched.count('DEFINE_ENUM_FLAG_OPERATORS('), 1)
+
+    def test_glib_launcher_supports_current_and_legacy_setuptools(self):
+        import ast
+        from types import SimpleNamespace
+
+        original = (
+            'import sys\nimport re\nimport os\n'
+            'from setuptools.command.easy_install import get_win_launcher\n\n'
+            'path = sys.argv[1]\n'
+        )
+        with temporary_directory() as folder:
+            patched = self.apply_source_patch(Path(folder), 'pyscript2exe.py',
+                                              original, 'glib2-setuptools-launcher.patch')
+            block = next(node for node in ast.parse(patched).body if isinstance(node, ast.Try))
+            code = compile(ast.Module(body=[block], type_ignores=[]), '<launcher imports>', 'exec')
+            launcher = Mock(return_value=b'MZ-test-launcher')
+            for legacy in (False, True):
+                with self.subTest(legacy=legacy):
+                    calls = []
+
+                    def import_helper(name, *args, **kwargs):
+                        calls.append(name)
+                        if name == 'setuptools._scripts' and legacy:
+                            raise ImportError('old setuptools')
+                        return SimpleNamespace(get_win_launcher=launcher)
+
+                    namespace = {'__builtins__': dict(vars(__import__('builtins')), __import__=import_helper)}
+                    exec(code, namespace)
+                    self.assertIs(namespace['get_win_launcher'], launcher)
+                    self.assertEqual(calls, ['setuptools._scripts'] +
+                                     (['setuptools.command.easy_install'] if legacy else []))
+
+    def test_cairo_and_glib_recipes_include_checked_source_patches(self):
+        for name, prepare_line in (
+            ('cairo-mingw-enum', '+  patch -p1 -i "${srcdir}/cairo-mingw-enum.patch"'),
+            ('glib2-setuptools-launcher',
+             '+  (cd "${srcdir}/launcher-helper" && patch -Np1 -i "${srcdir}/glib2-setuptools-launcher.patch")'),
+        ):
+            with self.subTest(name=name):
+                data = (HERE / 'patches' / (name + '.patch')).read_bytes().replace(b'\r\n', b'\n')
+                recipe = (HERE / 'patches' / (name + '-recipe.patch')).read_text()
+                self.assertIn('+source+=(' + name + '.patch)', recipe)
+                self.assertIn("+sha256sums+=('" + hashlib.sha256(data).hexdigest() + "')", recipe)
+                self.assertIn(prepare_line, recipe)
+                if name == 'glib2-setuptools-launcher':
+                    self.assertIn('+  cp "${srcdir}/pyscript2exe.py" "${srcdir}/launcher-helper/"', recipe)
+                    self.assertIn('+      "${srcdir}/launcher-helper/pyscript2exe.py"', recipe)
+
+    def test_gettext_patch_updates_both_environment_arrays(self):
+        original = '''      char **env = _environ;
+      wchar_t **wenv = _wenviron;
+      if (env != NULL)
+        for (char *s = env; *s != NULL; s++)
+          if (s[0] == 'T' && s[1] == 'Z' && s[2] == '=')
+            s[0] = '$';
+      if (wenv != NULL)
+        for (wchar_t *ws = wenv; *ws != NULL; ws++)
+          if (ws[0] == L'T' && ws[1] == L'Z' && ws[2] == L'=')
+            ws[0] = L'$';
+    }
+#endif
+
+'''
+        with temporary_directory() as folder:
+            root = Path(folder)
+            target = root / 'gettext-tools/gnulib-lib/localtime.c'
+            target.parent.mkdir(parents=True)
+            target.write_bytes(original.encode('utf-8'))
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            patch_file = root / 'gettext-localtime.patch'
+            shutil.copy2(HERE / 'patches/gettext-localtime.patch', patch_file)
+            normalize_patch_line_endings(patch_file)
+            for check in (True, False):
+                subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
+                               cwd=root, check=True, capture_output=True)
+            patched = target.read_text()
+            self.assertIn('for (char **ep = env;', patched)
+            self.assertIn('char *s = *ep;', patched)
+            self.assertIn('for (wchar_t **wep = wenv;', patched)
+            self.assertIn('wchar_t *ws = *wep;', patched)
+            self.assertNotIn('for (char *s = env;', patched)
+            self.assertNotIn('for (wchar_t *ws = wenv;', patched)
+
+    def test_gettext_recipe_keeps_source_patch_checksum(self):
+        data = (HERE / 'patches/gettext-localtime.patch').read_bytes().replace(b'\r\n', b'\n')
+        recipe_patch = (HERE / 'patches/gettext-localtime-recipe.patch').read_text()
+        self.assertIn("+sha256sums+=('" + hashlib.sha256(data).hexdigest() + "')", recipe_patch)
+        self.assertIn('+source+=(gettext-localtime.patch)', recipe_patch)
+        self.assertIn('+  apply_patch_with_msg gettext-localtime.patch', recipe_patch)
+
+    def test_libiconv_patch_preserves_version_and_existing_flags(self):
+        original = (
+            'pkgver=1.17\npkgrel=4\n'
+            'build() {\n'
+            '  [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"\n'
+            '  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"\n'
+            '}\n'
+        )
+        with temporary_directory() as folder:
+            root = Path(folder)
+            recipe = root / 'PKGBUILD'
+            recipe.write_bytes(original.encode('utf-8'))
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            patch_file = root / 'libiconv.patch'
+            shutil.copy2(HERE / 'patches/libiconv-gnu17.patch', patch_file)
+            normalize_patch_line_endings(patch_file)
+            for check in (True, False):
+                subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
+                               cwd=root, check=True, capture_output=True)
+            patched = recipe.read_text()
+            self.assertIn('pkgver=1.17\npkgrel=4\n', patched)
+            self.assertEqual(patched.count('-std=gnu17'), 1)
+            self.assertIn('export CFLAGS="${CFLAGS:-} -std=gnu17"', patched)
+
+
 class SourceTests(unittest.TestCase):
     def test_manifest_has_pinned_sources(self):
         manifest = json.loads((HERE / 'sources.json').read_text())

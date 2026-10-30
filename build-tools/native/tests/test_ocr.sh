@@ -46,7 +46,11 @@ export -f mkdir gpg pacman makepkg-mingw
 for mode in success source-failure build-failure; do
   testroot="$root/$mode"
   mkdir -p "$testroot/inputs" "$testroot/logs"
-  printf '%s\n' "validpgpkeys=('TEST-PUBLIC-KEY')" > "$testroot/inputs/PKGBUILD"
+  printf '%s\n' "validpgpkeys=('TEST-PUBLIC-KEY')" \
+    'build() {' \
+    '  [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"' \
+    '  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"' \
+    '}' > "$testroot/inputs/PKGBUILD"
   for file in source-inputs.json sources.json; do
     printf '{}\n' > "$testroot/logs/$file"
   done
@@ -56,11 +60,14 @@ for mode in success source-failure build-failure; do
   bash "$script" libiconv "$testroot" || status=$?
   test -f "$testroot/gnupg/verification-call.txt"
   test -f "$testroot/logs/environment-after.txt"
+  grep -q -- '-std=gnu17' "$testroot/work/PKGBUILD"
   case "$mode" in
     success)
       test "$status" = 0
       test -f "$testroot/artifacts/mock.pkg.tar.zst"
       test -f "$testroot/artifacts/mock.src.tar.gz"
+      test -f "$testroot/artifacts/patches/libiconv-gnu17.patch"
+      cmp "$testroot/work/PKGBUILD" "$testroot/artifacts/PKGBUILD"
       (cd "$testroot/artifacts" && sha256sum -c SHA256SUMS)
       test -f "$testroot/logs/mock-build.log"
       ;;

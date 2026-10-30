@@ -1,0 +1,21 @@
+Include the MinGW compatibility fix in the checksum-verified source package.
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -44,6 +44,9 @@
+             '6db6c44fbdb4926d09afa978fe80430186c4b7b7d255059602b1f94c6a079975'
+             '86c1af2878a20bd3608fc476e4ba1f2451458a5f6f12e457e37b61082c38db82')
+ 
++source+=(cairo-mingw-enum.patch)
++sha256sums+=('6fa0d4d69144b87d4aa67087072be6d3aa95b96960f2b10f10924ff092db5dd8')
++
+ prepare() {
+   cd "${srcdir}/${_realname}-${pkgver}"
+ 
+@@ -51,6 +54,7 @@
+   patch -p1 -i ${srcdir}/0026-create-argb-fonts.all.patch
+   patch -p1 -i ${srcdir}/0030-ucrt-clang-fixes.patch
++  patch -p1 -i "${srcdir}/cairo-mingw-enum.patch"
+ }
+ 
+ build() {
+   local -a _static_flags=(

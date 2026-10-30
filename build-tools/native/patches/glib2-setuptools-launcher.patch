@@ -1,0 +1,15 @@
+Use the current setuptools launcher helper, retaining the old API fallback.
+The launcher format and companion script naming remain unchanged.
+--- a/pyscript2exe.py
++++ b/pyscript2exe.py
+@@ -6,6 +6,9 @@
+ import sys
+ import re
+ import os
+-from setuptools.command.easy_install import get_win_launcher
++try:
++    from setuptools._scripts import get_win_launcher
++except ImportError:
++    from setuptools.command.easy_install import get_win_launcher
+ 
+ path = sys.argv[1]

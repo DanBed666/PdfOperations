@@ -14,7 +14,8 @@ required. Workflow permissions are read-only; action revisions are pinned.
 4. Start with `pdf2docx`. Download its candidate, source inputs and build logs
    from the completed run's **Artifacts** section.
 5. Run `ocr-dependencies` separately for the seven historical native packages.
-   At most two jobs run concurrently. Each job has a 90-minute timeout.
+   Leave `ocr_package` as `all`, or select one failed package to rebuild only
+   that candidate. At most two jobs run concurrently; each has a 90-minute timeout.
 6. Keep source artifacts with the candidate binaries. Artifacts expire after
    30 days (diagnostic logs after 14); they are not permanent source hosting.
 
@@ -75,6 +76,28 @@ Recipe/source checksums are pinned; `makepkg` retains its source and signature
 checks. Binary packages include build metadata, and `--allsource` includes
 upstream inputs and patches. The compiler/build dependencies come from the
 runner's current MINGW64 repository and are recorded with `pacman -Q`.
+
+For libiconv 1.17 only, `patches/libiconv-gnu17.patch` selects GNU C17 while
+preserving the other compiler flags. New GCC defaults to C23, which changes
+the meaning of the library's old empty-parameter declarations. The original
+checksum-pinned recipe is kept in the inputs; the patched recipe is included
+in the generated source archive and artifacts together with this patch.
+
+For gettext 0.22.5, `gettext-localtime.patch` fixes the Windows environment-array
+pointer types in `gettext-tools/gnulib-lib/localtime.c` (GNU gettext bug 65957).
+The recipe patch adds it to `source` and `sha256sums` and applies it in `prepare`,
+so the source package includes the fix and verifies its checksum. This does not
+disable incompatible-pointer diagnostics or change other package recipes.
+
+For cairo 1.18.2, `cairo-mingw-enum.patch` keeps the DirectWrite enum-operator
+fallback only on toolchains that do not already provide it (MinGW before 11
+and non-MinGW). DirectWrite remains enabled.
+
+For GLib 2.82.2, `glib2-setuptools-launcher.patch` updates the packaging helper
+to import `get_win_launcher` from `setuptools._scripts`, with a fallback to
+the old import. It preserves the EXE launcher and companion script format.
+Both fixes are listed with SHA-256 checksums in their patched recipes and
+included in source archives; original downloaded sources stay unchanged.
 
 These are individual package candidates, NOT a reconstructed, tested Tesseract
 distribution. They must not be blindly extracted over the existing OCR folder.

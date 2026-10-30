@@ -1,0 +1,17 @@
+diff --git a/PKGBUILD b/PKGBUILD
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -44,3 +44,6 @@
+ 
++source+=(gettext-localtime.patch)
++sha256sums+=('acf80dc3c06196f89c2ff7869f91c1bcf6e4ef6029613bc77f321531da58a202')
++
+ # Helper macros to help make tasks easier #
+ apply_patch_with_msg() {
+@@ -74,5 +77,6 @@
+   apply_patch_with_msg \
+     0024-disable-gnu-format.patch
++  apply_patch_with_msg gettext-localtime.patch
+ 
+   libtoolize --automake --copy --force
+   WANT_AUTOMAKE=latest ./autogen.sh --skip-gnulib

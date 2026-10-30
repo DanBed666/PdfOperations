@@ -1,0 +1,9 @@
+diff --git a/PKGBUILD b/PKGBUILD
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -61,3 +61,5 @@
+ build() {
++  # libiconv 1.17 uses pre-C23 declarations; keep the original C dialect.
++  export CFLAGS="${CFLAGS:-} -std=gnu17"
+   [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"
+   mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
