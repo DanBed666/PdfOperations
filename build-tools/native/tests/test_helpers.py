@@ -11,13 +11,14 @@ import tarfile
 import tempfile
 import unittest
 import uuid
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import zipfile
 
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 from source_inputs import digest, download, extract, inventory, normalize_patch_line_endings
 from compare_converter import contents
+from check_build_backend import check_source_metadata
 
 
 @contextmanager
@@ -119,6 +120,27 @@ class ComparisonTests(unittest.TestCase):
             path = self.docx(Path(folder), 'empty.docx', '', '2026')
             with self.assertRaises(AssertionError):
                 contents(path)
+
+
+class BuildMetadataTests(unittest.TestCase):
+    def test_accepts_archive_without_git_metadata(self):
+        backend = Mock()
+        backend.git_info_py.return_value = '\n'.join(
+            f'pymupdf_git_{name} = None' for name in ('sha', 'comment', 'branch', 'diff'))
+        check_source_metadata(backend, Path('source-archive'))
+        backend.git_info_py.assert_called_once_with('source-archive', check=0, prefix='pymupdf_git_')
+
+    def test_rejects_incomplete_metadata(self):
+        backend = Mock()
+        backend.git_info_py.return_value = 'pymupdf_git_sha = None'
+        with self.assertRaises(ValueError):
+            check_source_metadata(backend, Path('source-archive'))
+
+    def test_surfaces_backend_failure(self):
+        backend = Mock()
+        backend.git_info_py.side_effect = TypeError("object of type 'NoneType' has no len()")
+        with self.assertRaises(TypeError):
+            check_source_metadata(backend, Path('source-archive'))
 
 
 class MuPdfPatchTests(unittest.TestCase):

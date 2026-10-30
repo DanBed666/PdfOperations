@@ -32,6 +32,8 @@ Nothing runs on push or pull request. Nothing is automatically published.
   This build-path-only patch is retained in the source-input artifact.
 - Builds PyMuPDF against that explicit local MuPDF source tree, never a
   silently downloaded prebuilt candidate wheel.
+- Uses pipcl 10 to handle Git metadata absent from source archives. A metadata
+  preflight runs before compilation; pipcl 9 failed here after compiling MuPDF.
 - Keeps the converter wrapper unchanged. Runtime Python versions are pinned
   to the inspected bundle. Build-tool requirements are recorded separately.
 - Compares three synthetic documents against the audited official PyMuPDF

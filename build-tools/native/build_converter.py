@@ -56,6 +56,7 @@ def build(root):
     run(sys.executable, '-m', 'venv', root / 'builder')
     python = root / 'builder/Scripts/python.exe'
     run(python, '-m', 'pip', 'install', '-r', HERE / 'build-requirements.txt')
+    run(python, HERE / 'check_build_backend.py', pymupdf)
     run(python, '-m', 'pip', 'download', '--no-deps', '-r', HERE / 'runtime-requirements.txt',
         '--dest', root / 'runtime-downloads')
     old_wheels = list((root / 'runtime-downloads').glob('pymupdf-*.whl'))
