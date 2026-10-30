@@ -49,10 +49,14 @@ def build(root):
             patch = inputs / item['name']
             run('git', 'apply', '--check', patch, cwd=mupdf)
             run('git', 'apply', patch, cwd=mupdf)
-    local_patch = inputs / 'build-tools/patches/mupdf-vs-upgrade-libdir.patch'
-    normalize_patch_line_endings(local_patch)
-    run('git', 'apply', '--check', local_patch, cwd=mupdf)
-    run('git', 'apply', local_patch, cwd=mupdf)
+    for source, name in [
+        (mupdf, 'mupdf-vs-upgrade-libdir.patch'),
+        (pymupdf, 'pymupdf-vs-upgrade-packaging.patch'),
+    ]:
+        local_patch = inputs / 'build-tools/patches' / name
+        normalize_patch_line_endings(local_patch)
+        run('git', 'apply', '--check', local_patch, cwd=source)
+        run('git', 'apply', local_patch, cwd=source)
     run(sys.executable, '-m', 'venv', root / 'builder')
     python = root / 'builder/Scripts/python.exe'
     run(python, '-m', 'pip', 'install', '-r', HERE / 'build-requirements.txt')

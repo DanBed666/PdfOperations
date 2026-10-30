@@ -30,6 +30,9 @@ Nothing runs on push or pull request. Nothing is automatically published.
   the same Visual Studio output directory as compilation. The first hosted run
   built the library in `win32-vs-upgrade` but tried to link it from `win32`.
   This build-path-only patch is retained in the source-input artifact.
+- Applies `patches/pymupdf-vs-upgrade-packaging.patch` so wheel packaging finds
+  both Windows import libraries in that same directory. A preflight executes
+  the actual source's path helper in 18 configurations before compilation.
 - Builds PyMuPDF against that explicit local MuPDF source tree, never a
   silently downloaded prebuilt candidate wheel.
 - Uses pipcl 10 to handle Git metadata absent from source archives. A metadata
@@ -86,8 +89,8 @@ do not retroactively establish the provenance of the old DLLs. This is not
 legal clearance for the complete release, and MIT does not replace third-party
 licenses. Source artifacts cover these jobs, not every tool in the application.
 
-The workflows have been prepared and locally checked, not run on GitHub yet.
-The first hosted build is still needed to verify the native toolchain steps.
+Local checks do not replace a complete successful hosted build. Candidate
+packaging and comparisons must pass before the resulting binaries are usable.
 
 References:
 - https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow

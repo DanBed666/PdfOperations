@@ -18,7 +18,7 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 from source_inputs import digest, download, extract, inventory, normalize_patch_line_endings
 from compare_converter import contents
-from check_build_backend import check_source_metadata
+from check_build_backend import check_source_metadata, check_windows_library_paths
 
 
 @contextmanager
@@ -141,6 +141,58 @@ class BuildMetadataTests(unittest.TestCase):
         backend.git_info_py.side_effect = TypeError("object of type 'NoneType' has no len()")
         with self.assertRaises(TypeError):
             check_source_metadata(backend, Path('source-archive'))
+
+
+class PackagingPathTests(unittest.TestCase):
+    original = (
+        'def _windows_lib_directory(mupdf_local, build_type):\n'
+        '    wc = pipcl.wdev.WindowsCpu()\n'
+        "    ret = f'{mupdf_local}/platform/win32/{wc.windows_subdir}'\n"
+        "    if build_type == 'release':\n"
+        "        ret += 'Release/'\n"
+        "    elif build_type == 'debug':\n"
+        "        ret += 'Debug/'\n"
+        '    else:\n'
+        "        assert 0, f'Unrecognised {build_type=}.'\n"
+        '    return ret\n'
+    )
+
+    def test_preflight_detects_original_packaging_bug(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'setup.py').write_bytes(self.original.encode('utf-8'))
+            with self.assertRaisesRegex(ValueError, 'packaging path mismatch'):
+                check_windows_library_paths(root)
+
+    def test_patch_fixes_packaging_with_and_without_vs_upgrade(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            # The preflight must not execute setup.py's top-level build actions.
+            (root / 'setup.py').write_bytes(
+                ("raise RuntimeError('Do not import setup.py')\n\n" + self.original).encode('utf-8'))
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            patch_file = root / 'packaging.patch'
+            data = (HERE / 'patches/pymupdf-vs-upgrade-packaging.patch').read_bytes().replace(b'\r\n', b'\n')
+            patch_file.write_bytes(data.replace(b'\n', b'\r\n'))
+            normalize_patch_line_endings(patch_file)
+            for check in (True, False):
+                subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
+                               cwd=root, check=True, capture_output=True)
+            check_windows_library_paths(root)
+
+    def test_preflight_rejects_missing_helper(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'setup.py').write_bytes(b'')
+            with self.assertRaisesRegex(ValueError, 'Missing or ambiguous'):
+                check_windows_library_paths(root)
+
+    def test_preflight_rejects_duplicate_helper(self):
+        with temporary_directory() as folder:
+            root = Path(folder)
+            (root / 'setup.py').write_bytes((self.original * 2).encode('utf-8'))
+            with self.assertRaisesRegex(ValueError, 'Missing or ambiguous'):
+                check_windows_library_paths(root)
 
 
 class MuPdfPatchTests(unittest.TestCase):

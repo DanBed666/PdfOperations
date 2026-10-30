@@ -1,0 +1,12 @@
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -886,6 +886,7 @@
+ def _windows_lib_directory(mupdf_local, build_type):
+     wc = pipcl.wdev.WindowsCpu()
+-    ret = f'{mupdf_local}/platform/win32/{wc.windows_subdir}'
++    infix = 'win32-vs-upgrade' if os.environ.get('PYMUPDF_SETUP_MUPDF_VS_UPGRADE') == '1' else 'win32'
++    ret = f'{mupdf_local}/platform/{infix}/{wc.windows_subdir}'
+     if build_type == 'release':
+         ret += 'Release/'
+     elif build_type == 'debug':
