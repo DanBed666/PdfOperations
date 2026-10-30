@@ -25,8 +25,14 @@ def build(root):
         with logfile.open('w', encoding='utf-8') as output:
             output.write(json.dumps(list(map(str, command))) + '\n')
             output.flush()
-            subprocess.run(list(map(str, command)), cwd=cwd, env=env, check=True,
-                           stdout=output, stderr=subprocess.STDOUT, timeout=timeout)
+            try:
+                subprocess.run(list(map(str, command)), cwd=cwd, env=env, check=True,
+                               stdout=output, stderr=subprocess.STDOUT, timeout=timeout)
+            except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                output.flush()
+                print(f'Failed command; last log lines from {logfile.name}:', flush=True)
+                print('\n'.join(logfile.read_text(encoding='utf-8', errors='replace').splitlines()[-80:]), flush=True)
+                raise
 
     inputs = root / 'source-inputs'
     spec = json.loads((HERE / 'sources.json').read_text())
@@ -43,6 +49,9 @@ def build(root):
             patch = inputs / item['name']
             run('git', 'apply', '--check', patch, cwd=mupdf)
             run('git', 'apply', patch, cwd=mupdf)
+    local_patch = inputs / 'build-tools/patches/mupdf-vs-upgrade-libdir.patch'
+    run('git', 'apply', '--check', local_patch, cwd=mupdf)
+    run('git', 'apply', local_patch, cwd=mupdf)
     run(sys.executable, '-m', 'venv', root / 'builder')
     python = root / 'builder/Scripts/python.exe'
     run(python, '-m', 'pip', 'install', '-r', HERE / 'build-requirements.txt')

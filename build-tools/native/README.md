@@ -26,6 +26,10 @@ Nothing runs on push or pull request. Nothing is automatically published.
 - Uses Python 3.14.4, pdf2docx 0.5.13 and PyMuPDF 1.28.0.
 - Builds MuPDF from the hash-pinned official 1.28.0 source archive plus the two
   recorded public patches (version header and release-test script).
+- Applies the included `patches/mupdf-vs-upgrade-libdir.patch` so linking uses
+  the same Visual Studio output directory as compilation. The first hosted run
+  built the library in `win32-vs-upgrade` but tried to link it from `win32`.
+  This build-path-only patch is retained in the source-input artifact.
 - Builds PyMuPDF against that explicit local MuPDF source tree, never a
   silently downloaded prebuilt candidate wheel.
 - Keeps the converter wrapper unchanged. Runtime Python versions are pinned

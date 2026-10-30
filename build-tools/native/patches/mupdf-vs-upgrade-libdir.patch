@@ -1,0 +1,15 @@
+diff --git a/scripts/wrap/__main__.py b/scripts/wrap/__main__.py
+--- a/scripts/wrap/__main__.py
++++ b/scripts/wrap/__main__.py
+@@ -1906,8 +1906,9 @@
+                 if state.state_.windows:
+ 
+-                    libdir = f'{build_dirs.dir_mupdf}/platform/win32/'
+-                    mupdfcpp_lib = f'{build_dirs.dir_mupdf}/platform/win32/'
++                    win32_infix = _windows_vs_upgrade( vs_upgrade, build_dirs, devenv)
++                    libdir = f'{build_dirs.dir_mupdf}/platform/{win32_infix}/'
++                    mupdfcpp_lib = libdir
+                     if build_dirs.cpu.bits == 64:
+                         libdir += 'x64/'
+                     libdir += 'Debug/' if debug else 'Memento/' if memento else 'Release/'
+                     libs = list()

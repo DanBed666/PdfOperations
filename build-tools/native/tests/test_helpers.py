@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -118,6 +119,46 @@ class ComparisonTests(unittest.TestCase):
             path = self.docx(Path(folder), 'empty.docx', '', '2026')
             with self.assertRaises(AssertionError):
                 contents(path)
+
+
+class MuPdfPatchTests(unittest.TestCase):
+    def test_linker_uses_selected_vs_directory(self):
+        import ast
+        from types import SimpleNamespace
+
+        original = (
+            '                if state.state_.windows:\n'
+            '\n'
+            "                    libdir = f'{build_dirs.dir_mupdf}/platform/win32/'\n"
+            "                    mupdfcpp_lib = f'{build_dirs.dir_mupdf}/platform/win32/'\n"
+            '                    if build_dirs.cpu.bits == 64:\n'
+            "                        libdir += 'x64/'\n"
+            "                    libdir += 'Debug/' if debug else 'Memento/' if memento else 'Release/'\n"
+            '                    libs = list()\n'
+        )
+        with temporary_directory() as folder:
+            root = Path(folder)
+            target = root / 'scripts/wrap/__main__.py'
+            target.parent.mkdir(parents=True)
+            target.write_text(original, encoding='utf-8')
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            patch_file = HERE / 'patches/mupdf-vs-upgrade-libdir.patch'
+            for check in (True, False):
+                subprocess.run(['git', 'apply', *(['--check'] if check else []), str(patch_file)],
+                               cwd=root, check=True, capture_output=True)
+            # Execute only the patched path-selection block, not MuPDF or a compiler.
+            code = '\n'.join(line[16:] if line.startswith(' ' * 16) else line
+                             for line in target.read_text().splitlines())
+            parsed = compile(ast.parse(code), '<patched linker path>', 'exec')
+            for upgrade, directory in [(False, 'win32'), (True, 'win32-vs-upgrade')]:
+                namespace = {
+                    'state': SimpleNamespace(state_=SimpleNamespace(windows=True)),
+                    'build_dirs': SimpleNamespace(dir_mupdf='source', cpu=SimpleNamespace(bits=64)),
+                    'vs_upgrade': upgrade, 'devenv': 'compiler', 'debug': False, 'memento': False,
+                    '_windows_vs_upgrade': lambda enabled, *_: 'win32-vs-upgrade' if enabled else 'win32',
+                }
+                exec(parsed, namespace)
+                self.assertEqual(namespace['libdir'], f'source/platform/{directory}/x64/Release/')
 
 
 if __name__ == '__main__':
