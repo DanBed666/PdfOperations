@@ -9,6 +9,13 @@ import sys
 from source_inputs import HERE, digest, download, extract, inventory, normalize_patch_line_endings
 
 
+def command_environment(env=None):
+    environment = dict(os.environ if env is None else env)
+    # A UTF-8 log file alone does not set the encoding used by child processes.
+    environment.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8')
+    return environment
+
+
 def build(root):
     if sys.platform != 'win32' or sys.version_info[:3] != (3, 14, 4):
         raise RuntimeError('Use the workflow Windows x64 Python 3.14.4 environment')
@@ -26,7 +33,7 @@ def build(root):
             output.write(json.dumps(list(map(str, command))) + '\n')
             output.flush()
             try:
-                subprocess.run(list(map(str, command)), cwd=cwd, env=env, check=True,
+                subprocess.run(list(map(str, command)), cwd=cwd, env=command_environment(env), check=True,
                                stdout=output, stderr=subprocess.STDOUT, timeout=timeout)
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
                 output.flush()

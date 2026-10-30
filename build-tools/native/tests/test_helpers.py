@@ -19,6 +19,7 @@ sys.path.insert(0, str(HERE))
 from source_inputs import digest, download, extract, inventory, normalize_patch_line_endings
 from compare_converter import contents
 from check_build_backend import check_source_metadata, check_windows_library_paths
+from build_converter import command_environment
 
 
 @contextmanager
@@ -33,6 +34,41 @@ def temporary_directory():
         if directory.resolve().parent != root:
             raise RuntimeError('Unexpected test cleanup path')
         shutil.rmtree(directory)
+
+
+class CommandEncodingTests(unittest.TestCase):
+    def test_inherits_environment_without_mutating_it(self):
+        with patch.dict(os.environ, {'BUILD_TEST': 'preserved', 'PYTHONUTF8': '0'}, clear=True):
+            environment = command_environment()
+            self.assertEqual(environment['BUILD_TEST'], 'preserved')
+            self.assertEqual(environment['PYTHONUTF8'], '1')
+            self.assertEqual(environment['PYTHONIOENCODING'], 'utf-8')
+            self.assertEqual(os.environ['PYTHONUTF8'], '0')
+            self.assertNotIn('PYTHONIOENCODING', os.environ)
+
+    def test_preserves_custom_build_environment(self):
+        original = {'PYMUPDF_SETUP_MUPDF_BUILD': 'local-source', 'WDEV_VS_YEAR': '2022',
+                    'PYTHONIOENCODING': 'cp1252', 'PYTHONUTF8': '0'}
+        environment = command_environment(original)
+        self.assertEqual(environment['PYMUPDF_SETUP_MUPDF_BUILD'], 'local-source')
+        self.assertEqual(environment['WDEV_VS_YEAR'], '2022')
+        self.assertEqual(environment['PYTHONIOENCODING'], 'utf-8')
+        self.assertEqual(original['PYTHONIOENCODING'], 'cp1252')
+
+    def test_redirected_unicode_output_reproduces_failure_and_passes_with_utf8(self):
+        legacy = dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp1252')
+        command = [sys.executable, '-c', "print(chr(0x1f44b) + ' ' + chr(0x142))"]
+        with temporary_directory() as folder:
+            logfile = Path(folder) / 'command.log'
+            with logfile.open('w', encoding='utf-8') as output:
+                failed = subprocess.run(command, env=legacy, stdout=output,
+                                        stderr=subprocess.PIPE, timeout=30)
+            self.assertNotEqual(failed.returncode, 0)
+            self.assertIn(b'UnicodeEncodeError', failed.stderr)
+            with logfile.open('w', encoding='utf-8') as output:
+                subprocess.run(command, env=command_environment(legacy), stdout=output,
+                               stderr=subprocess.PIPE, timeout=30, check=True)
+            self.assertEqual(logfile.read_text(encoding='utf-8').strip(), chr(0x1f44b) + ' ' + chr(0x142))
 
 
 class SourceTests(unittest.TestCase):

@@ -37,6 +37,8 @@ Nothing runs on push or pull request. Nothing is automatically published.
   silently downloaded prebuilt candidate wheel.
 - Uses pipcl 10 to handle Git metadata absent from source archives. A metadata
   preflight runs before compilation; pipcl 9 failed here after compiling MuPDF.
+- Uses UTF-8 for the build process and its Python subprocesses, including
+  redirected dependency reports containing non-ASCII package descriptions.
 - Keeps the converter wrapper unchanged. Runtime Python versions are pinned
   to the inspected bundle. Build-tool requirements are recorded separately.
 - Compares three synthetic documents against the audited official PyMuPDF
