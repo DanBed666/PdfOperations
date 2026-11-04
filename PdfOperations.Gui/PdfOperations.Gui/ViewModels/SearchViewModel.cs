@@ -27,10 +27,10 @@ public partial class SearchViewModel : FileInputViewModelBase
     private bool exportToExcel;
 
     [ObservableProperty]
-    private int before = 2;
+    private int? before = 2;
 
     [ObservableProperty]
-    private int after = 2;
+    private int? after = 2;
 
     [ObservableProperty]
     private string lastOutputDirectory = "";
@@ -192,8 +192,8 @@ public partial class SearchViewModel : FileInputViewModelBase
                     InputFiles = currentInputFiles,
                     Output = OutputFileName,
                     PhrasesToFind = currentSearchPhrases,
-                    Before = Before,
-                    After = After
+                    Before = Before ?? 0,
+                    After = After ?? 0
                 };
 
                 OperationDefinition operationDefinition = new OperationDefinition
