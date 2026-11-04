@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PdfOperations.Gui.ViewModels"
              xmlns:views="clr-namespace:PdfOperations.Gui.Views"
+             xmlns:services="using:PdfOperations.Gui.Services"
              x:Class="PdfOperations.Gui.Views.FragmentsView"
              x:DataType="vm:FragmentsViewModel">
 
@@ -98,8 +99,15 @@
                                            Foreground="{DynamicResource InputListTextBrush}"
                                            TextWrapping="Wrap"
                                            ToolTip.Tip="{Binding DisplayPath}" />
-                                <TextBlock Text="{Binding PageNumbers}"
-                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                <TextBlock Foreground="{DynamicResource MutedTextBrush}"
+                                           TextWrapping="Wrap">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}: {1}">
+                                            <Binding Path="Pages" Source="{x:Static services:LocalizationService.Instance}" />
+                                            <Binding Path="PageNumbers" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

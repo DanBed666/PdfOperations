@@ -28,6 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\..\RUNTIME-REQUIREMENTS*.md"
+              Link="%(Filename)%(Extension)"
+              CopyToOutputDirectory="PreserveNewest"
+              CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Compile Update="Views\ManyToOneView.axaml.cs">
         <DependentUpon>ManyToOneView.axaml</DependentUpon>
         <SubType>Code</SubType>
