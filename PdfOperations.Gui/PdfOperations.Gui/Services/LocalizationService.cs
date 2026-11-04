@@ -160,7 +160,7 @@ public partial class LocalizationService : ObservableObject
             "PdfToImage" => Language == AppLanguage.Polish ? "PDF na obrazy" : "PDF to Image",
             "ImagesToPdf" => Language == AppLanguage.Polish ? "Obrazy na PDF" : "Images to PDF",
             "ImagesToTxt" => Language == AppLanguage.Polish ? "Obrazy na TXT" : "Images to TXT",
-            "ExtractFromPdf" => Language == AppLanguage.Polish ? "Wyodrębnij obrazy z PDF" : "Extract from PDF",
+            "ExtractFromPdf" => Language == AppLanguage.Polish ? "Wyodrębnij obrazy z PDF" : "Extract images from PDF",
             "LibreOffice" => Language == AppLanguage.Polish ? "Konwersja LibreOffice" : "LibreOffice conversion",
             "SplitPdf" => Language == AppLanguage.Polish ? "Podziel PDF" : "Split PDF",
             "MergePdf" => Language == AppLanguage.Polish ? "Połącz PDF" : "Merge PDF",
