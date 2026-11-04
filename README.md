@@ -206,3 +206,14 @@ The **About** view in the app shows its version, author and links to the project
 ### AI assistance during development
 
 The application was developed with partial assistance from [OpenAI Codex](https://openai.com/codex/).
+
+## Screenshots
+
+### Merge PDF
+![Merge PDF](docs/screenshots/merge-pdf.png)
+
+### Build PDF from fragments
+![Build PDF from fragments](docs/screenshots/pdf-fragments.png)
+
+### Search and export
+![Search with Excel and JSON export](docs/screenshots/search-export.png)

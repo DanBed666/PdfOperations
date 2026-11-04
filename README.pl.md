@@ -206,3 +206,14 @@ Widok **O programie** w aplikacji zawiera jej wersję, autora i linki do poniżs
 ### Wsparcie AI podczas tworzenia
 
 Aplikacja powstała przy częściowym wsparciu [OpenAI Codex](https://openai.com/codex/).
+
+## Zrzuty ekranu
+
+### Łączenie PDF
+![Łączenie PDF](docs/screenshots/merge-pdf.png)
+
+### PDF z fragmentów
+![Tworzenie PDF z wybranych fragmentów](docs/screenshots/pdf-fragments.png)
+
+### Wyszukiwanie i eksport
+![Wyszukiwanie z eksportem do Excela i JSON](docs/screenshots/search-export.png)
