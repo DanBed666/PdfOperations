@@ -33,4 +33,19 @@ public class JsonExporter
 
         File.WriteAllText(outputPath, json);
     }
+    
+    public static void SaveHitsToJson(IReadOnlyList<SearchHit> hits, string path, ExportLabels labels)
+    {
+        var records = hits.Select(hit => new Dictionary<string, object>
+        {
+            [labels.FileNameProperty] = Path.GetFileName(hit.FilePath),
+            [labels.FilePathProperty] = hit.FilePath,
+            [labels.Page] = hit.Page,
+            [labels.Line] = hit.Line,
+            [labels.Phrase] = hit.Phrase,
+            [labels.ValueProperty] = hit.Value
+        });
+        File.WriteAllText(path, JsonSerializer.Serialize(records,
+            new JsonSerializerOptions { WriteIndented = true }));
+    }
 }

@@ -70,4 +70,33 @@ public class ExcelExporter
 
         workbook.SaveAs(outputPath);
     }
+    
+    public static void SaveHitsToExcel(IReadOnlyList<SearchHit> hits, string path, ExportLabels labels)
+    {
+        using var workbook = new XLWorkbook();
+        var sheet = workbook.Worksheets.Add(labels.WorksheetName);
+        string[] headers = [labels.FileNameHeader, labels.FilePathHeader, labels.Page,
+            labels.Line, labels.Phrase, labels.ValueHeader];
+
+        for (int i = 0; i < headers.Length; i++)
+            sheet.Cell(1, i + 1).Value = headers[i];
+
+        sheet.Column(6).Style.NumberFormat.Format = "@";
+        int row = 2;
+        foreach (var hit in hits)
+        {
+            sheet.Cell(row, 1).Value = Path.GetFileName(hit.FilePath);
+            sheet.Cell(row, 2).Value = hit.FilePath;
+            sheet.Cell(row, 3).Value = hit.Page;
+            sheet.Cell(row, 4).Value = hit.Line;
+            sheet.Cell(row, 5).Value = hit.Phrase;
+            sheet.Cell(row, 6).Value = hit.Value;
+            row++;
+        }
+
+        sheet.Row(1).Style.Font.Bold = true;
+        sheet.SheetView.FreezeRows(1);
+        sheet.Columns(1, 6).AdjustToContents(10, 60);
+        workbook.SaveAs(path);
+    }
 }

@@ -10,4 +10,7 @@ public sealed record ExportLabels
     public string FilePathProperty { get; init; } = "FilePath";
     public string ValueProperty { get; init; } = "DesiredValue";
     public string FieldsProperty { get; init; } = "Fields";
+    public string Page { get; init; } = "Page";
+    public string Line { get; init; } = "Line";
+    public string Phrase { get; init; } = "Phrase";
 }
