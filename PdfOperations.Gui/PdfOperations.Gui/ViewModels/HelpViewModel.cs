@@ -42,15 +42,13 @@ public class HelpViewModel : ViewModelBase
         - Raport TXT zawiera wystąpienia wszystkich fraz. Wyszukiwanie nie rozróżnia wielkich i małych liter i znajduje również frazy wewnątrz dłuższego tekstu.
         - Opcje liczby linii przed i po wyniku określają, ile otaczającego tekstu trafi do raportu.
         - Eksport do Excela i JSON jest opcjonalny. Możesz wybrać jeden lub oba formaty; raport TXT zostanie zapisany również wtedy.
-        - Aby wyodrębnić wartości, wpisuj etykiety występujące w dokumentach. Eksport wymaga zgodności całej etykiety, a nie tylko jej fragmentu.
-        - Wartość jest odczytywana po dwukropku w tej samej linii albo z następnej niepustej linii. Ta linia musi mieścić się w zakresie raportu, więc w razie potrzeby zwiększ liczbę linii po wyniku.
+        - Dla każdej frazy możesz zapisać całą znalezioną linię lub tylko tekst po frazie. Jeżeli po frazie i opcjonalnym dwukropku nie ma tekstu, program sprawdzi następną niepustą linię tej samej strony, niezależnie od ustawień raportu TXT.
         - Jeśli następna linia jest inną szukaną etykietą, pole pozostanie puste. Etykieta, której nie dodano do szukanych pól, może jednak zostać odczytana jako wartość pustego pola. Sprawdź wyeksportowane dane.
-        - W Excelu każdy plik ma osobny wiersz, a każda fraza osobną kolumnę. Nazwa i pełna ścieżka pozwalają odróżnić pliki o tej samej nazwie.
-        - Powtarzające się identyczne wartości w obrębie pliku i pola są zapisywane tylko raz. Różne wartości trafiają do osobnych linii w jednej komórce Excela, a w JSON do tablicy.
-        - Brak wartości oznacza pustą komórkę w Excelu lub pustą tablicę w JSON. Wartości są zapisywane jako tekst, aby zachować na przykład zera na początku.
+        - Domyślnie każdy plik ma jeden wiersz w Excelu lub jeden obiekt w JSON. Podsumowanie zawiera tylko różne, niepuste wartości każdej frazy.
+        - Wybierz „Eksportuj każde trafienie jako osobny wpis”, aby otrzymać osobny wiersz lub obiekt dla każdej pasującej linii danej frazy, ze stroną i numerem linii. Powtórzenia zostaną zachowane, podobnie jak zera na początku wartości.
         - Język aplikacji w chwili uruchomienia wyszukiwania określa język stałych nagłówków i nazwy arkusza Excel oraz kluczy JSON: NazwaPliku, SciezkaPliku i Pola albo FileName, FilePath i Fields.
         - Wpisane frazy oraz znalezione wartości nie są tłumaczone. Zmiana języka aplikacji nie zmienia już zapisanych plików.
-        - Wyniki są grupowane według pliku, nie według osoby. Kilka nazwisk i numerów w jednym dokumencie nie zostanie automatycznie połączonych w pary.
+        - Kilka nazwisk i numerów w jednym dokumencie nie zostanie automatycznie połączonych w pary.
 
         Zamiana tekstu
 
@@ -103,15 +101,13 @@ public class HelpViewModel : ViewModelBase
         - The TXT report contains matches for all phrases. Search is case-insensitive and also finds phrases within longer text.
         - The lines-before and lines-after options control how much surrounding text is included in the report.
         - Excel and JSON exports are optional. Select either or both formats; the TXT report is still saved.
-        - To extract values, enter labels that appear in your documents. Export requires a match for the entire label, not just part of it.
-        - A value is read after the colon on the same line or from the next nonempty line. That line must be included in the report, so increase the lines-after setting when needed.
+        - For each phrase, save the entire matching line or just the text after the phrase. If nothing follows the phrase and optional colon, the next nonempty line on the same page is checked, regardless of the TXT context settings.
         - If the next line is another search label, the value remains empty. A label that is not among the search fields may instead be read as the value of an empty field. Check the exported data.
-        - In Excel, each file has a separate row and each phrase has a separate column. The file name and full path distinguish files with the same name.
-        - Identical values within a file and field are saved only once. Different values appear on separate lines in one Excel cell and as an array in JSON.
-        - Missing values produce an empty Excel cell or an empty JSON array. Values are saved as text to preserve details such as leading zeros.
+        - By default, each file has one Excel row or JSON object. This summary includes only distinct, nonempty values for each phrase.
+        - Select “Export each match as a separate record” for one row or object per matching line per phrase, with its page and line number. Repeated values and leading zeros are preserved.
         - The app language when search starts determines the fixed Excel headers and worksheet name, and the JSON keys: FileName, FilePath and Fields, or NazwaPliku, SciezkaPliku and Pola.
         - Your phrases and extracted values are not translated. Changing the app language does not change previously saved files.
-        - Results are grouped by file, not by person. Multiple names and numbers in one document are not automatically paired.
+        - Multiple names and numbers in one document are not automatically paired.
 
         Replacement
 
