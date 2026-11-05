@@ -32,16 +32,20 @@
 
                 <TextBlock Text="{Binding Loc.SearchFields}" />
 
-                <ItemsControl ItemsSource="{Binding SearchFields}">
+                <ItemsControl x:Name="SearchFieldsList" ItemsSource="{Binding SearchFields}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:SearchFieldViewModel">
-                            <Grid ColumnDefinitions="*,Auto"
+                            <Grid ColumnDefinitions="*,Auto,Auto"
                                   ColumnSpacing="8"
                                   Margin="0,0,0,8">
                                 <TextBox Grid.Column="0"
                                          Text="{Binding Phrase, Mode=TwoWay}" />
-
-                                <Button Grid.Column="1"
+                                
+                                <CheckBox Grid.Column="1"
+                                          IsChecked="{Binding SaveWholeLine, Mode=TwoWay}"
+                                          Content="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).Loc.SaveWholeLine}" />
+                                
+                                <Button Grid.Column="2"
                                         Content="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).Loc.Remove}"
                                         Command="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).RemoveSearchFieldCommand}"
                                         CommandParameter="{Binding}" />
@@ -51,7 +55,7 @@
                 </ItemsControl>
 
                 <Button Content="{Binding Loc.AddSearchField}"
-                        Command="{Binding AddSearchFieldCommand}"
+                        Click="AddSearchField_Click"
                         HorizontalAlignment="Left" />
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
@@ -97,6 +101,8 @@
                 
                 <CheckBox Content="{Binding Loc.AlsoExportToJson}"
                           IsChecked="{Binding ExportToJson}" />
+                <CheckBox Content="{Binding Loc.ExportEachHitLabel}"
+                          IsChecked="{Binding ExportEachHit}" />
 
                 <StackPanel Orientation="Horizontal"
                             Spacing="8">

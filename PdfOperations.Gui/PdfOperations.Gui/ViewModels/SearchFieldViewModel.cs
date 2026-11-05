@@ -6,4 +6,7 @@ public partial class SearchFieldViewModel : ObservableObject
 {
     [ObservableProperty]
     private string phrase = "";
+    
+    [ObservableProperty]
+    private bool saveWholeLine;
 }

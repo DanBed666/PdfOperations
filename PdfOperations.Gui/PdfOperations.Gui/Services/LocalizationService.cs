@@ -23,7 +23,10 @@ public partial class LocalizationService : ObservableObject
             FileNameProperty = "NazwaPliku",
             FilePathProperty = "SciezkaPliku",
             ValueProperty = "Wartosc",
-            FieldsProperty = "Pola"
+            FieldsProperty = "Pola",
+            Page = "Strona",
+            Line = "Linia",
+            Phrase = "Fraza"
         }
         : new ExportLabels();
 
@@ -434,4 +437,12 @@ public partial class LocalizationService : ObservableObject
     public string DuplicateSearchFields => Language == AppLanguage.Polish
         ? "Nazwy szukanych pól nie mogą się powtarzać."
         : "Search field names must be unique.";
+    
+    public string SaveWholeLine => Language == AppLanguage.Polish
+        ? "Zapisz całą znalezioną linię"
+        : "Save the entire matching line";
+
+    public string ExportEachHitLabel => Language == AppLanguage.Polish
+        ? "Eksportuj każde trafienie jako osobny wpis"
+        : "Export each match as a separate record";
 }

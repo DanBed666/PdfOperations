@@ -37,6 +37,9 @@ public partial class SearchViewModel : FileInputViewModelBase
     
     [ObservableProperty]
     private bool exportToJson;
+
+    [ObservableProperty]
+    private bool exportEachHit;
     
     public SearchViewModel() 
         : base(
@@ -90,13 +93,12 @@ public partial class SearchViewModel : FileInputViewModelBase
             StartCommand.NotifyCanExecuteChanged();
     }
     
-    private string[] GetSearchPhrases()
-    {
-        return SearchFields
-            .Select(field => field.Phrase.Trim().TrimEnd(':').TrimEnd())
-            .Where(phrase => !string.IsNullOrWhiteSpace(phrase))
+    private SearchFieldDefinition[] GetSearchFields() =>
+        SearchFields
+            .Select(f => new SearchFieldDefinition(
+                f.Phrase.Trim().TrimEnd(':').TrimEnd(), f.SaveWholeLine))
+            .Where(f => f.Phrase.Length > 0)
             .ToArray();
-    }
     
     public override void RefreshLocalization()
     {
@@ -136,7 +138,8 @@ public partial class SearchViewModel : FileInputViewModelBase
                 return;
             }
 
-            string[] currentSearchPhrases = GetSearchPhrases();
+            var currentFields = GetSearchFields();
+            string[] currentSearchPhrases = currentFields.Select(f => f.Phrase).ToArray();
 
             if (currentSearchPhrases.Length == 0)
             {
@@ -184,6 +187,7 @@ public partial class SearchViewModel : FileInputViewModelBase
             int processedFilesCount = 0;
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
             ExportLabels exportLabels = Loc.SearchExportLabels;
+            bool eachHit = ExportEachHit;
 
             await Task.Run(() =>
             {
@@ -192,6 +196,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                     InputFiles = currentInputFiles,
                     Output = OutputFileName,
                     PhrasesToFind = currentSearchPhrases,
+                    SearchFields = currentFields,
                     Before = Before ?? 0,
                     After = After ?? 0
                 };
@@ -243,10 +248,13 @@ public partial class SearchViewModel : FileInputViewModelBase
                         }
                     }
 
+                    var allHits = new List<SearchHit>();
+
                     foreach (FileJob fileJob in fileJobs)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        Search.SearchTempTextFiles(operationInput, operationContext, fileJob, cancellationToken);
+                        var fileHits = Search.SearchTempTextFiles(operationInput, operationContext, fileJob, cancellationToken);
+                        allHits.AddRange(fileHits);
                         progress.Report(++processedFilesCount);
                     }
 
@@ -258,8 +266,8 @@ public partial class SearchViewModel : FileInputViewModelBase
 
                     cancellationToken.ThrowIfCancellationRequested();
                     
-                    FileExtractionResult [] results = ExportToExcel || ExportToJson
-                        ? Search.GetFileExtractionResults(operationInput, tempReportPath, cancellationToken)
+                    FileExtractionResult[] results = !eachHit && (ExportToExcel || ExportToJson)
+                        ? Search.SummarizeHits(operationInput, allHits)
                         : [];
                     
                     string tempJsonPath = Path.ChangeExtension(tempReportPath, ".json");
@@ -269,7 +277,10 @@ public partial class SearchViewModel : FileInputViewModelBase
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        ExcelExporter.SaveFieldsToExcel(results, operationInput.PhrasesToFind, tempExcelPath, exportLabels);
+                        if (eachHit)
+                            ExcelExporter.SaveHitsToExcel(allHits, tempExcelPath, exportLabels);
+                        else
+                            ExcelExporter.SaveFieldsToExcel(results, operationInput.PhrasesToFind, tempExcelPath, exportLabels);
 
                         finalExcelPath = Path.ChangeExtension(finalPath, ".xlsx");
                         if (!OverwriteExistingFiles)
@@ -279,7 +290,10 @@ public partial class SearchViewModel : FileInputViewModelBase
                     if (ExportToJson)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        JsonExporter.SaveFieldsToJson(results, tempJsonPath, exportLabels);
+                        if (eachHit)
+                            JsonExporter.SaveHitsToJson(allHits, tempJsonPath, exportLabels);
+                        else
+                            JsonExporter.SaveFieldsToJson(results, tempJsonPath, exportLabels);
                         finalJsonPath = Path.ChangeExtension(finalPath, ".json");
                         if (!OverwriteExistingFiles)
                             finalJsonPath = GetAvailablePath(finalJsonPath);
@@ -332,7 +346,7 @@ public partial class SearchViewModel : FileInputViewModelBase
                && !InputFilesList.IsEmpty()
                && !string.IsNullOrWhiteSpace(OutputDirectory)
                && !string.IsNullOrWhiteSpace(OutputFileName)
-               && GetSearchPhrases().Length > 0;
+               && GetSearchFields().Length > 0;
     }
 
     partial void OnOutputDirectoryChanged(string value)
