@@ -111,46 +111,209 @@ public class Replacement
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        XDocument doc = XDocument.Load(xmlPath);
+        XDocument doc = XDocument.Load(xmlPath, System.Xml.Linq.LoadOptions.PreserveWhitespace);
         cancellationToken.ThrowIfCancellationRequested();
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-        foreach (XElement textNode in doc.Descendants(w + "t"))
+        foreach (XElement paragraph in doc.Descendants(w + "p").ToArray())
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            foreach (ReplacementPair pair in replacementPairs)
+            var nodes = new List<XElement>();
+            CollectText(paragraph);
+            FlushText();
+
+            void FlushText()
+            {
+                ReplaceTextAcrossNodes(nodes, replacementPairs, node => node.Value, (node, value) =>
+                {
+                    node.Value = value;
+                    node.SetAttributeValue(XNamespace.Xml + "space", "preserve");
+                }, cancellationToken);
+                nodes.Clear();
+            }
+
+            void CollectText(XElement element)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                StringComparison stringComparison = pair.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-                
-                textNode.Value = textNode.Value.Replace(pair.Find, pair.Replace, stringComparison);
+                // Do not join text across breaks, fields, drawings or nested paragraphs.
+                if ((element.Name == w + "p" && element != paragraph) ||
+                    (element.Name.Namespace == w && element.Name.LocalName is
+                        "tab" or "br" or "cr" or "drawing" or "pict" or "object" or
+                        "fldChar" or "instrText" or "fldSimple" or "sym" or
+                        "noBreakHyphen" or "softHyphen" or "del"))
+                {
+                    FlushText();
+                    return;
+                }
+
+                if (element.Name == w + "t")
+                    nodes.Add(element);
+                else
+                    foreach (XElement child in element.Elements())
+                        CollectText(child);
             }
         }
-        
+
         cancellationToken.ThrowIfCancellationRequested();
-        doc.Save(xmlPath);
+        doc.Save(xmlPath, System.Xml.Linq.SaveOptions.DisableFormatting);
         cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private static void ReplaceTextAcrossNodes<T>(List<T> nodes, List<ReplacementPair> pairs,
+        Func<T, string> getText, Action<T, string> setText, CancellationToken cancellationToken)
+    {
+        if (nodes.Count == 0)
+            return;
+
+        foreach (ReplacementPair pair in pairs)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (string.IsNullOrEmpty(pair.Find))
+                continue;
+
+            int offset = 0;
+            var spans = nodes.Select(node =>
+            {
+                int start = offset;
+                offset += getText(node).Length;
+                return (Node: node, Start: start, End: offset);
+            }).ToArray();
+            string text = string.Concat(nodes.Select(getText));
+            StringComparison comparison = pair.IgnoreCase
+                ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            var matches = new List<int>();
+
+            for (int position = 0; position <= text.Length - pair.Find.Length;)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                int found = text.IndexOf(pair.Find, position, comparison);
+                if (found < 0)
+                    break;
+                matches.Add(found);
+                position = found + pair.Find.Length;
+            }
+
+            // Work backwards so earlier matches keep their original node offsets.
+            foreach (int start in matches.AsEnumerable().Reverse())
+            {
+                int end = start + pair.Find.Length;
+                foreach (var span in spans)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    int left = Math.Max(start, span.Start);
+                    int right = Math.Min(end, span.End);
+                    if (left >= right)
+                        continue;
+
+                    string value = getText(span.Node).Remove(left - span.Start, right - left);
+                    if (start >= span.Start && start < span.End)
+                        value = value.Insert(start - span.Start, pair.Replace ?? "");
+                    setText(span.Node, value);
+                }
+            }
+        }
     }
     
     public static void ReplaceTextInOdfXml(string xmlPath, List<ReplacementPair> replacementPairs,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        string text = File.ReadAllText(xmlPath);
+        XDocument doc = XDocument.Load(xmlPath, System.Xml.Linq.LoadOptions.PreserveWhitespace);
         cancellationToken.ThrowIfCancellationRequested();
+        XNamespace text = "urn:oasis:names:tc:opendocument:xmlns:text:1.0";
+        XNamespace office = "urn:oasis:names:tc:opendocument:xmlns:office:1.0";
 
-        foreach (ReplacementPair pair in replacementPairs)
+        var paragraphs = doc.Descendants(office + "body").Descendants()
+            .Where(element => element.Name == text + "p" || element.Name == text + "h").ToArray();
+        foreach (XElement paragraph in paragraphs)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (pair.IgnoreCase)
-                text = text.Replace(pair.Find, pair.Replace, StringComparison.OrdinalIgnoreCase);
-            
-            text = text.Replace(pair.Find, pair.Replace);
+            var nodes = new List<XText>();
+            var originals = new List<(XText Node, string Value, XElement? Space)>();
+            CollectText(paragraph);
+            FlushText();
+
+            void FlushText()
+            {
+                ReplaceTextAcrossNodes(nodes, replacementPairs, node => node.Value,
+                    (node, value) => node.Value = value, cancellationToken);
+                foreach (var original in originals)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (original.Node.Value != original.Value)
+                        original.Node.ReplaceWith(EncodeOdfText(original.Node.Value, text));
+                    else if (original.Space is not null)
+                        original.Node.ReplaceWith(original.Space);
+                }
+                nodes.Clear();
+                originals.Clear();
+            }
+
+            void CollectText(XElement element)
+            {
+                foreach (XNode child in element.Nodes().ToArray())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (child is XText node)
+                    {
+                        nodes.Add(node);
+                        originals.Add((node, node.Value, null));
+                    }
+                    else if (child is XElement inline)
+                    {
+                        if (inline.Name == text + "span" || inline.Name == text + "a")
+                            CollectText(inline);
+                        else if (inline.Name == text + "s")
+                        {
+                            // ODF stores explicit spaces as elements, not ordinary text.
+                            var spaces = new XText(new string(' ', (int?)inline.Attribute(text + "c") ?? 1));
+                            inline.ReplaceWith(spaces);
+                            nodes.Add(spaces);
+                            originals.Add((spaces, spaces.Value, inline));
+                        }
+                        else if (!(inline.Name.Namespace == text && inline.Name.LocalName is
+                            "bookmark" or "bookmark-start" or "bookmark-end" or
+                            "reference-mark" or "reference-mark-start" or "reference-mark-end"))
+                        {
+                            // Breaks, fields and embedded objects separate searchable text.
+                            FlushText();
+                        }
+                    }
+                }
+            }
         }
-        
+
         cancellationToken.ThrowIfCancellationRequested();
-        File.WriteAllText(xmlPath, text);
+        doc.Save(xmlPath, System.Xml.Linq.SaveOptions.DisableFormatting);
         cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private static IEnumerable<XNode> EncodeOdfText(string value, XNamespace text)
+    {
+        for (int index = 0; index < value.Length;)
+        {
+            char character = value[index];
+            int start = index++;
+            if (character == ' ')
+            {
+                while (index < value.Length && value[index] == ' ')
+                    index++;
+                yield return new XElement(text + "s", new XAttribute(text + "c", index - start));
+            }
+            else if (character == '\t')
+                yield return new XElement(text + "tab");
+            else if (character is '\r' or '\n')
+            {
+                if (character == '\r' && index < value.Length && value[index] == '\n')
+                    index++;
+                yield return new XElement(text + "line-break");
+            }
+            else
+            {
+                while (index < value.Length && value[index] is not (' ' or '\t' or '\r' or '\n'))
+                    index++;
+                yield return new XText(value[start..index]);
+            }
+        }
     }
 
     public static void CreateDocumentFromDirectory(OperationInput input, string extDir, string tempPath, string extension)
