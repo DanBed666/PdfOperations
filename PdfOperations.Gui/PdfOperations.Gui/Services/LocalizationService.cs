@@ -81,6 +81,9 @@ public partial class LocalizationService : ObservableObject
     public string ExamplePages => Language == AppLanguage.Polish ? "Przykład: 1,3-5" : "Example: 1,3-5";
     public string ExampleSplitAfterPages => Language == AppLanguage.Polish ? "Przykład: 4,10,15" : "Example: 4,10,15";
     public string ExcelReplacementFile => Language == AppLanguage.Polish ? "Arkusz Excel z zamianami" : "Excel replacement file";
+    public string DownloadReplacementTemplate => Language == AppLanguage.Polish
+        ? "Pobierz szablon Excel"
+        : "Download Excel template";
     public string Replacement => Language == AppLanguage.Polish ? "Zamiana tekstu" : "Replacement";
     public string LibreOfficeConversion => Language == AppLanguage.Polish ? "Konwersja LibreOffice" : "LibreOffice conversion";
     public string FragmentPdfFile => Language == AppLanguage.Polish

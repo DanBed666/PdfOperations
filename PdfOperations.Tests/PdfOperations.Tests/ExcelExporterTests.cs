@@ -6,6 +6,84 @@ namespace PdfOperations.Tests;
 public class ExcelExporterTests
 {
     [TestMethod]
+    public void ReplacementTemplateHasEditableExamplesAcceptedByReader()
+    {
+        string directory = Directory.CreateTempSubdirectory("ReplacementTemplateTest-").FullName;
+        try
+        {
+            using var stream = new MemoryStream();
+            ExcelExporter.SaveReplacementTemplate(stream);
+            Assert.IsTrue(stream.CanWrite);
+            string path = Path.Combine(directory, "template.xlsx");
+            File.WriteAllBytes(path, stream.ToArray());
+
+            using (var workbook = new XLWorkbook(path))
+            {
+                Assert.AreEqual(1, workbook.Worksheets.Count);
+                Assert.IsFalse(workbook.IsProtected);
+                var sheet = workbook.Worksheet(1);
+                Assert.IsFalse(sheet.IsProtected);
+                Assert.AreEqual(3, sheet.LastRowUsed()!.RowNumber());
+                CollectionAssert.AreEqual(new[] { "Lp", "Find", "Replace", "IgnoreCase" },
+                    sheet.Range("A1:D1").Cells().Select(cell => cell.GetString()).ToArray());
+                Assert.IsTrue(sheet.Cell("A1").Style.Font.Bold);
+                Assert.AreEqual("@", sheet.Cell("B4").Style.NumberFormat.Format);
+                Assert.AreEqual("@", sheet.Cell("C4").Style.NumberFormat.Format);
+                Assert.AreEqual("TRUE", sheet.Cell("D2").GetString());
+                Assert.AreEqual("FALSE", sheet.Cell("D3").GetString());
+            }
+
+            var pairs = Replacement.ReadReplacementsFromExcel(path);
+            Assert.HasCount(2, pairs);
+            Assert.AreEqual(1, pairs[0].Lp);
+            Assert.AreEqual("{{COMPANY}}", pairs[0].Find);
+            Assert.AreEqual("Example Studio", pairs[0].Replace);
+            Assert.IsTrue(pairs[0].IgnoreCase);
+            Assert.AreEqual(2, pairs[1].Lp);
+            Assert.AreEqual("{{CITY}}", pairs[1].Find);
+            Assert.AreEqual("Warsaw", pairs[1].Replace);
+            Assert.IsFalse(pairs[1].IgnoreCase);
+        }
+        finally { TemporaryDirectoryCleanup.Delete(directory); }
+    }
+
+    [TestMethod]
+    public void ReplacementTemplateCanBeEditedAndExtendedWithTextValues()
+    {
+        string directory = Directory.CreateTempSubdirectory("ReplacementTemplateTest-").FullName;
+        try
+        {
+            using var stream = new MemoryStream();
+            ExcelExporter.SaveReplacementTemplate(stream);
+            stream.Position = 0;
+            string path = Path.Combine(directory, "edited.xlsx");
+            using (var workbook = new XLWorkbook(stream))
+            {
+                var sheet = workbook.Worksheet(1);
+                sheet.Cell("B2").Value = "Code";
+                sheet.Cell("C2").Value = "00123";
+                sheet.Cell("C3").Value = "";
+                sheet.Cell("A4").Value = 3;
+                sheet.Cell("B4").Value = "Formula text";
+                sheet.Cell("C4").Value = "=1+1";
+                sheet.Cell("D4").Value = "FALSE";
+                workbook.SaveAs(path);
+            }
+
+            var pairs = Replacement.ReadReplacementsFromExcel(path);
+            Assert.HasCount(3, pairs);
+            Assert.AreEqual("Code", pairs[0].Find);
+            Assert.AreEqual("00123", pairs[0].Replace);
+            Assert.AreEqual("", pairs[1].Replace);
+            Assert.AreEqual(3, pairs[2].Lp);
+            Assert.AreEqual("Formula text", pairs[2].Find);
+            Assert.AreEqual("=1+1", pairs[2].Replace);
+            Assert.IsFalse(pairs[2].IgnoreCase);
+        }
+        finally { TemporaryDirectoryCleanup.Delete(directory); }
+    }
+
+    [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
     public void SavesLocalizedFieldHeadersWithoutTranslatingData(bool empty)

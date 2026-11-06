@@ -4,6 +4,23 @@ namespace PdfOperations;
 
 public class ExcelExporter
 {
+    public static void SaveReplacementTemplate(Stream output)
+    {
+        using var workbook = new XLWorkbook();
+        var sheet = workbook.Worksheets.Add("Replacements");
+        sheet.Columns(2, 4).Style.NumberFormat.Format = "@";
+        sheet.Cell("A1").InsertData(new object[][]
+        {
+            ["Lp", "Find", "Replace", "IgnoreCase"],
+            [1, "{{COMPANY}}", "Example Studio", "TRUE"],
+            [2, "{{CITY}}", "Warsaw", "FALSE"]
+        });
+        sheet.Range("A1:D1").Style.Font.Bold = true;
+        sheet.Columns(1, 4).AdjustToContents(10, 40);
+        sheet.SheetView.FreezeRows(1);
+        workbook.SaveAs(output);
+    }
+
     public static void SaveToExcel(ExtractedValue[] results, string outputPath, ExportLabels? labels = null)
     {
         using var workbook = new XLWorkbook();
