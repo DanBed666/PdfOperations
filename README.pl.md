@@ -139,6 +139,17 @@ Wyszukiwanie w PDF odczytuje warstwę tekstową; nie wykonuje automatycznie OCR 
 
 ## Zamiana tekstu
 
+W widoku **Zamiana tekstu** kliknij **Pobierz szablon Excel** pod wyborem arkusza. Wybierz folder, w którym zapiszesz `replacement-template.xlsx`. Program tworzy plik lokalnie, bez połączenia z internetem. Zapisanie szablonu nie uruchamia zamiany ani nie wybiera go automatycznie do operacji.
+
+Otwórz plik w Excelu lub LibreOffice Calc, zastąp przykładowe zamiany własnymi i dodaj kolejne wiersze, jeśli są potrzebne. Zapisz jako `.xlsx`, a następnie wskaż go przyciskiem **Przeglądaj** obok pola **Arkusz Excel z zamianami**. Szablon nie jest zabezpieczony przed edycją i jest wspólny dla obu języków interfejsu:
+
+| Lp | Find | Replace | IgnoreCase |
+| --- | --- | --- | --- |
+| 1 | `{{COMPANY}}` | Example Studio | TRUE |
+| 2 | `{{CITY}}` | Warsaw | FALSE |
+
+Zachowaj pierwszy wiersz z nagłówkami i kolejność kolumn. `TRUE` ignoruje wielkość liter, a `FALSE` ją uwzględnia. Nie tłumacz tych dwóch wartości. Nawiasy w przykładach są opcjonalne: Find może zawierać zwykły tekst. Kolumny Find i Replace mają format tekstowy, aby zachowywać zera na początku.
+
 Zamiana tekstu obsługuje dokumenty DOCX, ODT i ODG, a nie pliki PDF ani zeskanowane obrazy. Korzysta z **pierwszego arkusza pliku Excel**. Pierwszy wiersz jest traktowany jako nagłówek, a kolejne wiersze są odczytywane według położenia kolumn:
 
 | Kolumna | Przeznaczenie | Przykład |
@@ -148,9 +159,11 @@ Zamiana tekstu obsługuje dokumenty DOCX, ODT i ODG, a nie pliki PDF ani zeskano
 | C | Tekst do wstawienia (`Replace`) | `Przykładowe Studio` |
 | D | Ignorowanie wielkości liter (`IgnoreCase`) | `TRUE` lub `FALSE` |
 
-Wiersze z pustą komórką Find są pomijane. Pusta komórka Replace powoduje usunięcie znalezionego tekstu. Aby odwrócić zamianę, zamień miejscami wartości Find i Replace.
+Wiersze z pustą komórką Find są pomijane. Pusta komórka Replace powoduje usunięcie znalezionego tekstu. Zamiany są wykonywane w kolejności wierszy, więc późniejsza zamiana może zmienić tekst powstały we wcześniejszej. Aby odwrócić zamianę, zamień miejscami wartości Find i Replace.
 
-Pracuj na kopiach ważnych dokumentów i sprawdzaj wyniki. W plikach DOCX fraza podzielona między kilka węzłów tekstowych XML, na przykład wskutek zmian formatowania, może nie zostać zamieniona jako całość.
+Pracuj na kopiach ważnych dokumentów i sprawdzaj wyniki. W głównej treści DOCX można zamieniać frazy podzielone przez zmiany formatowania w obrębie jednego akapitu. Wstawiony tekst przejmuje formatowanie początku trafienia, a otaczający tekst zachowuje swoje formatowanie. Dopasowanie nie przechodzi przez granice akapitów, tabulatory ani podziały wiersza. Nagłówki i stopki nie są przetwarzane.
+
+ODT i ODG również obsługują frazy podzielone przez formatowanie w obrębie akapitu lub nagłówka, także w polach tekstowych. Wstawiony tekst przejmuje formatowanie początku trafienia. Style, adresy linków i pozostałe atrybuty XML nie są przeszukiwane ani zmieniane. Dopasowanie nie przechodzi przez granice akapitów, tabulatory, podziały wiersza, pola automatyczne ani osadzone obiekty.
 
 ## Narzędzia zewnętrzne i uwagi o wynikach
 

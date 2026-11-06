@@ -55,8 +55,15 @@ public class HelpViewModel : ViewModelBase
         Zamiana tekstu
 
         - Zamiana tekstu korzysta z arkusza Excel z tekstem do znalezienia i wartością do podstawienia.
+        - Kliknij „Pobierz szablon Excel” pod wyborem arkusza i wybierz miejsce zapisu pliku replacement-template.xlsx. Szablon powstaje lokalnie, bez internetu; jego zapis nie uruchamia zamiany dokumentów.
+        - Otwórz szablon w Excelu lub LibreOffice Calc, zastąp przykłady własnymi zamianami, dodaj kolejne wiersze i zapisz jako .xlsx. Następnie wskaż zapisany plik przez „Przeglądaj” przy polu „Arkusz Excel z zamianami”.
+        - Używany jest pierwszy arkusz. Zachowaj pierwszy wiersz z nagłówkami i kolejność kolumn: A = Lp (numer), B = Find (tekst szukany), C = Replace (tekst do wstawienia), D = IgnoreCase (TRUE ignoruje wielkość liter, FALSE ją uwzględnia).
+        - Szablon jest edytowalny i wspólny dla obu języków. Zawiera przykłady {{COMPANY}} → Example Studio i {{CITY}} → Warsaw. Możesz szukać zwykłego tekstu; nawiasy {{...}} nie są wymagane. W kolumnie IgnoreCase zachowaj zapis TRUE/FALSE, nie tłumacz go.
+        - Puste Find pomija wiersz, a puste Replace usuwa znaleziony tekst. Zamiany są wykonywane w kolejności wierszy, więc późniejsza zamiana może zmienić wynik wcześniejszej.
         - Obsługiwane są dokumenty edytowalne, na przykład DOCX, ODT i ODG.
+        - W głównej treści DOCX fraza może mieć różne formatowanie w obrębie jednego akapitu. Wstawiony tekst przejmuje formatowanie początku trafienia; tekst poza zamianą zachowuje swoje style. Dopasowanie nie przechodzi przez granice akapitów, tabulatory ani podziały wiersza. Nagłówki i stopki nie są przetwarzane.
         - Jeśli dokument jest otwarty w innym programie, zapis może się nie udać.
+        - W ODT i ODG zamiana również rozpoznaje frazy rozdzielone formatowaniem w jednym akapicie lub nagłówku, także w polach tekstowych. Nowy tekst przejmuje formatowanie początku trafienia. Style i adresy linków pozostają bez zmian; dopasowanie nie przechodzi przez tabulatory, podziały wiersza, pola automatyczne ani osadzone obiekty.
 
         Wymagania
 
@@ -116,8 +123,15 @@ public class HelpViewModel : ViewModelBase
         Replacement
 
         - Text replacement uses an Excel file with text to find and replacement values.
+        - Click “Download Excel template” below the workbook picker and choose where to save replacement-template.xlsx. The template is generated locally without internet access; saving it does not start document replacement.
+        - Open the template in Excel or LibreOffice Calc, replace the examples with your own substitutions, add more rows and save as .xlsx. Then select the saved file using Browse next to Excel replacement file.
+        - The first worksheet is used. Keep the header row and column order: A = Lp (number), B = Find (text to find), C = Replace (replacement text), D = IgnoreCase (TRUE ignores letter case, FALSE respects it).
+        - The editable template is the same in both languages. It includes {{COMPANY}} → Example Studio and {{CITY}} → Warsaw. You can search for ordinary text; {{...}} braces are not required. Keep TRUE/FALSE in IgnoreCase without translating them.
+        - An empty Find skips the row; an empty Replace deletes the matched text. Replacements run in row order, so a later replacement may change the result of an earlier one.
         - Editable documents are supported, for example DOCX, ODT and ODG.
+        - In the DOCX document body, a phrase can span different formatting within one paragraph. Replacement text uses the formatting at the start of the match; surrounding text keeps its styles. Matches do not cross paragraph boundaries, tabs or line breaks. Headers and footers are not processed.
         - If the document is open in another program, saving may fail.
+        - In ODT and ODG, replacement also matches phrases split by formatting within one paragraph or heading, including text boxes. New text uses the formatting at the start of the match. Styles and link addresses remain unchanged; matches do not cross tabs, line breaks, fields or embedded objects.
 
         Requirements
 

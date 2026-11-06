@@ -139,6 +139,17 @@ PDF search reads the PDF text layer; it does not automatically OCR scanned PDF p
 
 ## Text replacement
 
+In **Replacement**, click **Download Excel template** below the Excel file picker. Choose a folder to save `replacement-template.xlsx`. The app generates this file locally, so no internet connection is needed. Saving the template does not start replacement or select it automatically.
+
+Open the file in Excel or LibreOffice Calc, replace the sample rows with your own substitutions, and add more rows as needed. Save it as `.xlsx`, then select it using **Browse** next to **Excel replacement file**. The template is not protected and is the same in both interface languages:
+
+| Lp | Find | Replace | IgnoreCase |
+| --- | --- | --- | --- |
+| 1 | `{{COMPANY}}` | Example Studio | TRUE |
+| 2 | `{{CITY}}` | Warsaw | FALSE |
+
+Keep the header row and column order. `TRUE` ignores letter case; `FALSE` respects it. Do not translate these two values. The braces in the examples are optional: Find can contain ordinary text. Find and Replace columns use text formatting to preserve leading zeros.
+
 Text replacement accepts DOCX, ODT and ODG files, not PDF files or scanned images. It uses the **first worksheet of an Excel file**. The first row is treated as a header; subsequent rows are read by column position:
 
 | Column | Purpose | Example |
@@ -148,9 +159,11 @@ Text replacement accepts DOCX, ODT and ODG files, not PDF files or scanned image
 | C | Replacement text (`Replace`) | `Example Studio` |
 | D | Ignore case (`IgnoreCase`) | `TRUE` or `FALSE` |
 
-Rows with an empty Find cell are skipped. An empty Replace cell removes the matched text. To reverse a substitution, swap the Find and Replace values.
+Rows with an empty Find cell are skipped. An empty Replace cell removes the matched text. Replacements run in row order, so a later replacement may change text produced by an earlier one. To reverse a substitution, swap the Find and Replace values.
 
-Use copies of important documents and inspect the output. In DOCX files, a phrase split across multiple XML text nodes, for example by formatting changes, may not be replaced as one phrase.
+Use copies of important documents and inspect the output. In the DOCX document body, replacement can match a phrase split by formatting changes within one paragraph. The replacement uses the formatting at the start of the match; surrounding text keeps its formatting. Matches do not cross paragraph boundaries, tabs or line breaks. Headers and footers are not processed.
+
+ODT and ODG also support phrases split across formatting spans within a paragraph or heading, including text boxes. Replacement text uses the formatting at the start of the match. Styles, link addresses and other XML attributes are not searched or modified. Matches do not cross paragraphs, tabs, line breaks, fields or embedded objects.
 
 ## External tools and output notes
 
