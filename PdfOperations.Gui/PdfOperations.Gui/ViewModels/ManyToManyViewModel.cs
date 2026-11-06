@@ -189,7 +189,7 @@ public partial class ManyToManyViewModel : ViewModelBase
                             foreach (string tempFile in Directory.GetFiles(operationContext.TempDir))
                             {
                                 cancellationToken.ThrowIfCancellationRequested();
-                                string finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
+                                finalPath = Path.Combine(OutputDirectory, Path.GetFileName(tempFile));
                                 if (!OverwriteExistingFiles)
                                     finalPath = GetAvailablePath(finalPath);
 
