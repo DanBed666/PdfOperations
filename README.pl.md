@@ -74,7 +74,7 @@ Wyszukiwanie obsługuje pliki PDF, TXT i obrazy. Korzystaj z filtra typu pliku w
 
 Wpisz frazę w sekcji **Szukane pola**, a kolejne dodawaj przyciskiem **Dodaj pole**. Puste pola są pomijane. Wymagana jest co najmniej jedna fraza, a nazwy pól nie mogą się powtarzać, także przy różnej wielkości liter.
 
-Raport TXT zawiera wystąpienia wszystkich fraz, również wewnątrz dłuższego tekstu. Wyszukiwanie nie rozróżnia wielkich i małych liter. Ustawienia liczby linii przed i po wyniku określają, ile otaczającego tekstu zostanie uwzględnione w raporcie.
+Raport TXT zawiera wystąpienia wszystkich fraz, również wewnątrz dłuższego tekstu. Wyszukiwanie nie rozróżnia wielkich i małych liter. Ustawienia liczby linii przed i po wyniku określają, ile otaczającego tekstu zostanie uwzględnione w raporcie. `[0]` oznacza linię z wynikiem, `[-1]` poprzednią, a `[+1]` następną.
 
 ### Eksport do Excela i JSON
 
@@ -88,14 +88,28 @@ Firma:
 Przykładowe Studio
 ```
 
-Wyszukiwanie pól `Numer sprawy` i `Firma` pozwala odczytać wartości `00123` i `Przykładowe Studio`. Odczyt wymaga zgodności całej etykiety, z pominięciem wielkości liter i białych znaków na jej początku i końcu. Znalezienie fragmentu dłuższej etykiety w raporcie TXT nie musi więc oznaczać odczytania wartości do eksportu.
+Wyszukiwanie pól `Numer sprawy` i `Firma` pozwala odczytać wartości `00123` i `Przykładowe Studio`. Dla każdej frazy możesz wybrać zapis całej znalezionej linii albo tylko wartości po frazie. Wyszukiwanie nie rozróżnia wielkich i małych liter i znajduje również frazę wewnątrz dłuższego tekstu.
+
+**Opcja „Eksportuj każde trafienie jako osobny wpis” niezaznaczona (podsumowanie):**
 
 - Każdy plik wejściowy otrzymuje jeden wiersz w Excelu lub jeden obiekt w JSON. Pełne ścieżki rozróżniają pliki o tej samej nazwie z różnych folderów.
 - Każde szukane pole otrzymuje kolumnę w Excelu lub wpis w obiekcie pól w JSON.
 - Identyczne wartości w obrębie jednego pliku i pola są zapisywane tylko raz. Różne wartości trafiają do osobnych linii w jednej komórce Excela lub do elementów tablicy w JSON.
 - Brak wartości oznacza pustą komórkę w Excelu lub pustą tablicę w JSON.
+
+**Opcja „Eksportuj każde trafienie jako osobny wpis” zaznaczona:**
+
+- Każda pasująca linia dla danej frazy otrzymuje osobny wiersz w Excelu lub obiekt w JSON: nazwę pliku, pełną ścieżkę, stronę, linię, frazę i wartość.
+- Powtarzające się wartości zostają zachowane. Trafienie bez odczytanej wartości jest zapisywane z pustą wartością; pliki bez trafień nie tworzą wpisów.
+- Kilka wystąpień tej samej frazy w jednej linii daje jeden wpis dla tej linii, a nie osobny wpis dla każdego wystąpienia.
+
+Przykładowo dwa różne numery telefonu znalezione w jednym PDF zajmą w podsumowaniu dwie linie w jednej komórce Excela lub dwa elementy tablicy w JSON. Po włączeniu osobnych wpisów zajmą dwa wiersze lub obiekty, jeśli znaleziono je w różnych liniach. Podsumowanie zachowuje wszystkie różne wartości, a nie tylko ostatni wynik.
+
+**W obu trybach:**
+
 - Wartości są zapisywane jako tekst, dzięki czemu zachowują zera na początku.
 - Język interfejsu w chwili rozpoczęcia operacji określa język stałych nagłówków Excela, nazwę arkusza i klucze JSON. Szukane frazy i odczytane wartości nie są tłumaczone.
+- Tryb eksportu nie zmienia raportu TXT. Żaden z trybów nie łączy automatycznie nazwisk, telefonów ani innych pól należących do tej samej osoby.
 
 | Element eksportu | Angielski | Polski |
 | --- | --- | --- |
@@ -105,16 +119,21 @@ Wyszukiwanie pól `Numer sprawy` i `Firma` pozwala odczytać wartości `00123` i
 | Nazwa pliku w JSON | `FileName` | `NazwaPliku` |
 | Ścieżka pliku w JSON | `FilePath` | `SciezkaPliku` |
 | Pola w JSON | `Fields` | `Pola` |
+| Strona w osobnych wpisach | `Page` | `Strona` |
+| Linia w osobnych wpisach | `Line` | `Linia` |
+| Fraza w osobnych wpisach | `Phrase` | `Fraza` |
+| Wartość w Excelu w osobnych wpisach | `Value` | `Wartość` |
+| Wartość w JSON w osobnych wpisach | `DesiredValue` | `Wartosc` |
 
 Jeśli inny program odczytuje wyeksportowany JSON, uwzględnij klucze zależne od wybranego języka.
 
 ### Ograniczenia odczytu
 
-Wartość jest odczytywana po dwukropku w tej samej linii lub z następnej niepustej linii mieszczącej się w raporcie. Jeśli wartość znajduje się poza tym zakresem, zwiększ liczbę linii po wyniku.
+Przy zapisie samej wartości program odczytuje tekst po frazie i opcjonalnym dwukropku. Jeżeli jest pusty, sprawdza następną niepustą linię tej samej strony. Nie zależy to od ustawień liczby linii przed i po wyniku w raporcie TXT. Opcja zapisu całej linii zapisuje zamiast tego linię z dopasowaniem.
 
 Jeśli następna linia jest inną szukaną etykietą, wartość pozostaje pusta. Nieznana etykieta może jednak zostać potraktowana jako wartość. Na przykład przy wyszukiwaniu wyłącznie pola `Numer sprawy`, pusta etykieta `Numer sprawy:` z następującą po niej linią `Adres: ul. Główna` może dać wynik `Adres: ul. Główna`. Sprawdź wyeksportowane dane przed ich wykorzystaniem.
 
-Wyniki są grupowane według pliku, a nie według osoby lub rekordu w dokumencie. Kilka nazwisk i numerów w jednym pliku nie zostanie automatycznie połączonych w pary.
+Przy zapisie samej wartości program próbuje zakończyć odczyt przed kolejną etykietą, również niewybraną, jeśli występuje po przecinku i kończy się dwukropkiem. To rozpoznawanie na podstawie wzorca, a nie znajomość struktury dokumentu: niejednoznaczny tekst może wymagać ręcznej korekty. Zapis całej linii nie stosuje tego przycinania.
 
 Wyszukiwanie w PDF odczytuje warstwę tekstową; nie wykonuje automatycznie OCR zeskanowanych stron PDF. W przypadku skanów bez zaznaczalnego tekstu najpierw zapisz strony jako obrazy, a następnie użyj OCR lub wyszukiwania w obrazach. Dokładność OCR zależy od jakości obrazów i dostępnych danych językowych.
 

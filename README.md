@@ -74,7 +74,7 @@ Search accepts PDF, TXT and image files. Use the file-type filter in the selecti
 
 Enter one phrase under **Search fields**, then use **Add field** for additional phrases. Empty fields are ignored. At least one phrase is required, and field names must be unique regardless of letter case.
 
-The TXT report contains case-insensitive matches for all phrases, including matches within longer text. The lines-before and lines-after settings control the surrounding context included in the report.
+The TXT report contains case-insensitive matches for all phrases, including matches within longer text. The lines-before and lines-after settings control the surrounding context included in the report. `[0]` marks the matching line, `[-1]` the preceding line, and `[+1]` the following line.
 
 ### Excel and JSON exports
 
@@ -88,14 +88,28 @@ Company:
 Example Studio
 ```
 
-Searching for `Reference` and `Company` can extract `00123` and `Example Studio`. Extraction matches the entire label, ignoring case and surrounding whitespace; matching only part of a longer label in the TXT report does not necessarily produce an extracted value.
+Searching for `Reference` and `Company` can extract `00123` and `Example Studio`. For each phrase, choose whether to save the entire matching line or just the value after the phrase. Search is case-insensitive and can also match a phrase within longer text.
+
+**With "Export each match as a separate record" unchecked (summary):**
 
 - Each input file produces one Excel row or JSON object. Full paths distinguish files with the same name in different folders.
 - Each search field produces an Excel column or an entry under the JSON fields object.
 - Identical values within one file and field are stored once. Different values are separate lines in one Excel cell or items in a JSON array.
 - Missing values produce an empty Excel cell or an empty JSON array.
+
+**With "Export each match as a separate record" checked:**
+
+- Each matching line for each phrase produces a separate Excel row or JSON object containing the file name, full path, page, line, phrase and value.
+- Repeated values are preserved. A match with no extracted value is included with an empty value; files with no matches produce no records.
+- Several occurrences of the same phrase on one line produce one record for that line, not one record per occurrence.
+
+For example, two different phone numbers found in one PDF occupy two lines in one Excel cell (or two items in a JSON array) in summary mode. With separate records enabled, they occupy two rows or objects, provided they were found on different lines. The summary keeps all distinct values, not just the last result.
+
+**In both modes:**
+
 - Values are stored as text, preserving leading zeros.
 - The interface language at the start of the operation determines the fixed Excel headers, worksheet name and JSON keys. Search phrases and extracted values are not translated.
+- The export mode does not change the TXT report. Neither mode automatically pairs names, phone numbers or other fields belonging to the same person.
 
 | Export label | English | Polish |
 | --- | --- | --- |
@@ -105,16 +119,21 @@ Searching for `Reference` and `Company` can extract `00123` and `Example Studio`
 | JSON file name | `FileName` | `NazwaPliku` |
 | JSON file path | `FilePath` | `SciezkaPliku` |
 | JSON fields | `Fields` | `Pola` |
+| Page in separate records | `Page` | `Strona` |
+| Line in separate records | `Line` | `Linia` |
+| Phrase in separate records | `Phrase` | `Fraza` |
+| Excel value in separate records | `Value` | `Wartość` |
+| JSON value in separate records | `DesiredValue` | `Wartosc` |
 
 If another program consumes the exported JSON, account for these language-dependent keys.
 
 ### Extraction limitations
 
-Values are read after a colon on the same line or from the next nonempty line within the report context. Increase the lines-after setting if the value lies outside that context.
+In value-only mode, text is read after the phrase and an optional colon. If that text is empty, the next nonempty line on the same page is checked. This does not depend on the lines-before or lines-after settings of the TXT report. Whole-line mode saves the matching line instead.
 
 If the next line is another search label, the value remains empty. An unknown label can instead be mistaken for a value. For example, when searching only for `Reference`, an empty `Reference:` followed by `Address: Main Street` may yield `Address: Main Street`. Review exported data before using it.
 
-Results are grouped by file, not by person or record within a document. Several names and numbers in one file are not automatically paired.
+Value-only mode tries to stop before the next label, including an unselected label after a comma when it is followed by a colon. This is a heuristic, not a document schema: ambiguous text may still need manual correction. Whole-line mode preserves the matching line without this trimming.
 
 PDF search reads the PDF text layer; it does not automatically OCR scanned PDF pages. For scans without selectable text, render the pages as images first and use OCR or image search. OCR accuracy depends on image quality and available language data.
 

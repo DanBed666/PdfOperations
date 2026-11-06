@@ -44,8 +44,10 @@ public class HelpViewModel : ViewModelBase
         - Eksport do Excela i JSON jest opcjonalny. Możesz wybrać jeden lub oba formaty; raport TXT zostanie zapisany również wtedy.
         - Dla każdej frazy możesz zapisać całą znalezioną linię lub tylko tekst po frazie. Jeżeli po frazie i opcjonalnym dwukropku nie ma tekstu, program sprawdzi następną niepustą linię tej samej strony, niezależnie od ustawień raportu TXT.
         - Jeśli następna linia jest inną szukaną etykietą, pole pozostanie puste. Etykieta, której nie dodano do szukanych pól, może jednak zostać odczytana jako wartość pustego pola. Sprawdź wyeksportowane dane.
-        - Domyślnie każdy plik ma jeden wiersz w Excelu lub jeden obiekt w JSON. Podsumowanie zawiera tylko różne, niepuste wartości każdej frazy.
+        - Gdy opcja „Eksportuj każde trafienie jako osobny wpis” jest niezaznaczona, każdy plik ma jeden wiersz w Excelu lub jeden obiekt w JSON. Wszystkie różne, niepuste wartości danej frazy trafiają do osobnych linii jednej komórki Excela lub do tablicy w JSON. To nie tylko ostatni wynik; identyczne wartości są zapisywane raz.
         - Wybierz „Eksportuj każde trafienie jako osobny wpis”, aby otrzymać osobny wiersz lub obiekt dla każdej pasującej linii danej frazy, ze stroną i numerem linii. Powtórzenia zostaną zachowane, podobnie jak zera na początku wartości.
+        - Przykład: dwa różne telefony znalezione w różnych liniach jednego PDF to jedna komórka z dwiema wartościami w podsumowaniu albo dwa wiersze po włączeniu osobnych wpisów. Kilka wystąpień tej samej frazy w jednej linii nadal daje jeden wpis dla tej linii.
+        - Tryb eksportu nie zmienia raportu TXT. Oznaczenia [0], [-1] i [+1] wskazują odpowiednio linię z wynikiem, poprzednią i następną.
         - Język aplikacji w chwili uruchomienia wyszukiwania określa język stałych nagłówków i nazwy arkusza Excel oraz kluczy JSON: NazwaPliku, SciezkaPliku i Pola albo FileName, FilePath i Fields.
         - Wpisane frazy oraz znalezione wartości nie są tłumaczone. Zmiana języka aplikacji nie zmienia już zapisanych plików.
         - Kilka nazwisk i numerów w jednym dokumencie nie zostanie automatycznie połączonych w pary.
@@ -103,8 +105,10 @@ public class HelpViewModel : ViewModelBase
         - Excel and JSON exports are optional. Select either or both formats; the TXT report is still saved.
         - For each phrase, save the entire matching line or just the text after the phrase. If nothing follows the phrase and optional colon, the next nonempty line on the same page is checked, regardless of the TXT context settings.
         - If the next line is another search label, the value remains empty. A label that is not among the search fields may instead be read as the value of an empty field. Check the exported data.
-        - By default, each file has one Excel row or JSON object. This summary includes only distinct, nonempty values for each phrase.
+        - With “Export each match as a separate record” unchecked, each file has one Excel row or JSON object. All distinct, nonempty values for each phrase appear on separate lines in one Excel cell or in a JSON array. This keeps more than just the last result; identical values are stored once.
         - Select “Export each match as a separate record” for one row or object per matching line per phrase, with its page and line number. Repeated values and leading zeros are preserved.
+        - Example: two different phone numbers found on different lines of one PDF produce one cell with two values in summary mode, or two rows with separate records enabled. Multiple occurrences of the same phrase on one line still produce one record for that line.
+        - The export mode does not change the TXT report. [0], [-1] and [+1] mark the matching, preceding and following lines respectively.
         - The app language when search starts determines the fixed Excel headers and worksheet name, and the JSON keys: FileName, FilePath and Fields, or NazwaPliku, SciezkaPliku and Pola.
         - Your phrases and extracted values are not translated. Changing the app language does not change previously saved files.
         - Multiple names and numbers in one document are not automatically paired.
