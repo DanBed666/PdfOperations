@@ -160,7 +160,6 @@ public partial class FragmentsViewModel : ViewModelBase
             Fragments.Add(fragment);
         }
 
-        SetSelectedFragmentFiles(Array.Empty<string>());
         PageNumbers = "";
         StatusKind = StatusKind.Success;
         StatusMessage = Loc.FragmentsAdded(pendingFragments.Count);
