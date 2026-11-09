@@ -171,7 +171,7 @@ public partial class MainViewModel : ViewModelBase
                 FileTypeName = Loc.InputImageFilesWithFormats,
                 MoveAllTempFiles = true,
                 FilePatterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tif", "*.tiff"],
-                Action = (_, _, fileJob, token) => Convert.PictToTxt(fileJob, token)
+                Action = (_, _, fileJob, token) => Convert.PictToTxtWithTables(fileJob, token)
             }),
             "ExtractFromPdf" => new ManyToManyViewModel(new GuiOperationDefinition
             {

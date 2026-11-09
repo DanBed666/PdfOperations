@@ -186,6 +186,18 @@ public static class Convert
         RunClass.Run(tool, arguments, OperationTimeouts.PdfToDocx, cancellationToken);
     }
     
+    public static void PictToTxtWithTables(FileJob fileJob) =>
+        PictToTxtWithTables(fileJob, CancellationToken.None);
+
+    public static void PictToTxtWithTables(FileJob fileJob, CancellationToken cancellationToken)
+    {
+        OperationCancellation.Run(OperationTimeouts.ImageToTxt, "Image to text", token =>
+        {
+            if (!TableOcr.TryConvert(fileJob, token))
+                PictToTxt(fileJob, token);
+        }, cancellationToken);
+    }
+
     public static void PictToTxt(FileJob fileJob)
     {
         PictToTxt(fileJob, CancellationToken.None);

@@ -64,7 +64,7 @@ public class OperationPaths
                 Name = "Odczytaj tekst z obrazu",
                 Filter = FileFilters.PictFiles,
                 Extension = ".txt",
-                FileOperationActionMultiple = Convert.PictToTxt,
+                FileOperationActionMultiple = Convert.PictToTxtWithTables,
                 OperationFlow = OperationFlow.FilesToFiles,
                 InputPrompt = "Wybierz obrazy do odczytu tekstu OCR:",
                 OutputPrompt = "Podaj nazwę pliku tekstowego:",
