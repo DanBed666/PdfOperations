@@ -14,6 +14,9 @@ public abstract partial class ViewModelBase : ObservableObject
 {
     public LocalizationService Loc => LocalizationService.Instance;
 
+    internal string OperationKey { get; set; } = "";
+    public string OperationDescription => Loc.GetOperationDescription(OperationKey);
+
     private string statusMessage = "";
 
     public string StatusMessage

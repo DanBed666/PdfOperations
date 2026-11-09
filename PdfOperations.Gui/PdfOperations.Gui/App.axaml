@@ -45,6 +45,11 @@
     <Application.Styles>
         <FluentTheme />
 
+        <Style Selector="TextBlock.operationDescription">
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
         <Style Selector="Button">
             <Setter Property="Cursor" Value="Hand" />
         </Style>

@@ -12,9 +12,12 @@
             <StackPanel Spacing="12"
                         Margin="0,0,20,8"
                         IsEnabled="{Binding IsNotBusy}">
-                <TextBlock Text="{Binding Title}"
-                           FontSize="24"
-                           FontWeight="SemiBold" />
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding Title}"
+                               FontSize="24"
+                               FontWeight="SemiBold" />
+                    <TextBlock Classes="operationDescription" Text="{Binding OperationDescription}" />
+                </StackPanel>
 
                 <TextBlock Text="{Binding InputTitle}" />
 

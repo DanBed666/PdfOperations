@@ -181,6 +181,30 @@ public partial class LocalizationService : ObservableObject
         };
     }
 
+    public string GetOperationDescription(string key)
+    {
+        var (pl, en) = key switch
+        {
+            "PdfToTxt" => ("Zapisuje tekst z PDF w pliku TXT bez rozpoznawania skanów.", "Saves the text in a PDF as a TXT file without running OCR on scans."),
+            "PdfToDocx" => ("Tworzy edytowalny dokument DOCX z pliku PDF. Wymaga Visual C++ v14 Redistributable x64 (link w Pomocy).", "Converts a PDF into an editable DOCX. Requires Visual C++ v14 Redistributable x64 (link in Help)."),
+            "DocxToPdfWord" => ("Zapisuje dokument DOCX jako PDF za pomocą zainstalowanego programu Microsoft Word.", "Saves a DOCX document as a PDF using Microsoft Word installed on this computer."),
+            "PdfToImage" => ("Zapisuje każdą stronę PDF jako osobny obraz JPG.", "Saves each PDF page as a separate JPG image."),
+            "ImagesToPdf" => ("Tworzy jeden PDF z obrazów w kolejności widocznej na liście.", "Combines the images into one PDF in the order shown."),
+            "ImagesToTxt" => ("Rozpoznaje tekst na obrazach i zapisuje go w plikach TXT.", "Recognizes text in images and saves it as plain text."),
+            "ExtractFromPdf" => ("Zapisuje obrazy osadzone w PDF jako osobne pliki.", "Saves the images embedded in a PDF as separate files."),
+            "LibreOffice" => ("Konwertuje dokumenty, arkusze i prezentacje do wybranego formatu bez potrzeby instalowania pakietu Microsoft Office.", "Converts documents, spreadsheets and presentations to the selected format without Microsoft Office."),
+            "SplitPdf" => ("Wydziela wybrane strony lub dzieli PDF na osobne pliki.", "Extracts selected pages or splits a PDF into separate files."),
+            "MergePdf" => ("Łączy całe pliki PDF w jeden dokument w kolejności widocznej na liście.", "Combines entire PDF files into one document in the order shown."),
+            "Search" => ("Wyszukuje frazy w plikach i zapisuje raport z dopasowaniami.", "Finds phrases in the selected files and saves a report of the matches."),
+            "Info" => ("Zapisuje raport o plikach PDF, m.in. liczbę stron i ich wymiary.", "Saves a report of PDF properties, including page count and page size."),
+            "FontInfo" => ("Zapisuje listę czcionek użytych w PDF i informację, czy są osadzone.", "Lists the fonts used in a PDF and whether they are embedded."),
+            "Replacement" => ("Zastępuje tekst w dokumentach według reguł z arkusza Excel.", "Replaces text in documents using rules from an Excel workbook."),
+            "Fragments" => ("Tworzy jeden PDF z wybranych zakresów stron w kolejności fragmentów na liście.", "Builds one PDF from selected page ranges in the order shown."),
+            _ => ("", "")
+        };
+        return Language == AppLanguage.Polish ? pl : en;
+    }
+
     public string MissingInputFiles(string files)
     {
         return Language == AppLanguage.Polish

@@ -231,6 +231,7 @@ public partial class MainViewModel : ViewModelBase
                 return;
             }
     
+            viewModel.OperationKey = value.Key;
             operationViewModels.Add(value.Key, viewModel);
         }
     
