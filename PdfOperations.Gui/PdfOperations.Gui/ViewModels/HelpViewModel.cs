@@ -6,6 +6,21 @@ public class HelpViewModel : ViewModelBase
 {
     public string Title => Loc.GetOperationName("Help");
 
+    public string RequirementsTitle => Loc.Language == AppLanguage.Polish ? "Instalacja na Windows x64" : "Setup on Windows x64";
+    public string RequirementsText => Loc.Language == AppLanguage.Polish
+        ? """
+          Do uruchomienia paczki slim zainstaluj .NET 10 Desktop Runtime. Na stronie pobierania wybierz instalator Windows x64 w sekcji .NET Desktop Runtime, nie SDK.
+          Do konwersji PDF do DOCX zainstaluj dodatkowo Visual C++ v14 Redistributable x64 w wersji 14.50.35719 lub nowszej.
+          Tylko opcja DOCX do PDF (Word) wymaga zainstalowanego i aktywowanego programu Microsoft Word. Bez Worda wybierz Konwersja LibreOffice.
+          Wypakuj cały ZIP i uruchom PdfOperations.Gui.exe. Zostaw folder tools obok aplikacji: zawiera już LibreOffice i narzędzia OCR.
+          """
+        : """
+          To run the slim package, install the .NET 10 Desktop Runtime. On the download page, choose the Windows x64 installer under .NET Desktop Runtime, not the SDK.
+          For PDF to DOCX, also install Visual C++ v14 Redistributable x64, version 14.50.35719 or later.
+          Only DOCX to PDF (Word) needs an installed and activated copy of Microsoft Word. Without Word, choose LibreOffice conversion.
+          Extract the entire ZIP and run PdfOperations.Gui.exe. Keep the tools folder next to the application: it includes LibreOffice and the OCR tools.
+          """;
+
     public string HelpText => Loc.Language == AppLanguage.Polish
         ? PolishHelpText
         : EnglishHelpText;
@@ -64,12 +79,6 @@ public class HelpViewModel : ViewModelBase
         - W głównej treści DOCX fraza może mieć różne formatowanie w obrębie jednego akapitu. Wstawiony tekst przejmuje formatowanie początku trafienia; tekst poza zamianą zachowuje swoje style. Dopasowanie nie przechodzi przez granice akapitów, tabulatory ani podziały wiersza. Nagłówki i stopki nie są przetwarzane.
         - Jeśli dokument jest otwarty w innym programie, zapis może się nie udać.
         - W ODT i ODG zamiana również rozpoznaje frazy rozdzielone formatowaniem w jednym akapicie lub nagłówku, także w polach tekstowych. Nowy tekst przejmuje formatowanie początku trafienia. Style i adresy linków pozostają bez zmian; dopasowanie nie przechodzi przez tabulatory, podziały wiersza, pola automatyczne ani osadzone obiekty.
-
-        Wymagania
-
-        - Konwersja DOCX do PDF przez Word wymaga zainstalowanego Microsoft Word.
-        - Konwersje LibreOffice wymagają dostępnego LibreOffice.
-        - Folder tools musi znajdować się obok aplikacji w wersji release.
 
         Problemy
 
@@ -132,12 +141,6 @@ public class HelpViewModel : ViewModelBase
         - In the DOCX document body, a phrase can span different formatting within one paragraph. Replacement text uses the formatting at the start of the match; surrounding text keeps its styles. Matches do not cross paragraph boundaries, tabs or line breaks. Headers and footers are not processed.
         - If the document is open in another program, saving may fail.
         - In ODT and ODG, replacement also matches phrases split by formatting within one paragraph or heading, including text boxes. New text uses the formatting at the start of the match. Styles and link addresses remain unchanged; matches do not cross tabs, line breaks, fields or embedded objects.
-
-        Requirements
-
-        - DOCX to PDF through Word requires Microsoft Word.
-        - LibreOffice conversions require LibreOffice.
-        - The tools folder must be available next to the release application.
 
         Problems
 

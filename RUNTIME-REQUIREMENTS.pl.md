@@ -4,16 +4,15 @@
 
 Paczka jest przeznaczona dla systemu Windows x64 i wymaga osobno zainstalowanego
 środowiska .NET. Nie zawiera własnej kopii tego środowiska. Aby uruchomić interfejs
-graficzny i jego proces pomocniczy, zainstaluj .NET 10 Desktop Runtime w wersji
-x64. Wypakuj całe archiwum i uruchom `PdfOperations.Gui.exe`.
+graficzny i jego proces pomocniczy, zainstaluj [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+W sekcji **.NET Desktop Runtime** wybierz instalator **Windows x64** (nie SDK).
+Wypakuj całe archiwum i uruchom `PdfOperations.Gui.exe`.
 
-Konwersja PDF do DOCX wymaga dodatkowo Microsoft Visual C++ v14 Redistributable
-w wersji x64, 14.50.35719 lub nowszej. Pobierz ten składnik bezpośrednio ze strony
-Microsoft:
+Konwersja PDF do DOCX wymaga dodatkowo [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe)
+w wersji 14.50.35719 lub nowszej.
 
-https://learn.microsoft.com/pl-pl/cpp/windows/latest-supported-vc-redist
-
-Microsoft Word jest potrzebny wyłącznie do konwersji korzystającej z Worda.
+Zainstalowany i aktywowany Microsoft Word jest potrzebny tylko do opcji **DOCX do PDF (Word)**.
+Bez Worda można wykonać tę konwersję przez dołączone LibreOffice.
 
 ## Informacje o bibliotekach
 

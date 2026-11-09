@@ -3,16 +3,15 @@
 [Polski](RUNTIME-REQUIREMENTS.pl.md)
 
 This is a framework-dependent Windows x64 package, not a self-contained
-publish output. Install the .NET 10 Desktop Runtime (x64) to run the GUI and
-its worker. Extract the entire archive and start `PdfOperations.Gui.exe`.
+publish output. Install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) to run the GUI and
+its worker. Under **.NET Desktop Runtime**, choose the **Windows x64** installer (not the SDK).
+Extract the entire archive and start `PdfOperations.Gui.exe`.
 
-PDF-to-DOCX conversion additionally requires the Microsoft Visual C++ v14
-Redistributable for x64, version 14.50.35719 or newer. Download it directly from
-Microsoft:
+PDF-to-DOCX conversion additionally requires [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe),
+version 14.50.35719 or later.
 
-https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
-
-Microsoft Word is required only for Word-based conversion.
+An installed and activated copy of Microsoft Word is needed only for **DOCX to PDF (Word)**.
+Without Word, use the bundled LibreOffice for this conversion.
 
 The separately copied `tools/pdf2docx/_internal/MSVCP140.dll` is intentionally not
 included. The converter uses the installed system runtime instead. Do not copy

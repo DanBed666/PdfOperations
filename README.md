@@ -29,9 +29,9 @@ The GUI includes file counts, file-type filters, progress indicators, cancellati
 
 ## Requirements and startup
 
-- Windows. The configured external tools use Windows executables, including x64 builds.
-- For a framework-dependent build, install the matching .NET 10 Desktop Runtime. A self-contained package includes its .NET runtime.
-- Microsoft Word is required only for the **DOCX to PDF (Word)** operation.
+- **To run the slim package on Windows x64:** install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Under **.NET Desktop Runtime**, choose the **Windows x64** installer. The SDK is not required.
+- **For PDF → DOCX:** install [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe), version 14.50.35719 or later.
+- **For DOCX to PDF (Word):** an installed and activated copy of Microsoft Word is needed. Without Word, choose **LibreOffice conversion**; LibreOffice is included in the package.
 - External tools and their supporting files must be present in the expected `tools` directory next to the application.
 - The application needs write access to the output and temporary directories, with sufficient free disk space.
 

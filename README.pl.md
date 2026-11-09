@@ -29,9 +29,9 @@ Interfejs zawiera liczniki plików, filtry formatów, wskaźniki postępu, anulo
 
 ## Wymagania i uruchomienie
 
-- System Windows. Skonfigurowane narzędzia zewnętrzne korzystają z plików wykonywalnych dla Windows, w tym wersji x64.
-- Wersja zależna od środowiska .NET wymaga odpowiedniej wersji .NET 10 Desktop Runtime. Paczka typu self-contained zawiera własne środowisko .NET.
-- Microsoft Word jest wymagany tylko do operacji **DOCX do PDF (Word)**.
+- **Do uruchomienia paczki slim na Windows x64:** zainstaluj [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). W sekcji **.NET Desktop Runtime** wybierz instalator **Windows x64**. SDK nie jest potrzebne.
+- **Do konwersji PDF → DOCX:** zainstaluj [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe) w wersji 14.50.35719 lub nowszej.
+- **Do opcji DOCX do PDF (Word):** potrzebny jest zainstalowany i aktywowany Microsoft Word. Bez Worda wybierz **Konwersja LibreOffice**; LibreOffice jest już w paczce.
 - Narzędzia zewnętrzne wraz z plikami pomocniczymi muszą znajdować się w przewidzianym folderze `tools` obok aplikacji.
 - Program potrzebuje uprawnień do zapisu w folderze wynikowym i folderach tymczasowych oraz wystarczającej ilości wolnego miejsca na dysku.
 
