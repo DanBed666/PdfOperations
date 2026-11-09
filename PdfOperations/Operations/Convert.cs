@@ -213,7 +213,7 @@ public static class Convert
         string tool = ToolPaths.ToolPathsDict[Tool.Magick];
         List<string> arguments = new List<string>();
         
-        arguments.AddRange([..fileJob.InputFiles, fileJob.TempPath]);
+        arguments.AddRange([..fileJob.InputFiles, "-auto-orient", fileJob.TempPath]);
         RunClass.Run(tool, arguments, OperationTimeouts.ImageToPdf, cancellationToken);
     }
     

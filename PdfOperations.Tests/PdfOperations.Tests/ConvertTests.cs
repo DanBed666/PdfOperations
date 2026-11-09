@@ -441,6 +441,36 @@ public class ConvertTests()
     }
     
     [TestMethod]
+    public void PictToPdfHonorsExifOrientationPerImage()
+    {
+        string dir = Files.PrepareTempDir();
+        try
+        {
+            string pdf = Path.Combine(dir, "result.pdf");
+            Convert.PictToPdf(new FileJob
+            {
+                InputFiles = TestHelper.SetInputPaths(["orientation-right-top.jpg", "orientation-untagged.jpg"]),
+                TempPath = pdf
+            });
+            Convert.PdfToPict(new FileJob { InputFile = pdf, TempPath = Path.Combine(dir, "page.jpg") });
+
+            // Both sources have red on the left. EXIF 6 moves it to the top of page one.
+            using var rotated = new System.Drawing.Bitmap(Path.Combine(dir, "page-1.jpg"));
+            using var unchanged = new System.Drawing.Bitmap(Path.Combine(dir, "page-2.jpg"));
+            Assert.IsGreaterThan(rotated.Width, rotated.Height);
+            Assert.IsGreaterThan(unchanged.Height, unchanged.Width);
+            var top = rotated.GetPixel(rotated.Width / 2, rotated.Height / 4);
+            var left = unchanged.GetPixel(unchanged.Width / 4, unchanged.Height / 2);
+            Assert.IsGreaterThan(top.B, top.R);
+            Assert.IsGreaterThan(left.B, left.R);
+        }
+        finally
+        {
+            TemporaryDirectoryCleanup.Delete(dir);
+        }
+    }
+
+    [TestMethod]
     public void PictToPdfTest()
     {
         OperationInput operationInput = new OperationInput()
