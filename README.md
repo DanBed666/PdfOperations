@@ -190,6 +190,7 @@ Executable locations are defined in [ToolPaths.cs](PdfOperations/Infrastructure/
 - LibreOffice HTML output is stored in a dedicated folder with its associated images and other generated assets. Keep these files together.
 - Extracted PDF images can have different formats, such as PNG or JPEG; extraction is not the same as rendering every page as JPEG.
 - Office conversions can depend on installed fonts and document layout. Check the resulting files.
+- If text looks different in a PDF exported by LibreOffice than it does in Word, LibreOffice may have substituted a missing font. Download the font from its publisher’s website, install it in Windows (including any bold or italic styles the document uses), and repeat the conversion.
 - Password-protected or damaged documents may fail with an error. Expand the error details for the underlying tool message.
 - Time limits apply to individual tool invocations or processing steps, not one fixed limit for the entire batch. Defaults are defined in [OperationTimeouts.cs](PdfOperations/Infrastructure/OperationTimeouts.cs).
 - LibreOffice conversion monitors temporary data size and free space. The current defaults are a 2 GiB temporary-data limit and a 2 GiB minimum free-space threshold on monitored drives. See [LibreOfficeDiskGuard.cs](PdfOperations/Infrastructure/LibreOfficeDiskGuard.cs).
