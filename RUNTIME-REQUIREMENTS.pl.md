@@ -2,11 +2,10 @@
 
 [English](RUNTIME-REQUIREMENTS.md)
 
-Paczka jest przeznaczona dla systemu Windows x64 i wymaga osobno zainstalowanego
-środowiska .NET. Nie zawiera własnej kopii tego środowiska. Aby uruchomić interfejs
-graficzny i jego proces pomocniczy, zainstaluj [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
-W sekcji **.NET Desktop Runtime** wybierz instalator **Windows x64** (nie SDK).
-Wypakuj całe archiwum i uruchom `PdfOperations.Gui.exe`.
+Wybierz jedną wersję dla Windows x64:
+
+- **Instalator:** zawiera .NET 10 dla aplikacji graficznej i jej procesu pomocniczego. Instaluje program dla bieżącego użytkownika w `%LOCALAPPDATA%\Programs\PdfOperations`, bez uprawnień administratora. Aby uruchomić program, wybierz **PdfOperations** w menu Start.
+- **Przenośny ZIP (slim):** wymaga [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). W sekcji **.NET Desktop Runtime** wybierz **Windows x64** (nie SDK). Rozpakuj całe archiwum z aplikacją do wybranego folderu i uruchom `PdfOperations.Gui.exe`.
 
 Konwersja PDF do DOCX wymaga dodatkowo [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe)
 w wersji 14.50.35719 lub nowszej.
@@ -26,6 +25,4 @@ LibreOffice i qpdf pozostawiono wraz z ich dotychczasowymi informacjami licencyj
 Ten dokument nie przyznaje praw do rozpowszechniania tych plików ani nie zastępuje
 warunków ich licencji.
 
-Użytkownik nie musi instalować Visual Studio. Instalacja wymaganych składników
-może wymagać zgody administratora. Paczka nie zawiera instalatora i nie uruchamia
-żadnego instalatora automatycznie.
+Użytkownik nie musi instalować Visual Studio. Osobna instalacja składników systemowych, takich jak pakiet Visual C++ Redistributable, może wymagać zgody administratora.

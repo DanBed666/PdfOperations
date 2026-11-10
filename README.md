@@ -6,6 +6,15 @@ PdfOperations is a Windows desktop application for working with PDF files, image
 
 The repository also contains the original console application. This guide describes the GUI workflow.
 
+## Download and install
+
+Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest):
+
+- **Installer (`*-setup.exe`):** includes .NET 10 and installs for your Windows account without administrator rights. Open **PdfOperations** from the Start menu. To find the installed files, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
+- **Portable ZIP (slim):** choose this if you want to keep the program in a folder of your choice. It requires the [.NET 10 Desktop Runtime for Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), not the SDK. Extract the **entire** application ZIP, then open `PdfOperations.Gui.exe` from the extracted folder.
+
+The separate `third-party-sources.zip` contains source code, not the application.
+
 ## Features
 
 | Operation | Description |
@@ -29,13 +38,12 @@ The GUI includes file counts, file-type filters, progress indicators, cancellati
 
 ## Requirements and startup
 
-- **To run the slim package on Windows x64:** install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Under **.NET Desktop Runtime**, choose the **Windows x64** installer. The SDK is not required.
 - **For PDF → DOCX:** install [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe), version 14.50.35719 or later.
 - **For DOCX to PDF (Word):** an installed and activated copy of Microsoft Word is needed. Without Word, choose **LibreOffice conversion**; LibreOffice is included in the package.
 - External tools and their supporting files must be present in the expected `tools` directory next to the application.
 - The application needs write access to the output and temporary directories, with sufficient free disk space.
 
-For a packaged build, extract the whole archive to a folder and run `PdfOperations.Gui.exe`. Do not run it directly from the archive or move only the executable away from its supporting files.
+See [Runtime requirements](RUNTIME-REQUIREMENTS.md) for details about both packages.
 
 Choose an operation from the left sidebar to begin. The built-in **Help** view is available in both interface languages.
 

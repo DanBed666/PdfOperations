@@ -2,10 +2,10 @@
 
 [Polski](RUNTIME-REQUIREMENTS.pl.md)
 
-This is a framework-dependent Windows x64 package, not a self-contained
-publish output. Install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) to run the GUI and
-its worker. Under **.NET Desktop Runtime**, choose the **Windows x64** installer (not the SDK).
-Extract the entire archive and start `PdfOperations.Gui.exe`.
+Choose one Windows x64 package:
+
+- **Installer:** includes .NET 10 for the GUI and its worker. It installs to `%LOCALAPPDATA%\Programs\PdfOperations` for the current user without administrator rights. Start **PdfOperations** from the Start menu.
+- **Portable ZIP (slim):** requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Under **.NET Desktop Runtime**, choose **Windows x64** (not the SDK). Extract the entire application ZIP to a folder of your choice and start `PdfOperations.Gui.exe`.
 
 PDF-to-DOCX conversion additionally requires [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe),
 version 14.50.35719 or later.
@@ -22,4 +22,4 @@ bundles are retained with their existing notices. This document does not grant
 redistribution rights to those files or replace their license terms.
 
 No Visual Studio installation is required for end users. Installing prerequisites
-may require administrator approval. No installer is bundled or run automatically.
+such as the system-wide Visual C++ Redistributable may require administrator approval.

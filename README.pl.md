@@ -6,6 +6,15 @@ PdfOperations to aplikacja dla systemu Windows do pracy z plikami PDF, obrazami,
 
 Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik opisuje obsługę wersji graficznej.
 
+## Pobieranie i instalacja
+
+Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) wybierz **jedną** z dwóch wersji dla Windows x64:
+
+- **Instalator (`*-setup.exe`):** zawiera .NET 10 i instaluje program tylko dla Twojego konta, bez uprawnień administratora. Aby go uruchomić, wybierz **PdfOperations** w menu Start. Aby otworzyć folder instalacji, wklej `%LOCALAPPDATA%\Programs\PdfOperations` w pasek adresu Eksploratora plików.
+- **Przenośny ZIP (slim):** wybierz go, jeśli chcesz samodzielnie wskazać folder programu. Ta wersja wymaga [.NET 10 Desktop Runtime dla Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), ale nie SDK. Rozpakuj **całe** archiwum z aplikacją i uruchom `PdfOperations.Gui.exe` z rozpakowanego folderu.
+
+Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
+
 ## Funkcje
 
 | Operacja | Opis |
@@ -29,13 +38,12 @@ Interfejs zawiera liczniki plików, filtry formatów, wskaźniki postępu, anulo
 
 ## Wymagania i uruchomienie
 
-- **Do uruchomienia paczki slim na Windows x64:** zainstaluj [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). W sekcji **.NET Desktop Runtime** wybierz instalator **Windows x64**. SDK nie jest potrzebne.
 - **Do konwersji PDF → DOCX:** zainstaluj [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe) w wersji 14.50.35719 lub nowszej.
 - **Do opcji DOCX do PDF (Word):** potrzebny jest zainstalowany i aktywowany Microsoft Word. Bez Worda wybierz **Konwersja LibreOffice**; LibreOffice jest już w paczce.
 - Narzędzia zewnętrzne wraz z plikami pomocniczymi muszą znajdować się w przewidzianym folderze `tools` obok aplikacji.
 - Program potrzebuje uprawnień do zapisu w folderze wynikowym i folderach tymczasowych oraz wystarczającej ilości wolnego miejsca na dysku.
 
-Aby uruchomić gotową paczkę, rozpakuj całe archiwum do folderu i otwórz `PdfOperations.Gui.exe`. Nie uruchamiaj programu bezpośrednio z archiwum ani nie przenoś samego pliku EXE bez plików pomocniczych.
+Szczegóły dotyczące obu wersji znajdziesz w [wymaganiach do uruchomienia](RUNTIME-REQUIREMENTS.pl.md).
 
 Na początek wybierz operację z lewego paska. Wbudowana **Pomoc** jest dostępna w obu językach interfejsu.
 
