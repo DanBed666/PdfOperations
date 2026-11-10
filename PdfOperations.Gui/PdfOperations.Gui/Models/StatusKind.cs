@@ -4,5 +4,6 @@ public enum StatusKind
 {
     Info,
     Error,
-    Success
+    Success,
+    Warning
 }

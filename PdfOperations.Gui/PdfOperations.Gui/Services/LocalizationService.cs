@@ -317,6 +317,10 @@ public partial class LocalizationService : ObservableObject
             : $"Done. Saved {count} files to: {displayPath}";
     }
 
+    public string TemporaryFoldersLeft => Language == AppLanguage.Polish
+        ? "Ostrzeżenie: nie udało się usunąć folderów tymczasowych."
+        : "Warning: temporary folders could not be removed.";
+
     public string DoneSavedFilesTo(string directory)
     {
         string displayPath = PathDisplayHelper.Format(directory);

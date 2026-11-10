@@ -79,12 +79,14 @@ public abstract partial class ViewModelBase : ObservableObject
         ? StatusKind switch
         {
             StatusKind.Success => "#123524",
+            StatusKind.Warning => "#422D10",
             StatusKind.Error => "#451A1A",
             _ => "#1E293B"
         }
         : StatusKind switch
         {
             StatusKind.Success => "#ECFDF3",
+            StatusKind.Warning => "#FFFBEB",
             StatusKind.Error => "#FEF2F2",
             _ => "#EFF6FF"
         };
@@ -93,12 +95,14 @@ public abstract partial class ViewModelBase : ObservableObject
         ? StatusKind switch
         {
             StatusKind.Success => "#22C55E",
+            StatusKind.Warning => "#D99B38",
             StatusKind.Error => "#EF4444",
             _ => "#3B82F6"
         }
         : StatusKind switch
         {
             StatusKind.Success => "#86EFAC",
+            StatusKind.Warning => "#D4A640",
             StatusKind.Error => "#FCA5A5",
             _ => "#BFDBFE"
         };
@@ -107,12 +111,14 @@ public abstract partial class ViewModelBase : ObservableObject
         ? StatusKind switch
         {
             StatusKind.Success => "#DCFCE7",
+            StatusKind.Warning => "#FDE7B0",
             StatusKind.Error => "#FEE2E2",
             _ => "#DBEAFE"
         }
         : StatusKind switch
         {
             StatusKind.Success => "#166534",
+            StatusKind.Warning => "#754700",
             StatusKind.Error => "#991B1B",
             _ => "#1F2937"
         };

@@ -87,6 +87,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
         IsBusy = true;
         StatusKind = StatusKind.Info;
+        var cleanupWarnings = new List<string>();
 
         try
         {
@@ -168,7 +169,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
 
                     try
                     {
-                        Convert.FileToPdf(input, context, cancellationToken);
+                        Convert.FileToPdf(input, context, cancellationToken, cleanupWarnings.Add);
                         cancellationToken.ThrowIfCancellationRequested();
 
                         string expectedFile = Path.Combine(context.TempDir,
@@ -177,9 +178,6 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                         if (!File.Exists(expectedFile))
                             throw new InvalidOperationException(
                                 $"LibreOffice didn't create file for: {inputFile}");
-
-                        if (SelectedFormat == "pdf")
-                            Convert.ValidatePdfOutput(expectedFile);
 
                         string name = currentInputFiles.Length == 1
                             ? customName
@@ -250,14 +248,16 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                     }
                     finally
                     {
-                        TemporaryDirectoryCleanup.Delete(context.TempDir, operationError);
+                        TemporaryDirectoryCleanup.Delete(context.TempDir, operationError, cleanupWarnings.Add);
                     }
                 }
             });
 
             LastOutputDirectory = OutputDirectory;
-            StatusKind = StatusKind.Success;
+            StatusKind = cleanupWarnings.Count == 0 ? StatusKind.Success : StatusKind.Warning;
             StatusMessage = Loc.DoneSavedFiles(savedFilesCount, OutputDirectory);
+            if (cleanupWarnings.Count > 0)
+                StatusMessage += " " + Loc.TemporaryFoldersLeft;
         }
         catch (Exception ex)
         {
@@ -265,6 +265,13 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         }
         finally
         {
+            if (cleanupWarnings.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(ErrorDetails))
+                    ErrorDetails += Environment.NewLine + Environment.NewLine;
+                ErrorDetails += Loc.TemporaryFoldersLeft + Environment.NewLine +
+                    string.Join(Environment.NewLine, cleanupWarnings);
+            }
             IsBusy = false;
         }
     }
