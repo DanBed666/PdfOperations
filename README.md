@@ -10,7 +10,7 @@ The repository also contains the original console application. This guide descri
 
 Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest):
 
-- **Installer (`*-setup.exe`):** includes .NET 10 and installs for your Windows account without administrator rights. Open **PdfOperations** from the Start menu. To find the installed files, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
+- **Installer (`*-setup.exe`):** installs PdfOperations for your Windows account without administrator rights and includes .NET 10. Open **PdfOperations** from the Start menu. To open the default installation folder, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
 - **Portable ZIP (slim):** choose this if you want to keep the program in a folder of your choice. It requires the [.NET 10 Desktop Runtime for Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), not the SDK. Extract the **entire** application ZIP, then open `PdfOperations.Gui.exe` from the extracted folder.
 
 The separate `third-party-sources.zip` contains source code, not the application.
@@ -28,7 +28,7 @@ PdfOperations does not check for updates automatically. To update, close the app
 | --- | --- |
 | PDF to TXT | Extract selectable text from PDF files. |
 | PDF to DOCX | Convert PDF files into Word documents using the pdf2docx tool. |
-| DOCX to PDF (Word) | Convert Word documents using installed Microsoft Word. |
+| DOCX to PDF (Word) | Convert Word documents to PDF using a locally installed copy of Microsoft Word. |
 | PDF to images | Render PDF pages as images. |
 | Images to PDF | Combine images into a PDF in the selected order. |
 | Images to TXT | Recognize text in images with Tesseract OCR. |
@@ -36,8 +36,8 @@ PdfOperations does not check for updates automatically. To update, close the app
 | LibreOffice conversion | Convert office documents to PDF, DOCX, ODT, XLSX, HTML or TXT, where supported by LibreOffice. |
 | PDF pages | Extract selected, even or odd pages; split after selected pages or into individual pages. |
 | Merge PDF | Combine PDFs in the order shown in the file list. |
-| PDF from fragments | Combine selected page ranges from multiple PDFs and arrange their order. |
-| Search | Search multiple phrases in PDF, TXT and image files; save a TXT report and optionally export extracted values to Excel and JSON. |
+| Build PDF from fragments | Combine page ranges from one or more PDFs in the order you choose. |
+| Search | Search PDF, TXT and image files for multiple phrases. Save a TXT report and optionally export the extracted values to Excel, JSON or both. |
 | PDF information | Read PDF metadata, page counts and font information. |
 | Text replacement | Replace text in DOCX, ODT and ODG documents using an Excel replacement table. |
 
@@ -76,12 +76,12 @@ When **Overwrite existing files** is off, conflicting output names receive numer
 
 Page numbers start at 1. Custom selections support individual pages and ranges, for example `1`, `2-5` or `1,3-5,8`.
 
-- **Selected pages** creates a PDF containing the requested pages.
+- **Custom pages** creates a PDF containing the pages you specify.
 - **Even pages** and **Odd pages** select pages automatically.
-- **Split after pages** treats each entered number as the last page of the preceding part. For example, splitting a seven-page PDF after pages `2,5` produces parts containing pages 1-2, 3-5 and 6-7.
+- **Split by pages** splits the PDF after each page you specify. For example, entering `2,5` for a seven-page PDF produces three parts: pages 1–2, 3–5 and 6–7.
 - **Split every page** creates a separate PDF for each page.
 
-Use **PDF from fragments** to assemble page ranges from several source PDFs. Add the ranges, check the page counts, and reorder the fragment list before starting.
+Use **Build PDF from fragments** to assemble a PDF from page ranges in one or more source files. Check the selected pages and arrange the fragments in the order you want them to appear.
 
 ## Search and extraction
 
@@ -174,7 +174,7 @@ Text replacement accepts DOCX, ODT and ODG files, not PDF files or scanned image
 | C | Replacement text (`Replace`) | `Example Studio` |
 | D | Ignore case (`IgnoreCase`) | `TRUE` or `FALSE` |
 
-Rows with an empty Find cell are skipped. An empty Replace cell removes the matched text. Replacements run in row order, so a later replacement may change text produced by an earlier one. To reverse a substitution, swap the Find and Replace values.
+Rows with an empty `Find` cell are skipped. An empty `Replace` cell removes the matched text. Rules run in row order, so a later rule can change the result of an earlier one. Swapping `Find` and `Replace` reverses the direction of a rule; it does not undo previous changes. Use a backup to restore the original text.
 
 Use copies of important documents and inspect the output. In the DOCX document body, replacement can match a phrase split by formatting changes within one paragraph. The replacement uses the formatting at the start of the match; surrounding text keeps its formatting. Matches do not cross paragraph boundaries, tabs or line breaks. Headers and footers are not processed.
 

@@ -2,7 +2,7 @@
 
 [English](README.md) | **Polski**
 
-PdfOperations to aplikacja dla systemu Windows do pracy z plikami PDF, obrazami, tekstem i dokumentami biurowymi. Ma interfejs graficzny oparty na Avalonia, dostępny po polsku i angielsku, oraz motyw jasny, ciemny i zgodny z ustawieniami systemu.
+PdfOperations to aplikacja dla systemu Windows do pracy z plikami PDF, obrazami, tekstem i dokumentami biurowymi. Interfejs graficzny wykorzystuje bibliotekę Avalonia i jest dostępny po polsku i angielsku. Do wyboru są trzy motywy: jasny, ciemny i systemowy.
 
 Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik opisuje obsługę wersji graficznej.
 
@@ -10,7 +10,7 @@ Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik 
 
 Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) wybierz **jedną** z dwóch wersji dla Windows x64:
 
-- **Instalator (`*-setup.exe`):** zawiera .NET 10 i instaluje program tylko dla Twojego konta, bez uprawnień administratora. Aby go uruchomić, wybierz **PdfOperations** w menu Start. Aby otworzyć folder instalacji, wklej `%LOCALAPPDATA%\Programs\PdfOperations` w pasek adresu Eksploratora plików.
+- **Instalator (`*-setup.exe`):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
 - **Przenośny ZIP (slim):** wybierz go, jeśli chcesz samodzielnie wskazać folder programu. Ta wersja wymaga [.NET 10 Desktop Runtime dla Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), ale nie SDK. Rozpakuj **całe** archiwum z aplikacją i uruchom `PdfOperations.Gui.exe` z rozpakowanego folderu.
 
 Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
@@ -28,7 +28,7 @@ PdfOperations nie sprawdza aktualizacji automatycznie. Aby zaktualizować progra
 | --- | --- |
 | PDF do TXT | Odczytywanie zaznaczalnego tekstu z plików PDF. |
 | PDF do DOCX | Konwersja plików PDF na dokumenty Word za pomocą narzędzia pdf2docx. |
-| DOCX do PDF (Word) | Konwersja dokumentów Word przy użyciu zainstalowanego programu Microsoft Word. |
+| DOCX do PDF (Word) | Konwersja dokumentów DOCX do formatu PDF za pomocą zainstalowanego programu Microsoft Word. |
 | PDF na obrazy | Zapisywanie stron PDF jako obrazów. |
 | Obrazy na PDF | Łączenie obrazów w jeden PDF w wybranej kolejności. |
 | Obrazy na TXT | Rozpoznawanie tekstu na obrazach za pomocą Tesseract OCR. |
@@ -36,8 +36,8 @@ PdfOperations nie sprawdza aktualizacji automatycznie. Aby zaktualizować progra
 | Konwersja LibreOffice | Konwersja dokumentów biurowych do PDF, DOCX, ODT, XLSX, HTML lub TXT, w zakresie obsługiwanym przez LibreOffice. |
 | Strony PDF | Wyodrębnianie wybranych, parzystych lub nieparzystych stron; podział po wskazanych stronach albo na pojedyncze strony. |
 | Łączenie PDF | Łączenie plików PDF w kolejności widocznej na liście. |
-| PDF z fragmentów | Łączenie wybranych zakresów stron z wielu plików PDF i ustalanie ich kolejności. |
-| Wyszukiwanie | Wyszukiwanie wielu fraz w plikach PDF, TXT i obrazach; zapis raportu TXT oraz opcjonalny eksport odczytanych wartości do Excela i JSON. |
+| Utwórz PDF z fragmentów | Łączenie zakresów stron z jednego lub kilku plików PDF w wybranej kolejności. |
+| Wyszukiwanie | Wyszukiwanie wielu fraz w plikach PDF, plikach TXT i na obrazach. Wyniki można zapisać w raporcie TXT, a odczytane wartości dodatkowo wyeksportować do Excela, do pliku JSON lub do obu formatów. |
 | Informacje o PDF | Odczytywanie metadanych, liczby stron i informacji o czcionkach. |
 | Zamiana tekstu | Zamiana tekstu w dokumentach DOCX, ODT i ODG na podstawie tabeli zamian w Excelu. |
 
@@ -57,7 +57,7 @@ Na początek wybierz operację z lewego paska. Wbudowana **Pomoc** jest dostępn
 ## Podstawowa obsługa
 
 1. Wybierz operację z bocznego paska.
-2. Kliknij **Wybierz pliki**, aby wskazać pliki wejściowe. Ten przycisk zastępuje obecną listę.
+2. Kliknij **Wybierz pliki**, aby wskazać pliki wejściowe. Nowy wybór zastąpi dotychczasową listę plików.
 3. Użyj **Dodaj pliki**, aby dopisać kolejne pliki, również z innych folderów.
 4. Wskaż folder zapisu i uzupełnij wymagane opcje, na przykład nazwę pliku, zakres stron lub szukane pola.
 5. Kliknij **Start**, a następnie **Otwórz folder wynikowy**, aby sprawdzić rezultaty.
@@ -76,12 +76,12 @@ Przycisk **Anuluj** zgłasza żądanie zatrzymania operacji. Anulowanie nie cofa
 
 Numeracja stron zaczyna się od 1. Możesz wskazywać pojedyncze strony i zakresy, na przykład `1`, `2-5` lub `1,3-5,8`.
 
-- Wybór wskazanych stron tworzy PDF zawierający żądane strony.
-- Tryby stron parzystych i nieparzystych wybierają strony automatycznie.
-- Podział po podanych stronach traktuje każdą wpisaną liczbę jako numer ostatniej strony poprzedniej części. Na przykład podział siedmiostronicowego PDF po stronach `2,5` tworzy części zawierające strony 1-2, 3-5 i 6-7.
-- Podział każdej strony osobno zapisuje każdą stronę do oddzielnego PDF.
+- **Wybrane strony**: program tworzy plik PDF zawierający tylko wskazane strony.
+- **Strony parzyste** i **Strony nieparzyste**: program wybiera strony automatycznie.
+- **Podziel po podanych stronach**: każda wpisana liczba wskazuje stronę, po której program dzieli plik. Na przykład wpisanie `2,5` dla siedmiostronicowego dokumentu daje trzy części: strony 1–2, 3–5 i 6–7.
+- **Podziel każdą stronę osobno**: program zapisuje każdą stronę jako osobny plik PDF.
 
-Operacja **Utwórz PDF z fragmentów** pozwala złożyć dokument z zakresów stron pochodzących z kilku plików PDF. Dodaj zakresy, sprawdź liczbę stron i ustaw kolejność fragmentów przed uruchomieniem.
+Opcja **Utwórz PDF z fragmentów** pozwala złożyć dokument z zakresów stron z jednego lub kilku plików PDF. Sprawdź wybrane strony i ułóż fragmenty w takiej kolejności, w jakiej mają się pojawić w gotowym dokumencie.
 
 ## Wyszukiwanie i odczytywanie wartości
 
@@ -146,7 +146,7 @@ Jeśli inny program odczytuje wyeksportowany JSON, uwzględnij klucze zależne o
 
 Przy zapisie samej wartości program odczytuje tekst po frazie i opcjonalnym dwukropku. Jeżeli jest pusty, sprawdza następną niepustą linię tej samej strony. Nie zależy to od ustawień liczby linii przed i po wyniku w raporcie TXT. Opcja zapisu całej linii zapisuje zamiast tego linię z dopasowaniem.
 
-Jeśli następna linia jest inną szukaną etykietą, wartość pozostaje pusta. Nieznana etykieta może jednak zostać potraktowana jako wartość. Na przykład przy wyszukiwaniu wyłącznie pola `Numer sprawy`, pusta etykieta `Numer sprawy:` z następującą po niej linią `Adres: ul. Główna` może dać wynik `Adres: ul. Główna`. Sprawdź wyeksportowane dane przed ich wykorzystaniem.
+Jeśli następna linia zawiera inną szukaną etykietę, wartość pozostaje pusta. Program może jednak potraktować nierozpoznaną etykietę jako wartość. Przykład: szukasz tylko pola `Numer sprawy`. Jeśli po pustym polu `Numer sprawy:` jest linia `Adres: ul. Główna`, program może odczytać `Adres: ul. Główna` jako numer sprawy. Sprawdź wyeksportowane dane przed ich wykorzystaniem.
 
 Przy zapisie samej wartości program próbuje zakończyć odczyt przed kolejną etykietą, również niewybraną, jeśli występuje po przecinku i kończy się dwukropkiem. To rozpoznawanie na podstawie wzorca, a nie znajomość struktury dokumentu: niejednoznaczny tekst może wymagać ręcznej korekty. Zapis całej linii nie stosuje tego przycinania.
 
@@ -174,9 +174,9 @@ Zamiana tekstu obsługuje dokumenty DOCX, ODT i ODG, a nie pliki PDF ani zeskano
 | C | Tekst do wstawienia (`Replace`) | `Przykładowe Studio` |
 | D | Ignorowanie wielkości liter (`IgnoreCase`) | `TRUE` lub `FALSE` |
 
-Wiersze z pustą komórką Find są pomijane. Pusta komórka Replace powoduje usunięcie znalezionego tekstu. Zamiany są wykonywane w kolejności wierszy, więc późniejsza zamiana może zmienić tekst powstały we wcześniejszej. Aby odwrócić zamianę, zamień miejscami wartości Find i Replace.
+Program pomija wiersze z pustą komórką `Find`. Pusta komórka `Replace` oznacza usunięcie znalezionego tekstu. Reguły są stosowane w kolejności wierszy, więc późniejsza reguła może zmienić wynik wcześniejszej. Zamiana miejscami wartości `Find` i `Replace` odwraca kierunek reguły, ale nie cofa wcześniejszych zmian. Aby odzyskać oryginalny tekst, skorzystaj z kopii zapasowej.
 
-Pracuj na kopiach ważnych dokumentów i sprawdzaj wyniki. W głównej treści DOCX można zamieniać frazy podzielone przez zmiany formatowania w obrębie jednego akapitu. Wstawiony tekst przejmuje formatowanie początku trafienia, a otaczający tekst zachowuje swoje formatowanie. Dopasowanie nie przechodzi przez granice akapitów, tabulatory ani podziały wiersza. Nagłówki i stopki nie są przetwarzane.
+Pracuj na kopiach ważnych dokumentów i sprawdzaj wyniki. W głównej treści dokumentu DOCX program rozpoznaje frazę nawet wtedy, gdy jej fragmenty mają różne formatowanie w obrębie jednego akapitu. Wstawiony tekst przejmuje formatowanie początku frazy, a tekst wokół niej zachowuje swoje formatowanie. Program nie łączy tekstu rozdzielonego granicą akapitu, tabulatorem ani podziałem wiersza. Nie przetwarza nagłówków ani stopek stron.
 
 ODT i ODG również obsługują frazy podzielone przez formatowanie w obrębie akapitu lub nagłówka, także w polach tekstowych. Wstawiony tekst przejmuje formatowanie początku trafienia. Style, adresy linków i pozostałe atrybuty XML nie są przeszukiwane ani zmieniane. Dopasowanie nie przechodzi przez granice akapitów, tabulatory, podziały wiersza, pola automatyczne ani osadzone obiekty.
 
@@ -197,7 +197,7 @@ Lokalizacje plików wykonywalnych są określone w [ToolPaths.cs](PdfOperations/
 - Wyniki konwersji LibreOffice do HTML są zapisywane w osobnym folderze wraz z obrazami i innymi wygenerowanymi plikami pomocniczymi. Przechowuj je razem.
 - Obrazy wyodrębnione z PDF mogą mieć różne formaty, na przykład PNG lub JPEG. Wyodrębnianie obrazów nie jest tym samym co zapisywanie każdej strony jako JPEG.
 - Konwersje dokumentów biurowych mogą zależeć od zainstalowanych czcionek i układu dokumentu. Sprawdź pliki wynikowe.
-- Jeśli tekst w pliku PDF utworzonym przez LibreOffice wygląda inaczej niż w Wordzie, przyczyną może być brak czcionki i użycie zamiennika. Pobierz brakującą czcionkę ze strony jej wydawcy, zainstaluj ją w Windows wraz z odmianami użytymi w dokumencie (np. pogrubioną lub kursywą) i ponów konwersję.
+- Jeśli tekst w pliku PDF utworzonym przez LibreOffice wygląda inaczej niż w Wordzie, LibreOffice mógł użyć zamiennika brakującej czcionki. Pobierz czcionkę ze strony jej wydawcy i zainstaluj w systemie Windows te jej odmiany, których użyto w dokumencie (np. zwykłą, pogrubioną i pochyłą). Następnie ponów konwersję.
 - Dokumenty zabezpieczone hasłem lub uszkodzone mogą powodować błąd. Rozwiń szczegóły błędu, aby zobaczyć komunikat używanego narzędzia.
 - Limity czasu dotyczą pojedynczych wywołań narzędzi lub etapów przetwarzania, a nie jednego wspólnego limitu dla całej partii. Wartości domyślne są określone w [OperationTimeouts.cs](PdfOperations/Infrastructure/OperationTimeouts.cs).
 - Konwersja LibreOffice monitoruje rozmiar danych tymczasowych i wolne miejsce. Obecne wartości domyślne to limit 2 GiB danych tymczasowych oraz wymagane minimum 2 GiB wolnego miejsca na monitorowanych dyskach. Szczegóły znajdują się w [LibreOfficeDiskGuard.cs](PdfOperations/Infrastructure/LibreOfficeDiskGuard.cs).
@@ -221,7 +221,7 @@ Uruchomienie testów automatycznych:
 dotnet test PdfOperations.Tests/PdfOperations.Tests/PdfOperations.Tests.csproj -c Release
 ```
 
-Część testów to testy integracyjne wymagające odpowiednich narzędzi zewnętrznych. Testy konwersji przez Word wymagają również programu Microsoft Word. Folder `TestData` projektu testowego jest kopiowany do folderu wynikowego testów podczas kompilacji.
+Część testów to testy integracyjne wymagające odpowiednich narzędzi zewnętrznych. Testy konwersji za pomocą programu Word wymagają jego zainstalowania. Podczas kompilacji folder `TestData` jest kopiowany do folderu wynikowego projektu testowego.
 
 Aby zamiast GUI uruchomić pierwotną aplikację konsolową:
 
