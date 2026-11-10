@@ -15,6 +15,13 @@ Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) 
 
 Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
 
+### Ręczna aktualizacja
+
+PdfOperations nie sprawdza aktualizacji automatycznie. Aby zaktualizować program, zamknij go i pobierz nowszą wersję ze [strony wydań](https://github.com/DanBed666/PdfOperations/releases/latest).
+
+- **Instalator:** uruchom nowy plik `*-setup.exe` z tego samego konta Windows i pozostaw dotychczasowy folder instalacji. Nie musisz odinstalowywać poprzedniej wersji.
+- **Przenośny ZIP:** rozpakuj całe nowe archiwum z aplikacją do nowego folderu i uruchom z niego `PdfOperations.Gui.exe`. Jeśli korzystasz z własnego skrótu, zmień go tak, żeby wskazywał nowy plik wykonywalny.
+
 ## Funkcje
 
 | Operacja | Opis |

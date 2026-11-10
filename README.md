@@ -15,6 +15,13 @@ Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/
 
 The separate `third-party-sources.zip` contains source code, not the application.
 
+### Manual updates
+
+PdfOperations does not check for updates automatically. To update, close the app and download the newer version from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest).
+
+- **Installer:** run the new `*-setup.exe` from the same Windows account and keep the existing installation folder. You do not need to uninstall the previous version.
+- **Portable ZIP:** extract the entire new application ZIP into a new folder, then run `PdfOperations.Gui.exe` from that folder. If you created a shortcut, update it to point to the new executable.
+
 ## Features
 
 | Operation | Description |
