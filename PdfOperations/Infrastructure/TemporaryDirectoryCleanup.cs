@@ -40,7 +40,10 @@ public static class TemporaryDirectoryCleanup
         }
     }
 
-    public static void Delete(string directory, Exception? operationError = null)
+    public static void Delete(string directory, Exception? operationError = null) =>
+        Delete(directory, operationError, null);
+
+    public static void Delete(string directory, Exception? operationError, Action<string>? reportWarning)
     {
         const int attempts = 10;
         Exception? lastError = null;
@@ -65,6 +68,11 @@ public static class TemporaryDirectoryCleanup
 
         var cleanupError = new IOException(
             $"Could not remove temporary directory '{directory}'. It was left on disk.", lastError);
+        if (operationError is null && reportWarning is not null)
+        {
+            reportWarning(directory);
+            return;
+        }
         if (operationError is null)
             throw cleanupError;
 

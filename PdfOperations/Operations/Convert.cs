@@ -11,37 +11,37 @@ public static class Convert
     }
 
     public static void FileToPdf(OperationInput fileInput, OperationContext context, CancellationToken cancellationToken)
+        => FileToPdf(fileInput, context, cancellationToken,
+            path => Console.Error.WriteLine($"Ostrzeżenie: nie usunięto folderu tymczasowego: {path}"));
+
+    public static void FileToPdf(OperationInput fileInput, OperationContext context, CancellationToken cancellationToken,
+        Action<string> reportCleanupWarning)
+        => RunLibreOfficeConversion(fileInput, context, cancellationToken, reportCleanupWarning,
+            workDirectory => RunLibreOffice(fileInput, context, cancellationToken, workDirectory));
+
+    internal static void RunLibreOfficeConversion(OperationInput fileInput, OperationContext context,
+        CancellationToken cancellationToken, Action<string> reportCleanupWarning, Action<string> convert)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
         string workDirectory = Directory.CreateTempSubdirectory("PdfOperationsLibre-").FullName;
         Exception? operationError = null;
         try
         {
-            LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]);
-            
-            string[] inputs = fileInput.InputFiles.Select(path =>
-                fileInput.Format.Equals("txt", StringComparison.OrdinalIgnoreCase)
-                && Path.GetExtension(path).Equals(".docx", StringComparison.OrdinalIgnoreCase)
-                    ? PrepareDocxForText(path, workDirectory) : path).ToArray();
-
-            string profileUri = new Uri(
-                Path.Combine(workDirectory, "profile") + Path.DirectorySeparatorChar).AbsoluteUri;
-            List<string> arguments = [$"-env:UserInstallation={profileUri}", "--headless",
-                "--nologo", "--nodefault", "--nofirststartwizard", "--norestore"];
-
-            if (inputs.All(f => Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-                && fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase))
-                arguments.Add("--infilter=writer_pdf_import");
-
-            arguments.AddRange(["--convert-to", fileInput.Format, ..inputs, "--outdir", context.TempDir]);
-            
-            string libreTemp = Path.Combine(workDirectory, "temp");
-            Directory.CreateDirectory(libreTemp);
-            RunClass.RunGuarded(
-                ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments,
-                OperationTimeouts.LibreOffice, cancellationToken, libreTemp,
-                () => LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]));
+            convert(workDirectory);
+            foreach (string input in fileInput.InputFiles)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                string output = Path.Combine(context.TempDir, Path.GetFileNameWithoutExtension(input) + "." + fileInput.Format);
+                if (!File.Exists(output))
+                    throw new InvalidOperationException($"LibreOffice didn't create file for: {input}");
+                if (fileInput.Format.Equals("pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    ValidatePdfOutput(output);
+                    RunClass.Run(ToolPaths.ToolPathsDict[Tool.Qpdf], ["--check", output],
+                        OperationTimeouts.PdfInfo, cancellationToken);
+                }
+            }
+            cancellationToken.ThrowIfCancellationRequested();
         }
         catch (Exception ex)
         {
@@ -50,8 +50,37 @@ public static class Convert
         }
         finally
         {
-            TemporaryDirectoryCleanup.Delete(workDirectory, operationError);
+            TemporaryDirectoryCleanup.Delete(workDirectory, operationError, reportCleanupWarning);
         }
+    }
+
+    internal static void RunLibreOffice(OperationInput fileInput, OperationContext context,
+        CancellationToken cancellationToken, string workDirectory)
+    {
+        LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]);
+
+        string[] inputs = fileInput.InputFiles.Select(path =>
+            fileInput.Format.Equals("txt", StringComparison.OrdinalIgnoreCase)
+            && Path.GetExtension(path).Equals(".docx", StringComparison.OrdinalIgnoreCase)
+                ? PrepareDocxForText(path, workDirectory) : path).ToArray();
+
+        string profileUri = new Uri(
+            Path.Combine(workDirectory, "profile") + Path.DirectorySeparatorChar).AbsoluteUri;
+        List<string> arguments = [$"-env:UserInstallation={profileUri}", "--headless",
+            "--nologo", "--nodefault", "--nofirststartwizard", "--norestore"];
+
+        if (inputs.All(f => Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+            && fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase))
+            arguments.Add("--infilter=writer_pdf_import");
+
+        arguments.AddRange(["--convert-to", fileInput.Format, ..inputs, "--outdir", context.TempDir]);
+
+        string libreTemp = Path.Combine(workDirectory, "temp");
+        Directory.CreateDirectory(libreTemp);
+        RunClass.RunGuarded(
+            ToolPaths.ToolPathsDict[Tool.LibreOffice], arguments,
+            OperationTimeouts.LibreOffice, cancellationToken, libreTemp,
+            () => LibreOfficeDiskGuard.Check([workDirectory, context.TempDir]));
     }
 
     private static string PrepareDocxForText(string input, string workDirectory)
@@ -109,9 +138,10 @@ public static class Convert
         if (fileInfo.Length == 0)
             throw new InvalidOperationException($"PDF file is empty: {path}");
 
-        byte[] header = File.ReadAllBytes(path).Take(4).ToArray();
+        using var stream = File.OpenRead(path);
+        Span<byte> header = stackalloc byte[4];
 
-        if (header.Length < 4 ||
+        if (stream.ReadAtLeast(header, header.Length, throwOnEndOfStream: false) < header.Length ||
             header[0] != '%' ||
             header[1] != 'P' ||
             header[2] != 'D' ||
