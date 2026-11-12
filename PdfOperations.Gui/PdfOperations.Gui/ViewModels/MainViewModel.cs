@@ -239,30 +239,30 @@ public partial class MainViewModel : ViewModelBase
         CurrentOperationViewModel = viewModel;
     }
     
-    public AppLanguage[] Languages { get; } =
+    public LanguageMenuItem[] Languages { get; } =
     [
-        AppLanguage.Polish,
-        AppLanguage.English
+        new(AppLanguage.Polish, "Polski"),
+        new(AppLanguage.English, "English")
     ];
 
-    public AppLanguage SelectedLanguage
+    public LanguageMenuItem? SelectedLanguage
     {
-        get => Loc.Language;
+        get => Languages.FirstOrDefault(item => item.Language == Loc.Language);
         set
         {
-            if (Loc.Language == value)
+            if (value is null || Loc.Language == value.Language)
                 return;
 
             string? selectedKey = SelectedOperation?.Key;
             AppTheme selectedTheme = SelectedTheme?.Theme ?? AppTheme.System;
-            Loc.Language = value;
+            Loc.Language = value.Language;
             
             foreach (ViewModelBase viewModel in operationViewModels.Values)
             {
                 viewModel.RefreshLocalization();
             }
 
-            settings.Language = value;
+            settings.Language = value.Language;
             SettingsService.Save(settings);
 
             RefreshThemes(selectedTheme);
