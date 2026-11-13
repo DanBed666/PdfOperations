@@ -45,7 +45,7 @@ Interfejs zawiera liczniki plików, filtry formatów, wskaźniki postępu, anulo
 
 ## Wymagania i uruchomienie
 
-- **Do konwersji PDF → DOCX:** zainstaluj [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe) w wersji 14.50.35719 lub nowszej.
+- **PDF → DOCX:** instalator i wersja przenośna z dołączoną biblioteką Microsoft Visual C++ nie wymagają osobnej instalacji pakietu Visual C++. Warunki korzystania z biblioteki akceptujesz podczas instalacji, a w wersji przenośnej przed pierwszą konwersją PDF → DOCX.
 - **Do opcji DOCX do PDF (Word):** potrzebny jest zainstalowany i aktywowany Microsoft Word. Bez Worda wybierz **Konwersja LibreOffice**; LibreOffice jest już w paczce.
 - Narzędzia zewnętrzne wraz z plikami pomocniczymi muszą znajdować się w przewidzianym folderze `tools` obok aplikacji.
 - Program potrzebuje uprawnień do zapisu w folderze wynikowym i folderach tymczasowych oraz wystarczającej ilości wolnego miejsca na dysku.

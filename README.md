@@ -45,7 +45,7 @@ The GUI includes file counts, file-type filters, progress indicators, cancellati
 
 ## Requirements and startup
 
-- **For PDF → DOCX:** install [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe), version 14.50.35719 or later.
+- **PDF → DOCX:** the installer and portable ZIP with the bundled Microsoft Visual C++ library do not require a separate Visual C++ installation. Accept the library terms during setup or, in the portable version, before your first PDF → DOCX conversion.
 - **For DOCX to PDF (Word):** an installed and activated copy of Microsoft Word is needed. Without Word, choose **LibreOffice conversion**; LibreOffice is included in the package.
 - External tools and their supporting files must be present in the expected `tools` directory next to the application.
 - The application needs write access to the output and temporary directories, with sufficient free disk space.
