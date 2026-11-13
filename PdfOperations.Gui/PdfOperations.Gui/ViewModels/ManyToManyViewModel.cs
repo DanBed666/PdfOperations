@@ -145,6 +145,17 @@ public partial class ManyToManyViewModel : ViewModelBase
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + operation.OutputExtension;
             }
 
+            if (operation.Name == "PdfToDocx" && VcRuntimeTerms.NeedsAcceptance)
+            {
+                bool polish = Loc.Language == AppLanguage.Polish;
+                if (!await Views.VcRuntimeTermsDialog.ShowAsync(polish))
+                {
+                    StatusMessage = polish ? "Anulowano konwersję PDF na DOCX." : "PDF to DOCX cancelled.";
+                    return;
+                }
+                VcRuntimeTerms.Accept();
+            }
+
             StatusMessage = Loc.Starting(Title);
 
             string finalPath = "";

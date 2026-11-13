@@ -186,7 +186,7 @@ public partial class LocalizationService : ObservableObject
         var (pl, en) = key switch
         {
             "PdfToTxt" => ("Zapisuje tekst z PDF w pliku TXT bez rozpoznawania skanów.", "Saves the text in a PDF as a TXT file without running OCR on scans."),
-            "PdfToDocx" => ("Tworzy edytowalny dokument DOCX z pliku PDF. Wymaga Visual C++ v14 Redistributable x64 (link w Pomocy).", "Converts a PDF into an editable DOCX. Requires Visual C++ v14 Redistributable x64 (link in Help)."),
+            "PdfToDocx" => ("Tworzy edytowalny dokument DOCX z pliku PDF.", "Converts a PDF into an editable DOCX."),
             "DocxToPdfWord" => ("Zapisuje dokument DOCX jako PDF za pomocą zainstalowanego programu Microsoft Word.", "Saves a DOCX document as a PDF using Microsoft Word installed on this computer."),
             "PdfToImage" => ("Zapisuje każdą stronę PDF jako osobny obraz JPG.", "Saves each PDF page as a separate JPG image."),
             "ImagesToPdf" => ("Tworzy jeden PDF z obrazów w kolejności widocznej na liście.", "Combines the images into one PDF in the order shown."),

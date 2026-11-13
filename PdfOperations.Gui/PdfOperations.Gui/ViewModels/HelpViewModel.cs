@@ -10,13 +10,13 @@ public class HelpViewModel : ViewModelBase
     public string RequirementsText => Loc.Language == AppLanguage.Polish
         ? """
           Do uruchomienia paczki slim zainstaluj .NET 10 Desktop Runtime. Na stronie pobierania wybierz instalator Windows x64 w sekcji .NET Desktop Runtime, nie SDK.
-          Do konwersji PDF do DOCX zainstaluj dodatkowo Visual C++ v14 Redistributable x64 w wersji 14.50.35719 lub nowszej.
+          Jeśli paczka zawiera bibliotekę Visual C++ do konwersji PDF na DOCX, zaakceptuj jej warunki w instalatorze lub przy pierwszej konwersji. W paczce bez tej biblioteki wymagany jest Visual C++ v14 Redistributable x64 w wersji 14.50.35719 lub nowszej.
           Tylko opcja DOCX do PDF (Word) wymaga zainstalowanego i aktywowanego programu Microsoft Word. Bez Worda wybierz Konwersja LibreOffice.
           Wypakuj cały ZIP i uruchom PdfOperations.Gui.exe. Zostaw folder tools obok aplikacji: zawiera już LibreOffice i narzędzia OCR.
           """
         : """
           To run the slim package, install the .NET 10 Desktop Runtime. On the download page, choose the Windows x64 installer under .NET Desktop Runtime, not the SDK.
-          For PDF to DOCX, also install Visual C++ v14 Redistributable x64, version 14.50.35719 or later.
+          If the package includes the Visual C++ library for PDF to DOCX, accept its terms during setup or before the first conversion. Packages without the library require Visual C++ v14 Redistributable x64, version 14.50.35719 or later.
           Only DOCX to PDF (Word) needs an installed and activated copy of Microsoft Word. Without Word, choose LibreOffice conversion.
           Extract the entire ZIP and run PdfOperations.Gui.exe. Keep the tools folder next to the application: it includes LibreOffice and the OCR tools.
           """;

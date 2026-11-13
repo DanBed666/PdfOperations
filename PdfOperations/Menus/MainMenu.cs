@@ -34,6 +34,16 @@ public class MainMenu
                     if (operationInput is null)
                         continue;
 
+                    if (znak == 2 && VcRuntimeTerms.NeedsAcceptance)
+                    {
+                        bool polish = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "pl";
+                        if (!VcRuntimeTerms.PromptConsole(Console.In, Console.Out, polish))
+                        {
+                            Console.WriteLine(polish ? "Anulowano konwersję PDF na DOCX." : "PDF to DOCX cancelled.");
+                            continue;
+                        }
+                        VcRuntimeTerms.Accept();
+                    }
                     Execute.ExecuteOpe(operationInput, value);
                 }
                 else if (znak >= 17 && znak <= 18)
