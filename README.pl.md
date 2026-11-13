@@ -11,7 +11,7 @@ Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik 
 Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) wybierz **jedną** z dwóch wersji dla Windows x64:
 
 - **Instalator (`*-setup.exe`):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
-- **Przenośny ZIP (slim):** wybierz go, jeśli chcesz samodzielnie wskazać folder programu. Ta wersja wymaga [.NET 10 Desktop Runtime dla Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), ale nie SDK. Rozpakuj **całe** archiwum z aplikacją i uruchom `PdfOperations.Gui.exe` z rozpakowanego folderu.
+- **Wersja przenośna (`*-win-x64-portable.zip`):** zawiera środowisko .NET 10 Desktop Runtime, więc nie trzeba osobno instalować .NET. Rozpakuj **całe** archiwum ZIP do wybranego folderu i uruchom z niego `PdfOperations.Gui.exe`.
 
 Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
 
