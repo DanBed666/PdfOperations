@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Update="terms\vc-runtime-v1\*.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
       <InternalsVisibleTo Include="PdfOperations.Tests" />
       <PackageReference Include="ClosedXML" Version="0.105.1" />
     </ItemGroup>

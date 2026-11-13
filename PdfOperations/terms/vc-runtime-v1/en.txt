@@ -1,0 +1,16 @@
+PdfOperations: terms for the Microsoft Visual C++ library
+
+Terms version: 1
+
+What do these terms cover? Only the unmodified Microsoft Visual C++ Runtime library for Windows x64 included at tools/pdf2docx/_internal/MSVCP140.dll for PDF to DOCX conversion. These are the PdfOperations publisher's terms, not Microsoft's own license agreement. They do not change the MIT license for the PdfOperations code or the licenses of other components in the package.
+
+Use. You may use the library as part of PdfOperations, including at work. You do not acquire ownership of it. These terms do not grant a separate license to use it in another product.
+
+Protecting the library. You may not modify the library, bypass its technical limitations, remove, alter or obscure notices from Microsoft or its suppliers, or attempt to derive its source code by reverse engineering, decompilation or disassembly. These restrictions do not apply to acts permitted by law where that permission cannot be waived by contract, or to acts required by a separate license applicable to the component in question. You may not suggest that Microsoft publishes or endorses PdfOperations.
+
+Redistribution. Under these terms you may redistribute the unmodified library only as part of PdfOperations, together with these terms and the rights notices. If you pass on such a package, require your distributors and external end users to accept these same terms before you provide it to them. Do not offer the library under MIT or grant rights you have not received. Comply with applicable export controls and sanctions.
+
+Warranties and statutory rights. The PdfOperations publisher makes no warranties or commitments on Microsoft's behalf. These terms do not limit rights that cannot be excluded by law, including mandatory consumer rights.
+
+Sources: Visual Studio Community 2026 license, “Distributable Code” section: https://visualstudio.microsoft.com/license-terms/vs2026-ga-community/
+Microsoft's list of redistributable files: https://learn.microsoft.com/en-us/visualstudio/releases/2026/redistribution#visual-c-runtime-files.

@@ -1,0 +1,16 @@
+PdfOperations: warunki korzystania z biblioteki Microsoft Visual C++
+
+Wersja warunków: 1
+
+Czego dotyczą te warunki? Wyłącznie niezmienionej biblioteki Microsoft Visual C++ Runtime dla Windows x64, dołączonej jako tools/pdf2docx/_internal/MSVCP140.dll na potrzeby konwersji PDF na DOCX. Są to warunki wydawcy PdfOperations, a nie oficjalne tłumaczenie licencji Microsoftu. Nie zmieniają licencji MIT na kod PdfOperations ani licencji pozostałych składników paczki.
+
+Używanie. Możesz używać biblioteki jako części PdfOperations, również w pracy. Nie nabywasz do niej praw własności. Warunki te nie udzielają osobnej licencji na użycie biblioteki w innym produkcie.
+
+Ochrona biblioteki. Nie wolno modyfikować biblioteki, obchodzić jej ograniczeń technicznych, usuwać, zmieniać ani ukrywać oznaczeń Microsoftu lub jego dostawców, ani odtwarzać jej kodu źródłowego przez inżynierię wsteczną, dekompilację lub dezasemblację. Ograniczenia te nie dotyczą czynności, na które zezwala prawo w sposób niewyłączalny umową, ani czynności wymaganych przez odrębną licencję mającą zastosowanie do danego składnika. Nie wolno sugerować, że Microsoft wydał lub rekomenduje PdfOperations.
+
+Przekazywanie dalej. Na podstawie tych warunków możesz przekazać niezmienioną bibliotekę wyłącznie jako część PdfOperations, razem z tymi warunkami i oznaczeniami praw. Jeśli przekazujesz taką paczkę dalej, przed jej przekazaniem wymagaj od swoich dystrybutorów i zewnętrznych użytkowników końcowych akceptacji tych samych warunków. Nie udzielaj na bibliotekę licencji MIT ani innych praw, których sam nie otrzymałeś. Przestrzegaj obowiązujących przepisów dotyczących eksportu i sankcji.
+
+Gwarancje i prawa ustawowe. Wydawca PdfOperations nie udziela gwarancji ani nie zaciąga zobowiązań w imieniu Microsoftu. Niniejsze warunki nie ograniczają uprawnień, których zgodnie z prawem nie można wyłączyć, w tym praw konsumenta.
+
+Źródła: Licencja Visual Studio Community 2026, sekcja „Distributable Code”: https://visualstudio.microsoft.com/license-terms/vs2026-ga-community/
+Wykaz plików dopuszczonych do redystrybucji: https://learn.microsoft.com/en-us/visualstudio/releases/2026/redistribution#visual-c-runtime-files.
