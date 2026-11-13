@@ -476,4 +476,12 @@ public partial class LocalizationService : ObservableObject
     public string ExportEachHitLabel => Language == AppLanguage.Polish
         ? "Eksportuj każde trafienie jako osobny wpis"
         : "Export each match as a separate record";
+    
+    public string CheckUpdatesLabel => Language == AppLanguage.Polish ? "Sprawdź aktualizacje" : "Check for updates";
+    public string CheckingUpdates => Language == AppLanguage.Polish ? "Sprawdzanie aktualizacji..." : "Checking for updates...";
+    public string NoUpdates => Language == AppLanguage.Polish ? "Brak nowszej wersji." : "No newer version is available.";
+    public string UpdateCheckFailed => Language == AppLanguage.Polish ? "Nie udało się sprawdzić aktualizacji." : "Could not check for updates.";
+    public string OpenReleaseLabel => Language == AppLanguage.Polish ? "Otwórz stronę wydania" : "Open release page";
+    public string UpdateAvailable(Version version) => Language == AppLanguage.Polish
+        ? $"Dostępna jest wersja {version}." : $"Version {version} is available.";
 }

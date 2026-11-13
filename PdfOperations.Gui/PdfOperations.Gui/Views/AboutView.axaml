@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PdfOperations.Gui.ViewModels"
+             xmlns:views="using:PdfOperations.Gui.Views"
              xmlns:models="using:PdfOperations.Gui.Models"
              x:Class="PdfOperations.Gui.Views.AboutView"
              x:DataType="vm:AboutViewModel">
@@ -35,6 +36,14 @@
                 <TextBlock Grid.Row="1" Text="{Binding Loc.AboutAuthorLabel}" />
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
             </Grid>
+            
+            <Button Content="{Binding Loc.CheckUpdatesLabel}"
+                    Command="{Binding CheckUpdatesCommand}" />
+            <views:StatusBannerView IsVisible="{Binding IsStatusVisible}" />
+
+            <HyperlinkButton Classes="projectLink" IsVisible="{Binding HasUpdate}"
+                             Content="{Binding Loc.OpenReleaseLabel}"
+                             NavigateUri="{Binding ReleaseUrl}" />
 
             <HyperlinkButton Classes="projectLink"
                              NavigateUri="{Binding RepositoryUrl}"
