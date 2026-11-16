@@ -384,8 +384,8 @@ public partial class LocalizationService : ObservableObject
         : "Search files (*.pdf, *.txt, images)";
 
     public string InputOfficeFilesWithFormats => Language == AppLanguage.Polish
-        ? "Dokumenty Office (*.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)"
-        : "Office documents (*.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)";
+        ? "Dokumenty Office i PDF (*.pdf, *.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)"
+        : "Office and PDF documents (*.pdf, *.docx, *.odt, *.doc, *.odg, *.rtf, *.xlsx, *.ods, *.pptx, *.odp)";
 
     public string InputExcelFilesWithFormats => Language == AppLanguage.Polish
         ? "Arkusze Excel (*.xlsx)"
@@ -484,4 +484,15 @@ public partial class LocalizationService : ObservableObject
     public string OpenReleaseLabel => Language == AppLanguage.Polish ? "Pobierz nową wersję z GitHuba" : "Download the new version from GitHub";
     public string UpdateAvailable(Version version) => Language == AppLanguage.Polish
         ? $"Dostępna jest wersja {version}." : $"Version {version} is available.";
+    
+    public string DownloadUpdateLabel => Language == AppLanguage.Polish ? "Pobierz aktualizację" : "Download update";
+    public string DownloadingUpdate => Language == AppLanguage.Polish ? "Pobieranie aktualizacji..." : "Downloading update...";
+    public string UpdateDownloaded => Language == AppLanguage.Polish ? "Aktualizacja pobrana. Jeszcze jej nie zastosowano." : "Update downloaded. It has not been applied yet.";
+    public string UpdateDownloadFailed => Language == AppLanguage.Polish ? "Nie udało się pobrać aktualizacji." : "Could not download the update.";
+    public string RestartToUpdateLabel => Language == AppLanguage.Polish ? "Uruchom ponownie i zaktualizuj" : "Restart and update";
+    public string UpdateWaitForOperations => Language == AppLanguage.Polish ? "Poczekaj na zakończenie operacji, a następnie ponownie kliknij przycisk aktualizacji." : "Wait for operations to finish, then click the update button again.";
+    public string UpdateApplyFailed => Language == AppLanguage.Polish ? "Nie udało się rozpocząć aktualizacji." : "Could not start applying the update.";
+    public string UpdateCloseOtherWindows => Language == AppLanguage.Polish
+        ? "Zamknij pozostałe okna tej kopii programu przed aktualizacją."
+        : "Close the other windows of this application copy before updating.";
 }

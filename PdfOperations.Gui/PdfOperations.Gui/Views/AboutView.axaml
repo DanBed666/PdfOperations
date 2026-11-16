@@ -39,6 +39,13 @@
             
             <Button Content="{Binding Loc.CheckUpdatesLabel}"
                     Command="{Binding CheckUpdatesCommand}" />
+            <Button Content="{Binding Loc.DownloadUpdateLabel}" Command="{Binding DownloadUpdateCommand}" />
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"
+                         IsVisible="{Binding IsDownloading}" Height="6" />
+            
+            <Button Content="{Binding Loc.RestartToUpdateLabel}"
+                    Command="{Binding RestartToUpdateCommand}" />
+            
             <views:StatusBannerView IsVisible="{Binding IsStatusVisible}" />
 
             <HyperlinkButton Classes="projectLink" IsVisible="{Binding HasUpdate}"

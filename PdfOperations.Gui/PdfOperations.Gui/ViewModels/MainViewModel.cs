@@ -208,7 +208,8 @@ public partial class MainViewModel : ViewModelBase
             "Replacement" => new ReplacementViewModel(),
             "Fragments" => new FragmentsViewModel(),
             "Help" => new HelpViewModel(),
-            "About" => new AboutViewModel(),
+            "About" => new AboutViewModel(
+                () => operationViewModels.Values.Any(vm => vm.IsBusy)),
             _ => null
         };
     }
