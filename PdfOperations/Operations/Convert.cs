@@ -72,6 +72,13 @@ public static class Convert
         if (inputs.All(f => Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
             && fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase))
             arguments.Add("--infilter=writer_pdf_import");
+        
+        if (inputs.All(f =>
+                Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+            && fileInput.Format.Equals("odg", StringComparison.OrdinalIgnoreCase))
+        {
+            arguments.Add("--infilter=draw_pdf_import");
+        }
 
         arguments.AddRange(["--convert-to", fileInput.Format, ..inputs, "--outdir", context.TempDir]);
 

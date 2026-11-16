@@ -26,6 +26,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
     [
         "pdf",
         "docx",
+        "odg",
         "odt",
         "xlsx",
         "html",
@@ -60,7 +61,7 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
         : base(
             loc => loc.SelectDocumentFiles,
             loc => loc.InputOfficeFilesWithFormats,
-            ["*.docx", "*.odt", "*.doc", "*.odg", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
+            ["*.pdf", "*.docx", "*.odt", "*.doc", "*.odg", "*.rtf", "*.xlsx", "*.ods", "*.pptx", "*.odp"],
             inputTitle: loc => loc.InputOfficeFilesWithFormats)
     {
         InputFilesList.FilesChanged += () =>
