@@ -13,6 +13,8 @@ Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) 
 - **Instalator (`*-setup.exe`):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
 - **Wersja przenośna (`*-win-x64-portable.zip`):** zawiera środowisko .NET 10 Desktop Runtime, więc nie trzeba osobno instalować .NET. Rozpakuj **całe** archiwum ZIP do wybranego folderu i uruchom z niego `PdfOperations.Gui.exe`.
 
+**Na Windows 11 zalecamy wersję portable ZIP.** Niepodpisany instalator może zostać zablokowany przez Inteligentną kontrolę aplikacji.
+
 Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
 
 ### Ręczna aktualizacja

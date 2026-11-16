@@ -13,6 +13,8 @@ Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/
 - **Installer (`*-setup.exe`):** installs PdfOperations for your Windows account without administrator rights and includes .NET 10. Open **PdfOperations** from the Start menu. To open the default installation folder, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
 - **Portable ZIP (`*-win-x64-portable.zip`):** includes the .NET 10 Desktop Runtime, so you do not need to install .NET separately. Extract the **entire** ZIP to a folder of your choice and run `PdfOperations.Gui.exe` from that folder.
 
+**On Windows 11, we recommend the portable ZIP version.** The unsigned installer may be blocked by Smart App Control.
+
 The separate `third-party-sources.zip` contains source code, not the application.
 
 ### Manual updates
