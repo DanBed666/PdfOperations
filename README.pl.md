@@ -10,16 +10,16 @@ Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik 
 
 Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) wybierz **jedną** z dwóch wersji dla Windows x64:
 
-- **Instalator (`*-setup.exe`):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
-- **Wersja przenośna (`*-win-x64-portable.zip`):** zawiera środowisko .NET 10 Desktop Runtime, więc nie trzeba osobno instalować .NET. Rozpakuj **całe** archiwum ZIP do wybranego folderu i uruchom z niego `PdfOperations.Gui.exe`.
+- **Wersja przenośna (`*-win-x64-portable.zip`, zalecana):** nie wymaga instalacji i zawiera środowisko .NET 10 Desktop Runtime. Rozpakuj **całe** archiwum ZIP do folderu, w którym masz uprawnienia do zapisu, i uruchom z niego `PdfOperations.Gui.exe`, nie bezpośrednio z ZIP-a. Nie przenoś samego pliku wykonywalnego poza ten folder ani nie usuwaj dołączonych bibliotek i narzędzi.
+- **Instalator (`*-setup.exe`, opcjonalny):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
 
-**Na Windows 11 zalecamy wersję portable ZIP.** Niepodpisany instalator może zostać zablokowany przez Inteligentną kontrolę aplikacji.
+**Na Windows 11 wybierz przede wszystkim wersję przenośną ZIP.** Instalator nie jest przeznaczony wyłącznie dla Windows 10, ale jego niepodpisany plik wykonywalny może zostać zablokowany przez [Inteligentną kontrolę aplikacji](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions). Wersja przenośna również podlega zabezpieczeniom Windows i ograniczeniom ustawionym przez administratora organizacji, więc także może zostać zablokowana.
 
-Osobne archiwum `third-party-sources.zip` zawiera kod źródłowy dołączonych narzędzi, a nie aplikację.
+Osobne archiwum `*-third-party-sources.zip` zawiera kod źródłowy składników zewnętrznych, a nie aplikację. Nie trzeba go rozpakowywać, aby uruchomić PdfOperations.
 
 ### Ręczna aktualizacja
 
-PdfOperations nie sprawdza aktualizacji automatycznie. Aby zaktualizować program, zamknij go i pobierz nowszą wersję ze [strony wydań](https://github.com/DanBed666/PdfOperations/releases/latest).
+PdfOperations nie sprawdza ani nie instaluje aktualizacji automatycznie. W widoku **O programie** kliknij **Sprawdź aktualizacje**, aby sprawdzić wersję na GitHubie (wymagane jest połączenie z internetem). Jeśli jest dostępna nowsza wersja, przycisk **Pobierz nową wersję z GitHuba** otworzy stronę wydania; nie pobierze ani nie zainstaluje aktualizacji za Ciebie. Możesz też bezpośrednio odwiedzić [stronę wydań](https://github.com/DanBed666/PdfOperations/releases/latest). Przed podmianą lub instalacją plików zamknij program.
 
 - **Instalator:** uruchom nowy plik `*-setup.exe` z tego samego konta Windows i pozostaw dotychczasowy folder instalacji. Nie musisz odinstalowywać poprzedniej wersji.
 - **Przenośny ZIP:** rozpakuj całe nowe archiwum z aplikacją do nowego folderu i uruchom z niego `PdfOperations.Gui.exe`. Jeśli korzystasz z własnego skrótu, zmień go tak, żeby wskazywał nowy plik wykonywalny.

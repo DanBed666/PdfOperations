@@ -10,16 +10,16 @@ The repository also contains the original console application. This guide descri
 
 Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest):
 
-- **Installer (`*-setup.exe`):** installs PdfOperations for your Windows account without administrator rights and includes .NET 10. Open **PdfOperations** from the Start menu. To open the default installation folder, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
-- **Portable ZIP (`*-win-x64-portable.zip`):** includes the .NET 10 Desktop Runtime, so you do not need to install .NET separately. Extract the **entire** ZIP to a folder of your choice and run `PdfOperations.Gui.exe` from that folder.
+- **Portable ZIP (`*-win-x64-portable.zip`, recommended):** no installation is needed, and the .NET 10 Desktop Runtime is included. Extract the **entire** ZIP to a folder you can write to and run `PdfOperations.Gui.exe` from that folder, not from inside the ZIP. Do not move the executable out of its folder or remove the bundled libraries and tools.
+- **Installer (`*-setup.exe`, optional):** installs PdfOperations for your Windows account without administrator rights and includes .NET 10. Open **PdfOperations** from the Start menu. To open the default installation folder, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
 
-**On Windows 11, we recommend the portable ZIP version.** The unsigned installer may be blocked by Smart App Control.
+**On Windows 11, prefer the portable ZIP.** The installer is not limited to Windows 10, but its unsigned executable may be blocked by [Smart App Control](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions). The portable version is also subject to Windows security checks and any restrictions set by your organization's administrator; it is not a guaranteed exception to those policies.
 
-The separate `third-party-sources.zip` contains source code, not the application.
+The separate `*-third-party-sources.zip` contains source code for third-party components, not the application. You do not need to extract it to run PdfOperations.
 
 ### Manual updates
 
-PdfOperations does not check for updates automatically. To update, close the app and download the newer version from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest).
+PdfOperations does not check for or install updates automatically. In **About**, click **Check for updates** to check GitHub (an internet connection is required). If a newer version is available, **Download the new version from GitHub** opens the release page; it does not download or install the update for you. You can also visit [Releases](https://github.com/DanBed666/PdfOperations/releases/latest) directly. Close the app before replacing or installing its files.
 
 - **Installer:** run the new `*-setup.exe` from the same Windows account and keep the existing installation folder. You do not need to uninstall the previous version.
 - **Portable ZIP:** extract the entire new application ZIP into a new folder, then run `PdfOperations.Gui.exe` from that folder. If you created a shortcut, update it to point to the new executable.
