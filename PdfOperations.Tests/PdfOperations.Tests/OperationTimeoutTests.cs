@@ -137,25 +137,48 @@ public class OperationTimeoutTests
     }
 
     [TestMethod]
-    public void ReplacementWithoutCancellationStillUpdatesDocxAndOdfXml()
+    [DataRow(".docx", false)]
+    [DataRow(".docx", true)]
+    [DataRow(".odt", false)]
+    [DataRow(".odt", true)]
+    [DataRow(".odg", false)]
+    [DataRow(".odg", true)]
+    public void ReplacementWithoutCancellationStillUpdatesDocxAndOdfXml(string extension, bool withDeclaration)
     {
         string directory = Directory.CreateTempSubdirectory("PdfOperationsReplacementTest-").FullName;
         try
         {
             string file = Path.Combine(directory, "document.xml");
             List<ReplacementPair> pairs = [new() { Find = "PLACEHOLDER", Replace = "changed" }];
-            File.WriteAllText(file,
-                "<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">" +
-                "<w:body><w:p><w:r><w:t>PLACEHOLDER</w:t></w:r></w:p></w:body></w:document>");
-            Replacement.ReplaceTextInFile(file, pairs, ".docx");
-            StringAssert.Contains(File.ReadAllText(file), ">changed<");
+            const string wordNamespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            const string textNamespace = "urn:oasis:names:tc:opendocument:xmlns:text:1.0";
+            string body = extension == ".odt"
+                ? "<office:text><text:p>PLACEHOLDER</text:p></office:text>"
+                : "<office:drawing><draw:page><draw:frame><draw:text-box>" +
+                  "<text:p>PLACEHOLDER</text:p></draw:text-box></draw:frame></draw:page></office:drawing>";
+            string original = extension == ".docx"
+                ? $"<w:document xmlns:w=\"{wordNamespace}\"><w:body><w:p><w:r>" +
+                  "<w:t>PLACEHOLDER</w:t></w:r></w:p></w:body></w:document>"
+                : "<office:document-content xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" " +
+                  $"xmlns:text=\"{textNamespace}\" xmlns:draw=\"urn:oasis:names:tc:opendocument:xmlns:drawing:1.0\">" +
+                  $"<office:body>{body}</office:body></office:document-content>";
+            if (withDeclaration)
+                original = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + original;
 
-            foreach (string extension in new[] { ".odt", ".odg" })
-            {
-                File.WriteAllText(file, "<root>PLACEHOLDER</root>");
-                Replacement.ReplaceTextInFile(file, pairs, extension);
-                Assert.AreEqual("<root>changed</root>", File.ReadAllText(file));
-            }
+            var expected = System.Xml.Linq.XDocument.Parse(original);
+            System.Xml.Linq.XName textElement = System.Xml.Linq.XName.Get(
+                extension == ".docx" ? "t" : "p", extension == ".docx" ? wordNamespace : textNamespace);
+            var expectedText = expected.Descendants(textElement).Single();
+            expectedText.Value = "changed";
+            if (extension == ".docx")
+                expectedText.SetAttributeValue(System.Xml.Linq.XNamespace.Xml + "space", "preserve");
+
+            File.WriteAllText(file, original);
+            Replacement.ReplaceTextInFile(file, pairs, extension);
+            var actual = System.Xml.Linq.XDocument.Load(file);
+            Assert.AreEqual("changed", actual.Descendants(textElement).Single().Value);
+            // Serialization may add a declaration; compare document content and structure instead.
+            Assert.IsTrue(System.Xml.Linq.XNode.DeepEquals(expected.Root, actual.Root));
         }
         finally { Directory.Delete(directory, true); }
     }
