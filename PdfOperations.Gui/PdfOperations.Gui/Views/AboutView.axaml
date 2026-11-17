@@ -6,6 +6,18 @@
              x:Class="PdfOperations.Gui.Views.AboutView"
              x:DataType="vm:AboutViewModel">
     <UserControl.Styles>
+        <Style Selector="Arc.updating">
+            <Style.Animations>
+                <Animation Duration="0:0:1" IterationCount="Infinite">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="RotateTransform.Angle" Value="0" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="RotateTransform.Angle" Value="360" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
         <Style Selector="HyperlinkButton.projectLink">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Padding" Value="0" />
@@ -40,13 +52,31 @@
             <Button Content="{Binding Loc.CheckUpdatesLabel}"
                     Command="{Binding CheckUpdatesCommand}" />
             <Button Content="{Binding Loc.DownloadUpdateLabel}" Command="{Binding DownloadUpdateCommand}" />
-            <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"
-                         IsVisible="{Binding IsDownloading}" Height="6" />
+            <StackPanel IsVisible="{Binding IsDownloading}" Spacing="10">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Arc Width="24" Height="24" StartAngle="0" SweepAngle="270"
+                         Stroke="{Binding StatusForeground}" StrokeThickness="3"
+                         Classes.updating="{Binding IsDownloading}"
+                         VerticalAlignment="Center" RenderTransformOrigin="50%,50%">
+                        <Arc.RenderTransform>
+                            <RotateTransform Angle="0" />
+                        </Arc.RenderTransform>
+                    </Arc>
+                    <TextBlock Grid.Column="1" Text="{Binding UpdateActivityText}"
+                               VerticalAlignment="Center" TextWrapping="Wrap" />
+                </Grid>
+                <TextBlock Text="{Binding UpdateProgressText}" TextWrapping="Wrap" />
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"
+                             Height="6" AutomationProperties.Name="{Binding UpdateProgressText}" />
+                <Button Content="{Binding Loc.CancelUpdateDownload}" Command="{Binding CancelDownloadCommand}" />
+            </StackPanel>
             
             <Button Content="{Binding Loc.RestartToUpdateLabel}"
                     Command="{Binding RestartToUpdateCommand}" />
             
-            <views:StatusBannerView IsVisible="{Binding IsStatusVisible}" />
+            <Panel IsVisible="{Binding !IsDownloading}">
+                <views:StatusBannerView IsVisible="{Binding IsStatusVisible}" />
+            </Panel>
 
             <HyperlinkButton Classes="projectLink" IsVisible="{Binding HasUpdate}"
                              Content="{Binding Loc.OpenReleaseLabel}"

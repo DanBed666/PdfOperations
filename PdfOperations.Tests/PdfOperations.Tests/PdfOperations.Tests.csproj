@@ -17,14 +17,13 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\PdfOperations\PdfOperations.csproj" />
+        <ProjectReference Include="..\..\PdfOperations.Gui\PdfOperations.Gui\PdfOperations.Gui.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Compile Remove="ValidationTests.cs" />
         <Compile Remove="TestInput.cs" />
         <Compile Remove="InputValidatorTests.cs" />
-        <Compile Include="..\..\PdfOperations.Gui\PdfOperations.Gui\Services\InstanceCoordinator.cs"
-                 Link="Services\InstanceCoordinator.cs" />
     </ItemGroup>
 
     <ItemGroup>

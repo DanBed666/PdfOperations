@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using PdfOperations.Gui.Services;
 using Velopack;
@@ -13,7 +14,8 @@ namespace PdfOperations.Gui.ViewModels;
 
 public partial class AboutViewModel : ViewModelBase
 {
-    private readonly AppUpdateService updateService = new();
+    private readonly IAppUpdateService updateService;
+    private CancellationTokenSource? downloadCancellation;
     
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
@@ -23,6 +25,7 @@ public partial class AboutViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
     [NotifyCanExecuteChangedFor(nameof(RestartToUpdateCommand))]
     [NotifyCanExecuteChangedFor(nameof(CheckUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CancelDownloadCommand))]
     private bool isDownloading;
 
     [ObservableProperty]
@@ -38,13 +41,30 @@ public partial class AboutViewModel : ViewModelBase
     private bool isCheckingUpdates;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UpdateProgressText))]
     private int downloadProgress;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UpdateActivityText))]
+    private bool isPreparingUpdate;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UpdateActivityText))]
+    [NotifyCanExecuteChangedFor(nameof(CancelDownloadCommand))]
+    private bool isDownloadCancellationRequested;
+
+    public string UpdateProgressText => Loc.UpdateOverallProgress(DownloadProgress);
+    public string UpdateActivityText => IsDownloadCancellationRequested ? Loc.CancellingUpdate
+        : IsPreparingUpdate ? Loc.PreparingUpdate : Loc.DownloadingUpdate;
     
     private readonly Func<bool> hasRunningOperations;
     
-    public AboutViewModel(Func<bool> hasRunningOperations)
+    public AboutViewModel(Func<bool> hasRunningOperations) : this(hasRunningOperations, new AppUpdateService()) { }
+
+    public AboutViewModel(Func<bool> hasRunningOperations, IAppUpdateService updateService)
     {
         this.hasRunningOperations = hasRunningOperations;
+        this.updateService = updateService;
     }
 
     private bool CanDownloadUpdate() =>
@@ -76,22 +96,36 @@ public partial class AboutViewModel : ViewModelBase
         if (!CanDownloadUpdate())
             return;
         var update = AvailableUpdate!;
+        using var cancellation = new CancellationTokenSource();
+        downloadCancellation = cancellation;
+        IsDownloadCancellationRequested = false;
+        IsPreparingUpdate = false;
         IsDownloading = true;
         DownloadProgress = 0;
         StatusKind = StatusKind.Info;
         StatusMessage = Loc.DownloadingUpdate;
         try
         {
-            IProgress<int> progress = new Progress<int>(value =>
+            IProgress<UpdateDownloadProgress> progress = new Progress<UpdateDownloadProgress>(value =>
             {
-                if (IsDownloading)
-                    DownloadProgress = Math.Max(DownloadProgress, Math.Clamp(value, 0, 100));
+                // Ignore queued callbacks from a cancelled/finished attempt, including after a retry.
+                if (!ReferenceEquals(downloadCancellation, cancellation) || cancellation.IsCancellationRequested)
+                    return;
+                DownloadProgress = Math.Clamp(value.Percent, 0, 99);
+                IsPreparingUpdate = value.Phase == UpdateDownloadPhase.Preparing;
+                StatusMessage = UpdateActivityText;
             });
-            await updateService.DownloadAsync(update, progress.Report);
+            await updateService.DownloadAsync(update, progress.Report, cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
             DownloadedUpdate = update;
             DownloadProgress = 100;
             StatusKind = StatusKind.Success;
             StatusMessage = Loc.UpdateDownloaded;
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+            StatusKind = StatusKind.Info;
+            StatusMessage = Loc.UpdateDownloadCancelled;
         }
         catch (Exception ex)
         {
@@ -99,7 +133,31 @@ public partial class AboutViewModel : ViewModelBase
             StatusMessage = Loc.UpdateDownloadFailed;
             ErrorDetails = ex.ToString();
         }
-        finally { IsDownloading = false; }
+        finally
+        {
+            downloadCancellation = null;
+            IsDownloading = false;
+            IsPreparingUpdate = false;
+            IsDownloadCancellationRequested = false;
+        }
+    }
+
+    private bool CanCancelDownload() => IsDownloading && !IsDownloadCancellationRequested;
+
+    [RelayCommand(CanExecute = nameof(CanCancelDownload))]
+    private void CancelDownload()
+    {
+        if (!CanCancelDownload()) return;
+        IsDownloadCancellationRequested = true;
+        StatusKind = StatusKind.Info;
+        StatusMessage = UpdateActivityText;
+        downloadCancellation?.Cancel();
+    }
+
+    public override void RefreshLocalization()
+    {
+        base.RefreshLocalization();
+        if (IsDownloading) StatusMessage = UpdateActivityText;
     }
     
     private bool CanRestartToUpdate() =>

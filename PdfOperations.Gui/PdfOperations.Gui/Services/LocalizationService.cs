@@ -106,6 +106,9 @@ public partial class LocalizationService : ObservableObject
     public string SelectExcelReplacementFile => Language == AppLanguage.Polish ? "Wybierz arkusz Excel z zamianami." : "Select Excel replacement file.";
     public string SelectOutputDirectory => Language == AppLanguage.Polish ? "Wybierz folder zapisu." : "Select output directory.";
     public string SelectOutputFormat => Language == AppLanguage.Polish ? "Wybierz format pliku." : "Select output format.";
+    public string SameFormatConversion(string files) => Language == AppLanguage.Polish
+        ? $"Te pliki mają już wybrany format: {files}. Usuń je z listy lub wybierz inny format."
+        : $"These files already have the selected format: {files}. Remove them from the list or choose another format.";
     public string OutputDirectoryDoesNotExist => Language == AppLanguage.Polish ? "Podany folder zapisu nie istnieje." : "Output directory does not exist.";
     public string EnterSearchPhrase => Language == AppLanguage.Polish ? "Wpisz szukaną frazę." : "Enter search phrase.";
     public string EnterPages => Language == AppLanguage.Polish ? "Wpisz strony, na przykład: 1,3-5." : "Enter pages, for example: 1,3-5.";
@@ -487,7 +490,19 @@ public partial class LocalizationService : ObservableObject
     
     public string DownloadUpdateLabel => Language == AppLanguage.Polish ? "Pobierz aktualizację" : "Download update";
     public string DownloadingUpdate => Language == AppLanguage.Polish ? "Pobieranie aktualizacji..." : "Downloading update...";
-    public string UpdateDownloaded => Language == AppLanguage.Polish ? "Aktualizacja pobrana. Jeszcze jej nie zastosowano." : "Update downloaded. It has not been applied yet.";
+    public string PreparingUpdate => Language == AppLanguage.Polish
+        ? "Przygotowywanie i sprawdzanie paczki aktualizacji. To może potrwać kilka minut..."
+        : "Preparing and verifying the update package. This may take a few minutes...";
+    public string CancelUpdateDownload => Language == AppLanguage.Polish ? "Anuluj pobieranie" : "Cancel download";
+    public string CancellingUpdate => Language == AppLanguage.Polish
+        ? "Anulowanie aktualizacji. Oczekiwanie na zakończenie bieżącego etapu i sprzątanie..."
+        : "Cancelling the update. Waiting for the current step and cleanup to finish...";
+    public string UpdateDownloadCancelled => Language == AppLanguage.Polish
+        ? "Anulowano aktualizację. Bieżąca wersja programu nie została zmieniona. Możesz spróbować ponownie."
+        : "Update cancelled. The current application version has not changed. You can try again.";
+    public string UpdateOverallProgress(int percent) => Language == AppLanguage.Polish
+        ? $"Postęp całej operacji: {percent}%" : $"Overall progress: {percent}%";
+    public string UpdateDownloaded => Language == AppLanguage.Polish ? "Aktualizacja pobrana i przygotowana. Możesz uruchomić program ponownie, aby ją zastosować." : "Update downloaded and prepared. Restart the application to apply it.";
     public string UpdateDownloadFailed => Language == AppLanguage.Polish ? "Nie udało się pobrać aktualizacji." : "Could not download the update.";
     public string RestartToUpdateLabel => Language == AppLanguage.Polish ? "Uruchom ponownie i zaktualizuj" : "Restart and update";
     public string UpdateWaitForOperations => Language == AppLanguage.Polish ? "Poczekaj na zakończenie operacji, a następnie ponownie kliknij przycisk aktualizacji." : "Wait for operations to finish, then click the update button again.";
