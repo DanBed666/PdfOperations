@@ -5,6 +5,13 @@ using System.Xml.Linq;
 
 public static class Convert
 {
+    public static bool IsSameFormat(string inputFile, string outputFormat)
+    {
+        string format = outputFormat.Split(':', 2)[0].Trim().TrimStart('.');
+        return format.Length > 0 && string.Equals(
+            Path.GetExtension(inputFile), "." + format, StringComparison.OrdinalIgnoreCase);
+    }
+
     public static void FileToPdf(OperationInput fileInput, OperationContext context)
     {
         FileToPdf(fileInput, context, CancellationToken.None);
@@ -23,6 +30,9 @@ public static class Convert
         CancellationToken cancellationToken, Action<string> reportCleanupWarning, Action<string> convert)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        if (fileInput.InputFiles.Any(file => IsSameFormat(file, fileInput.Format)))
+            throw new ArgumentException("Input and output formats must be different.", nameof(fileInput));
+
         string workDirectory = Directory.CreateTempSubdirectory("PdfOperationsLibre-").FullName;
         Exception? operationError = null;
         try

@@ -119,15 +119,27 @@ public partial class LibreOfficeViewModel : FileInputViewModelBase
                 return;
             }
 
-            if (!Directory.Exists(OutputDirectory))
-                Directory.CreateDirectory(OutputDirectory);
-
             if (string.IsNullOrWhiteSpace(SelectedFormat))
             {
                 StatusKind = StatusKind.Error;
                 StatusMessage = Loc.SelectOutputFormat;
                 return;
             }
+
+            string[] sameFormatFiles = currentInputFiles
+                .Where(file => Convert.IsSameFormat(file, SelectedFormat))
+                .Select(file => Path.GetFileName(file))
+                .ToArray();
+
+            if (sameFormatFiles.Length > 0)
+            {
+                StatusKind = StatusKind.Warning;
+                StatusMessage = Loc.SameFormatConversion(string.Join(", ", sameFormatFiles));
+                return;
+            }
+
+            if (!Directory.Exists(OutputDirectory))
+                Directory.CreateDirectory(OutputDirectory);
 
             string customName = "";
 
