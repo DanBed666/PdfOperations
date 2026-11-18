@@ -6,19 +6,25 @@ public class HelpViewModel : ViewModelBase
 {
     public string Title => Loc.GetOperationName("Help");
 
-    public string RequirementsTitle => Loc.Language == AppLanguage.Polish ? "Instalacja na Windows x64" : "Setup on Windows x64";
+    public string RequirementsTitle => Loc.Language == AppLanguage.Polish ? "Wersja portable na Windows x64" : "Portable version on Windows x64";
     public string RequirementsText => Loc.Language == AppLanguage.Polish
         ? """
-          Do uruchomienia paczki slim zainstaluj .NET 10 Desktop Runtime. Na stronie pobierania wybierz instalator Windows x64 w sekcji .NET Desktop Runtime, nie SDK.
-          Jeśli paczka zawiera bibliotekę Visual C++ do konwersji PDF na DOCX, zaakceptuj jej warunki w instalatorze lub przy pierwszej konwersji. W paczce bez tej biblioteki wymagany jest Visual C++ v14 Redistributable x64 w wersji 14.50.35719 lub nowszej.
+          Obecne wydanie jest dostępne jako portable ZIP, bez osobnego instalatora. Zawiera .NET 10 Desktop Runtime i wymagane biblioteki Visual C++; nie trzeba instalować ich osobno.
+          Warunki biblioteki Visual C++ zaakceptuj przed pierwszą konwersją PDF na DOCX. Odmowa nie blokuje pozostałych operacji.
           Tylko opcja DOCX do PDF (Word) wymaga zainstalowanego i aktywowanego programu Microsoft Word. Bez Worda wybierz Konwersja LibreOffice.
-          Wypakuj cały ZIP i uruchom PdfOperations.Gui.exe. Zostaw folder tools obok aplikacji: zawiera już LibreOffice i narzędzia OCR.
+          Rozpakuj cały ZIP do nowego folderu z prawem zapisu i uruchom PdfOperations.exe z głównego poziomu. Zachowaj current, Update.exe i .portable. LibreOffice i narzędzia OCR są w current/tools. Własne dokumenty zapisuj poza current.
+          Do zwykłego korzystania z portable nie potrzeba uprawnień administratora, ale zabezpieczenia Windows i zasady organizacji nadal obowiązują.
+          Aktualizacje: O programie → Sprawdź aktualizacje → Pobierz aktualizację. Widać postęp pobierania i przygotowywania; pobieranie można anulować. Zakończ konwersje i zamknij inne okna tej samej kopii, zanim wybierzesz Uruchom ponownie i zaktualizuj. Potrzebne są internet, prawo zapisu i wolne miejsce. Pierwsza aktualizacja może pobrać całą paczkę, kolejne mogą korzystać z pakietów różnicowych.
+          Starszą paczkę bez Velopack zastąp ręcznie, rozpakowując nowy ZIP do nowego folderu. Do uruchomienia wystarczy ZIP z aplikacją; pliki .nupkg i releases.win.json są dla mechanizmu aktualizacji.
           """
         : """
-          To run the slim package, install the .NET 10 Desktop Runtime. On the download page, choose the Windows x64 installer under .NET Desktop Runtime, not the SDK.
-          If the package includes the Visual C++ library for PDF to DOCX, accept its terms during setup or before the first conversion. Packages without the library require Visual C++ v14 Redistributable x64, version 14.50.35719 or later.
+          The current release is a portable ZIP, without a separate installer. It includes the .NET 10 Desktop Runtime and required Visual C++ libraries; you do not need to install them separately.
+          Accept the Visual C++ library terms before your first PDF-to-DOCX conversion. Declining does not block other operations.
           Only DOCX to PDF (Word) needs an installed and activated copy of Microsoft Word. Without Word, choose LibreOffice conversion.
-          Extract the entire ZIP and run PdfOperations.Gui.exe. Keep the tools folder next to the application: it includes LibreOffice and the OCR tools.
+          Extract the entire ZIP to a new writable folder and run PdfOperations.exe at its top level. Keep current, Update.exe and .portable together. LibreOffice and OCR tools are in current/tools. Save your own documents outside current.
+          Normal use of portable does not require administrator rights, but Windows security checks and organizational policies still apply.
+          Updates: About → Check for updates → Download update. Download and preparation progress are shown; downloading can be cancelled. Finish conversions and close other windows of the same copy before choosing Restart and update. Internet access, write permissions and free space are required. The first update may download the full package; later updates can use differential packages.
+          Replace an older package without Velopack manually by extracting the new ZIP to a new folder. Only the application ZIP is needed to run the app; .nupkg files and releases.win.json are for the updater.
           """;
 
     public string HelpText => Loc.Language == AppLanguage.Polish

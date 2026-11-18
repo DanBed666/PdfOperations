@@ -17,11 +17,8 @@
             <StackPanel Spacing="6">
                 <TextBlock Text="{Binding RequirementsTitle}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
                 <TextBlock Text="{Binding RequirementsText}" TextWrapping="Wrap" LineHeight="22" />
-                <HyperlinkButton NavigateUri="https://dotnet.microsoft.com/en-us/download/dotnet/10.0" HorizontalAlignment="Left">
-                    <TextBlock Text=".NET 10 Desktop Runtime (Windows x64)" TextWrapping="Wrap" />
-                </HyperlinkButton>
-                <HyperlinkButton NavigateUri="https://aka.ms/vc14/vc_redist.x64.exe" HorizontalAlignment="Left">
-                    <TextBlock Text="Microsoft Visual C++ v14 Redistributable (x64)" TextWrapping="Wrap" />
+                <HyperlinkButton NavigateUri="https://github.com/DanBed666/PdfOperations/releases/latest" HorizontalAlignment="Left">
+                    <TextBlock Text="GitHub Releases" TextWrapping="Wrap" />
                 </HyperlinkButton>
             </StackPanel>
         </StackPanel>
