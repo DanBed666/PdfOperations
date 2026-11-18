@@ -199,7 +199,7 @@ ODT and ODG also support phrases split across formatting spans within a paragrap
 
 Executable locations are defined in [ToolPaths.cs](PdfOperations/Infrastructure/ToolPaths.cs). Keep the expected subdirectory names and the tools' supporting libraries and data files, not just their executables. Installing a tool somewhere else or adding it to PATH does not change these configured locations.
 
-- LibreOffice input formats include DOCX, ODT, DOC, ODG, RTF, XLSX, ODS, PPTX and ODP. Not every input/output combination is supported by LibreOffice.
+- LibreOffice conversion works with file formats supported by LibreOffice; the files do not need to have been created in LibreOffice. The app accepts PDF, DOCX, ODT, DOC, ODG, RTF, XLSX, ODS, PPTX and ODP as input. Not every input/output combination is supported by LibreOffice.
 - LibreOffice HTML output is stored in a dedicated folder with its associated images and other generated assets. Keep these files together.
 - Extracted PDF images can have different formats, such as PNG or JPEG; extraction is not the same as rendering every page as JPEG.
 - Office conversions can depend on installed fonts and document layout. Check the resulting files.

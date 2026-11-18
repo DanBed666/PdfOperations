@@ -199,7 +199,7 @@ ODT i ODG również obsługują frazy podzielone przez formatowanie w obrębie a
 
 Lokalizacje plików wykonywalnych są określone w [ToolPaths.cs](PdfOperations/Infrastructure/ToolPaths.cs). Zachowaj przewidziane nazwy podfolderów oraz biblioteki i dane pomocnicze narzędzi, nie tylko same pliki wykonywalne. Zainstalowanie narzędzia w innym miejscu lub dodanie go do PATH nie zmienia tych skonfigurowanych lokalizacji.
 
-- Formaty wejściowe konwersji LibreOffice to DOCX, ODT, DOC, ODG, RTF, XLSX, ODS, PPTX i ODP. LibreOffice nie obsługuje każdej kombinacji formatu wejściowego i wyjściowego.
+- Konwersja LibreOffice dotyczy formatów plików obsługiwanych przez LibreOffice; pliki nie muszą być utworzone w tym pakiecie. Program przyjmuje jako wejście PDF, DOCX, ODT, DOC, ODG, RTF, XLSX, ODS, PPTX i ODP. LibreOffice nie obsługuje każdej kombinacji formatu wejściowego i wyjściowego.
 - Wyniki konwersji LibreOffice do HTML są zapisywane w osobnym folderze wraz z obrazami i innymi wygenerowanymi plikami pomocniczymi. Przechowuj je razem.
 - Obrazy wyodrębnione z PDF mogą mieć różne formaty, na przykład PNG lub JPEG. Wyodrębnianie obrazów nie jest tym samym co zapisywanie każdej strony jako JPEG.
 - Konwersje dokumentów biurowych mogą zależeć od zainstalowanych czcionek i układu dokumentu. Sprawdź pliki wynikowe.
