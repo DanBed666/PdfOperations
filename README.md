@@ -6,23 +6,27 @@ PdfOperations is a Windows desktop application for working with PDF files, image
 
 The repository also contains the original console application. This guide describes the GUI workflow.
 
-## Download and install
+## Download and run
 
-Choose **one** Windows x64 package from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest):
+PdfOperations is distributed as a **portable ZIP for Windows x64**, without a separate installer. Download **`PdfOperations-1.0.0-win-x64-portable.zip`** from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest).
 
-- **Portable ZIP (`*-win-x64-portable.zip`, recommended):** no installation is needed, and the .NET 10 Desktop Runtime is included. Extract the **entire** ZIP to a folder you can write to and run `PdfOperations.Gui.exe` from that folder, not from inside the ZIP. Do not move the executable out of its folder or remove the bundled libraries and tools.
-- **Installer (`*-setup.exe`, optional):** installs PdfOperations for your Windows account without administrator rights and includes .NET 10. Open **PdfOperations** from the Start menu. To open the default installation folder, paste `%LOCALAPPDATA%\Programs\PdfOperations` into the File Explorer address bar.
+1. Extract the **entire** ZIP to a new folder you can write to.
+2. Run **`PdfOperations.exe` in the top-level folder**, not from inside the ZIP.
+3. Keep the launcher together with `current`, `Update.exe` and `.portable`. Do not move individual executables or delete bundled libraries. Documentation and tools are inside `current`.
 
-**On Windows 11, prefer the portable ZIP.** The installer is not limited to Windows 10, but its unsigned executable may be blocked by [Smart App Control](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions). The portable version is also subject to Windows security checks and any restrictions set by your organization's administrator; it is not a guaranteed exception to those policies.
+The package includes the **.NET 10 Desktop Runtime and required Visual C++ libraries**; no separate installation of these components or administrator rights is needed for normal use in a writable folder. Windows security checks and your organization's policies still apply and may prevent the application from running.
 
-The separate `*-third-party-sources.zip` contains source code for third-party components, not the application. You do not need to extract it to run PdfOperations.
+The ZIP is the only download needed to run the app. The `.nupkg` files and `releases.win.json` are used by the updater; do not extract or run them manually. `SHA256SUMS.txt` contains checksums for verifying downloads. The separate `*-third-party-sources.zip` contains source code for third-party components, not the application, and is not needed to run it.
 
-### Manual updates
+### Updates
 
-PdfOperations does not check for or install updates automatically. In **About**, click **Check for updates** to check GitHub (an internet connection is required). If a newer version is available, **Download the new version from GitHub** opens the release page; it does not download or install the update for you. You can also visit [Releases](https://github.com/DanBed666/PdfOperations/releases/latest) directly. Close the app before replacing or installing its files.
+In **About**, click **Check for updates**, then **Download update** if a newer version is available. An internet connection is required. The app shows download and preparation progress, including percentages, and lets you cancel downloading. Once ready, finish conversions, close other windows of the same application copy and click **Restart and update**. Updates require write access to the portable folder and sufficient free disk space; they are not applied without your action.
 
-- **Installer:** run the new `*-setup.exe` from the same Windows account and keep the existing installation folder. You do not need to uninstall the previous version.
-- **Portable ZIP:** extract the entire new application ZIP into a new folder, then run `PdfOperations.Gui.exe` from that folder. If you created a shortcut, update it to point to the new executable.
+The first update may download the full package. Later updates can use smaller differential packages when available. The GitHub link in **About** still opens the release page for manual downloads.
+
+For a **manual update**, close the app, extract the entire new ZIP into a new folder and run `PdfOperations.exe`. Update any shortcuts to point to the new launcher. Keep your own documents outside the managed `current` folder.
+
+Older portable packages without Velopack require this manual migration once. Replacing a 1.0.0 package with another 1.0.0 package does not trigger a newer-version notification.
 
 ## Features
 
@@ -47,12 +51,12 @@ The GUI includes file counts, file-type filters, progress indicators, cancellati
 
 ## Requirements and startup
 
-- **PDF → DOCX:** the installer and portable ZIP with the bundled Microsoft Visual C++ library do not require a separate Visual C++ installation. Accept the library terms during setup or, in the portable version, before your first PDF → DOCX conversion.
+- **PDF → DOCX:** the required Microsoft Visual C++ library is bundled. Accept its terms before your first PDF → DOCX conversion; declining does not block other operations.
 - **For DOCX to PDF (Word):** an installed and activated copy of Microsoft Word is needed. Without Word, choose **LibreOffice conversion**; LibreOffice is included in the package.
-- External tools and their supporting files must be present in the expected `tools` directory next to the application.
+- Keep external tools and their supporting files in `current/tools` within the portable folder.
 - The application needs write access to the output and temporary directories, with sufficient free disk space.
 
-See [Runtime requirements](RUNTIME-REQUIREMENTS.md) for details about both packages.
+See [Runtime requirements](RUNTIME-REQUIREMENTS.md) for details.
 
 Choose an operation from the left sidebar to begin. The built-in **Help** view is available in both interface languages.
 

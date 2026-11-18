@@ -6,23 +6,27 @@ PdfOperations to aplikacja dla systemu Windows do pracy z plikami PDF, obrazami,
 
 Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik opisuje obsługę wersji graficznej.
 
-## Pobieranie i instalacja
+## Pobieranie i uruchomienie
 
-Na [stronie wydań](https://github.com/DanBed666/PdfOperations/releases/latest) wybierz **jedną** z dwóch wersji dla Windows x64:
+PdfOperations jest dostępny jako **przenośna paczka ZIP dla Windows x64**, bez osobnego instalatora. Ze [strony wydań](https://github.com/DanBed666/PdfOperations/releases/latest) pobierz **`PdfOperations-1.0.0-win-x64-portable.zip`**.
 
-- **Wersja przenośna (`*-win-x64-portable.zip`, zalecana):** nie wymaga instalacji i zawiera środowisko .NET 10 Desktop Runtime. Rozpakuj **całe** archiwum ZIP do folderu, w którym masz uprawnienia do zapisu, i uruchom z niego `PdfOperations.Gui.exe`, nie bezpośrednio z ZIP-a. Nie przenoś samego pliku wykonywalnego poza ten folder ani nie usuwaj dołączonych bibliotek i narzędzi.
-- **Instalator (`*-setup.exe`, opcjonalny):** instaluje PdfOperations na Twoim koncie bez uprawnień administratora i zawiera .NET 10. Aby uruchomić program, wybierz **PdfOperations** w menu Start. Domyślny folder instalacji otworzysz, wklejając `%LOCALAPPDATA%\Programs\PdfOperations` w pasku adresu Eksploratora plików.
+1. Rozpakuj **cały** ZIP do nowego folderu, w którym masz prawo zapisu.
+2. Uruchom **`PdfOperations.exe` z głównego folderu**, nie bezpośrednio z ZIP-a.
+3. Zachowaj obok niego folder `current` oraz pliki `Update.exe` i `.portable`. Nie przenoś pojedynczych plików wykonywalnych ani nie usuwaj dołączonych bibliotek. Dokumentacja i narzędzia znajdują się w `current`.
 
-**Na Windows 11 wybierz przede wszystkim wersję przenośną ZIP.** Instalator nie jest przeznaczony wyłącznie dla Windows 10, ale jego niepodpisany plik wykonywalny może zostać zablokowany przez [Inteligentną kontrolę aplikacji](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions). Wersja przenośna również podlega zabezpieczeniom Windows i ograniczeniom ustawionym przez administratora organizacji, więc także może zostać zablokowana.
+Paczka zawiera **.NET 10 Desktop Runtime i wymagane biblioteki Visual C++**. Nie trzeba instalować tych składników osobno ani mieć uprawnień administratora do zwykłego korzystania z programu w folderze z prawem zapisu. Nadal obowiązują zabezpieczenia Windows i zasady organizacji, które mogą zablokować uruchomienie aplikacji.
 
-Osobne archiwum `*-third-party-sources.zip` zawiera kod źródłowy składników zewnętrznych, a nie aplikację. Nie trzeba go rozpakowywać, aby uruchomić PdfOperations.
+Do uruchomienia wystarczy sam ZIP z aplikacją. Pliki `.nupkg` i `releases.win.json` służą mechanizmowi aktualizacji; nie rozpakowuj ani nie uruchamiaj ich ręcznie. `SHA256SUMS.txt` zawiera sumy kontrolne do sprawdzenia pobranych plików. Osobne archiwum `*-third-party-sources.zip` zawiera źródła składników zewnętrznych, a nie aplikację, i nie jest potrzebne do jej uruchomienia.
 
-### Ręczna aktualizacja
+### Aktualizacje
 
-PdfOperations nie sprawdza ani nie instaluje aktualizacji automatycznie. W widoku **O programie** kliknij **Sprawdź aktualizacje**, aby sprawdzić wersję na GitHubie (wymagane jest połączenie z internetem). Jeśli jest dostępna nowsza wersja, przycisk **Pobierz nową wersję z GitHuba** otworzy stronę wydania; nie pobierze ani nie zainstaluje aktualizacji za Ciebie. Możesz też bezpośrednio odwiedzić [stronę wydań](https://github.com/DanBed666/PdfOperations/releases/latest). Przed podmianą lub instalacją plików zamknij program.
+W widoku **O programie** kliknij **Sprawdź aktualizacje**, a następnie **Pobierz aktualizację**, jeśli jest dostępna nowsza wersja. Wymagane jest połączenie z internetem. Program pokazuje postęp pobierania i przygotowywania, w tym procenty, oraz pozwala anulować pobieranie. Gdy aktualizacja będzie gotowa, zakończ konwersje, zamknij pozostałe okna tej samej kopii aplikacji i kliknij **Uruchom ponownie i zaktualizuj**. Aktualizacje wymagają prawa zapisu w folderze portable i wystarczającej ilości wolnego miejsca; nie są stosowane bez Twojego działania.
 
-- **Instalator:** uruchom nowy plik `*-setup.exe` z tego samego konta Windows i pozostaw dotychczasowy folder instalacji. Nie musisz odinstalowywać poprzedniej wersji.
-- **Przenośny ZIP:** rozpakuj całe nowe archiwum z aplikacją do nowego folderu i uruchom z niego `PdfOperations.Gui.exe`. Jeśli korzystasz z własnego skrótu, zmień go tak, żeby wskazywał nowy plik wykonywalny.
+Pierwsza aktualizacja może pobrać pełną paczkę. Kolejne mogą korzystać z mniejszych pakietów różnicowych, jeśli zostaną udostępnione. Link do GitHuba w widoku **O programie** nadal otwiera stronę wydania do ręcznego pobrania.
+
+Aby **zaktualizować ręcznie**, zamknij program, rozpakuj całe nowe archiwum do nowego folderu i uruchom `PdfOperations.exe`. Zmień ewentualne skróty tak, żeby wskazywały nowy plik uruchamiający. Własne dokumenty przechowuj poza zarządzanym folderem `current`.
+
+Starsze paczki portable bez Velopack wymagają jednorazowego przejścia w ten ręczny sposób. Podmiana paczki 1.0.0 na inną paczkę 1.0.0 nie powoduje powiadomienia o nowszej wersji.
 
 ## Funkcje
 
@@ -47,12 +51,12 @@ Interfejs zawiera liczniki plików, filtry formatów, wskaźniki postępu, anulo
 
 ## Wymagania i uruchomienie
 
-- **PDF → DOCX:** instalator i wersja przenośna z dołączoną biblioteką Microsoft Visual C++ nie wymagają osobnej instalacji pakietu Visual C++. Warunki korzystania z biblioteki akceptujesz podczas instalacji, a w wersji przenośnej przed pierwszą konwersją PDF → DOCX.
+- **PDF → DOCX:** wymagana biblioteka Microsoft Visual C++ jest dołączona. Zaakceptuj jej warunki przed pierwszą konwersją PDF → DOCX; odmowa nie blokuje innych operacji.
 - **Do opcji DOCX do PDF (Word):** potrzebny jest zainstalowany i aktywowany Microsoft Word. Bez Worda wybierz **Konwersja LibreOffice**; LibreOffice jest już w paczce.
-- Narzędzia zewnętrzne wraz z plikami pomocniczymi muszą znajdować się w przewidzianym folderze `tools` obok aplikacji.
+- Zachowaj narzędzia zewnętrzne wraz z plikami pomocniczymi w `current/tools` wewnątrz folderu portable.
 - Program potrzebuje uprawnień do zapisu w folderze wynikowym i folderach tymczasowych oraz wystarczającej ilości wolnego miejsca na dysku.
 
-Szczegóły dotyczące obu wersji znajdziesz w [wymaganiach do uruchomienia](RUNTIME-REQUIREMENTS.pl.md).
+Szczegóły znajdziesz w [wymaganiach do uruchomienia](RUNTIME-REQUIREMENTS.pl.md).
 
 Na początek wybierz operację z lewego paska. Wbudowana **Pomoc** jest dostępna w obu językach interfejsu.
 

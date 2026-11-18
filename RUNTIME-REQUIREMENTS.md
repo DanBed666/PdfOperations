@@ -2,14 +2,15 @@
 
 [Polski](RUNTIME-REQUIREMENTS.pl.md)
 
-Choose one Windows x64 package:
+The current release is a **portable ZIP for Windows x64**, without a separate installer.
 
-- **Installer:** includes .NET 10 for the GUI and its worker. It installs to `%LOCALAPPDATA%\Programs\PdfOperations` for the current user without administrator rights. Start **PdfOperations** from the Start menu.
-- **Portable ZIP (`*-win-x64-portable.zip`):** includes the .NET 10 Desktop Runtime, so you do not need to install .NET separately. Extract the **entire** ZIP to a folder of your choice and run `PdfOperations.Gui.exe` from that folder.
+The `*-win-x64-portable.zip` includes the .NET 10 Desktop Runtime for the GUI and its worker. **No separate .NET installation is needed.** Extract the entire ZIP to a new writable folder and run **`PdfOperations.exe` at its top level**. Keep `current`, `Update.exe` and `.portable` beside it; bundled tools are in `current/tools`.
+
+Normal use does not require administrator rights, but Windows security checks and organizational policies still apply. Output and temporary folders must be writable and have enough free disk space. Velopack updates also need write access and free space in the portable folder. See [Updates](README.md#updates).
 
 ## PDF to DOCX
 
-With either package, **you do not need to install Visual C++ separately** if it contains `tools/pdf2docx/_internal/MSVCP140.dll`. The installer displays the library terms during setup. The portable version asks before your first PDF-to-DOCX conversion. Acceptance is remembered for your Windows account; declining in the portable version does not block other operations.
+**You do not need to install Visual C++ separately.** The required DLL is included at `current/tools/pdf2docx/_internal/MSVCP140.dll`. The app asks you to accept its terms before your first PDF-to-DOCX conversion. Acceptance is remembered for your Windows account; declining does not block other operations.
 
 Only older packages that shipped without this DLL need the system-wide [Microsoft Visual C++ v14 Redistributable x64](https://aka.ms/vc14/vc_redist.x64.exe), version 14.50.35719 or later, for PDF-to-DOCX conversion. You do not need Visual Studio.
 
