@@ -80,7 +80,8 @@ public static class Convert
             "--nologo", "--nodefault", "--nofirststartwizard", "--norestore"];
 
         if (inputs.All(f => Path.GetExtension(f).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-            && fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase))
+            && (fileInput.Format.Equals("odt", StringComparison.OrdinalIgnoreCase) 
+                || fileInput.Format.Equals("docx", StringComparison.OrdinalIgnoreCase)))
             arguments.Add("--infilter=writer_pdf_import");
         
         if (inputs.All(f =>
