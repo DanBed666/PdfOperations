@@ -1,0 +1,119 @@
+name: Copy third-party sources
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: Existing release containing unchanged dependency sources
+        type: string
+        required: true
+        default: v1.0.0
+      target_tag:
+        description: Existing destination release (upload its SHA256SUMS.txt first)
+        type: string
+        required: true
+        default: v1.0.1
+      expected_sha256:
+        description: SHA256 of the dependency source archive, verified independently
+        type: string
+        required: true
+        default: 6e0ed51e03dc80cd6fdec8aacd21dba342ccd4723fa166bb33295b3cbc1127cc
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copy-third-party-sources-${{ inputs.target_tag }}
+  cancel-in-progress: false
+
+jobs:
+  copy:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      GH_PROMPT_DISABLED: '1'
+      SOURCE_TAG: ${{ inputs.source_tag }}
+      TARGET_TAG: ${{ inputs.target_tag }}
+      EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+    steps:
+      - name: Copy and verify dependency sources only
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sourceTag = $env:SOURCE_TAG.Trim()
+          $targetTag = $env:TARGET_TAG.Trim()
+          $expected = $env:EXPECTED_SHA256.Trim().ToLowerInvariant()
+          if ($sourceTag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$' -or
+              $targetTag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$' -or $sourceTag -eq $targetTag) {
+              throw 'Use two different version tags, for example v1.0.0 and v1.0.1.'
+          }
+          if ($expected -notmatch '^[a-f0-9]{64}$') { throw 'Invalid expected SHA256.' }
+
+          function Get-Release([string] $tag) {
+              $json = & gh api "repos/$env:GH_REPO/releases/tags/$tag"
+              if ($LASTEXITCODE -ne 0) { throw "Cannot read release $tag. Create it first; a draft is also supported." }
+              return ($json -join "`n" | ConvertFrom-Json)
+          }
+
+          function Download-Asset([string] $tag, [string] $name, [string] $directory) {
+              New-Item -ItemType Directory -Path $directory -Force | Out-Null
+              for ($attempt = 1; $attempt -le 3; $attempt++) {
+                  & gh release download $tag --repo $env:GH_REPO --pattern $name --dir $directory --clobber
+                  if ($LASTEXITCODE -eq 0) { return (Join-Path $directory $name) }
+                  if ($attempt -lt 3) { Start-Sleep -Seconds 10 }
+              }
+              throw "Cannot download $name from $tag after three attempts."
+          }
+
+          function Assert-Hash([string] $path) {
+              $actual = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+              if ($actual -ne $expected) { throw "SHA256 mismatch for $path. No existing release assets will be replaced." }
+          }
+
+          $sourceName = "PdfOperations-$($sourceTag.Substring(1))-third-party-sources.zip"
+          $targetName = "PdfOperations-$($targetTag.Substring(1))-third-party-sources.zip"
+          $source = Get-Release $sourceTag
+          $target = Get-Release $targetTag
+          $sourceAssets = @($source.assets | Where-Object { $_.name -ceq $sourceName -and $_.state -eq 'uploaded' })
+          if ($sourceAssets.Count -ne 1) { throw "Missing complete source asset: $sourceName" }
+          $checksums = @($target.assets | Where-Object { $_.name -ceq 'SHA256SUMS.txt' -and $_.state -eq 'uploaded' })
+          if ($checksums.Count -ne 1) { throw 'Upload the original SHA256SUMS.txt to the target release first.' }
+
+          $work = Join-Path $env:RUNNER_TEMP ("copy-third-party-" + [Guid]::NewGuid().ToString('N'))
+          $checksumPath = Download-Asset $targetTag 'SHA256SUMS.txt' (Join-Path $work 'checksums')
+          $pattern = '(?m)^([a-fA-F0-9]{64})[ \t]+\*?' + [regex]::Escape($targetName) + '\r?$'
+          $entries = [regex]::Matches((Get-Content -LiteralPath $checksumPath -Raw), $pattern)
+          if ($entries.Count -ne 1 -or $entries[0].Groups[1].Value.ToLowerInvariant() -ne $expected) {
+              throw "SHA256SUMS.txt must contain exactly one matching entry for $targetName. Restore the original checksum file from bandzul."
+          }
+
+          $existing = @($target.assets | Where-Object { $_.name -ceq $targetName })
+          if ($existing.Count -gt 0) {
+              if ($existing.Count -ne 1 -or $existing[0].state -ne 'uploaded') {
+                  throw "An incomplete asset named $targetName already exists. Remove only that failed upload manually, then rerun."
+              }
+              $existingPath = Download-Asset $targetTag $targetName (Join-Path $work 'existing')
+              Assert-Hash $existingPath
+              "Already present and verified: $targetName. No release assets changed." |
+                  Tee-Object -FilePath $env:GITHUB_STEP_SUMMARY -Append
+              return
+          }
+          if ($target.immutable) { throw 'The target release is immutable and cannot accept new assets.' }
+
+          $archive = Download-Asset $sourceTag $sourceName (Join-Path $work 'source')
+          Assert-Hash $archive
+          Rename-Item -LiteralPath $archive -NewName $targetName
+          $uploadPath = Join-Path (Split-Path -Parent $archive) $targetName
+          & gh release upload $targetTag $uploadPath --repo $env:GH_REPO
+          if ($LASTEXITCODE -ne 0) { throw 'Upload failed. Rerun to verify whether it completed; existing assets are never overwritten.' }
+
+          $verified = Download-Asset $targetTag $targetName (Join-Path $work 'verified')
+          Assert-Hash $verified
+          @(
+              "Copied and verified: $sourceTag -> $targetTag"
+              "File: $targetName"
+              "SHA256: $expected"
+              'Only the dependency source archive was uploaded. Tags, other assets and release descriptions were not changed.'
+          ) | Tee-Object -FilePath $env:GITHUB_STEP_SUMMARY -Append
