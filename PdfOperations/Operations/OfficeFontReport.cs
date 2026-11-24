@@ -77,7 +77,7 @@ public static class OfficeFontReport
             result.AppendLine($"{(polish ? "Zadeklarowane osadzenie" : "Declared embedding")}: {embedded}");
 
             var sources = group.Select(f => f.Source).Distinct().ToArray();
-            result.AppendLine($"{(polish ? "Miejsca" : "Locations")}: {string.Join("; ", sources.Take(100))}");
+            AppendLocations(result, sources.Take(100), polish);
             if (sources.Length > 100)
                 result.AppendLine(polish ? "Pokazano pierwsze 100 miejsc." : "Only the first 100 locations are shown.");
         }
@@ -98,5 +98,50 @@ public static class OfficeFontReport
             result.AppendLine($"{(polish ? "UWAGA" : "NOTE")}: {text}");
         }
         return result.ToString();
+    }
+    
+    private static void AppendLocations(
+        StringBuilder result, IEnumerable<string> sources, bool polish)
+    {
+        var groups = new Dictionary<string, SortedSet<int>>();
+        var other = new List<string>();
+
+        foreach (string source in sources)
+        {
+            const string separator = ": p. ";
+            int index = source.LastIndexOf(separator, StringComparison.Ordinal);
+
+            if (index < 0 ||
+                !int.TryParse(source[(index + separator.Length)..], out int paragraph) ||
+                paragraph < 1)
+            {
+                other.Add(source);
+                continue;
+            }
+
+            string section = source[..index];
+            if (!groups.TryGetValue(section, out var paragraphs))
+                groups[section] = paragraphs = new SortedSet<int>();
+
+            paragraphs.Add(paragraph);
+        }
+
+        result.AppendLine(polish ? "Miejsca:" : "Locations:");
+
+        foreach (var entry in groups)
+        {
+            string label = entry.Key;
+            if (label == "/word/document.xml")
+                label = polish ? "Treść główna" : "Main document";
+            else if (label.StartsWith("slide ", StringComparison.Ordinal))
+                label = (polish ? "Slajd " : "Slide ") + label[6..];
+
+            string heading = polish ? "akapity" : "paragraphs";
+            result.AppendLine(
+                $"  {label} | {heading}: {string.Join(", ", entry.Value)}");
+        }
+
+        foreach (string source in other)
+            result.AppendLine($"  {source}");
     }
 }
