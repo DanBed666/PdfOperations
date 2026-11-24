@@ -3,6 +3,33 @@ namespace PdfOperations;
 
 public static class OfficeFontReport
 {
+    private static string GetStyleName(int weight, bool italic, bool polish)
+    {
+        var (pl, en) = weight switch
+        {
+            100 => ("Bardzo cienka", "Thin"),
+            200 => ("Cienka", "Extra Light"),
+            300 => ("Lekka", "Light"),
+            350 => ("Półlekka", "Semi Light"),
+            400 => ("Zwykła", "Regular"),
+            500 => ("Średnia", "Medium"),
+            600 => ("Półpogrubiona", "Semi Bold"),
+            700 => ("Pogrubiona", "Bold"),
+            800 => ("Bardzo pogrubiona", "Extra Bold"),
+            900 => ("Gruba", "Black"),
+            950 => ("Bardzo gruba", "Extra Black"),
+            _ => ($"Niestandardowa grubość ({weight})", $"Custom weight ({weight})")
+        };
+
+        if (italic)
+        {
+            pl = weight == 400 ? "Kursywa" : $"{pl} kursywa";
+            en = weight == 400 ? "Italic" : $"{en} Italic";
+        }
+
+        return polish ? $"{pl} ({en})" : en;
+    }
+
     public static string Create(string path, IInstalledFontCatalog catalog,
         bool polish, CancellationToken cancellationToken = default)
     {
@@ -11,7 +38,7 @@ public static class OfficeFontReport
     }
 
     public static string Format(OfficeFontDocument document, IInstalledFontCatalog catalog,
-        bool polish, CancellationToken cancellationToken = default)
+        bool polish, CancellationToken cancellationToken = default, bool compact = false)
     {
         var result = new StringBuilder();
         result.AppendLine(polish ? "CZCIONKI DOKUMENTU" : "DOCUMENT FONTS");
@@ -39,11 +66,16 @@ public static class OfficeFontReport
                 _ => polish ? "Nie ustalono" : "Unknown"
             };
             string family = string.IsNullOrWhiteSpace(font.Family) ? "?" : font.Family;
-            string style = font.Italic ? (polish ? "Kursywa" : "Italic") : (polish ? "Prosta" : "Normal");
+            string style = GetStyleName(font.Weight, font.Italic, polish);
             string embedded = font.Embedded ? (polish ? "tak" : "yes") : (polish ? "nie wykryto" : "not detected");
+
             result.AppendLine();
-            result.AppendLine($"{family} | {font.Weight} | {style} | {description}");
+            result.AppendLine($"{family} | {style} | {description}");
+            if (compact)
+                continue;
+
             result.AppendLine($"{(polish ? "Zadeklarowane osadzenie" : "Declared embedding")}: {embedded}");
+
             var sources = group.Select(f => f.Source).Distinct().ToArray();
             result.AppendLine($"{(polish ? "Miejsca" : "Locations")}: {string.Join("; ", sources.Take(100))}");
             if (sources.Length > 100)

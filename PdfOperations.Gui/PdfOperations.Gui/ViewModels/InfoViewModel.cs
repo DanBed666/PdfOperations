@@ -185,17 +185,34 @@ public partial class InfoViewModel : FileInputViewModelBase
                     cancellationToken.ThrowIfCancellationRequested();
                     if (fontMode)
                     {
-                        string report = Path.GetExtension(inputFile)
-                            .Equals(".pdf", StringComparison.OrdinalIgnoreCase)
-                            ? RunClass.RunWithOutput(
+                        string report;
+                        string previewReport;
+
+                        if (Path.GetExtension(inputFile)
+                            .Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                        {
+                            report = RunClass.RunWithOutput(
                                 ToolPaths.ToolPathsDict[Tool.PdfFonts],
-                                OperationTimeouts.PdfFontInfo, cancellationToken, inputFile)
-                            : OfficeFontReport.Create(inputFile, catalog!, polish, cancellationToken);
+                                OperationTimeouts.PdfFontInfo, cancellationToken, inputFile);
+
+                            previewReport = report;
+                        }
+                        else
+                        {
+                            var document = OfficeFontReader.Read(inputFile, cancellationToken);
+
+                            report = OfficeFontReport.Format(
+                                document, catalog!, polish, cancellationToken);
+
+                            previewReport = OfficeFontReport.Format(
+                                document, catalog!, polish, cancellationToken, compact: true);
+                        }
 
                         cancellationToken.ThrowIfCancellationRequested();
                         Info.SaveToFile(stagedReport!, report, inputFile);
-                        AppendPreview(inputFile + Environment.NewLine);
-                        AppendPreview(report);
+
+                        AppendPreview(Path.GetFileName(inputFile) + Environment.NewLine);
+                        AppendPreview(previewReport);
                         AppendPreview(Environment.NewLine + Environment.NewLine);
                     }
                     else
