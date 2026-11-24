@@ -221,10 +221,128 @@ public sealed class OfficeFontTests
         string en = OfficeFontReport.Format(data, new FixedCatalog(FontAvailability.MissingFace), false);
         StringAssert.Contains(pl, "Nie znaleziono dokładnej odmiany");
         StringAssert.Contains(pl, "Nie ustalono");
-        StringAssert.Contains(pl, "Kursywa");
+        StringAssert.Contains(pl, "Pogrubiona kursywa (Bold Italic)");
         StringAssert.Contains(en, "Exact face not found");
         StringAssert.Contains(en, "Unknown");
         StringAssert.Contains(en, "Italic");
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void CompactReportKeepsFontsStatusesAndWarningsButOmitsDetails(bool polish)
+    {
+        var data = new OfficeFontDocument(
+            [new("Roboto", 700, true, "private-location-1", true),
+             new("Roboto", 700, true, "private-location-2", true),
+             new("", 400, false, "private-location-3", false)], ["scripts"]);
+        var catalog = new FixedCatalog(FontAvailability.MissingFace);
+        string full = OfficeFontReport.Format(data, catalog, polish);
+        string compact = OfficeFontReport.Format(data, catalog, polish, compact: true);
+        string embedding = polish ? "Zadeklarowane osadzenie:" : "Declared embedding:";
+        string locations = polish ? "Miejsca:" : "Locations:";
+        string font = polish
+            ? "Roboto | Pogrubiona kursywa (Bold Italic) | Nie znaleziono dokładnej odmiany"
+            : "Roboto | Bold Italic | Exact face not found";
+
+        foreach (string report in new[] { full, compact })
+        {
+            StringAssert.Contains(report, font);
+            StringAssert.Contains(report, polish ? "Nie ustalono" : "Unknown");
+            StringAssert.Contains(report, polish
+                ? "UWAGA: Nieobsługiwany zakres pisma: czcionka nieustalona."
+                : "NOTE: Unsupported writing system: font unresolved.");
+            Assert.AreEqual(1, report.Split(Environment.NewLine)
+                .Count(line => line.StartsWith("Roboto |", StringComparison.Ordinal)));
+        }
+        StringAssert.Contains(full, embedding + (polish ? " tak" : " yes"));
+        StringAssert.Contains(full, locations);
+        Assert.DoesNotContain(embedding, compact);
+        Assert.DoesNotContain(locations, compact);
+        foreach (var use in data.Fonts)
+        {
+            StringAssert.Contains(full, use.Source);
+            Assert.DoesNotContain(use.Source, compact);
+        }
+        Assert.IsLessThan(full.Length, compact.Length);
+        Assert.AreEqual(full, OfficeFontReport.Format(data, catalog, polish));
+    }
+
+    [TestMethod]
+    [DataRow(400, false, "Zwykła (Regular)", "Regular")]
+    [DataRow(400, true, "Kursywa (Italic)", "Italic")]
+    [DataRow(700, false, "Pogrubiona (Bold)", "Bold")]
+    [DataRow(700, true, "Pogrubiona kursywa (Bold Italic)", "Bold Italic")]
+    [DataRow(600, false, "Półpogrubiona (Semi Bold)", "Semi Bold")]
+    [DataRow(800, true, "Bardzo pogrubiona kursywa (Extra Bold Italic)", "Extra Bold Italic")]
+    [DataRow(450, false, "Niestandardowa grubość (450) (Custom weight (450))", "Custom weight (450)")]
+    public void StyleNamesAreLocalizedWithoutChangingCatalogArguments(
+        int weight, bool italic, string expectedPolish, string expectedEnglish)
+    {
+        var data = new OfficeFontDocument([new("Roboto", weight, italic, "test", false)], []);
+        var catalog = new RecordingCatalog();
+        foreach (bool polish in new[] { false, true })
+        foreach (bool compact in new[] { false, true })
+        {
+            string report = OfficeFontReport.Format(data, catalog, polish, compact: compact);
+            string expected = polish ? expectedPolish : expectedEnglish;
+            string status = polish ? "Dostępna" : "Available";
+            StringAssert.Contains(report, $"Roboto | {expected} | {status}");
+            if (!polish) Assert.DoesNotContain(expectedPolish, report);
+        }
+        Assert.HasCount(4, catalog.Calls);
+        Assert.IsTrue(catalog.Calls.All(call => call == ("Roboto", weight, italic)));
+    }
+
+    [TestMethod]
+    public void CompactReportHonorsCancellation()
+    {
+        var data = new OfficeFontDocument([new("Arial", 400, false, "test", false)], []);
+        Assert.Throws<OperationCanceledException>(() => OfficeFontReport.Format(
+            data, new FixedCatalog(FontAvailability.Available), false,
+            new CancellationToken(true), compact: true));
+    }
+
+    [TestMethod]
+    [DataRow("docx", AppLanguage.Polish)]
+    [DataRow("docx", AppLanguage.English)]
+    [DataRow("pptx", AppLanguage.Polish)]
+    [DataRow("pptx", AppLanguage.English)]
+    public async Task GuiUsesCompactOfficePreviewAndSavesFullReport(string extension, AppLanguage language)
+    {
+        string path = extension == "docx"
+            ? Word(Paragraph("AbsentFont_Preview", flags: "<w:b/><w:i/>"))
+            : Presentation("<a:rPr b=\"1\" i=\"1\"><a:latin typeface=\"AbsentFont_Preview\"/></a:rPr>");
+        byte[] before = File.ReadAllBytes(path);
+        var vm = ViewModel([path]);
+        var previous = vm.Loc.Language;
+        try
+        {
+            vm.Loc.Language = language;
+            bool polish = language == AppLanguage.Polish;
+            await vm.StartCommand.ExecuteAsync(null);
+            Assert.AreEqual(StatusKind.Success, vm.StatusKind, vm.ErrorDetails);
+            string saved = File.ReadAllText(Path.Combine(root, "font_info.txt"));
+            var document = OfficeFontReader.Read(path);
+            var catalog = new FixedCatalog(FontAvailability.MissingFamily);
+            string expectedFull = OfficeFontReport.Format(document, catalog, polish);
+            string expectedPreview = OfficeFontReport.Format(document, catalog, polish, compact: true);
+
+            Assert.AreEqual(Path.GetFileName(path) + Environment.NewLine + expectedPreview
+                + Environment.NewLine + Environment.NewLine, vm.ReportText);
+            StringAssert.Contains(saved, expectedFull);
+            StringAssert.Contains(saved, path);
+            Assert.DoesNotContain(path, vm.ReportText);
+            Assert.DoesNotContain(polish ? "Miejsca:" : "Locations:", vm.ReportText);
+            Assert.DoesNotContain(polish ? "Zadeklarowane osadzenie:" : "Declared embedding:", vm.ReportText);
+            foreach (var use in document.Fonts)
+            {
+                StringAssert.Contains(saved, use.Source);
+                Assert.DoesNotContain(use.Source, vm.ReportText);
+            }
+            CollectionAssert.AreEqual(before, File.ReadAllBytes(path));
+        }
+        finally { vm.Loc.Language = previous; }
     }
 
     [TestMethod]
@@ -272,6 +390,12 @@ public sealed class OfficeFontTests
                 StringAssert.Contains(vm.ReportText, family);
             }
             StringAssert.Contains(vm.ReportText, language == AppLanguage.Polish ? "CZCIONKI DOKUMENTU" : "DOCUMENT FONTS");
+            string pdfReport = RunClass.RunWithOutput(ToolPaths.ToolPathsDict[Tool.PdfFonts],
+                OperationTimeouts.PdfFontInfo, CancellationToken.None,
+                TestHelper.SetInputPaths(["test_1.pdf"])[0]);
+            StringAssert.Contains(report, pdfReport);
+            StringAssert.Contains(vm.ReportText, pdfReport);
+            Assert.DoesNotContain(language == AppLanguage.Polish ? "Miejsca:" : "Locations:", vm.ReportText);
             Assert.IsTrue(vm.HasReport);
             Assert.IsFalse(vm.IsBusy);
             Assert.IsEmpty(Directory.GetFiles(root, ".font-report-*.tmp"));
@@ -346,7 +470,7 @@ public sealed class OfficeFontTests
     public async Task GuiTruncatesOnlyPreviewNotSavedReport()
     {
         var body = new StringBuilder();
-        for (int i = 0; i < 1800; i++) body.Append(Paragraph($"Font{i:D4}_" + new string('X', 80)));
+        for (int i = 0; i < 2500; i++) body.Append(Paragraph($"Font{i:D4}_" + new string('X', 80)));
         var vm = ViewModel([Word(body.ToString())]);
         await vm.StartCommand.ExecuteAsync(null);
         Assert.AreEqual(StatusKind.Success, vm.StatusKind, vm.ErrorDetails);
@@ -354,8 +478,8 @@ public sealed class OfficeFontTests
         Assert.IsGreaterThan(200_000, report.Length);
         Assert.AreEqual(200_000 + Environment.NewLine.Length + vm.Loc.FontPreviewTruncated.Length, vm.ReportText.Length);
         StringAssert.EndsWith(vm.ReportText, vm.Loc.FontPreviewTruncated);
-        StringAssert.Contains(report, "Font1799_");
-        Assert.DoesNotContain("Font1799_", vm.ReportText);
+        StringAssert.Contains(report, "Font2499_");
+        Assert.DoesNotContain("Font2499_", vm.ReportText);
     }
 
     [TestMethod]
@@ -381,6 +505,17 @@ public sealed class OfficeFontTests
     private sealed class FixedCatalog(FontAvailability status) : IInstalledFontCatalog
     {
         public FontAvailability Check(string family, int weight, bool italic) => status;
+    }
+
+    private sealed class RecordingCatalog : IInstalledFontCatalog
+    {
+        public List<(string Family, int Weight, bool Italic)> Calls { get; } = [];
+
+        public FontAvailability Check(string family, int weight, bool italic)
+        {
+            Calls.Add((family, weight, italic));
+            return FontAvailability.Available;
+        }
     }
 
     // Deliver progress immediately so cancellation between two files is deterministic.
