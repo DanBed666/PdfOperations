@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,6 +13,8 @@ namespace PdfOperations.Gui.ViewModels;
 
 public partial class InfoViewModel : FileInputViewModelBase
 {
+    private const int PreviewCharacterLimit = 200_000;
+
     [ObservableProperty]
     private string outputDirectory = "";
 
@@ -29,21 +32,36 @@ public partial class InfoViewModel : FileInputViewModelBase
 
     [ObservableProperty]
     private string defaultOutputFileName = "pdf_info.txt";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasReport))]
+    private string reportText = "";
+
+    public bool HasReport => !string.IsNullOrWhiteSpace(ReportText);
     
     public InfoViewModel(InfoMode mode)
         : base(
-            loc => loc.SelectPdfFiles,
-            loc => loc.InputPdfFilesWithFormats,
-            ["*.pdf"],
-            inputTitle: loc => loc.InputPdfFilesWithFormats)
+            loc => mode == InfoMode.FontInfo
+                ? loc.SelectFontInputFiles : loc.SelectPdfFiles,
+            loc => mode == InfoMode.FontInfo
+                ? loc.InputFontFilesWithFormats : loc.InputPdfFilesWithFormats,
+            mode == InfoMode.FontInfo
+                ? ["*.pdf", "*.docx", "*.pptx"] : ["*.pdf"],
+            inputTitle: loc => mode == InfoMode.FontInfo
+                ? loc.InputFontFilesWithFormats : loc.InputPdfFilesWithFormats)
     {
         this.mode = mode;
-        Title = mode == InfoMode.FontInfo
-            ? Loc.GetOperationName("FontInfo")
-            : Loc.GetOperationName("Info");
+        if (mode == InfoMode.FontInfo)
+            OutputFileName = DefaultOutputFileName = "font_info.txt";
+
+        Title = Loc.GetOperationName(
+            mode == InfoMode.FontInfo ? "FontInfo" : "Info");
+
         InputFilesList.FilesChanged += () =>
         {
-            SetDefaultOutputDirectoryFromInputFiles(InputFilesList.ToPathArray(), OutputDirectory, value => OutputDirectory = value);
+            SetDefaultOutputDirectoryFromInputFiles(
+                InputFilesList.ToPathArray(), OutputDirectory,
+                value => OutputDirectory = value);
             StartCommand.NotifyCanExecuteChanged();
         };
     }
@@ -66,19 +84,29 @@ public partial class InfoViewModel : FileInputViewModelBase
             return;
 
         IsBusy = true;
+        ReportText = "";
         var cancellationToken = OperationToken;
         StatusKind = StatusKind.Info;
+        string? stagedReport = null;
+        bool ownsStagedReport = false;
 
         try
         {
             if (InputFilesList.IsEmpty())
             {
                 StatusKind = StatusKind.Error;
-                StatusMessage = Loc.SelectPdfFiles;
+                StatusMessage = FileDialogTitle;
                 return;
             }
             
             string[] currentInputFiles = InputFilesList.ToPathArray();
+            
+            if (currentInputFiles.Any(file => !FilePatterns.Any(pattern =>
+                    Path.GetExtension(file).Equals(
+                        pattern[1..], StringComparison.OrdinalIgnoreCase))))
+            {
+                throw new NotSupportedException(FileTypeName);
+            }
 
             string[] missingFiles = currentInputFiles
                 .Where(file => !File.Exists(file))
@@ -105,7 +133,7 @@ public partial class InfoViewModel : FileInputViewModelBase
 
             if (string.IsNullOrWhiteSpace(OutputFileName))
             {
-                OutputFileName = "pdf_info.txt";
+                OutputFileName = DefaultOutputFileName;
             }
 
             if (!Path.GetExtension(OutputFileName).Equals(".txt", StringComparison.OrdinalIgnoreCase))
@@ -113,7 +141,7 @@ public partial class InfoViewModel : FileInputViewModelBase
                 OutputFileName = Path.GetFileNameWithoutExtension(OutputFileName) + ".txt";
             }
 
-            StatusMessage = Loc.ReadingPdfInfo;
+            StatusMessage = Mode == InfoMode.FontInfo ? Loc.ReadingFontInfo : Loc.ReadingPdfInfo;
 
             string finalPath = Path.Combine(OutputDirectory, OutputFileName);
             if (!OverwriteExistingFiles)
@@ -121,26 +149,79 @@ public partial class InfoViewModel : FileInputViewModelBase
 
             int processedFilesCount = 0;
             IProgress<int> progress = BeginFileProgress(currentInputFiles.Length);
+            bool fontMode = Mode == InfoMode.FontInfo;
+            bool polish = Loc.Language == AppLanguage.Polish;
+            bool overwrite = OverwriteExistingFiles;
+            var preview = new StringBuilder();
+            bool previewTruncated = false;
+
+            void AppendPreview(string text)
+            {
+                int count = Math.Min(text.Length, PreviewCharacterLimit - preview.Length);
+                preview.Append(text, 0, count);
+                previewTruncated |= count < text.Length;
+            }
+
+            if (fontMode)
+                stagedReport = Path.Combine(
+                    Path.GetDirectoryName(finalPath)!, $".font-report-{Guid.NewGuid():N}.tmp");
 
             await Task.Run(() =>
             {
+                IInstalledFontCatalog? catalog = null;
+                if (fontMode && currentInputFiles.Any(file =>
+                        !Path.GetExtension(file).Equals(".pdf", StringComparison.OrdinalIgnoreCase)))
+                    catalog = WindowsFontCatalog.Read(cancellationToken);
+
+                if (fontMode)
+                {
+                    using var reservation = new FileStream(
+                        stagedReport!, FileMode.CreateNew, FileAccess.Write);
+                    ownsStagedReport = true;
+                }
+
                 foreach (string inputFile in currentInputFiles)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    FileJob fileJob = new FileJob
+                    if (fontMode)
                     {
-                        InputFiles = [inputFile],
-                        TempPath = finalPath
-                    };
+                        string report = Path.GetExtension(inputFile)
+                            .Equals(".pdf", StringComparison.OrdinalIgnoreCase)
+                            ? RunClass.RunWithOutput(
+                                ToolPaths.ToolPathsDict[Tool.PdfFonts],
+                                OperationTimeouts.PdfFontInfo, cancellationToken, inputFile)
+                            : OfficeFontReport.Create(inputFile, catalog!, polish, cancellationToken);
 
-                    if (Mode == InfoMode.FontInfo)
-                        Info.ShowFontInfo(fileJob, cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        Info.SaveToFile(stagedReport!, report, inputFile);
+                        AppendPreview(inputFile + Environment.NewLine);
+                        AppendPreview(report);
+                        AppendPreview(Environment.NewLine + Environment.NewLine);
+                    }
                     else
-                        Info.ShowInfo(fileJob, cancellationToken);
-
+                    {
+                        Info.ShowInfo(new FileJob
+                        {
+                            InputFiles = [inputFile],
+                            TempPath = finalPath
+                        }, cancellationToken);
+                    }
                     progress.Report(++processedFilesCount);
                 }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                if (fontMode)
+                {
+                    File.Move(stagedReport!, finalPath, overwrite);
+                    ownsStagedReport = false;
+                }
             });
+
+            if (previewTruncated && preview.Length > 0 && char.IsHighSurrogate(preview[^1]))
+                preview.Length--;
+            ReportText = preview.ToString();
+            if (previewTruncated)
+                ReportText += Environment.NewLine + Loc.FontPreviewTruncated;
 
             LastOutputDirectory = OutputDirectory;
             StatusKind = StatusKind.Success;
@@ -152,6 +233,12 @@ public partial class InfoViewModel : FileInputViewModelBase
         }
         finally
         {
+            if (ownsStagedReport && stagedReport is not null)
+            {
+                try { File.Delete(stagedReport); }
+                catch (IOException ex) { Debug.WriteLine(ex); }
+                catch (UnauthorizedAccessException ex) { Debug.WriteLine(ex); }
+            }
             IsBusy = false;
         }
     }

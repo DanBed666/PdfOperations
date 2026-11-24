@@ -62,6 +62,14 @@
                             Command="{Binding OpenOutputFolderCommand}"
                             MinWidth="170" />
                 </StackPanel>
+                <TextBox Text="{Binding ReportText, Mode=OneWay}"
+                         IsVisible="{Binding HasReport}"
+                         IsReadOnly="True"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         MinHeight="160"
+                         MaxHeight="420"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

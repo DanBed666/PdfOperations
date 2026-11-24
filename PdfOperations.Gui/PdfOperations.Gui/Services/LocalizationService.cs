@@ -116,6 +116,9 @@ public partial class LocalizationService : ObservableObject
     public string EnterSplitPages => Language == AppLanguage.Polish ? "Wpisz strony podziału, na przykład: 4,10,15." : "Enter split pages, for example: 4,10,15.";
     public string Searching => Language == AppLanguage.Polish ? "Wyszukiwanie..." : "Searching...";
     public string ReadingPdfInfo => Language == AppLanguage.Polish ? "Odczytywanie informacji o PDF..." : "Reading PDF info...";
+    public string FontPreviewTruncated => Language == AppLanguage.Polish
+        ? "Podgląd skrócono. Pełny raport znajduje się w zapisanym pliku TXT."
+        : "Preview truncated. The complete report is in the saved TXT file.";
     public string ReplacingText => Language == AppLanguage.Polish ? "Trwa zamiana tekstu..." : "Replacing text...";
     public string CreatingPdfWithSelectedPages => Language == AppLanguage.Polish ? "Tworzenie PDF z wybranymi stronami..." : "Creating PDF with selected pages...";
     public string BuildingPdfFromFragments => Language == AppLanguage.Polish ? "Tworzenie PDF z fragmentów..." : "Building PDF from fragments...";
@@ -200,7 +203,9 @@ public partial class LocalizationService : ObservableObject
             "MergePdf" => ("Łączy całe pliki PDF w jeden dokument w kolejności widocznej na liście.", "Combines entire PDF files into one document in the order shown."),
             "Search" => ("Wyszukuje frazy w plikach i zapisuje raport z dopasowaniami.", "Finds phrases in the selected files and saves a report of the matches."),
             "Info" => ("Zapisuje raport o plikach PDF, m.in. liczbę stron i ich wymiary.", "Saves a report of PDF properties, including page count and page size."),
-            "FontInfo" => ("Zapisuje listę czcionek użytych w PDF i informację, czy są osadzone.", "Lists the fonts used in a PDF and whether they are embedded."),
+            "FontInfo" => (
+                "Zapisuje informacje o czcionkach PDF oraz sprawdza czcionki tekstu DOCX/PPTX i ich dostępność w Windows. Ograniczenia analizy są podane w raporcie.",
+                "Reports PDF fonts and checks DOCX/PPTX text fonts against the Windows font catalog. Inspection limitations are listed in the report."),
             "Replacement" => ("Zastępuje tekst w dokumentach według reguł z arkusza Excel.", "Replaces text in documents using rules from an Excel workbook."),
             "Fragments" => ("Tworzy jeden PDF z wybranych zakresów stron w kolejności fragmentów na liście.", "Builds one PDF from selected page ranges in the order shown."),
             _ => ("", "")
@@ -510,4 +515,15 @@ public partial class LocalizationService : ObservableObject
     public string UpdateCloseOtherWindows => Language == AppLanguage.Polish
         ? "Zamknij pozostałe okna tej kopii programu przed aktualizacją."
         : "Close the other windows of this application copy before updating.";
+    
+    public string ReadingFontInfo => Language == AppLanguage.Polish
+        ? "Sprawdzanie czcionek..." : "Checking fonts...";
+
+    public string SelectFontInputFiles => Language == AppLanguage.Polish
+        ? "Wybierz pliki PDF, DOCX lub PPTX."
+        : "Select PDF, DOCX or PPTX files.";
+
+    public string InputFontFilesWithFormats => Language == AppLanguage.Polish
+        ? "Dokumenty (*.pdf, *.docx, *.pptx)"
+        : "Documents (*.pdf, *.docx, *.pptx)";
 }
