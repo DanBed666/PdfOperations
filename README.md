@@ -44,7 +44,8 @@ Older portable packages without Velopack require this manual migration once. Rep
 | Merge PDF | Combine PDFs in the order shown in the file list. |
 | Build PDF from fragments | Combine page ranges from one or more PDFs in the order you choose. |
 | Search | Search PDF, TXT and image files for multiple phrases. Save a TXT report and optionally export the extracted values to Excel, JSON or both. |
-| PDF information | Read PDF metadata, page counts and font information. |
+| Info | Read PDF metadata and page counts. |
+| Font info | Report PDF fonts and inspect DOCX/PPTX text fonts, including their availability in Windows. Save a TXT report and view a preview in the app. |
 | Text replacement | Replace text in DOCX, ODT and ODG documents using an Excel replacement table. |
 
 The GUI includes file counts, file-type filters, progress indicators, cancellation, overwrite control and expandable error details. Language and theme preferences are saved between sessions.
@@ -88,6 +89,37 @@ Page numbers start at 1. Custom selections support individual pages and ranges, 
 - **Split every page** creates a separate PDF for each page.
 
 Use **Build PDF from fragments** to assemble a PDF from page ranges in one or more source files. Check the selected pages and arrange the fragments in the order you want them to appear.
+
+## Font information
+
+Choose **Font info** to inspect PDF, DOCX or PPTX files. You can combine these formats in one input list. The separate **Info** operation still accepts only PDFs.
+
+1. Select the documents and an output folder.
+2. Keep the default report name, `font_info.txt`, or enter another TXT file name.
+3. Click **Start**. After successful completion, the report appears below the buttons. Use **Open output folder** to open its location.
+
+For **PDF**, the app uses Poppler's `pdffonts` to report fonts and PDF embedding information. It does not compare PDF fonts against the Windows font catalog.
+
+For **DOCX/PPTX**, the app reads text formatting, supported styles and theme references, then compares the resolved font families and styles with the Windows font catalog. The report includes family names, requested weights (`400` for regular, `700` for bold), italic formatting, declared embedding and locations in the document. DOCX locations identify XML parts and paragraphs, not rendered page numbers; PPTX locations identify slides and paragraphs. The report labels follow the interface language selected when the operation starts; document font names are not translated.
+
+| DOCX/PPTX status | Meaning |
+| --- | --- |
+| Available | A matching family, weight and upright/italic style was found in the Windows catalog. |
+| Missing family | The resolved family was not found in the Windows catalog. |
+| Exact face not found | The family exists, but the requested weight/style combination was not found. Variable fonts and synthetic styles may need separate verification. |
+| Unknown | The reader could not resolve the font unambiguously. This is not proof that a font is missing. |
+
+**Declared embedding** means that a reference to an embedded font part was found. It does not confirm that the font is installed, that its data is valid, or that LibreOffice will use it. This operation reads documents without modifying them and does not download or install fonts. DOCX/PPTX font inspection does not require Word, PowerPoint, LibreOffice, internet access or administrator rights.
+
+The preview is limited to **200,000 characters** and shows a notice if truncated; this preview limit does not truncate the saved TXT report. Each DOCX/PPTX font entry lists up to 100 distinct locations, including in the TXT file. A new run clears the previous preview. The font report is finalized only after the entire input list succeeds; an error or cancellation before that point leaves an existing report unchanged.
+
+### Font inspection limitations
+
+The DOCX reader includes text in the main document, headers, footers, footnotes, endnotes and comments. The PPTX reader inspects slide text and uses supported layout/master styles to resolve its formatting. The readers target Latin text, including Polish characters; unsupported writing systems and unresolved theme references are reported as unknown.
+
+This is not a full Word or PowerPoint rendering engine. Conditional Word table styles, charts, SmartArt, embedded objects, graphical text, bullet/numbering fonts, presenter notes and text appearing only on a slide master are not fully covered and may be omitted or require manual verification. The report warns about supported categories of uncertainty, but it is not an exhaustive inventory of every unsupported element. Legacy DOC/PPT files and other Office formats are not accepted by this operation.
+
+An available font does not guarantee identical layout after conversion in LibreOffice. Check the resulting document. If a font or style is missing, obtain it from its publisher and install it according to its license and your organization's policies, then repeat the inspection and conversion.
 
 ## Search and extraction
 
@@ -203,7 +235,7 @@ Executable locations are defined in [ToolPaths.cs](PdfOperations/Infrastructure/
 - LibreOffice HTML output is stored in a dedicated folder with its associated images and other generated assets. Keep these files together.
 - Extracted PDF images can have different formats, such as PNG or JPEG; extraction is not the same as rendering every page as JPEG.
 - Office conversions can depend on installed fonts and document layout. Check the resulting files.
-- If text looks different in a PDF exported by LibreOffice than it does in Word, LibreOffice may have substituted a missing font. Download the font from its publisher’s website, install it in Windows (including any bold or italic styles the document uses), and repeat the conversion.
+- If text looks different in a PDF exported by LibreOffice than it does in Word or PowerPoint, LibreOffice may have substituted a missing font. For DOCX/PPTX input, use [Font info](#font-information) to check for missing families and styles. Obtain fonts from their publisher and install the required styles in Windows according to their licenses and your organization's policies, then repeat the conversion.
 - Password-protected or damaged documents may fail with an error. Expand the error details for the underlying tool message.
 - Time limits apply to individual tool invocations or processing steps, not one fixed limit for the entire batch. Defaults are defined in [OperationTimeouts.cs](PdfOperations/Infrastructure/OperationTimeouts.cs).
 - LibreOffice conversion monitors temporary data size and free space. The current defaults are a 2 GiB temporary-data limit and a 2 GiB minimum free-space threshold on monitored drives. See [LibreOfficeDiskGuard.cs](PdfOperations/Infrastructure/LibreOfficeDiskGuard.cs).

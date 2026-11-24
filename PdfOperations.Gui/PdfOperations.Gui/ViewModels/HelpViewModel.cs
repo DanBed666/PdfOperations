@@ -56,6 +56,19 @@ public class HelpViewModel : ViewModelBase
         - Podział po podanych stronach - wpisana strona kończy poprzedni plik.
         - Podział każdej strony osobno - każda strona trafia do osobnego pliku PDF.
 
+        Informacje o czcionkach
+
+        - Wybierz Informacje o czcionkach, dodaj PDF, DOCX lub PPTX, wskaż folder zapisu i kliknij Start. Możesz mieszać te formaty na jednej liście. Osobna operacja Informacje nadal przyjmuje tylko PDF.
+        - Domyślna nazwa raportu to font_info.txt. Po powodzeniu całej operacji pojawi się podgląd pod przyciskami; Otwórz folder wynikowy otwiera miejsce zapisu TXT.
+        - Dla PDF narzędzie pdffonts podaje czcionki i osadzenie w PDF, bez porównania z katalogiem Windows. Dla DOCX/PPTX aplikacja analizuje formatowanie, obsługiwane style i motywy oraz sprawdza rodziny i odmiany w Windows.
+        - Raport DOCX/PPTX zawiera nazwę rodziny, grubość (400 = zwykła, 700 = pogrubiona), kursywę, zadeklarowane osadzenie i miejsca wystąpienia. Dla DOCX są to części XML i akapity, nie numery stron; dla PPTX slajdy i akapity. Język etykiet zależy od języka aplikacji przy rozpoczęciu analizy.
+        - Dostępna oznacza znalezioną rodzinę i odmianę. Brak rodziny oznacza brak w katalogu Windows. Nie znaleziono dokładnej odmiany oznacza brak żądanego połączenia grubości i pochylenia; czcionki zmienne i odmiany syntetyczne wymagają weryfikacji. Nie ustalono oznacza niejednoznaczny wynik, nie potwierdzony brak czcionki.
+        - Zadeklarowane osadzenie nie potwierdza instalacji czcionki, poprawności jej danych ani użycia przez LibreOffice. Operacja nie zmienia dokumentów, nie pobiera i nie instaluje czcionek. Analiza DOCX/PPTX nie wymaga Worda, PowerPointa, LibreOffice, internetu ani administratora.
+        - Podgląd ma limit 200 000 znaków; jego skrócenie nie skraca TXT. Każda pozycja czcionki DOCX/PPTX pokazuje do 100 różnych miejsc wystąpienia również w TXT. Nowe uruchomienie czyści podgląd. Błąd lub anulowanie przed końcowym zapisem raportu pozostawia poprzedni plik bez zmian.
+        - DOCX obejmuje tekst główny, nagłówki, stopki, przypisy i komentarze. PPTX obejmuje tekst slajdów z obsługiwanym dziedziczeniem formatowania. Obsługiwany jest tekst łaciński, w tym polskie znaki. DOC/PPT i inne formaty biurowe nie są przyjmowane.
+        - Analiza nie zastępuje renderowania dokumentu. Warunkowe style tabel, wykresy, SmartArt, obiekty osadzone, tekst graficzny, czcionki punktorów i numeracji, notatki prezentera i tekst tylko na wzorcu slajdu nie są w pełni obsługiwane. Ostrzeżenia nie wyliczają każdego pominiętego elementu.
+        - Dostępność czcionki nie gwarantuje identycznego układu w LibreOffice. Sprawdź wynik konwersji. Brakujące rodziny i odmiany uzyskaj od wydawcy i instaluj zgodnie z licencją oraz zasadami organizacji, a następnie ponów analizę i konwersję.
+
         Wyszukiwanie i eksport wyników
 
         - W sekcji „Szukane pola” wpisz własną frazę. Przyciskiem „Dodaj pole” możesz dodać kolejne, a przyciskiem „Usuń” usunąć niepotrzebne pole.
@@ -117,6 +130,19 @@ public class HelpViewModel : ViewModelBase
         - Even and odd pages are selected automatically.
         - Split after pages - the entered page becomes the last page of the previous output file.
         - Split every page - each page is saved as a separate PDF file.
+
+        Font info
+
+        - Choose Font info, add PDF, DOCX or PPTX files, select an output folder and click Start. You can mix these formats in one list. The separate Info operation still accepts only PDFs.
+        - The default report name is font_info.txt. After the entire operation succeeds, a preview appears below the buttons; Open output folder opens the TXT file's location.
+        - For PDF, pdffonts reports fonts and PDF embedding without comparing them against the Windows catalog. For DOCX/PPTX, the app reads formatting, supported styles and themes and checks font families and styles in Windows.
+        - The DOCX/PPTX report includes family names, weight (400 = regular, 700 = bold), italic formatting, declared embedding and locations. DOCX locations are XML parts and paragraphs, not page numbers; PPTX locations are slides and paragraphs. Report labels follow the app language when inspection starts.
+        - Available means a matching family and style was found. Missing family means the family was not found in the Windows catalog. Exact face not found means the requested weight/style combination was not found; variable fonts and synthetic styles require verification. Unknown means an unresolved result, not a confirmed missing font.
+        - Declared embedding does not confirm font installation, valid font data or use by LibreOffice. The operation does not modify documents or download or install fonts. DOCX/PPTX inspection does not require Word, PowerPoint, LibreOffice, internet access or administrator rights.
+        - The preview is limited to 200,000 characters; truncating it does not truncate the TXT report. Each DOCX/PPTX font entry lists up to 100 distinct locations, including in TXT. A new run clears the preview. An error or cancellation before the report is finalized leaves the previous file unchanged.
+        - DOCX inspection includes the main text, headers, footers, footnotes, endnotes and comments. PPTX inspection covers slide text with supported formatting inheritance. Latin text, including Polish characters, is supported. DOC/PPT and other Office formats are not accepted.
+        - Inspection does not replace document rendering. Conditional table styles, charts, SmartArt, embedded objects, graphical text, bullet/numbering fonts, presenter notes and text only on a slide master are not fully covered. Warnings do not identify every omitted element.
+        - Font availability does not guarantee identical layout in LibreOffice. Check the conversion result. Obtain missing families and styles from their publisher and install them according to their licenses and your organization's policies, then repeat inspection and conversion.
 
         Search and result export
 

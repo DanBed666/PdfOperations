@@ -44,7 +44,8 @@ Starsze paczki portable bez Velopack wymagają jednorazowego przejścia w ten r�
 | Łączenie PDF | Łączenie plików PDF w kolejności widocznej na liście. |
 | Utwórz PDF z fragmentów | Łączenie zakresów stron z jednego lub kilku plików PDF w wybranej kolejności. |
 | Wyszukiwanie | Wyszukiwanie wielu fraz w plikach PDF, plikach TXT i na obrazach. Wyniki można zapisać w raporcie TXT, a odczytane wartości dodatkowo wyeksportować do Excela, do pliku JSON lub do obu formatów. |
-| Informacje o PDF | Odczytywanie metadanych, liczby stron i informacji o czcionkach. |
+| Informacje | Odczytywanie metadanych i liczby stron PDF. |
+| Informacje o czcionkach | Odczyt czcionek PDF oraz analiza czcionek tekstu DOCX/PPTX, w tym ich dostępności w Windows. Zapis raportu TXT i podgląd w aplikacji. |
 | Zamiana tekstu | Zamiana tekstu w dokumentach DOCX, ODT i ODG na podstawie tabeli zamian w Excelu. |
 
 Interfejs zawiera liczniki plików, filtry formatów, wskaźniki postępu, anulowanie operacji, opcję nadpisywania oraz rozwijane szczegóły błędów. Wybrany język i motyw są zapamiętywane między uruchomieniami programu.
@@ -88,6 +89,37 @@ Numeracja stron zaczyna się od 1. Możesz wskazywać pojedyncze strony i zakres
 - **Podziel każdą stronę osobno**: program zapisuje każdą stronę jako osobny plik PDF.
 
 Opcja **Utwórz PDF z fragmentów** pozwala złożyć dokument z zakresów stron z jednego lub kilku plików PDF. Sprawdź wybrane strony i ułóż fragmenty w takiej kolejności, w jakiej mają się pojawić w gotowym dokumencie.
+
+## Informacje o czcionkach
+
+Wybierz **Informacje o czcionkach**, aby sprawdzić pliki PDF, DOCX lub PPTX. Możesz połączyć te formaty na jednej liście wejściowej. Osobna operacja **Informacje** nadal przyjmuje wyłącznie pliki PDF.
+
+1. Wybierz dokumenty i folder zapisu.
+2. Zostaw domyślną nazwę raportu `font_info.txt` albo wpisz inną nazwę pliku TXT.
+3. Kliknij **Start**. Po pomyślnym zakończeniu raport pojawi się pod przyciskami. Przycisk **Otwórz folder wynikowy** otwiera jego lokalizację.
+
+Dla **PDF** aplikacja korzysta z narzędzia `pdffonts` z pakietu Poppler, które podaje czcionki i informacje o ich osadzeniu w PDF. Nie porównuje czcionek PDF z katalogiem czcionek Windows.
+
+Dla **DOCX/PPTX** aplikacja odczytuje formatowanie tekstu, obsługiwane style i odwołania do motywu, a następnie porównuje ustalone rodziny i odmiany czcionek z katalogiem Windows. Raport zawiera nazwy rodzin, żądane grubości (`400` dla zwykłej, `700` dla pogrubionej), kursywę, zadeklarowane osadzenie i miejsca wystąpienia w dokumencie. W DOCX są to części XML i akapity, a nie numery stron po wyrenderowaniu; w PPTX są to slajdy i akapity. Etykiety raportu odpowiadają językowi interfejsu w chwili rozpoczęcia operacji; nazwy czcionek z dokumentu nie są tłumaczone.
+
+| Status DOCX/PPTX | Znaczenie |
+| --- | --- |
+| Dostępna | W katalogu Windows znaleziono pasującą rodzinę, grubość i odmianę prostą lub pochyloną. |
+| Brak rodziny | Ustalonej rodziny nie znaleziono w katalogu Windows. |
+| Nie znaleziono dokładnej odmiany | Rodzina istnieje, ale nie znaleziono żądanego połączenia grubości i pochylenia. Czcionki zmienne i odmiany syntetyczne mogą wymagać osobnej weryfikacji. |
+| Nie ustalono | Czytnik nie rozstrzygnął jednoznacznie, jaka czcionka jest używana. Nie dowodzi to braku czcionki w systemie. |
+
+**Zadeklarowane osadzenie** oznacza odnalezienie odwołania do osadzonej części z czcionką. Nie potwierdza, że czcionka jest zainstalowana, że jej dane są poprawne ani że LibreOffice jej użyje. Operacja odczytuje dokumenty bez ich zmieniania i nie pobiera ani nie instaluje czcionek. Analiza czcionek DOCX/PPTX nie wymaga Worda, PowerPointa, LibreOffice, internetu ani uprawnień administratora.
+
+Podgląd ma limit **200 000 znaków** i pokazuje informację o skróceniu; ten limit nie skraca zapisanego raportu TXT. Każda pozycja czcionki DOCX/PPTX zawiera maksymalnie 100 różnych miejsc wystąpienia, również w pliku TXT. Nowe uruchomienie czyści poprzedni podgląd. Raport czcionek jest zapisywany pod docelową nazwą dopiero po powodzeniu całej listy wejściowej; błąd lub anulowanie przed tym momentem pozostawia istniejący raport bez zmian.
+
+### Ograniczenia analizy czcionek
+
+Czytnik DOCX obejmuje tekst główny, nagłówki, stopki, przypisy dolne i końcowe oraz komentarze. Czytnik PPTX analizuje tekst slajdów i korzysta z obsługiwanych stylów układu oraz wzorca do ustalenia jego formatowania. Czytniki obsługują tekst łaciński, w tym polskie znaki; dla nieobsługiwanych systemów pisma i nierozstrzygniętych odwołań do motywu czcionka jest oznaczana jako nieustalona.
+
+To nie jest pełny silnik renderowania Worda ani PowerPointa. Warunkowe style tabel Worda, wykresy, SmartArt, obiekty osadzone, tekst graficzny, czcionki punktorów i numeracji, notatki prezentera oraz tekst występujący wyłącznie na wzorcu slajdu nie są w pełni objęte analizą i mogą zostać pominięte lub wymagać ręcznego sprawdzenia. Raport ostrzega o rozpoznawanych kategoriach niepewności, ale nie stanowi kompletnego wykazu wszystkich nieobsługiwanych elementów. Starsze pliki DOC/PPT i inne formaty biurowe nie są przyjmowane przez tę operację.
+
+Dostępność czcionki nie gwarantuje identycznego układu po konwersji w LibreOffice. Sprawdź dokument wynikowy. Jeśli brakuje rodziny lub odmiany, pobierz ją od wydawcy i zainstaluj zgodnie z licencją oraz zasadami organizacji, a następnie ponów analizę i konwersję.
 
 ## Wyszukiwanie i odczytywanie wartości
 
@@ -203,7 +235,7 @@ Lokalizacje plików wykonywalnych są określone w [ToolPaths.cs](PdfOperations/
 - Wyniki konwersji LibreOffice do HTML są zapisywane w osobnym folderze wraz z obrazami i innymi wygenerowanymi plikami pomocniczymi. Przechowuj je razem.
 - Obrazy wyodrębnione z PDF mogą mieć różne formaty, na przykład PNG lub JPEG. Wyodrębnianie obrazów nie jest tym samym co zapisywanie każdej strony jako JPEG.
 - Konwersje dokumentów biurowych mogą zależeć od zainstalowanych czcionek i układu dokumentu. Sprawdź pliki wynikowe.
-- Jeśli tekst w pliku PDF utworzonym przez LibreOffice wygląda inaczej niż w Wordzie, LibreOffice mógł użyć zamiennika brakującej czcionki. Pobierz czcionkę ze strony jej wydawcy i zainstaluj w systemie Windows te jej odmiany, których użyto w dokumencie (np. zwykłą, pogrubioną i pochyłą). Następnie ponów konwersję.
+- Jeśli tekst w pliku PDF utworzonym przez LibreOffice wygląda inaczej niż w Wordzie lub PowerPoincie, LibreOffice mógł użyć zamiennika brakującej czcionki. Dla dokumentu wejściowego DOCX/PPTX użyj [Informacji o czcionkach](#informacje-o-czcionkach), aby sprawdzić brakujące rodziny i odmiany. Pobierz czcionki od ich wydawcy i zainstaluj wymagane odmiany w Windows zgodnie z licencjami oraz zasadami organizacji, a następnie ponów konwersję.
 - Dokumenty zabezpieczone hasłem lub uszkodzone mogą powodować błąd. Rozwiń szczegóły błędu, aby zobaczyć komunikat używanego narzędzia.
 - Limity czasu dotyczą pojedynczych wywołań narzędzi lub etapów przetwarzania, a nie jednego wspólnego limitu dla całej partii. Wartości domyślne są określone w [OperationTimeouts.cs](PdfOperations/Infrastructure/OperationTimeouts.cs).
 - Konwersja LibreOffice monitoruje rozmiar danych tymczasowych i wolne miejsce. Obecne wartości domyślne to limit 2 GiB danych tymczasowych oraz wymagane minimum 2 GiB wolnego miejsca na monitorowanych dyskach. Szczegóły znajdują się w [LibreOfficeDiskGuard.cs](PdfOperations/Infrastructure/LibreOfficeDiskGuard.cs).
