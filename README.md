@@ -8,7 +8,7 @@ The repository also contains the original console application. This guide descri
 
 ## Download and run
 
-PdfOperations is distributed as a **portable ZIP for Windows x64**, without a separate installer. Download **`PdfOperations-1.0.0-win-x64-portable.zip`** from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest).
+PdfOperations is distributed as a **portable ZIP for Windows x64**, without a separate installer. Download **`PdfOperations-1.0.1-win-x64-portable.zip`** from [Releases](https://github.com/DanBed666/PdfOperations/releases/latest).
 
 1. Extract the **entire** ZIP to a new folder you can write to.
 2. Run **`PdfOperations.exe` in the top-level folder**, not from inside the ZIP.
@@ -100,7 +100,7 @@ Choose **Font info** to inspect PDF, DOCX or PPTX files. You can combine these f
 
 For **PDF**, the app uses Poppler's `pdffonts` to report fonts and PDF embedding information. It does not compare PDF fonts against the Windows font catalog.
 
-For **DOCX/PPTX**, the app reads text formatting, supported styles and theme references, then compares the resolved font families and styles with the Windows font catalog. The report includes family names, requested weights (`400` for regular, `700` for bold), italic formatting, declared embedding and locations in the document. DOCX locations identify XML parts and paragraphs, not rendered page numbers; PPTX locations identify slides and paragraphs. The report labels follow the interface language selected when the operation starts; document font names are not translated.
+For **DOCX/PPTX**, the app reads text formatting, supported styles and theme references, then compares the resolved font families and styles with the Windows font catalog. The TXT report includes family names, readable style names (for example, Regular or Bold Italic), declared embedding and grouped locations. DOCX locations identify the main document or XML parts and paragraphs, not rendered page numbers; PPTX locations group paragraph numbers by slide. The report labels follow the interface language selected when the operation starts; document font names are not translated.
 
 | DOCX/PPTX status | Meaning |
 | --- | --- |
@@ -111,7 +111,7 @@ For **DOCX/PPTX**, the app reads text formatting, supported styles and theme ref
 
 **Declared embedding** means that a reference to an embedded font part was found. It does not confirm that the font is installed, that its data is valid, or that LibreOffice will use it. This operation reads documents without modifying them and does not download or install fonts. DOCX/PPTX font inspection does not require Word, PowerPoint, LibreOffice, internet access or administrator rights.
 
-The preview is limited to **200,000 characters** and shows a notice if truncated; this preview limit does not truncate the saved TXT report. Each DOCX/PPTX font entry lists up to 100 distinct locations, including in the TXT file. A new run clears the previous preview. The font report is finalized only after the entire input list succeeds; an error or cancellation before that point leaves an existing report unchanged.
+For DOCX/PPTX, the compact preview shows font families, style names, availability and warnings; embedding details and grouped locations remain in the TXT report. PDF preview content is unchanged. The preview is limited to **200,000 characters** and shows a notice if truncated; this limit does not truncate the saved TXT report. Each DOCX/PPTX font entry in TXT lists up to 100 distinct locations. A new run clears the previous preview. The font report is finalized only after the entire input list succeeds; an error or cancellation before that point leaves an existing report unchanged.
 
 ### Font inspection limitations
 

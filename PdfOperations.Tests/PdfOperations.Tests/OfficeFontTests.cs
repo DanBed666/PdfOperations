@@ -337,9 +337,12 @@ public sealed class OfficeFontTests
             Assert.DoesNotContain(polish ? "Zadeklarowane osadzenie:" : "Declared embedding:", vm.ReportText);
             foreach (var use in document.Fonts)
             {
-                StringAssert.Contains(saved, use.Source);
                 Assert.DoesNotContain(use.Source, vm.ReportText);
             }
+            string section = extension == "docx"
+                ? (polish ? "Treść główna" : "Main document")
+                : (polish ? "Slajd 1" : "Slide 1");
+            StringAssert.Contains(saved, $"  {section} | {(polish ? "akapity" : "paragraphs")}: 1");
             CollectionAssert.AreEqual(before, File.ReadAllBytes(path));
         }
         finally { vm.Loc.Language = previous; }
@@ -492,6 +495,45 @@ public sealed class OfficeFontTests
         Assert.AreEqual(StatusKind.Success, vm.StatusKind, vm.ErrorDetails);
         StringAssert.Contains(File.ReadAllText(Path.Combine(root, "pdf_info.txt")), "Pages:");
         Assert.IsFalse(vm.HasReport);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void LocationsGroupAndSortParagraphsAndPreserveUnknownSources(bool polish)
+    {
+        string[] sources = ["slide 3: p. 10", "slide 3: p. 2", "slide 3: p. 2",
+            "/word/document.xml: p. 4", "/word/document.xml: p. 1",
+            "/word/header1.xml: p. 3", "/word/header2.xml: p. 3",
+            "unknown-source", "slide 4: p. invalid", "slide 5: p. 0"];
+        var data = new OfficeFontDocument(sources.Select(s => new OfficeFontUse("Arial", 400, false, s, false)).ToArray(), []);
+        string report = OfficeFontReport.Format(data, new FixedCatalog(FontAvailability.Available), polish);
+        string paragraphs = polish ? "akapity" : "paragraphs";
+        StringAssert.Contains(report, $"  {(polish ? "Slajd 3" : "Slide 3")} | {paragraphs}: 2, 10");
+        StringAssert.Contains(report, $"  {(polish ? "Treść główna" : "Main document")} | {paragraphs}: 1, 4");
+        StringAssert.Contains(report, $"  /word/header1.xml | {paragraphs}: 3");
+        StringAssert.Contains(report, $"  /word/header2.xml | {paragraphs}: 3");
+        foreach (string source in sources.TakeLast(3)) StringAssert.Contains(report, "  " + source);
+        Assert.DoesNotContain(": 2, 2", report);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void GroupedLocationsRetainHundredLocationLimit(bool polish)
+    {
+        var data = new OfficeFontDocument(Enumerable.Range(1, 101)
+            .Select(i => new OfficeFontUse("Arial", 400, false, $"slide 1: p. {i}", false)).ToArray(), []);
+        var catalog = new FixedCatalog(FontAvailability.Available);
+        string report = OfficeFontReport.Format(data, catalog, polish);
+        string expected = string.Join(", ", Enumerable.Range(1, 100));
+        StringAssert.Contains(report, $"  {(polish ? "Slajd 1" : "Slide 1")} | {(polish ? "akapity" : "paragraphs")}: {expected}");
+        Assert.DoesNotContain(", 101", report);
+        string notice = polish ? "Pokazano pierwsze 100 miejsc." : "Only the first 100 locations are shown.";
+        StringAssert.Contains(report, notice);
+        string preview = OfficeFontReport.Format(data, catalog, polish, compact: true);
+        Assert.DoesNotContain(notice, preview);
+        Assert.DoesNotContain(expected, preview);
     }
 
     private InfoViewModel ViewModel(string[] files)

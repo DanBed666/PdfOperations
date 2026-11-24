@@ -8,7 +8,7 @@ Repozytorium zawiera również pierwotną aplikację konsolową. Ten przewodnik 
 
 ## Pobieranie i uruchomienie
 
-PdfOperations jest dostępny jako **przenośna paczka ZIP dla Windows x64**, bez osobnego instalatora. Ze [strony wydań](https://github.com/DanBed666/PdfOperations/releases/latest) pobierz **`PdfOperations-1.0.0-win-x64-portable.zip`**.
+PdfOperations jest dostępny jako **przenośna paczka ZIP dla Windows x64**, bez osobnego instalatora. Ze [strony wydań](https://github.com/DanBed666/PdfOperations/releases/latest) pobierz **`PdfOperations-1.0.1-win-x64-portable.zip`**.
 
 1. Rozpakuj **cały** ZIP do nowego folderu, w którym masz prawo zapisu.
 2. Uruchom **`PdfOperations.exe` z głównego folderu**, nie bezpośrednio z ZIP-a.
@@ -100,7 +100,7 @@ Wybierz **Informacje o czcionkach**, aby sprawdzić pliki PDF, DOCX lub PPTX. Mo
 
 Dla **PDF** aplikacja korzysta z narzędzia `pdffonts` z pakietu Poppler, które podaje czcionki i informacje o ich osadzeniu w PDF. Nie porównuje czcionek PDF z katalogiem czcionek Windows.
 
-Dla **DOCX/PPTX** aplikacja odczytuje formatowanie tekstu, obsługiwane style i odwołania do motywu, a następnie porównuje ustalone rodziny i odmiany czcionek z katalogiem Windows. Raport zawiera nazwy rodzin, żądane grubości (`400` dla zwykłej, `700` dla pogrubionej), kursywę, zadeklarowane osadzenie i miejsca wystąpienia w dokumencie. W DOCX są to części XML i akapity, a nie numery stron po wyrenderowaniu; w PPTX są to slajdy i akapity. Etykiety raportu odpowiadają językowi interfejsu w chwili rozpoczęcia operacji; nazwy czcionek z dokumentu nie są tłumaczone.
+Dla **DOCX/PPTX** aplikacja odczytuje formatowanie tekstu, obsługiwane style i odwołania do motywu, a następnie porównuje ustalone rodziny i odmiany czcionek z katalogiem Windows. Raport TXT zawiera nazwy rodzin, czytelne nazwy odmian (np. Zwykła (Regular) lub Pogrubiona kursywa (Bold Italic)), zadeklarowane osadzenie i pogrupowane miejsca wystąpienia. W DOCX są to treść główna lub części XML i akapity, a nie numery stron po wyrenderowaniu; w PPTX numery akapitów są grupowane według slajdów. Etykiety raportu odpowiadają językowi interfejsu w chwili rozpoczęcia operacji; nazwy czcionek z dokumentu nie są tłumaczone.
 
 | Status DOCX/PPTX | Znaczenie |
 | --- | --- |
@@ -111,7 +111,7 @@ Dla **DOCX/PPTX** aplikacja odczytuje formatowanie tekstu, obsługiwane style i 
 
 **Zadeklarowane osadzenie** oznacza odnalezienie odwołania do osadzonej części z czcionką. Nie potwierdza, że czcionka jest zainstalowana, że jej dane są poprawne ani że LibreOffice jej użyje. Operacja odczytuje dokumenty bez ich zmieniania i nie pobiera ani nie instaluje czcionek. Analiza czcionek DOCX/PPTX nie wymaga Worda, PowerPointa, LibreOffice, internetu ani uprawnień administratora.
 
-Podgląd ma limit **200 000 znaków** i pokazuje informację o skróceniu; ten limit nie skraca zapisanego raportu TXT. Każda pozycja czcionki DOCX/PPTX zawiera maksymalnie 100 różnych miejsc wystąpienia, również w pliku TXT. Nowe uruchomienie czyści poprzedni podgląd. Raport czcionek jest zapisywany pod docelową nazwą dopiero po powodzeniu całej listy wejściowej; błąd lub anulowanie przed tym momentem pozostawia istniejący raport bez zmian.
+Skrócony podgląd DOCX/PPTX pokazuje rodziny, odmiany, dostępność i ostrzeżenia; informacje o osadzeniu oraz pogrupowane miejsca pozostają w TXT. Zawartość podglądu PDF nie zmienia się. Podgląd ma limit **200 000 znaków** i pokazuje informację o skróceniu; ten limit nie skraca zapisanego raportu TXT. Każda pozycja czcionki DOCX/PPTX w TXT zawiera maksymalnie 100 różnych miejsc wystąpienia. Nowe uruchomienie czyści poprzedni podgląd. Raport czcionek jest zapisywany pod docelową nazwą dopiero po powodzeniu całej listy wejściowej; błąd lub anulowanie przed tym momentem pozostawia istniejący raport bez zmian.
 
 ### Ograniczenia analizy czcionek
 
